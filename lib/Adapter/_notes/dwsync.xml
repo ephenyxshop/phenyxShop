@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<dwsync>
+<file name="Adapter_AddressFactory.php" server="192.129.168.18/NewAlliance/" local="132525895490000000" remote="132525895490000000" Dst="1" />
+<file name="Adapter_CacheManager.php" server="192.129.168.18/NewAlliance/" local="132525895490000000" remote="132525895490000000" Dst="1" />
+<file name="Adapter_Configuration.php" server="192.129.168.18/NewAlliance/" local="132525895490000000" remote="132525895490000000" Dst="1" />
+<file name="Adapter_Database.php" server="192.129.168.18/NewAlliance/" local="132525895490000000" remote="132525895490000000" Dst="1" />
+<file name="Adapter_EntityMapper.php" server="192.129.168.18/NewAlliance/" local="132525895490000000" remote="132525895490000000" Dst="1" />
+<file name="Adapter_EntityMetaDataRetriever.php" server="192.129.168.18/NewAlliance/" local="132525895490000000" remote="132525895490000000" Dst="1" />
+<file name="Adapter_Exception.php" server="192.129.168.18/NewAlliance/" local="132525895490000000" remote="132525895490000000" Dst="1" />
+<file name="Adapter_HookManager.php" server="192.129.168.18/NewAlliance/" local="132525895490000000" remote="132525895490000000" Dst="1" />
+<file name="Adapter_PackItemsManager.php" server="192.129.168.18/NewAlliance/" local="132525895490000000" remote="132525895490000000" Dst="1" />
+<file name="Adapter_ProductPriceCalculator.php" server="192.129.168.18/NewAlliance/" local="132525895490000000" remote="132525895490000000" Dst="1" />
+<file name="Adapter_ServiceLocator.php" server="192.129.168.18/NewAlliance/" local="132525895490000000" remote="132525895490000000" Dst="1" />
+<file name="Adapter_StockManager.php" server="192.129.168.18/NewAlliance/" local="132525895490000000" remote="132525895490000000" Dst="1" />
+</dwsync>
