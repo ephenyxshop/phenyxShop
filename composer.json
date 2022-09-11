@@ -1,0 +1,20 @@
+{
+    "name": "ephenyxshop/phenyxshop",
+    "description": "Ephenyx Shop Code source",
+    "homepage": "http://dev.maxmind.com/geoip/legacy/downloadable",
+    "type": "library",
+    "license": "LGPL-2.1-or-later",
+    "authors": [
+        {
+            "name": "Jeff hunger",
+            "email": "jeff@ephenyx.com",
+            "homepage": "https://ephenyx.com/"
+        }
+    ],
+    "require": {
+        "php": ">=8"
+    },
+     "autoload": {
+        "files": ["library/phenyx.composer.php"]
+    }
+}
