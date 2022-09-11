@@ -41,9 +41,9 @@ class EmployeeThreadCore extends ObjectModel {
     ];
 
     
-    public function __construct($id = null, $idLang = null, $idShop = null) {
+    public function __construct($id = null, $idLang = null) {
 
-        parent::__construct($id, null, $idShop);
+        parent::__construct($id, null);
         $this->current_license = Configuration::get('EPH_LICENSE_ID');
         
     }

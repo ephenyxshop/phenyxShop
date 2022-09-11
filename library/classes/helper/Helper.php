@@ -20,8 +20,8 @@ class HelperCore {
     public $token;
     /** @var array $toolbar_btn */
     public $toolbar_btn;
-    /** @var mixed $EPH_help_context */
-    public $EPH_help_context;
+    /** @var mixed $ps_help_context */
+    public $ps_help_context;
     /** @var string $title */
     public $title;
     /** @var bool $show_toolbar */

@@ -17,67 +17,165 @@ class HookCore extends ObjectModel {
      * @deprecated 1.0.0
      */
     protected static $_hook_modules_cache = null;
+    
+    protected static $_available_modules_cache = null;
     /**
      * @deprecated 1.0.0
      */
     protected static $_hook_modules_cache_exec = null;
-    /**
-     * @var string Hook name identifier
-     */
+   
     public $name;
-    /**
-     * @var string Hook title (displayed in BO)
-     */
-    public $title;
-    /**
-     * @var string Hook description
-     */
-    public $description;
-    /**
-     * @var bool
-     */
+    
+    public $target;
+   
+    public $is_tag;
+    
     public $position = false;
-    /**
-     * @var bool Is this hook usable with live edit ?
-     */
+    
+    public $metas;
+    
     public $live_edit = false;
-    // @codingStandardsIgnoreEnd
-
+    
+    public $title;
+    
+    public $description;
+    
+    public $tag_value;
+    
+    public $modules;
+    
+    public $available_modules;
     /**
      * @see ObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'hook',
         'primary' => 'id_hook',
+        'multilang' => true,
         'fields'  => [
-            'name'        => ['type' => self::TYPE_STRING, 'validate' => 'isHookName', 'required' => true, 'size' => 64],
-            'title'       => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName'],
-            'description' => ['type' => self::TYPE_HTML, 'validate' => 'isCleanHtml'],
-            'position'    => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
-            'live_edit'   => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
+            'name'              => ['type' => self::TYPE_STRING, 'validate' => 'isHookName', 'required' => true, 'size' => 64],
+            'target'            => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName'],
+            'position'          => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'],
+            'is_tag'            => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName'],
+            'metas'             => ['type' => self::TYPE_NOTHING, 'validate' => 'isJSON'],
+            'modules'           => ['type' => self::TYPE_NOTHING],
+            'available_modules' => ['type' => self::TYPE_NOTHING],
+            'live_edit'         => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],            
+             /* Lang fields */
+            'title'             => ['type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isGenericName'],
+            'description'       => ['type' => self::TYPE_HTML, 'lang' => true, 'validate' => 'isCleanHtml'],
+            'tag_value'         => ['type' => self::TYPE_STRING, 'lang' => true],
         ],
     ];
+    
+    public function __construct($id = null, $idLang = null) {
 
-    /**
-     * Return Hooks List
-     *
-     * @param bool $position
-     *
-     * @return array Hooks List
-     *
-     * @throws PhenyxShopDatabaseException
-     * @throws PhenyxShopException
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     */
+        parent::__construct($id, $idLang);
+       
+        if($this->id) {
+            $this->modules = $this->getModules();
+            $this->available_modules = $this->getPossibleModuleList();
+            $this->metas = Tools::jsonDecode($this->metas, true);
+        }
+        
+    }
+    
+    public function update($nullValues = false) {
+
+        $this->modules = Tools::jsonEncode($this->modules);
+        $this->available_modules = Tools::jsonEncode($this->available_modules);
+        $return = parent::update($nullValues);       
+
+        return $return;
+    }
+    
+    public function getModules($force = false) {
+        
+		if(!empty($this->modules) || $force) {
+            return Tools::jsonDecode($this->modules, true);
+        }
+        $modules = Hook::getHookModuleExecList($this->name);
+        $collection = [];
+        if(is_array($modules)) {
+            foreach($modules as &$module) {
+                $tmpInstance = Module::getInstanceById($module['id_module']);
+                if(!$tmpInstance->active) {
+                    continue;
+                }                
+                $position =  Db::getInstance()->getValue(
+                    (new DbQuery())
+	                ->select('position')
+                    ->from('hook_module')
+                    ->where('`id_hook` ='.$this->id)
+                    ->where('`id_module` ='.$tmpInstance->id)
+                                    );
+                $collection[$tmpInstance->name] = [
+                    'id_module' => $tmpInstance->id,
+                    'displayName' => $tmpInstance->displayName,
+                    'id_hook' => $this->id,
+                    'position' => $position,
+                ];
+                
+            }
+        }
+        $this->modules = $collection;
+        $this->update();
+        return $collection;
+	}
+    
+    public function getPossibleModuleList($force = false) {
+        
+        if(!empty($this->available_modules) || $force) {
+            return Tools::jsonDecode($this->available_modules, true);
+        }
+        $collection = [];
+        $modules = Module::getModulesOnDisk();
+        foreach($modules as $module) {
+            if(array_key_exists($module->name, $this->modules)) {
+                continue;
+            }
+            $tmpInstance = Module::getInstanceById($module->id);            
+            if (is_callable([$tmpInstance, 'hook' . ucfirst($this->name)])) {
+                $collection[$tmpInstance->name] = [
+                    'id_module' => $tmpInstance->id,
+                    'name'    => $tmpInstance->name,
+                ];
+            }
+        }
+        
+        $this->available_modules = $collection;
+        $this->update();
+        return $collection;
+                
+    }
+    
+    public static function getHooksCollection($idLang = null) {
+
+        $collection = [];
+        if (is_null($idLang)) {
+            $idLang = Context::getContext()->language->id;
+        }
+
+        $hooks = new PhenyxShopCollection('Hook', $idLang);
+        foreach($hooks as $hook) {
+            $collection[] = new Hook($hook->id, $idLang);
+        }
+
+        return $collection;
+    }
+
     public static function getHooks($position = false) {
 
-        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
-            '
-            SELECT * FROM `' . _DB_PREFIX_ . 'hook` h
-            ' . ($position ? 'WHERE h.`position` = 1' : '') . '
-            ORDER BY `name`'
-        );
+        $query = new DbQuery();
+        $query->select('h.*, hl.*');
+        $query->from('hook', 'h');
+        $query->leftJoin('hook_lang', 'hl', 'hl.`id_hook` = h.`id_hook` AND hl.`id_lang` = ' . Context::getContext()->language->id);
+        if($position) {
+            $query->where('h`position` = 1');
+        }
+        $query->orderBy('h.`name`');
+        
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
     }
 
     /**
@@ -158,6 +256,21 @@ class HookCore extends ObjectModel {
 
         return $moduleList;
     }
+    
+    public static function getModuleHook() {
+        
+        $idLang = Context::getContext()->language->id;
+        return Db::getInstance()->executeS(
+            (new DbQuery())
+	        ->select('DISTINCT(hm.`id_hook`), h.*')
+            ->from('hook_module', 'hm')
+            ->leftJoin('hook', 'h', 'h.`id_hook` = hm.`id_hook`')
+            ->leftJoin('hook_lang', 'hl', 'hl.`id_hook` = h.`id_hook` AND hl.`id_lang` = '.$idLang)
+            ->leftJoin('module_shop', 'ms', 'ms.`id_module` = hm.`id_module`')
+            ->orderBy('hm.`id_hook` ASC')
+            ->where('h.live_edit = 1 AND ms.enable_device = 7')
+        );
+    }
 
     /**
      * Get list of all registered hooks with modules
@@ -175,9 +288,10 @@ class HookCore extends ObjectModel {
 
         if (!Cache::isStored($cacheId)) {
             $results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS('
-                SELECT h.id_hook, h.name AS h_name, h.title, h.description, h.position, h.live_edit, hm.position AS hm_position, m.id_module, m.name, m.active
+                SELECT h.id_hook, h.name AS h_name, hl.title, hl.description, h.position, h.live_edit, hm.position AS hm_position, m.id_module, m.name, m.active
                 FROM `' . _DB_PREFIX_ . 'hook_module` hm
                 STRAIGHT_JOIN `' . _DB_PREFIX_ . 'hook` h ON (h.id_hook = hm.id_hook AND hm.id_shop = ' . (int) Context::getContext()->shop->id . ')
+                STRAIGHT_JOIN `' . _DB_PREFIX_ . 'hook_lang` hl ON (hl.id_hook = h.id_hook AND hl.id_lang = ' . (int) Context::getContext()->language->id . ')
                 STRAIGHT_JOIN `' . _DB_PREFIX_ . 'module` AS m ON (m.id_module = hm.id_module)
                 ORDER BY hm.position'
             );
@@ -491,12 +605,7 @@ class HookCore extends ObjectModel {
 
                 // Live edit
 
-                if (!$arrayReturn && $array['live_edit'] && Tools::isSubmit('live_edit') && Tools::getValue('ad')
-                    && Tools::getValue('liveToken') == Tools::getAdminToken(
-                        'AdminModulesPositions'
-                        . (int) Tab::getIdFromClassName('AdminModulesPositions') . (int) Tools::getValue('id_employee')
-                    )
-                ) {
+                if (!$arrayReturn && $array['live_edit'] && Tools::isSubmit('live_edit') && Tools::getValue('id_employee')) {
                     $liveEdit = true;
                     $output .= static::wrapLiveEdit($display, $moduleInstance, $array['id_hook']);
                 } else if ($arrayReturn) {
@@ -566,10 +675,8 @@ class HookCore extends ObjectModel {
 
             // SQL Request
             $sql = new DbQuery();
-            $sql->select('h.`name` as hook, m.`id_module`, h.`id_hook`, m.`name` as module, h.`live_edit`');
+            $sql->select('h.`name` as hook, m.`id_module`, h.`id_hook`, m.`name` as module, h.`live_edit`, hm.`position`');
             $sql->from('module', 'm');
-            $sql->join(Shop::addSqlAssociation('module', 'm', true, 'module_shop.enable_device & ' . (int) Context::getContext()->getDevice()));
-            $sql->innerJoin('module_shop', 'ms', 'ms.`id_module` = m.`id_module`');
             $sql->innerJoin('hook_module', 'hm', 'hm.`id_module` = m.`id_module`');
             $sql->innerJoin('hook', 'h', 'hm.`id_hook` = h.`id_hook`');
 
@@ -635,6 +742,7 @@ class HookCore extends ObjectModel {
                         'id_hook'   => $row['id_hook'],
                         'module'    => $row['module'],
                         'id_module' => $row['id_module'],
+                        'position'  => $row['position'],
                         'live_edit' => $row['live_edit'],
                     ];
                 }
@@ -872,11 +980,14 @@ class HookCore extends ObjectModel {
      */
     public static function wrapLiveEdit($display, $moduleInstance, $idHook) {
 
+        if(is_null($display)) {
+            $display = 'height:50px;';
+        }
         return '<script type="text/javascript"> modules_list.push(\'' . Tools::safeOutput($moduleInstance->name) . '\');</script>
                 <div id="hook_' . (int) $idHook . '_module_' . (int) $moduleInstance->id . '_moduleName_' . str_replace('_', '-', Tools::safeOutput($moduleInstance->name)) . '"
-                class="dndModule" style="border: 1px dotted red;' . (!strlen($display) ? 'height:50px;' : '') . '">
+                class="dndModule" style="border: 1px dotted red;' . $display . '">
                     <span style="font-family: Georgia;font-size:13px;font-style:italic;">
-                        <img style="padding-right:5px;" src="' . _MODULE_DIR_ . Tools::safeOutput($moduleInstance->name) . '/logo.gif">'
+                        <img style="padding-right:5px;" src="' . _MODULE_DIR_ . Tools::safeOutput($moduleInstance->name) . '/logo.gif" width="16" height="16">'
         . Tools::safeOutput($moduleInstance->displayName) . '<span style="float:right">
                 <a href="#" id="' . (int) $idHook . '_' . (int) $moduleInstance->id . '" class="moveModule">
                     <img src="' . _EPH_ADMIN_IMG_ . 'arrow_out.png"></a>
@@ -1212,6 +1323,101 @@ class HookCore extends ObjectModel {
         Cache::clean('hook_idsbyname');
 
         return parent::add($autoDate, $nullValues);
+    }
+    
+    public static function getHeaderHooks($home = null) {
+
+        $collection = [];
+       
+        $idLang = Context::getContext()->language->id;
+        if($home) {
+            $idIndex = Meta::getIdMetaByPage($home);
+        }
+                
+        $hooks = new PhenyxShopCollection('Hook', $idLang);
+        $hooks->where('target', '=', 'header');
+        $hooks->orderBy('position');
+        foreach($hooks as $hook) {
+            $hook = new Hook($hook->id, $idLang);
+            if($home && is_array($hook->metas) && !in_array($idIndex, $hook->metas)) {
+                continue;
+            }          
+            $collection[$hook->name] = $hook;
+        }
+        
+        return $collection;
+    }
+    
+    public static function getHomeHooks() {
+
+        $collection = [];
+        $idLang = Context::getContext()->language->id;   
+        $idIndex = Meta::getIdMetaByPage('index');
+        $hooks = new PhenyxShopCollection('Hook', $idLang);
+        $hooks->where('target', '=', 'index');
+        $hooks->orderBy('position');
+        foreach($hooks as $hook) {
+            $hook = new Hook($hook->id, $idLang);
+            if(is_array($hook->metas) && !in_array($idIndex, $hook->metas)) {
+                continue;
+            }         
+            
+            $collection[$hook->name] = $hook;
+        }
+        
+        return $collection;
+    }
+    
+    public static function getLeftColumnHooks($idLang = null) {
+
+        $collection = [];
+        if (is_null($idLang)) {
+            $idLang = Context::getContext()->language->id;
+        }
+                
+        $hooks = new PhenyxShopCollection('Hook', $idLang);
+        $hooks->where('name', '=', 'displayLeftColumn');
+        foreach($hooks as $hook) {
+            $hook = new Hook($hook->id, $idLang);
+            $collection[$hook->name] = $hook;
+        }
+        
+        return $collection;
+    }
+    
+    public static function getRightColumnHooks($idLang = null) {
+
+        $collection = [];
+        if (is_null($idLang)) {
+            $idLang = Context::getContext()->language->id;
+        }
+       
+        $hooks = new PhenyxShopCollection('Hook', $idLang);
+        $hooks->where('name', '=', 'displayRightColumn');
+        foreach($hooks as $hook) {
+            $hook = new Hook($hook->id, $idLang);
+            $collection[$hook->name] = $hook;
+        }
+        
+        return $collection;
+    }
+    
+    public static function getFooterHooks($idLang = null) {
+
+        $collection = [];
+        if (is_null($idLang)) {
+            $idLang = Context::getContext()->language->id;
+        }
+                
+        $hooks = new PhenyxShopCollection('Hook', $idLang);
+        $hooks->where('target', '=', 'footer');
+        $hooks->orderBy('position');
+        foreach($hooks as $hook) {
+            $hook = new Hook($hook->id, $idLang);
+            $collection[$hook->name] = $hook;
+        }
+        
+        return $collection;
     }
 
 }

@@ -55,9 +55,9 @@ class GroupCore extends ObjectModel {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function __construct($id = null, $idLang = null, $idShop = null) {
+    public function __construct($id = null, $idLang = null) {
 
-        parent::__construct($id, $idLang, $idShop);
+        parent::__construct($id, $idLang);
         // @codingStandardsIgnoreStart
 
         if ($this->id && !isset(Group::$group_price_display_method[$this->id])) {
@@ -80,12 +80,7 @@ class GroupCore extends ObjectModel {
      */
     public static function getGroups($idLang, $idShop = false) {
 
-        $shopCriteria = '';
-
-        if ($idShop) {
-            $shopCriteria = Shop::addSqlAssociation('group', 'g');
-        }
-
+        
         return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('DISTINCT g.`id_group`, g.`reduction`, g.`price_display_method`, gl.`name`')
@@ -153,14 +148,7 @@ class GroupCore extends ObjectModel {
             $groups[$idGroup] = new Group($idGroup);
         }
 
-        if (!$groups[$idGroup]->isAssociatedToShop(Context::getContext()->shop->id)) {
-            $idGroup = (int) $psCustomerGroup;
-
-            if (!isset($groups[$idGroup])) {
-                $groups[$idGroup] = new Group($idGroup);
-            }
-
-        }
+        
 
         return $groups[$idGroup];
     }

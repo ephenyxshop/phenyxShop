@@ -14,7 +14,7 @@ class NewsletterCore extends ObjectModel {
         'primary'   => 'id_newsletter',
         'fields'    => [
             'email'             => ['type' => self::TYPE_STRING, 'required' => true, 'size' => 128],
-			'newsletter_date_add'              => ['type' => self::TYPE_DATE, 'shop' => true, 'validate' => 'isDate'],
+			'newsletter_date_add'              => ['type' => self::TYPE_DATE,  'validate' => 'isDate'],
 			'ip_registration_newsletter' => ['type' => self::TYPE_STRING, 'copy_post' => false],
 			'http_referer'                 => ['type' => self::TYPE_STRING, 'size' => 255],
 			'id_sendinblue'       => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],

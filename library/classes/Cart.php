@@ -307,13 +307,13 @@ class CartCore extends ObjectModel {
         $sql->leftJoin(
             'product_lang',
             'pl',
-            'p.`id_product` = pl.`id_product` AND pl.`id_lang` = ' . (int) $this->id_lang . Shop::addSqlRestrictionOnLang('pl', 'cp.id_shop')
+            'p.`id_product` = pl.`id_product` AND pl.`id_lang` = ' . (int) $this->id_lang 
         );
 
         $sql->leftJoin(
             'category_lang',
             'cl',
-            'product_shop.`id_category_default` = cl.`id_category` AND cl.`id_lang` = ' . (int) $this->id_lang . Shop::addSqlRestrictionOnLang('cl', 'cp.id_shop')
+            'product_shop.`id_category_default` = cl.`id_category` AND cl.`id_lang` = ' . (int) $this->id_lang 
         );
 
         $sql->leftJoin('product_supplier', 'ps', 'ps.`id_product` = cp.`id_product` AND ps.`id_product_attribute` = cp.`id_product_attribute` AND ps.`id_supplier` = p.`id_supplier`');
@@ -591,7 +591,7 @@ class CartCore extends ObjectModel {
 
         switch ($roundType) {
         case CustomerPieces::ROUND_ITEM:
-            $price = Tools::EPH_round($price, $displayPrecision);
+            $price = Tools::ps_round($price, $displayPrecision);
         // Intentionally fall through.
         case CustomerPieces::ROUND_LINE:
         case CustomerPieces::ROUND_TOTAL:
@@ -621,7 +621,7 @@ class CartCore extends ObjectModel {
         // else nothing to change.
 
         if ($roundType === CustomerPieces::ROUND_LINE) {
-            $total = Tools::EPH_round($total, $displayPrecision);
+            $total = Tools::ps_round($total, $displayPrecision);
         }
 
         return $total;
@@ -967,7 +967,7 @@ class CartCore extends ObjectModel {
         $includeGiftWrapping = (!$configuration->get('EPH_ATCP_SHIPWRAP') || $type !== Cart::ONLY_PRODUCTS);
 
         if ($this->gift && $includeGiftWrapping) {
-            $wrappingFees = Tools::EPH_round(
+            $wrappingFees = Tools::ps_round(
                 Tools::convertPrice(
                     $this->getGiftWrappingPrice($withTaxes),
                     Currency::getCurrencyInstance((int) $this->id_currency)
@@ -1081,7 +1081,7 @@ class CartCore extends ObjectModel {
             return $orderTotalDiscount;
         }
 
-        return Tools::EPH_round((float) $orderTotal, $displayPrecision);
+        return Tools::ps_round((float) $orderTotal, $displayPrecision);
     }
 
     /**
@@ -4396,11 +4396,11 @@ class CartCore extends ObjectModel {
             if ($cartRule['free_shipping'] && (empty($cartRule['code']) || preg_match('/^' . CartRule::BO_ORDER_CODE_PREFIX . '[0-9]+/', $cartRule['code']))) {
                 $cartRule['value_real'] -= $totalShipping;
                 $cartRule['value_tax_exc'] -= $totalShippingTaxExc;
-                $cartRule['value_real'] = Tools::EPH_round(
+                $cartRule['value_real'] = Tools::ps_round(
                     $cartRule['value_real'],
                     $decimals
                 );
-                $cartRule['value_tax_exc'] = Tools::EPH_round(
+                $cartRule['value_tax_exc'] = Tools::ps_round(
                     $cartRule['value_tax_exc'],
                     $decimals
                 );
@@ -4424,11 +4424,11 @@ class CartCore extends ObjectModel {
 
                     if (empty($product['gift']) && $product['id_product'] == $cartRule['gift_product'] && $product['id_product_attribute'] == $cartRule['gift_product_attribute']) {
                         // Update total products
-                        $totalProductsWt = Tools::EPH_round(
+                        $totalProductsWt = Tools::ps_round(
                             $totalProductsWt - $product['price_wt'],
                             $decimals
                         );
-                        $totalProducts = Tools::EPH_round(
+                        $totalProducts = Tools::ps_round(
                             $totalProducts - $product['price'],
                             $decimals
                         );
@@ -4438,21 +4438,21 @@ class CartCore extends ObjectModel {
                         $totalDiscountsTaxExc = $totalDiscountsTaxExc - $product['price'];
 
                         // Update cart rule value
-                        $cartRule['value_real'] = Tools::EPH_round(
+                        $cartRule['value_real'] = Tools::ps_round(
                             $cartRule['value_real'] - $product['price_wt'],
                             $decimals
                         );
-                        $cartRule['value_tax_exc'] = Tools::EPH_round(
+                        $cartRule['value_tax_exc'] = Tools::ps_round(
                             $cartRule['value_tax_exc'] - $product['price'],
                             $decimals
                         );
 
                         // Update product quantity
-                        $product['total_wt'] = Tools::EPH_round(
+                        $product['total_wt'] = Tools::ps_round(
                             $product['total_wt'] - $product['price_wt'],
                             $decimals
                         );
-                        $product['total'] = Tools::EPH_round(
+                        $product['total'] = Tools::ps_round(
                             $product['total'] - $product['price'],
                             $decimals
                         );

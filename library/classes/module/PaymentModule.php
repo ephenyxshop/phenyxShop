@@ -191,7 +191,7 @@ abstract class PaymentModuleCore extends Module {
            
 
             $order_creation_failed = false;
-            $cart_total_paid = (float) Tools::EPH_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH), 2);
+            $cart_total_paid = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH), 2);
 
             foreach ($cart_delivery_option as $id_address => $key_carriers) {
 
@@ -298,7 +298,7 @@ abstract class PaymentModuleCore extends Module {
 
                     $piece->module = $this->name;
 
-                    $piece->total_paid = (float) Tools::EPH_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH, $package['product_list'], $id_carrier), _EPH_PRICE_COMPUTE_PRECISION_);
+                    $piece->total_paid = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH, $package['product_list'], $id_carrier), _EPH_PRICE_COMPUTE_PRECISION_);
                     $piece->id_carrier = $id_carrier;
                     $piece->id_address_delivery = (int) $id_address;
                     $piece->id_address_invoice = (int) $this->context->cart->id_address_invoice;
@@ -390,7 +390,7 @@ abstract class PaymentModuleCore extends Module {
                         $price = Product::getPriceStatic((int) $product['id_product'], false, ($product['id_product_attribute'] ? (int) $product['id_product_attribute'] : null), 6, null, false, true, $product['cart_quantity'], false, (int) $piece->id_customer, (int) $piece->id_cart, (int) $piece->{Configuration::get('EPH_TAX_ADDRESS_TYPE')});
                         $price_wt = Product::getPriceStatic((int) $product['id_product'], true, ($product['id_product_attribute'] ? (int) $product['id_product_attribute'] : null), 2, null, false, true, $product['cart_quantity'], false, (int) $piece->id_customer, (int) $piece->id_cart, (int) $piece->{Configuration::get('EPH_TAX_ADDRESS_TYPE')});
 
-                        $product_price = Product::getTaxCalculationMethod() == EPH_TAX_EXC ? Tools::EPH_round($price, 2) : $price_wt;
+                        $product_price = Product::getTaxCalculationMethod() == EPH_TAX_EXC ? Tools::ps_round($price, 2) : $price_wt;
 
                         $product_var_tpl = [
                             'reference'     => $product['reference'],

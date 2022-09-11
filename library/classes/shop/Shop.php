@@ -62,8 +62,7 @@ class ShopCore extends ObjectModel
     protected static $shops;
     /** @var array $asso_tables */
     protected static $asso_tables = [];
-    /** @var array $id_shop_default_tables */
-    protected static $id_shop_default_tables = [];
+   
     /** @var bool $initialized */
     protected static $initialized = false;
     /**
@@ -113,9 +112,9 @@ class ShopCore extends ObjectModel
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function __construct($id = null, $idLang = null, $idShop = null)
+    public function __construct($id = null, $idLang = null)
     {
-        parent::__construct($id, $idLang, $idShop);
+        parent::__construct($id, $idLang);
         if ($this->id) {
             $this->setUrl();
         }

@@ -90,10 +90,10 @@ class TopMenuCore extends ObjectModel {
         ],
     ];
 
-    public function __construct($id_topmenu = null, $id_lang = null, $id_shop = null) {
+    public function __construct($id_topmenu = null, $id_lang = null) {
 
        
-        parent::__construct($id_topmenu, $id_lang, $id_shop);
+        parent::__construct($id_topmenu, $id_lang);
 
         if ($this->id) {
             $this->outPutName = $this->getNameValue();
@@ -296,15 +296,15 @@ class TopMenuCore extends ObjectModel {
 
     public static function getMenus($id_lang, $active = true, $get_from_all_shops = false, $groupRestrict = false) {
 
-        $sql_grouEPH_join = '';
-        $sql_grouEPH_where = '';
+        $sql_groups_join = '';
+        $sql_groups_where = '';
 
         if ($groupRestrict && Group::isFeatureActive()) {
             $groups = TopMenu::getCustomerGroups();
 
             if (count($groups)) {
-                $sql_grouEPH_join = 'LEFT JOIN `' . _DB_PREFIX_ . 'category_group` cg ON (cg.`id_category` = ca.`id_category`)';
-                $sql_grouEPH_where = 'AND IF (atp.`id_category` IS NULL OR atp.`id_category` = 0, 1, cg.`id_group` IN (' . implode(',', array_map('intval', $groups)) . '))';
+                $sql_groups_join = 'LEFT JOIN `' . _DB_PREFIX_ . 'category_group` cg ON (cg.`id_category` = ca.`id_category`)';
+                $sql_groups_where = 'AND IF (atp.`id_category` IS NULL OR atp.`id_category` = 0, 1, cg.`id_group` IN (' . implode(',', array_map('intval', $groups)) . '))';
             }
 
         }
@@ -318,13 +318,12 @@ class TopMenuCore extends ObjectModel {
                 FROM `' . _DB_PREFIX_ . 'topmenu` atp                
                 LEFT JOIN `' . _DB_PREFIX_ . 'topmenu_lang` atpl ON (atp.`id_topmenu` = atpl.`id_topmenu` AND atpl.`id_lang` = ' . (int) $id_lang . ')
                 LEFT JOIN ' . _DB_PREFIX_ . 'cms c ON (c.id_cms = atp.`id_cms`)
-                ' . Shop::addSqlAssociation('cms', 'c', false, true, null, ($get_from_all_shops ? 'all' : false)) . '
                 LEFT JOIN ' . _DB_PREFIX_ . 'cms_lang cl ON (c.id_cms = cl.id_cms AND cl.id_lang = ' . (int) $id_lang . ')
                 LEFT JOIN ' . _DB_PREFIX_ . 'cms_category cc ON (cc.id_cms_category = atp.`id_cms_category`)
               
                 LEFT JOIN ' . _DB_PREFIX_ . 'cms_category_lang ccl ON (cc.id_cms_category = ccl.id_cms_category AND ccl.id_lang = ' . (int) $id_lang . ')
                 LEFT JOIN ' . _DB_PREFIX_ . 'category ca ON (ca.id_category = atp.`id_category`)
-                ' . $sql_grouEPH_join . '
+                ' . $sql_groups_join . '
                 LEFT JOIN ' . _DB_PREFIX_ . 'category_lang cal ON (ca.id_category = cal.id_category AND cal.id_lang = ' . (int) $id_lang .  ')
                 LEFT JOIN `' . _DB_PREFIX_ . 'manufacturer` m ON (atp.`id_manufacturer` = m.`id_manufacturer`)
                 LEFT JOIN `' . _DB_PREFIX_ . 'supplier` s ON (atp.`id_supplier` = s.`id_supplier`)'
@@ -332,7 +331,7 @@ class TopMenuCore extends ObjectModel {
                 WHERE atp.`active` = 1 AND (atp.`active_desktop` = 1 || atp.`active_mobile` = 1)
                 AND ((atp.`id_manufacturer` = 0 AND atp.`id_supplier` = 0 AND atp.`id_category` = 0 AND atp.`id_cms` = 0 AND atp.`id_cms_category` = 0)
                 OR c.id_cms IS NOT NULL OR cc.id_cms_category IS NOT NULL OR m.id_manufacturer IS NOT NULL OR ca.id_category IS NOT NULL OR s.`id_supplier` IS NOT NULL)
-                ' . $sql_grouEPH_where : '') . '
+                ' . $sql_groups_where : '') . '
                 GROUP BY atp.`id_topmenu`
                 ORDER BY atp.`position`';
 		
@@ -1178,7 +1177,6 @@ class TopMenuCore extends ObjectModel {
         $cmsCategories = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             'SELECT cc.*, ccl.*
             FROM `' . _DB_PREFIX_ . 'cms_category` cc
-            ' . Shop::addSqlAssociation('cms_category', 'cc') . '
             LEFT JOIN `' . _DB_PREFIX_ . 'cms_category_lang` ccl ON cc.`id_cms_category` = ccl.`id_cms_category`
             WHERE ccl.`id_lang` = ' . (int) $id_lang . '
             AND cc.`id_parent` != 0

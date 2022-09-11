@@ -81,7 +81,7 @@ class AverageTaxOfProductsTaxCalculatorCore
 
         $actualTax = 0;
         foreach ($amounts as &$data) {
-            $data = Tools::EPH_round(
+            $data = Tools::ps_round(
                 $priceBeforeTax * ($data['base'] / $totalBase) * $data['rate'] / 100,
                 $roundPrecision,
                 $roundMode

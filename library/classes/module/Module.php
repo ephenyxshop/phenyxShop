@@ -48,7 +48,7 @@ abstract class ModuleCore {
     /** @var string Registered Version in database */
     public $registered_version;
     /** @var array filled with known compliant PrestaShop versions */
-    public $EPH_versions_compliancy = [];
+    public $ps_versions_compliancy = [];
     /**
      * @var string Filled with known compliant thirty bees versions
      *             This string contains a SemVer 1.0.0 range
@@ -143,20 +143,20 @@ abstract class ModuleCore {
      */
     public function __construct($name = null, Context $context = null) {
 
-        if (isset($this->EPH_versions_compliancy) && !isset($this->EPH_versions_compliancy['min'])) {
-            $this->EPH_versions_compliancy['min'] = '1.4.0.0';
+        if (isset($this->ps_versions_compliancy) && !isset($this->ps_versions_compliancy['min'])) {
+            $this->ps_versions_compliancy['min'] = '1.4.0.0';
         }
 
-        if (isset($this->EPH_versions_compliancy) && !isset($this->EPH_versions_compliancy['max'])) {
-            $this->EPH_versions_compliancy['max'] = _EPH_VERSION_;
+        if (isset($this->ps_versions_compliancy) && !isset($this->ps_versions_compliancy['max'])) {
+            $this->ps_versions_compliancy['max'] = _EPH_VERSION_;
         }
 
-        if (strlen($this->EPH_versions_compliancy['min']) == 3) {
-            $this->EPH_versions_compliancy['min'] .= '.0.0';
+        if (strlen($this->ps_versions_compliancy['min']) == 3) {
+            $this->ps_versions_compliancy['min'] .= '.0.0';
         }
 
-        if (strlen($this->EPH_versions_compliancy['max']) == 3) {
-            $this->EPH_versions_compliancy['max'] .= '.999.999';
+        if (strlen($this->ps_versions_compliancy['max']) == 3) {
+            $this->ps_versions_compliancy['max'] .= '.999.999';
         }
 
         // Load context and smarty
@@ -592,7 +592,7 @@ abstract class ModuleCore {
             Module::upgradeModuleVersion($moduleName, $moduleVersion);
         }
 
-        usort($list, 'EPH_module_version_sort');
+        usort($list, 'ps_module_version_sort');
 
         // Set the list to module cache
         // @codingStandardsIgnoreStart
@@ -860,7 +860,7 @@ abstract class ModuleCore {
     public static function getModulesOnDisk($useConfig = false, $loggedOnAddons = false, $idEmployee = false) {
 
         global $_MODULES;
-		$filetest = fopen("testgetModulesOnDisk.txt","a");
+		$filetest = fopen("testgetModulesOnDisk.txt","w");
         // Init var
         $moduleList = [];
         $moduleNameList = [];
@@ -873,9 +873,8 @@ abstract class ModuleCore {
         $modulesInstalled = [];
         $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
-                ->select('m.`name`, m.`version`, mp.`interest`, module_shop.`enable_device`')
+                ->select('m.`name`, m.`version`, mp.`interest`')
                 ->from('module', 'm')
-                ->join(Shop::addSqlAssociation('module', 'm'))
                 ->leftJoin('module_preference', 'mp', 'mp.`module` = m.`name` AND mp.`id_employee` = ' . (int) $idEmployee)
         );
 
@@ -889,7 +888,7 @@ abstract class ModuleCore {
                 $errors[] = Tools::displayError('All modules cannot be loaded due to memory limit restrictions, please increase your memory_limit value on your server configuration');
                 break;
             }
-			fwrite($filetest,$module.PHP_EOL);
+			
             $iso = substr(Context::getContext()->language->iso_code, 0, 2);
 
             // Check if config.xml module file exists and if it's not outdated
@@ -1068,7 +1067,7 @@ abstract class ModuleCore {
             $list = Shop::getContextListShopID();
             $results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
-                    ->select('m.`id_module`, m.`name`, (SELECT COUNT(*) FROM `' . _DB_PREFIX_ . 'module_shop` ms WHERE m.`id_module` = ms.`id_module` AND ms.`id_shop` IN (' . implode(',', $list) . ')) AS `total`')
+                    ->select('m.`id_module`, m.`name`, COUNT(m.`id_module`) AS `total`')
                     ->from('module', 'm')
                     ->where('LOWER(m.`name`) IN (' . mb_strtolower(implode(',', $moduleNameList)) . ')')
             );
@@ -1189,7 +1188,7 @@ abstract class ModuleCore {
             }
 
         }
-
+        fwrite($filetest,print_r($moduleList, true).PHP_EOL);
         return $moduleList;
     }
 
@@ -1469,7 +1468,6 @@ abstract class ModuleCore {
                 ->leftJoin('hook', 'h', 'hm.`id_hook` = h.`id_hook`')
                 ->where('h.`name` = \'' . pSQL($hookPayment) . '\'')
                 ->where((isset($billing) && $frontend ? 'mc.`id_country` = ' . (int) $billing->id_country : ''))
-                ->where('(SELECT COUNT(*) FROM ' . _DB_PREFIX_ . 'module_shop ms WHERE ms.id_module = m.id_module AND ms.id_shop IN(' . implode(', ', $list) . ')) = ' . count($list))
                 ->where('hm.`id_shop` IN(' . implode(', ', $list) . ')')
                 ->where((count($groups) && $frontend && $useGroups) ? 'mg.`id_group` IN (' . implode(', ', $groups) . ')' : '')
                 ->groupBy('hm.`id_hook`, hm.`id_module`')
@@ -1508,9 +1506,9 @@ abstract class ModuleCore {
             if (Db::getInstance()->getValue(
                 (new DbQuery())
                 ->select('`id_module`')
-                ->from('module_shop')
+                ->from('module')
                 ->where('`id_module` = ' . (int) $idModule)
-                ->where('`id_shop` = ' . (int) Context::getContext()->shop->id)
+                ->where('`active` = 1')
             )) {
                 $active = true;
             }
@@ -1574,7 +1572,7 @@ abstract class ModuleCore {
             if (!$this->checkCompliancy()) {
                 $return = [
                     'success' => false,
-                    'message' => Tools::displayError('The version of your module is not compliant with your thirty bees version.'),
+                    'message' => Tools::displayError('The version of your plugin is not compliant with your Ephenyx version.'),
                 ];
                 die(Tools::jsonEncode($return));
             }
@@ -1591,7 +1589,7 @@ abstract class ModuleCore {
                         ->from('module')
                         ->where('LOWER(`name`) = \'' . pSQL(mb_strtolower($dependency)) . '\'')
                     )) {
-                        $error = Tools::displayError('Before installing this module, you have to install this/these module(s) first:') . '<br />';
+                        $error = Tools::displayError('Before installing this plugin, you have to install this/these plugin(s) first:') . '<br />';
 
                         foreach ($this->dependencies as $d) {
                             $error .= '- ' . $d . '<br />';
@@ -1617,7 +1615,7 @@ abstract class ModuleCore {
 
                 $return = [
                     'success' => false,
-                    'message' => Tools::displayError('This module has already been installed.'),
+                    'message' => Tools::displayError('This plugin has already been installed.'),
                 ];
                 die(Tools::jsonEncode($return));
 
@@ -1717,11 +1715,11 @@ abstract class ModuleCore {
      */
     public function checkCompliancy() {
 
-        if (version_compare(_EPH_VERSION_, $this->EPH_versions_compliancy['min'], '<')) {
+        if (version_compare(_EPH_VERSION_, $this->ps_versions_compliancy['min'], '<')) {
             return false;
         }
 
-        if (version_compare('1.6.1.20', $this->EPH_versions_compliancy['max'], '>')) {
+        if (version_compare('1.6.1.20', $this->ps_versions_compliancy['max'], '>')) {
             return false;
         }
 
@@ -2302,46 +2300,15 @@ abstract class ModuleCore {
      */
     public function enable($forceAll = false) {
 
-        // Retrieve all shops where the module is enabled
-        $list = Shop::getContextListShopID();
+        
 
-        if (!$this->id || !is_array($list)) {
+        if (!$this->id) {
             return false;
         }
+        
+        Db::getInstance(_EPH_USE_SQL_SLAVE_)->execute('UPDATE `' . _DB_PREFIX_ . 'module` SET active = 1 WHERE `id_module` = '.$this->id);
 
-        // Store the results in an array
-        $items = [];
-
-        if ($results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
-            (new DbQuery())
-            ->select('`id_shop`')
-            ->from('module_shop')
-            ->where('`id_module` = ' . (int) $this->id)
-            ->where((!$forceAll) ? '`id_shop` IN(' . implode(', ', $list) . ')' : '')
-        )) {
-
-            foreach ($results as $row) {
-                $items[] = $row['id_shop'];
-            }
-
-        }
-
-        // Enable module in the shop where it is not enabled yet
-
-        foreach ($list as $id) {
-
-            if (!in_array($id, $items)) {
-                Db::getInstance()->insert(
-                    'module_shop',
-                    [
-                        'id_module' => $this->id,
-                        'id_shop'   => $id,
-                    ]
-                );
-            }
-
-        }
-
+        
         return true;
     }
 
@@ -2437,10 +2404,7 @@ abstract class ModuleCore {
     public function disable($forceAll = false) {
 
         // Disable module for all shops
-        Db::getInstance()->delete(
-            'module_shop',
-            '`id_module` = ' . (int) $this->id . ' ' . ((!$forceAll) ? ' AND `id_shop` IN(' . implode(', ', Shop::getContextListShopID()) . ')' : '')
-        );
+        Db::getInstance()->execute('UPDATE `' . _DB_PREFIX_ . 'module` SET `active` = 0 WHERE `id_module` = '.$this->id);
     }
 
     /**
@@ -2590,6 +2554,11 @@ abstract class ModuleCore {
 
         // Clean modules position
         $this->cleanPositions($hookId, $shopList);
+        
+        $hook = new Hook($idHook);
+        $hook->modules = $hook->getModules(true);
+        $hook->available_modules = $hook->getPossibleModuleList(true);
+        $hook->update();
 
         Hook::exec('actionModuleUnRegisterHookAfter', ['object' => $this, 'hook_name' => $hookName]);
 
@@ -2817,7 +2786,8 @@ abstract class ModuleCore {
                 $newHook->name = pSQL($hookName);
                 $newHook->title = pSQL($hookName);
                 $newHook->live_edit = (bool) preg_match('/^display/i', $newHook->name);
-                $newHook->position = (bool) $newHook->live_edit;
+                $newHook->position = 1;
+                $newHook->available_modules = [];
                 $newHook->add();
                 $idHook = $newHook->id;
 
@@ -2872,7 +2842,9 @@ abstract class ModuleCore {
                 }
 
             }
-
+            $hook = new Hook($idHook);
+            $hook->getModules(true);
+            $hook->getPossibleModuleList(true);
             Hook::exec('actionModuleRegisterHookAfter', ['object' => $this, 'hook_name' => $hookName]);
         }
 
@@ -3347,6 +3319,7 @@ abstract class ModuleCore {
      * @return Smarty_Internal_Template
      *
      * @since 2.1.0.0
+
      */
     protected function getCurrentSubTemplate($template, $cache_id = null, $compile_id = null) {
 
@@ -3701,15 +3674,15 @@ abstract class ModuleCore {
      */
     protected function _clearCache($template, $cacheId = null, $compileId = null) {
 
-        static $EPH_smarty_clear_cache = null;
+        static $ps_smarty_clear_cache = null;
 
-        if ($EPH_smarty_clear_cache === null) {
-            $EPH_smarty_clear_cache = Configuration::get('EPH_SMARTY_CLEAR_CACHE');
+        if ($ps_smarty_clear_cache === null) {
+            $ps_smarty_clear_cache = Configuration::get('EPH_SMARTY_CLEAR_CACHE');
         }
 
         if (static::$_batch_mode) {
 
-            if ($EPH_smarty_clear_cache == 'never') {
+            if ($ps_smarty_clear_cache == 'never') {
                 return 0;
             }
 
@@ -3726,7 +3699,7 @@ abstract class ModuleCore {
 
         } else {
 
-            if ($EPH_smarty_clear_cache == 'never') {
+            if ($ps_smarty_clear_cache == 'never') {
                 return 0;
             }
 
@@ -3812,6 +3785,11 @@ abstract class ModuleCore {
         }
 
     }
+    
+    public function isMobileDevice() {
+		
+		return preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", $_SERVER["HTTP_USER_AGENT"]);
+	}
 
     /**
      * add a info message to display at the top of the admin page
@@ -3833,7 +3811,7 @@ abstract class ModuleCore {
 
 }
 
-function EPH_module_version_sort($a, $b) {
+function ps_module_version_sort($a, $b) {
 
     return version_compare($a['version'], $b['version']);
 }

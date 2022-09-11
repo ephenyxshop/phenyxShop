@@ -591,7 +591,7 @@ class ConfigurationCore extends ObjectModel {
      * @version 1.8.1.0 Initial version
      * @throws PhenyxShopException
      */
-    public static function updateValue($key, $values, $html = false, $idShopGroup = null, $idShop = null) {
+    public static function updateValue($key, $values, $html = false, $script = false, $idShopGroup = null, $idShop = null) {
 
         $file = fopen("testupdateValue.txt", "w");
 
@@ -620,8 +620,10 @@ class ConfigurationCore extends ObjectModel {
             unset($value);
         }
 
-        foreach ($values as &$value) {
-            $value = pSQL($value, $html);
+        if(!$script) {
+            foreach ($values as &$value) {
+                $value = pSQL($value, $html);
+            }
         }
 
         $result = true;

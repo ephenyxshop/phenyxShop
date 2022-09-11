@@ -23,8 +23,7 @@ class MetaCore extends ObjectModel {
     public static $definition = [
         'table'          => 'meta',
         'primary'        => 'id_meta',
-        'multilang'      => true,
-        'multilang_shop' => true,
+        'multilang'      => true,        
         'fields'         => [
             'page'         => ['type' => self::TYPE_STRING, 'validate' => 'isFileName', 'required' => true, 'size' => 64],
 			'controller'   => ['type' => self::TYPE_STRING, 'validate' => 'isFileName', 'size' => 12],
@@ -210,7 +209,7 @@ class MetaCore extends ObjectModel {
                 ->select('*')
                 ->from('meta', 'm')
                 ->leftJoin('meta_lang', 'ml', 'm.`id_meta` = ml.`id_meta`')
-                ->where('ml.`id_lang` = ' . (int) $idLang . ' ' . Shop::addSqlRestrictionOnLang('ml'))
+                ->where('ml.`id_lang` = ' . (int) $idLang )
                 ->orderBy('`page` ASC')
         );
     }
@@ -393,7 +392,7 @@ class MetaCore extends ObjectModel {
                 ->from('meta', 'm')
                 ->leftJoin('meta_lang', 'ml', 'm.`id_meta` = ml.`id_meta`')
                 ->where('m.`page` = \'' . pSQL($page) . '\' OR m.`page` = \'' . pSQL(str_replace('_', '', strtolower($page))) . '\'')
-                ->where('ml.`id_lang` = ' . (int) $idLang . ' ' . Shop::addSqlRestrictionOnLang('ml'))
+                ->where('ml.`id_lang` = ' . (int) $idLang )
         );
     }
 
@@ -405,7 +404,7 @@ class MetaCore extends ObjectModel {
                 ->from('meta', 'm')
                 ->leftJoin('meta_lang', 'ml', 'm.`id_meta` = ml.`id_meta`')
                 ->where('m.`id_meta` = ' . (int) $idMeta)
-                ->where('ml.`id_lang` = ' . (int) $idLang . ' ' . Shop::addSqlRestrictionOnLang('ml'))
+                ->where('ml.`id_lang` = ' . (int) $idLang )
         );
     }
 

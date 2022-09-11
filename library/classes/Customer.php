@@ -724,8 +724,8 @@ class CustomerCore extends ObjectModel {
 	 */
 	public function getAddresses($idLang) {
 
-		$shareOrder = (bool) Context::getContext()->shop->getGroup()->share_order;
-		$cacheId = 'Customer::getAddresses' . (int) $this->id . '-' . (int) $idLang . '-' . $shareOrder;
+		
+		$cacheId = 'Customer::getAddresses' . (int) $this->id . '-' . (int) $idLang ;
 
 		if (!Cache::isStored($cacheId)) {
 			$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
@@ -735,7 +735,6 @@ class CustomerCore extends ObjectModel {
 					->leftJoin('country', 'c', 'a.`id_country` = c.`id_country`')
 					->leftJoin('country_lang', 'cl', 'c.`id_country` = cl.`id_country` AND cl.`id_lang` = ' . (int) $idLang)
 					->leftJoin('state', 's', 's.`id_state` = a.`id_state`')
-					->join($shareOrder ? '' : Shop::addSqlAssociation('country', 'c'))
 					->where('a.`id_customer` = ' . (int) $this->id)
 					->where('a.`deleted` = 0')
 			);
@@ -1376,7 +1375,6 @@ class CustomerCore extends ObjectModel {
 			(new DbQuery())
 				->select('cg.`id_group` AS `id`')
 				->from('customer_group', 'cg')
-				->join(Shop::addSqlAssociation('group', 'cg'))
 				->where('cg.`id_customer` = ' . (int) $this->id)
 		);
 	}

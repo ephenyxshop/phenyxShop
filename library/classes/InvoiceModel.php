@@ -28,9 +28,9 @@ class InvoiceModelCore extends ObjectModel {
 	public $pieceFields;
 
    
-    public function __construct($id = null, $idLang = null, $idShop = null) {
+    public function __construct($id = null, $idLang = null) {
 
-        parent::__construct($id, $idLang, $idShop);
+        parent::__construct($id, $idLang);
 		
 		$this->pieceFields = [
          	'product_reference'          => ['name' => $this->l('Référence'), 'format' => ''],

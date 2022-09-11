@@ -872,9 +872,7 @@ class StockManagerCore implements StockManagerInterface
 				FROM `'._DB_PREFIX_.'stock_mvt` sm
 				LEFT JOIN `'._DB_PREFIX_.'stock` s ON (sm.`id_stock` = s.`id_stock`)
 				LEFT JOIN `'._DB_PREFIX_.'product` p ON (p.`id_product` = s.`id_product`)
-				'.Shop::addSqlAssociation('product', 'p').'
 				LEFT JOIN `'._DB_PREFIX_.'product_attribute` pa ON (p.`id_product` = pa.`id_product`)
-				'.Shop::addSqlAssociation('product_attribute', 'pa', false).'
 				WHERE sm.`sign` = -1
 				AND sm.`id_stock_mvt_reason` != '.Configuration::get('EPH_STOCK_MVT_TRANSFER_FROM').'
 				AND TO_DAYS("'.date('Y-m-d').' 00:00:00") - TO_DAYS(sm.`date_add`) <= '.(int) $coverage.'
@@ -889,7 +887,7 @@ class StockManagerCore implements StockManagerInterface
             return -1;
         }
 
-        $quantityPerDay = Tools::EPH_round($quantityOut / $coverage);
+        $quantityPerDay = Tools::ps_round($quantityOut / $coverage);
         $physicalQuantity = $this->getProductPhysicalQuantities(
             $idProduct,
             $idProductAttribute,
@@ -897,7 +895,7 @@ class StockManagerCore implements StockManagerInterface
             true
         );
 
-        $timeLeft = ($quantityPerDay == 0) ? (-1) : Tools::EPH_round($physicalQuantity / $quantityPerDay);
+        $timeLeft = ($quantityPerDay == 0) ? (-1) : Tools::ps_round($physicalQuantity / $quantityPerDay);
 
         return $timeLeft;
     }
@@ -918,7 +916,7 @@ class StockManagerCore implements StockManagerInterface
      */
     protected function calculateWA(Stock $stock, $quantity, $priceTe)
     {
-        return (float) Tools::EPH_round(((($stock->physical_quantity * $stock->price_te) + ($quantity * $priceTe)) / ($stock->physical_quantity + $quantity)), 6);
+        return (float) Tools::ps_round(((($stock->physical_quantity * $stock->price_te) + ($quantity * $priceTe)) / ($stock->physical_quantity + $quantity)), 6);
     }
 
     /**

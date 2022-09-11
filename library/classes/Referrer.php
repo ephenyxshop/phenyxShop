@@ -338,9 +338,7 @@ class ReferrerCore extends ObjectModel {
 
             foreach (Shop::getShops(true, null, true) as $idShop) {
 
-                if (!$referrer->isAssociatedToShop($idShop)) {
-                    continue;
-                }
+                
 
                 $statsVisits = $referrer->getStatsVisits(null, $employee);
                 $registrations = $referrer->getRegistrations(null, $employee);

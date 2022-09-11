@@ -58,11 +58,11 @@ class AttributesCore extends ObjectModel {
      * @since   1.8.1.0
      * @version 1.8.5.0
      */
-    public function __construct($id = null, $idLang = null, $idShop = null) {
+    public function __construct($id = null, $idLang = null) {
 
         $this->image_dir = _EPH_COL_IMG_DIR_;
 
-        parent::__construct($id, $idLang, $idShop);
+        parent::__construct($id, $idLang);
     }
 
     /**
@@ -87,8 +87,6 @@ class AttributesCore extends ObjectModel {
                 ->leftJoin('attribute_group_lang', 'agl', 'ag.`id_attribute_group` = agl.`id_attribute_group` AND agl.`id_lang` = ' . (int) $idLang)
                 ->leftJoin('attribute', 'a', 'a.`id_attribute_group` = ag.`id_attribute_group`')
                 ->leftJoin('attribute_lang', 'al', 'al.`id_attribute` = a.`id_attribute` AND al.`id_lang` = ' . (int) $idLang)
-                ->join(Shop::addSqlAssociation('attribute_group', 'ag'))
-                ->join(Shop::addSqlAssociation('attribute', 'a'))
                 ->where($notNull ? 'a.`id_attribute` IS NOT NULL AND al.`name` IS NOT NULL AND agl.`id_attribute_group` IS NOT NULL' : '')
                 ->orderBy('agl.`name` ASC, a.`position` ASC')
         );
@@ -227,8 +225,6 @@ class AttributesCore extends ObjectModel {
                 ->leftJoin('attribute_group_lang', 'agl', 'ag.`id_attribute_group` = agl.`id_attribute_group` AND agl.`id_lang` = ' . (int) $idLang)
                 ->leftJoin('attribute', 'a', 'a.`id_attribute_group` = ag.`id_attribute_group`')
                 ->leftJoin('attribute_lang', 'al', 'a.`id_attribute` = al.`id_attribute` AND al.`id_lang` = ' . (int) $idLang)
-                ->join(Shop::addSqlAssociation('attribute_group', 'ag'))
-                ->join(Shop::addSqlAssociation('attribute', 'a'))
                 ->where('al.`name` = \'' . pSQL($name) . '\'')
                 ->where('ag.`id_attribute_group` = ' . (int) $idAttributeGroup)
                 ->orderBy('agl.`name` ASC, a.`position` ASC')

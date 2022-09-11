@@ -545,7 +545,7 @@ class SupplyOrderCore extends ObjectModel
                 if ($this->def['fields'][$key]['validate'] == 'isFloat' ||
                     $this->def['fields'][$key]['validate'] == 'isPrice'
                 ) {
-                    $value = Tools::EPH_round($value, 6);
+                    $value = Tools::ps_round($value, 6);
                 }
                 $this->$key = $value;
             }

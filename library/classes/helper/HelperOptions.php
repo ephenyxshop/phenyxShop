@@ -126,10 +126,7 @@ class HelperOptionsCore extends Helper {
                 }
 
                 if ($field['type'] === 'code') {
-                    $this->context->controller->addJS(_EPH_JS_DIR_.'ace/ace.js');
-                    $this->context->controller->addJS(_EPH_JS_DIR_.'ace/ext-language_tools.js');
-                    $this->context->controller->addJS(_EPH_JS_DIR_.'ace/snippets/' . $field['mode'] . '.js');
-                    $this->context->controller->addCSS(_EPH_JS_DIR_.'ace/aceinput.css');
+                    $this->context->controller->addJS('https://cdn.ephenyxapi.com/ace/ace.js');
                 }
 
                 if ($field['type'] == 'tags') {

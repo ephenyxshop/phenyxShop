@@ -53,7 +53,7 @@ class HelperShopCore extends Helper {
 
         }
 
-        $tpl = $this->createTemplate('helpers/shoEPH_list/list.tpl');
+        $tpl = $this->createTemplate('helpers/shops_list/list.tpl');
         $tpl->assign(
             [
                 'tree'                    => $tree,

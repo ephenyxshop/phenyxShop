@@ -186,8 +186,6 @@ class SpecificPriceRuleCore extends ObjectModel {
                 $query = (new DbQuery())
                     ->select('DISTINCT p.`id_product`')
                     ->from('product', 'p')
-                    ->leftJoin('product_shop', 'ps', 'p.`id_product` = ps.`id_product`')
-                    ->where('ps.id_shop = ' . (int) $currentShopId)
                 ;
 
                 $attributesJoinAdded = false;
@@ -200,8 +198,7 @@ class SpecificPriceRuleCore extends ObjectModel {
 
                         if (!$attributesJoinAdded) {
                             $query->select('pa.`id_product_attribute`')
-                                ->leftJoin('product_attribute', 'pa', 'p.`id_product` = pa.`id_product`')
-                                ->join(Shop::addSqlAssociation('product_attribute', 'pa', false));
+                                ->leftJoin('product_attribute', 'pa', 'p.`id_product` = pa.`id_product`');
 
                             $attributesJoinAdded = true;
                         }
@@ -254,9 +251,7 @@ class SpecificPriceRuleCore extends ObjectModel {
                 $query = new DbQuery();
                 $query->select('p.`id_product`')
                     ->select('NULL as `id_product_attribute`')
-                    ->from('product', 'p')
-                    ->leftJoin('product_shop', 'ps', 'p.`id_product` = ps.`id_product`')
-                    ->where('ps.id_shop = ' . (int) $currentShopId);
+                    ->from('product', 'p');
                 $query->where('p.`id_product` IN (' . implode(', ', array_map('intval', $products)) . ')');
                 $result = Db::getInstance()->executeS($query);
             } else {

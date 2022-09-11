@@ -64,19 +64,7 @@ class ManufacturerCore extends ObjectModel {
             'meta_keywords'     => ['type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isGenericName'],
         ],
     ];
-    protected $webserviceParameters = [
-        'fields'       => [
-            'active'       => [],
-            'link_rewrite' => ['getter' => 'getLink', 'setter' => false],
-        ],
-        'associations' => [
-            'addresses' => [
-                'resource' => 'address', 'setter' => false, 'fields' => [
-                    'id' => ['xlink_resource' => 'addresses'],
-                ],
-            ],
-        ],
-    ];
+    
 
     /**
      * ManufacturerCore constructor.
@@ -144,7 +132,6 @@ class ManufacturerCore extends ObjectModel {
             (new DbQuery())
                 ->select('m.*, ml.`description`, ml.`short_description`')
                 ->from('manufacturer', 'm')
-                ->join(Shop::addSqlAssociation('manufacturer', 'm'))
                 ->innerJoin('manufacturer_lang', 'ml', 'm.`id_manufacturer` = ml.`id_manufacturer`')
                 ->where('ml.`id_lang` = ' . (int) $idLang)
                 ->where($active ? 'm.`active` = 1' : '')
@@ -175,11 +162,10 @@ class ManufacturerCore extends ObjectModel {
                 (new DbQuery())
                     ->select('p.`id_manufacturer`, COUNT(DISTINCT p.`id_product`) AS `nb_products`')
                     ->from('product', 'p')
-                    ->join(Shop::addSqlAssociation('product', 'p'))
                     ->leftJoin('manufacturer', 'm', 'm.`id_manufacturer` = p.`id_manufacturer`')
                     ->where('p.`id_manufacturer` != 0')
-                    ->where('product_shop.`visibility` NOT IN ("none")')
-                    ->where($active ? 'product_shop.`active` = 1' : '')
+                    ->where('p.`visibility` NOT IN ("none")')
+                    ->where($active ? 'p.`active` = 1' : '')
                     ->where(Group::isFeatureActive() && $allGroup ? '' : 'EXISTS (' . $categoryGroupSql->build() . ')')
                     ->groupBy('p.`id_manufacturer`')
             );
@@ -345,10 +331,9 @@ class ManufacturerCore extends ObjectModel {
                 (new DbQuery())
                     ->select('p.`id_product`')
                     ->from('product', 'p')
-                    ->join(Shop::addSqlAssociation('product', 'p'))
                     ->where('p.`id_manufacturer` = ' . (int) $idManufacturer)
-                    ->where($active ? 'product_shop.`active` = 1' : '')
-                    ->where($front ? 'product_shop.`visibility` IN ("both", "catalog")' : '')
+                    ->where($active ? 'p.`active` = 1' : '')
+                    ->where($front ? 'p.`visibility` IN ("both", "catalog")' : '')
                     ->where('EXISTS (' . $categoryGroupSql->build() . ')')
             );
 
@@ -361,7 +346,7 @@ class ManufacturerCore extends ObjectModel {
         }
 
         if ($orderBy == 'price') {
-            $aliasWithDot = 'product_shop.';
+            $aliasWithDot = 'p.';
         } else if ($orderBy == 'name') {
             $aliasWithDot = 'pl.';
         } else if ($orderBy == 'manufacturer_name') {
@@ -374,20 +359,19 @@ class ManufacturerCore extends ObjectModel {
         }
 
         $sql = (new DbQuery())
-            ->select('p.*, product_shop.*, stock.`out_of_stock`, IFNULL(stock.`quantity`, 0) AS `quantity`')
+            ->select('p.*, stock.`out_of_stock`, IFNULL(stock.`quantity`, 0) AS `quantity`')
             ->select(Combination::isFeatureActive() ? 'product_attribute_shop.`minimal_quantity` AS `product_attribute_minimal_quantity`, IFNULL(product_attribute_shop.`id_product_attribute`,0) AS `id_product_attribute`' : '')
             ->select('pl.`description`, pl.`description_short`, pl.`link_rewrite`, pl.`meta_description`, pl.`meta_keywords`')
             ->select('pl.`meta_title`, pl.`name`, pl.`available_now`, pl.`available_later`, image_shop.`id_image` AS `id_image`, il.`legend`, m.`name` AS `manufacturer_name`')
-            ->select('DATEDIFF(product_shop.`date_add`, DATE_SUB("' . date('Y-m-d') . ' 00:00:00", INTERVAL ' . (Validate::isUnsignedInt(Configuration::get('EPH_NB_DAYS_NEW_PRODUCT')) ? (int) Configuration::get('EPH_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY)) > 0 AS `new`')
+            ->select('DATEDIFF(p.`date_add`, DATE_SUB("' . date('Y-m-d') . ' 00:00:00", INTERVAL ' . (Validate::isUnsignedInt(Configuration::get('EPH_NB_DAYS_NEW_PRODUCT')) ? (int) Configuration::get('EPH_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY)) > 0 AS `new`')
             ->from('product', 'p')
-            ->join(Shop::addSqlAssociation('product', 'p'))
             ->join(Combination::isFeatureActive() ? 'LEFT JOIN `' . _DB_PREFIX_ . 'product_attribute_shop` product_attribute_shop ON (p.`id_product` = product_attribute_shop.`id_product` AND product_attribute_shop.`default_on` = 1 AND product_attribute_shop.`id_shop` = ' . (int) $context->shop->id . ')' : '')
             ->leftJoin('product_lang', 'pl', 'p.`id_product` = pl.`id_product`')
             ->leftJoin('image_shop', 'image_shop', 'image_shop.`id_product` = p.`id_product` AND image_shop.cover=1 AND image_shop.id_shop=' . (int) $context->shop->id)
             ->leftJoin('image_lang', 'il', 'image_shop.`id_image` = il.`id_image` AND il.`id_lang` = ' . (int) $idLang)
             ->leftJoin('manufacturer', 'm', 'm.`id_manufacturer` = p.`id_manufacturer`')
             ->join(Product::sqlStock('p', 0))
-            ->where('pl.`id_lang` = ' . (int) $idLang . Shop::addSqlRestrictionOnLang('pl'));
+            ->where('pl.`id_lang` = ' . (int) $idLang );
 
         if (Group::isFeatureActive() || $activeCategory) {
             $sql->innerJoin('category_product', 'cp', 'p.`id_product` = cp.`id_product`');
@@ -405,8 +389,8 @@ class ManufacturerCore extends ObjectModel {
         }
 
         $sql->where('p.`id_manufacturer` = ' . (int) $idManufacturer);
-        $sql->where($active ? '`product_shop`.`active` = 1' : '');
-        $sql->where($front ? '`product_shop`.`visibility` IN ("both", "catalog")' : '');
+        $sql->where($active ? '`p`.`active` = 1' : '');
+        $sql->where($front ? '`p`.`visibility` IN ("both", "catalog")' : '');
         $sql->groupBy('p.`id_product`');
         $sql->orderBy($aliasWithDot . '`' . bqSQL($orderBy) . '` ' . pSQL($orderWay));
         $sql->limit((int) $n, ((int) $p - 1) * (int) $n);
@@ -530,11 +514,10 @@ class ManufacturerCore extends ObjectModel {
             (new DbQuery())
                 ->select('p.`id_product`, pl.`name`')
                 ->from('product', 'p')
-                ->join(Shop::addSqlAssociation('product', 'p'))
                 ->leftJoin('product_lang', 'pl', 'p.`id_product` = pl.`id_product`')
                 ->where('pl.`id_lang` = ' . (int) $idLang . $context->shop->addSqlRestrictionOnLang('pl'))
                 ->where('p.`id_manufacturer` = ' . (int) $this->id)
-                ->where($front ? 'product_shop.`visibility` IN ("both", "catalog")' : '')
+                ->where($front ? 'p.`visibility` IN ("both", "catalog")' : '')
         );
     }
 
@@ -562,68 +545,9 @@ class ManufacturerCore extends ObjectModel {
         );
     }
 
-    /**
-     * @return array|false|mysqli_result|null|PDOStatement|resource
-     *
-     * @throws PhenyxShopDatabaseException
-     * @throws PhenyxShopException
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     */
-    public function getWsAddresses() {
+    
 
-        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
-            (new DbQuery())
-                ->select('a.`id_address` AS `id`')
-                ->from('address', 'a')
-                ->join(Shop::addSqlAssociation('manufacturer', 'a'))
-                ->where('a.`id_manufacturer` = ' . (int) $this->id)
-                ->where('a.`deleted` = 0')
-        );
-    }
-
-    /**
-     * @param array $idAddresses
-     *
-     * @return bool
-     *
-     * @throws PhenyxShopDatabaseException
-     * @throws PhenyxShopException
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     */
-    public function setWsAddresses($idAddresses) {
-
-        $ids = [];
-
-        foreach ($idAddresses as $id) {
-            $ids[] = (int) $id['id'];
-        }
-
-        $result1 = Db::getInstance()->update(
-            'address',
-            [
-                'id_manufacturer' => 0,
-            ],
-            '`id_manufacturer` = ' . (int) $this->id . ' AND `deleted` = 0'
-        );
-
-        $result2 = true;
-
-        if (count($ids)) {
-            $result2 = Db::getInstance()->update(
-                'address',
-                [
-                    'id_customer'     => 0,
-                    'id_supplier'     => 0,
-                    'id_manufacturer' => (int) $this->id,
-                ],
-                '`id_address` IN(' . implode(',', $ids) . ') AND `deleted` = 0'
-            );
-        }
-
-        return ($result1 && $result2);
-    }
+    
 
     /**
      * @param bool $nullValues

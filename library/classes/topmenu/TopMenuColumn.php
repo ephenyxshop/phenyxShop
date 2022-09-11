@@ -203,15 +203,15 @@ class TopMenuColumnCore extends ObjectModel {
 
     public static function getMenuColums($id_topmenu_columns_wrap, $id_lang, $active = true, $groupRestrict = false) {
 
-        $sql_grouEPH_join = '';
-        $sql_grouEPH_where = '';
+        $sql_groups_join = '';
+        $sql_groups_where = '';
 
         if ($groupRestrict && Group::isFeatureActive()) {
             $groups = TopMenu::getCustomerGroups();
 
             if (count($groups)) {
-                $sql_grouEPH_join = 'LEFT JOIN `' . _DB_PREFIX_ . 'category_group` cg ON (cg.`id_category` = ca.`id_category`)';
-                $sql_grouEPH_where = 'AND IF (atmc.`id_category` IS NULL OR atmc.`id_category` = 0, 1, cg.`id_group` IN (' . implode(',', array_map('intval', $groups)) . '))';
+                $sql_groups_join = 'LEFT JOIN `' . _DB_PREFIX_ . 'category_group` cg ON (cg.`id_category` = ca.`id_category`)';
+                $sql_groups_where = 'AND IF (atmc.`id_category` IS NULL OR atmc.`id_category` = 0, 1, cg.`id_group` IN (' . implode(',', array_map('intval', $groups)) . '))';
             }
 
         }
@@ -224,18 +224,16 @@ class TopMenuColumnCore extends ObjectModel {
                 FROM `' . _DB_PREFIX_ . 'topmenu_columns` atmc
                 LEFT JOIN `' . _DB_PREFIX_ . 'topmenu_columns_lang` atmcl ON (atmc.`id_topmenu_column` = atmcl.`id_topmenu_column` AND atmcl.`id_lang` = ' . (int) $id_lang . ')
                 LEFT JOIN ' . _DB_PREFIX_ . 'cms c ON (c.id_cms = atmc.`id_cms`)
-                ' . Shop::addSqlAssociation('cms', 'c', false) . '
                 LEFT JOIN ' . _DB_PREFIX_ . 'cms_lang cl ON (c.id_cms = cl.id_cms AND cl.id_lang = ' . (int) $id_lang . ')
                 LEFT JOIN ' . _DB_PREFIX_ . 'category ca ON (ca.id_category = atmc.`id_category`)
-                ' . $sql_grouEPH_join . '
+                ' . $sql_groups_join . '
                 LEFT JOIN ' . _DB_PREFIX_ . 'category_lang cal ON (ca.id_category = cal.id_category AND cal.id_lang = ' . (int) $id_lang . ')
                 LEFT JOIN `' . _DB_PREFIX_ . 'manufacturer` m ON (atmc.`id_manufacturer` = m.`id_manufacturer`)
                 LEFT JOIN `' . _DB_PREFIX_ . 'supplier` s ON (atmc.`id_supplier` = s.`id_supplier`)
-                ' . Shop::addSqlAssociation('supplier', 's', false) . '
                 WHERE ' . ($active ? ' atmc.`active` = 1 AND (atmc.`active_desktop` = 1 || atmc.`active_mobile` = 1) AND ' : '') . ' atmc.`id_topmenu_columns_wrap` = ' . (int) $id_topmenu_columns_wrap . '
                 ' . ($active ? 'AND ((atmc.`id_manufacturer` = 0 AND atmc.`id_supplier` = 0 AND atmc.`id_category` = 0 AND atmc.`id_cms` = 0)
                 OR c.id_cms IS NOT NULL OR m.id_manufacturer IS NOT NULL OR ca.id_category IS NOT NULL OR s.`id_supplier` IS NOT NULL)' : '')
-            . $sql_grouEPH_where . '
+            . $sql_groups_where . '
                 GROUP BY atmc.`id_topmenu_column`
                 ORDER BY atmc.`position`';
 
@@ -250,15 +248,15 @@ class TopMenuColumnCore extends ObjectModel {
 
     public static function getMenuColumsByIdMenu($id_menu, $id_lang, $active = true, $groupRestrict = false) {
 
-        $sql_grouEPH_join = '';
-        $sql_grouEPH_where = '';
+        $sql_groups_join = '';
+        $sql_groups_where = '';
 
         if ($groupRestrict && Group::isFeatureActive()) {
             $groups = TopMenu::getCustomerGroups();
 
             if (count($groups)) {
-                $sql_grouEPH_join = 'LEFT JOIN `' . _DB_PREFIX_ . 'category_group` cg ON (cg.`id_category` = ca.`id_category`)';
-                $sql_grouEPH_where = 'AND IF (atmc.`id_category` IS NULL OR atmc.`id_category` = 0, 1, cg.`id_group` IN (' . implode(',', array_map('intval', $groups)) . '))';
+                $sql_groups_join = 'LEFT JOIN `' . _DB_PREFIX_ . 'category_group` cg ON (cg.`id_category` = ca.`id_category`)';
+                $sql_groups_where = 'AND IF (atmc.`id_category` IS NULL OR atmc.`id_category` = 0, 1, cg.`id_group` IN (' . implode(',', array_map('intval', $groups)) . '))';
             }
 
         }
@@ -271,19 +269,16 @@ class TopMenuColumnCore extends ObjectModel {
                 FROM `' . _DB_PREFIX_ . 'topmenu_columns` atmc
                 LEFT JOIN `' . _DB_PREFIX_ . 'topmenu_columns_lang` atmcl ON (atmc.`id_topmenu_column` = atmcl.`id_topmenu_column` AND atmcl.`id_lang` = ' . (int) $id_lang . ')
                 LEFT JOIN ' . _DB_PREFIX_ . 'cms c ON (c.id_cms = atmc.`id_cms`)
-                ' . Shop::addSqlAssociation('cms', 'c', false) . '
                 LEFT JOIN ' . _DB_PREFIX_ . 'cms_lang cl ON (c.id_cms = cl.id_cms AND cl.id_lang = ' . (int) $id_lang . ')
                 LEFT JOIN ' . _DB_PREFIX_ . 'category ca ON (ca.id_category = atmc.`id_category`)
-                ' . $sql_grouEPH_join . '
+                ' . $sql_groups_join . '
                 LEFT JOIN ' . _DB_PREFIX_ . 'category_lang cal ON (ca.id_category = cal.id_category AND cal.id_lang = ' . (int) $id_lang .  ')
                 LEFT JOIN `' . _DB_PREFIX_ . 'manufacturer` m ON (atmc.`id_manufacturer` = m.`id_manufacturer`)
-                ' . Shop::addSqlAssociation('manufacturer', 'm', false) . '
                 LEFT JOIN `' . _DB_PREFIX_ . 'supplier` s ON (atmc.`id_supplier` = s.`id_supplier`)
-                ' . Shop::addSqlAssociation('supplier', 's', false) . '
                 WHERE ' . ($active ? ' atmc.`active` = 1 AND (atmc.`active_desktop` = 1 || atmc.`active_mobile` = 1) AND' : '') . ' atmc.`id_topmenu` = ' . (int) $id_menu . '
                 ' . ($active ? 'AND ((atmc.`id_manufacturer` = 0 AND atmc.`id_supplier` = 0 AND atmc.`id_category` = 0 AND atmc.`id_cms` = 0)
                 OR c.id_cms IS NOT NULL OR m.id_manufacturer IS NOT NULL OR ca.id_category IS NOT NULL OR s.`id_supplier` IS NOT NULL)' : '')
-            . $sql_grouEPH_where . '
+            . $sql_groups_where . '
                 AND atmc.`type` != 8
                 GROUP BY atmc.`id_topmenu_column`
                 ORDER BY atmc.`position`';

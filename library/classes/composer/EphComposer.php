@@ -1345,7 +1345,7 @@ class EphComposerCore extends ObjectModel {
                 EphComposer::addShortcode('vc_' . $value['id'], [$this, 'vcallmodcode']);
 
                 if ($this->is_admin()) {
-                    $this->vcmaEPH_init('vc_' . $value['id'], $value['name']);
+                    $this->vcmaps_init('vc_' . $value['id'], $value['name']);
                 }
 
             }
@@ -1354,7 +1354,7 @@ class EphComposerCore extends ObjectModel {
 
     }
 
-    public function vcmaEPH_init($base = '', $module_name = null) {
+    public function vcmaps_init($base = '', $module_name = null) {
 
         $hooks = [];
 
@@ -3438,10 +3438,9 @@ class EphComposerCore extends ObjectModel {
         $front = true;
         $sql = 'SELECT p.`id_product`, pl.`name`
                 FROM `' . _DB_PREFIX_ . 'product` p
-                ' . Shop::addSqlAssociation('product', 'p') . '
-                LEFT JOIN `' . _DB_PREFIX_ . 'product_lang` pl ON (p.`id_product` = pl.`id_product` ' . Shop::addSqlRestrictionOnLang('pl') . ')
+                LEFT JOIN `' . _DB_PREFIX_ . 'product_lang` pl ON (p.`id_product` = pl.`id_product` ' . ')
                 WHERE pl.`id_lang` = ' . (int) $id_lang . '
-                ' . ($front ? ' AND product_shop.`visibility` IN ("both", "catalog")' : '') . '
+                ' . ($front ? ' AND p.`visibility` IN ("both", "catalog")' : '') . '
                 ORDER BY pl.`name`';
         return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
     }
@@ -4184,7 +4183,7 @@ class EphComposerCore extends ObjectModel {
                 }
 				if(Tools::isImagickCompatible() && empty($result['base_64'])) {
 					$extension = pathinfo($thumb_src, PATHINFO_EXTENSION);
-					$img = new Imagick(_EPH_ROOT_ADMIN_DIR_.$thumb_src);
+					$img = new Imagick(_EPH_ROOT_DIR_.$thumb_src);
 					$imgBuff = $img->getimageblob();
 					$img->clear(); 
 					$img = base64_encode($imgBuff);

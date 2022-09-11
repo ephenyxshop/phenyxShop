@@ -16,7 +16,7 @@ class CombinationCore extends ObjectModel {
         'primary' => 'id_product_attribute',
 		'multilang' => true,
         'fields'  => [
-            'id_product'         => ['type' => self::TYPE_INT, 'shop' => 'both', 'validate' => 'isUnsignedId', 'required' => true],
+            'id_product'         => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true],
             'location'           => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName', 'size' => 64],
             'ean13'              => ['type' => self::TYPE_STRING, 'validate' => 'isEan13', 'size' => 13],
             'upc'                => ['type' => self::TYPE_STRING, 'validate' => 'isUpc', 'size' => 12],
@@ -25,14 +25,14 @@ class CombinationCore extends ObjectModel {
             'supplier_reference' => ['type' => self::TYPE_STRING, 'size' => 32],
 
             /* Shop fields */
-            'wholesale_price'    => ['type' => self::TYPE_FLOAT, 'shop' => true, 'validate' => 'isPrice', 'size' => 27],
-            'price'              => ['type' => self::TYPE_FLOAT, 'shop' => true, 'validate' => 'isNegativePrice', 'size' => 20],
-            'ecotax'             => ['type' => self::TYPE_FLOAT, 'shop' => true, 'validate' => 'isPrice', 'size' => 20],
-            'weight'             => ['type' => self::TYPE_FLOAT, 'shop' => true, 'validate' => 'isFloat'],
-            'unit_price_impact'  => ['type' => self::TYPE_FLOAT, 'shop' => true, 'validate' => 'isNegativePrice', 'size' => 20],
-            'minimal_quantity'   => ['type' => self::TYPE_INT, 'shop' => true, 'validate' => 'isUnsignedId', 'required' => true],
-            'default_on'         => ['type' => self::TYPE_BOOL, 'allow_null' => true, 'shop' => true, 'validate' => 'isBool'],
-            'available_date'     => ['type' => self::TYPE_DATE, 'shop' => true, 'validate' => 'isDateFormat'],
+            'wholesale_price'    => ['type' => self::TYPE_FLOAT,  'validate' => 'isPrice', 'size' => 27],
+            'price'              => ['type' => self::TYPE_FLOAT,  'validate' => 'isNegativePrice', 'size' => 20],
+            'ecotax'             => ['type' => self::TYPE_FLOAT,  'validate' => 'isPrice', 'size' => 20],
+            'weight'             => ['type' => self::TYPE_FLOAT,  'validate' => 'isFloat'],
+            'unit_price_impact'  => ['type' => self::TYPE_FLOAT,  'validate' => 'isNegativePrice', 'size' => 20],
+            'minimal_quantity'   => ['type' => self::TYPE_INT,  'validate' => 'isUnsignedId', 'required' => true],
+            'default_on'         => ['type' => self::TYPE_BOOL, 'allow_null' => true,  'validate' => 'isBool'],
+            'available_date'     => ['type' => self::TYPE_DATE,  'validate' => 'isDateFormat'],
 			
 			'name'                   => ['type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isCatalogName', 'size' => 128],
             'description'            => ['type' => self::TYPE_HTML, 'lang' => true, 'validate' => 'isCleanHtml'],
@@ -184,9 +184,8 @@ class CombinationCore extends ObjectModel {
 
         return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
-                ->select('product_attribute_shop.`price`')
+                ->select('pa.`price`')
                 ->from('product_attribute', 'pa')
-                ->join(Shop::addSqlAssociation('product_attribute', 'pa'))
                 ->where('pa.`id_product_attribute` = ' . (int) $idProductAttribute)
         );
     }
@@ -385,7 +384,6 @@ class CombinationCore extends ObjectModel {
             (new DbQuery())
                 ->select('a.`id_attribute` AS `id`')
                 ->from('product_attribute_combination', 'a')
-                ->join(Shop::addSqlAssociation('attribute', 'a'))
                 ->where('a.`id_product_attribute` = ' . (int) $this->id)
         );
 
@@ -406,7 +404,6 @@ class CombinationCore extends ObjectModel {
             (new DbQuery())
                 ->select('a.`id_image` AS `id`')
                 ->from('product_attribute_image', 'a')
-                ->join(Shop::addSqlAssociation('product_attribute', 'a'))
                 ->where('a.`id_product_attribute` = ' . (int) $this->id)
         );
     }

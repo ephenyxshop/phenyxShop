@@ -279,7 +279,7 @@ class CustomerPieceDetailCore extends ObjectModel {
         if ($quantityDiscount) {
             $this->product_quantity_discount = $unitPrice;
             if (Product::getTaxCalculationMethod((int) $order->id_customer) == EPH_TAX_EXC) {
-                $this->product_quantity_discount = Tools::EPH_round($unitPrice, _EPH_PRICE_DATABASE_PRECISION_);
+                $this->product_quantity_discount = Tools::ps_round($unitPrice, _EPH_PRICE_DATABASE_PRECISION_);
             }
 
             if (isset($this->tax_calculator)) {
@@ -300,7 +300,7 @@ class CustomerPieceDetailCore extends ObjectModel {
 
         $this->total_shipping_price_tax_excl = (float) $product['additional_shipping_cost'];
         $this->total_shipping_price_tax_incl = (float) ($this->total_shipping_price_tax_excl * (1 + ($taxRate / 100)));
-        $this->total_shipping_price_tax_incl = Tools::EPH_round($this->total_shipping_price_tax_incl, 2);
+        $this->total_shipping_price_tax_incl = Tools::ps_round($this->total_shipping_price_tax_incl, 2);
     }
 	
 	protected function setProductTax(CustomerPieces $order, $product)  {
@@ -348,9 +348,9 @@ class CustomerPieceDetailCore extends ObjectModel {
 
                     if ($this->specificPrice['reduction_tax']) {
                         $this->reduction_amount_tax_incl = $this->reduction_amount;
-                        $this->reduction_amount_tax_excl = Tools::EPH_round($this->tax_calculator->removeTaxes($this->reduction_amount), _EPH_PRICE_DATABASE_PRECISION_);
+                        $this->reduction_amount_tax_excl = Tools::ps_round($this->tax_calculator->removeTaxes($this->reduction_amount), _EPH_PRICE_DATABASE_PRECISION_);
                     } else {
-                        $this->reduction_amount_tax_incl = Tools::EPH_round($this->tax_calculator->addTaxes($this->reduction_amount), _EPH_PRICE_DATABASE_PRECISION_);
+                        $this->reduction_amount_tax_incl = Tools::ps_round($this->tax_calculator->addTaxes($this->reduction_amount), _EPH_PRICE_DATABASE_PRECISION_);
                         $this->reduction_amount_tax_excl = $this->reduction_amount;
                     }
                     break;
@@ -402,12 +402,12 @@ class CustomerPieceDetailCore extends ObjectModel {
             $unitAmount = $totalAmount = 0;
             switch ((int) Configuration::get('EPH_ROUND_TYPE')) {
                 case CustomerPieces::ROUND_ITEM:
-                    $unitAmount = (float) Tools::EPH_round($amount, _EPH_PRICE_DISPLAY_PRECISION_);
+                    $unitAmount = (float) Tools::ps_round($amount, _EPH_PRICE_DISPLAY_PRECISION_);
                     $totalAmount = $unitAmount * $this->product_quantity;
                     break;
                 case CustomerPieces::ROUND_LINE:
                     $unitAmount = $amount;
-                    $totalAmount = Tools::EPH_round($unitAmount * $this->product_quantity, _EPH_PRICE_DISPLAY_PRECISION_);
+                    $totalAmount = Tools::ps_round($unitAmount * $this->product_quantity, _EPH_PRICE_DISPLAY_PRECISION_);
                     break;
                 case CustomerPieces::ROUND_TOTAL:
                     $unitAmount = $amount;
@@ -592,19 +592,18 @@ class CustomerPieceDetailCore extends ObjectModel {
 
             $orderProducts = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
-                    ->select('DISTINCT od.`id_product` as produc_id, p.`id_product`, pl.`name`, pl.`link_rewrite`, p.`reference`, i.`id_image`, product_shop.`show_price`')
+                    ->select('DISTINCT od.`id_product` as produc_id, p.`id_product`, pl.`name`, pl.`link_rewrite`, p.`reference`, i.`id_image`, p.`show_price`')
                     ->select('cl.`link_rewrite` AS `category`, p.`ean13`, p.`out_of_stock`, p.`id_category_default`')
                     ->select(Combination::isFeatureActive() ? 'IFNULL(`product_attribute_shop`.`id_product_attribute`, 0) id_product_attribute' : '')
                     ->from('customer_piece_detail', 'od')
                     ->leftJoin('product', 'p', 'p.`id_product` = od.`id_product`')
-                    ->join(Shop::addSqlAssociation('product', 'p'))
                     ->join((Combination::isFeatureActive() ? 'LEFT JOIN `'._DB_PREFIX_.'product_attribute_shop` product_attribute_shop ON (p.`id_product` = product_attribute_shop.`id_product` AND product_attribute_shop.`default_on` = 1 AND product_attribute_shop.id_shop='.(int) Context::getContext()->shop->id.')' : ''))
-                    ->leftJoin('product_lang', 'pl', 'pl.`id_product` = od.`id_product` AND pl.`id_lang` = '.(int) $idLang.' '.Shop::addSqlRestrictionOnLang('pl'))
-                    ->leftJoin('category_lang', 'cl', 'cl.`id_category` = product_shop.`id_category_default` AND cl.`id_lang` = '.(int) $idLang.' '.Shop::addSqlRestrictionOnLang('cl'))
-                    ->leftJoin('image', 'i', 'i.`id_product` = od.`id_product` '.Shop::addSqlAssociation('image', 'i', true, 'image_shop.cover=1'))
+                    ->leftJoin('product_lang', 'pl', 'pl.`id_product` = od.`id_product` AND pl.`id_lang` = '.(int) $idLang)
+                    ->leftJoin('category_lang', 'cl', 'cl.`id_category` = p.`id_category_default` AND cl.`id_lang` = '.(int) $idLang)
+                    ->leftJoin('image', 'i', 'i.`id_product` = od.`id_product` ')
                     ->where('od.`id_customer_piece` IN ('.$list.')')
                     ->where('od.`id_product` != '.(int) $idProduct)
-                    ->where($front ? '`product_shop`.`visibility` IN ("both", "catalog")' : '')
+                    ->where($front ? '`p`.`visibility` IN ("both", "catalog")' : '')
                     ->orderBy('RAND()')
                     ->limit((int) $limit),
                 true,

@@ -92,8 +92,7 @@ class CarrierCore extends ObjectModel {
     public static $definition = [
         'table'          => 'carrier',
         'primary'        => 'id_carrier',
-        'multilang'      => true,
-        'multilang_shop' => true,
+        'multilang'      => true,        
         'fields'         => [
             /* Classic fields */
             'id_reference'         => ['type' => self::TYPE_INT],
@@ -425,7 +424,6 @@ class CarrierCore extends ObjectModel {
             (new DbQuery())
                 ->select('cl.*, c.*, cl.`name` as `country`, z.`name` as `zone`')
                 ->from('country', 'c')
-                ->join(Shop::addSqlAssociation('country', 'c'))
                 ->leftJoin('country_lang', 'cl', 'cl.`id_country` = c.`id_country` AND cl.`id_lang` = ' . (int) $idLang)
                 ->innerJoin('carrier_zone', 'cz', 'cz.`id_zone` = c.`id_zone`')
                 ->innerJoin('carrier', 'cr', 'cr.`id_carrier` = cz.`id_carrier`')
@@ -902,9 +900,8 @@ class CarrierCore extends ObjectModel {
         $sql = (new DbQuery())
             ->select('c.*, cl.`delay`')
             ->from('carrier', 'c')
-            ->leftJoin('carrier_lang', 'cl', 'c.`id_carrier` = cl.`id_carrier` AND cl.`id_lang` = ' . (int) $idLang . Shop::addSqlRestrictionOnLang('cl'))
+            ->leftJoin('carrier_lang', 'cl', 'c.`id_carrier` = cl.`id_carrier` AND cl.`id_lang` = ' . (int) $idLang )
             ->leftJoin('carrier_zone', 'cz', 'cz.`id_carrier` = c.`id_carrier`')
-            ->join(Shop::addSqlAssociation('carrier', 'c'))
             ->where('c.`deleted` = ' . ($delete ? '1' : '0'));
 
         if ($idZone) {
@@ -1555,7 +1552,7 @@ class CarrierCore extends ObjectModel {
             // Get all ranges for this carrier
             $rangePrices = RangePrice::getRanges($this->id);
             $rangeWeights = RangeWeight::getRanges($this->id);
-            // Create row in EPH_delivery table
+            // Create row in ps_delivery table
 
             if (count($rangePrices) || count($rangeWeights)) {
                 $insert = [];

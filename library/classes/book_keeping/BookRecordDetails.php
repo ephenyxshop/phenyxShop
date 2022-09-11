@@ -19,7 +19,7 @@ class BookRecordDetailsCore extends ObjectModel {
             'piece_number'   => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],
             'debit'          => ['type' => self::TYPE_FLOAT],
             'credit'         => ['type' => self::TYPE_FLOAT],
-            'date_add'       => ['type' => self::TYPE_DATE, 'shop' => true, 'validate' => 'isDate'],
+            'date_add'       => ['type' => self::TYPE_DATE,  'validate' => 'isDate'],
             /* Lang fields */
 
         ],

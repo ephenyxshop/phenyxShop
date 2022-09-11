@@ -40,7 +40,7 @@ class ImageCore extends ObjectModel {
         'primary'   => 'id_image',
         'multilang' => true,
         'fields'    => [
-            'id_product' => ['type' => self::TYPE_INT, 'shop' => 'both', 'validate' => 'isUnsignedId', 'required' => true],
+            'id_product' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true],
             'position'   => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'],
             'cover'      => ['type' => self::TYPE_BOOL, 'allow_null' => true, 'validate' => 'isBool', 'shop' => true],
             'legend'     => ['type' => self::TYPE_STRING, 'lang' => true, 'size' => 128],

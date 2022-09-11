@@ -56,9 +56,9 @@ class ProductAccountCore extends ObjectModel {
 	 *
 	 * @since 2.1.0.0
 	 */
-	public function __construct($id = null, $idLang = null, $idShop = null) {
+	public function __construct($id = null, $idLang = null) {
 
-		parent::__construct($id, $idLang, $idShop);
+		parent::__construct($id, $idLang);
 		$this->sell_local = $this->getAccount($this->sell_account_local);
 		$this->sell_cee = $this->getAccount($this->sell_account_cee);
 		$this->sell_export = $this->getAccount($this->sell_account_export);

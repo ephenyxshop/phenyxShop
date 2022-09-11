@@ -270,9 +270,7 @@ class ImageManagerCore {
 
     public function actionOnImageUploadAfter($dstFile, $newFile) {
 
-        $file = fopen("testImageUploadAfter.txt","w");
-		fwrite($file,$dstFile.PHP_EOL);
-		fwrite($file,$newFile.PHP_EOL);
+        
 		$config = WebPGeneratorConfig::getConverterSettings();
         try {
 

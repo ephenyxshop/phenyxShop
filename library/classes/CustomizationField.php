@@ -24,8 +24,7 @@ class CustomizationFieldCore extends ObjectModel {
     public static $definition = [
         'table'          => 'customization_field',
         'primary'        => 'id_customization_field',
-        'multilang'      => true,
-        'multilang_shop' => true,
+        'multilang'      => true,        
         'fields'         => [
             /* Classic fields */
             'id_product' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true],

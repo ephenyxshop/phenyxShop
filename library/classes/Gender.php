@@ -35,7 +35,7 @@ class GenderCore extends ObjectModel {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function __construct($id = null, $idLang = null, $idShop = null) {
+    public function __construct($id = null, $idLang = null) {
 
         parent::__construct($id, $idLang, $idShop);
 

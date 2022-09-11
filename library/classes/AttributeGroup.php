@@ -66,7 +66,6 @@ class AttributeGroupCore extends ObjectModel {
             (new DbQuery())
                 ->select('*')
                 ->from('attribute', 'a')
-                ->join(Shop::addSqlAssociation('attribute', 'a'))
                 ->leftJoin('attribute_lang', 'al', 'a.`id_attribute` = al.`id_attribute` AND al.`id_lang` = ' . (int) $idLang)
                 ->where('a.`id_attribute_group` = ' . (int) $idAttributeGroup)
                 ->orderBy('`position` ASC')
@@ -88,7 +87,6 @@ class AttributeGroupCore extends ObjectModel {
             (new DbQuery())
                 ->select('DISTINCT agl.`name`, ag.*, agl.*')
                 ->from('attribute_group', 'ag')
-                ->join(Shop::addSqlAssociation('attribute_group', 'ag'))
                 ->leftJoin('attribute_group_lang', 'agl', 'ag.`id_attribute_group` = agl.`id_attribute_group` AND agl.`id_lang` = ' . (int) $idLang)
                 ->orderBy('agl.`name` ASC')
         );
@@ -395,7 +393,6 @@ class AttributeGroupCore extends ObjectModel {
             (new DbQuery())
                 ->select('a.`id_attribute` AS `id`')
                 ->from('attribute', 'a')
-                ->join(Shop::addSqlAssociation('attribute', 'a'))
                 ->where('a.`id_attribute_group` = ' . (int) $this->id)
         );
 

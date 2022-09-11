@@ -28,8 +28,6 @@ class ImageTypeCore extends ObjectModel {
     public $manufacturers;
     /** @var int Apply to suppliers */
     public $suppliers;
-    /** @var int Apply to scenes */
-    public $scenes;
     /** @var int Apply to store */
     public $stores;
     // @codingStandardsIgnoreEnd
@@ -59,7 +57,6 @@ class ImageTypeCore extends ObjectModel {
             'products'      => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
             'manufacturers' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
             'suppliers'     => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
-            'scenes'        => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
             'stores'        => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
         ],
     ];
@@ -118,6 +115,7 @@ class ImageTypeCore extends ObjectModel {
 
             $list[$key]['done'] = $result['done'];
             $list[$key]['total'] = $result['done'] + sizeof($result['todo']);
+
 
         }
 
@@ -262,7 +260,7 @@ class ImageTypeCore extends ObjectModel {
         if (!isset(static::$images_types_name_cache[$name . '_' . $type . '_' . $order]) && !$isPassed) {
             $results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS('SELECT * FROM `' . _DB_PREFIX_ . 'image_type`');
 
-            $types = ['products', 'categories', 'manufacturers', 'suppliers', 'scenes', 'stores'];
+            $types = ['products', 'categories', 'manufacturers', 'suppliers', 'stores'];
             $total = count($types);
 
             foreach ($results as $result) {

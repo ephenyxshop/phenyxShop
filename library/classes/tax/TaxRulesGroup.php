@@ -166,8 +166,8 @@ class TaxRulesGroupCore extends ObjectModel
         return Db::getInstance()->executeS(
             '
 			SELECT DISTINCT g.id_tax_rules_group, g.name, g.active
-			FROM `'._DB_PREFIX_.'tax_rules_group` g'
-            .Shop::addSqlAssociation('tax_rules_group', 'g').' WHERE deleted = 0'
+			FROM `'._DB_PREFIX_.'tax_rules_group` g
+            WHERE deleted = 0'
             .($onlyActive ? ' AND g.`active` = 1' : '').'
 			ORDER BY name ASC'
         );

@@ -11,6 +11,8 @@ use Thunder\Shortcode\HandlerContainer\HandlerContainer;
 use Thunder\Shortcode\Parser\RegularParser;
 use Thunder\Shortcode\Processor\Processor;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
+use \Curl\Curl;
+use MatthiasMullie\Minify;
 
 /**
  * Class AdminControllerCore
@@ -486,6 +488,16 @@ class AdminControllerCore extends EphController {
 	public $paramTable;
 	
 	public $paramIdentifier;
+    
+    public $cssRootfile = _EPH_THEME_DIR_ . 'css/root.css';
+	
+	public $cssfile = _EPH_THEME_DIR_ . 'css/autoload/custom.css';
+	
+	public $cssPolygonfile = _EPH_THEME_DIR_ . 'css/autoload/polygon.css';
+	
+	public $cssMenufile = _EPH_THEME_DIR_ . 'css/autoload/custom_menu.css';
+    
+    public $jsfile = _EPH_THEME_DIR_ . 'js/autoload/root.js';
 
     /**
      * AdminControllerCore constructor.
@@ -900,11 +912,11 @@ class AdminControllerCore extends EphController {
             'price'                                                                                                                     => $this->l('Price'),
             'min_qty'                                                                                                                   => $this->l('Min qty'),
             'invalid_product'                                                                                                           => $this->l('Invalid product'),
-            'ooEPH_something_goes_wrong'                                                                                                 => $this->l('Oops! Something goes wrong!'),
+            'oops_something_goes_wrong'                                                                                                 => $this->l('Oops! Something goes wrong!'),
             'min_quantity_must_be_less_than_available_quantity'                                                                         => $this->l('Minimum quantity must be less than available quantity.'),
             'default_quantity_should_be_greater_than_or_equal_to_minimum_quantity'                                                      => $this->l('Default quantity should be greater than or equal to minimum quantity.'),
             'quantity_must_be_greater_than_or_equal_to_minimum_quantity'                                                                => $this->l('Quantity must be greater than or equal to {0}.'),
-            'ooEPH_cannot_update_accessory'                                                                                              => $this->l('Oops! Cannot update accessory'),
+            'oops_cannot_update_accessory'                                                                                              => $this->l('Oops! Cannot update accessory'),
             'position'                                                                                                                  => $this->l('Position'),
             'action'                                                                                                                    => $this->l('Action'),
             'item_inside'                                                                                                               => $this->l('%s item inside'),
@@ -1237,7 +1249,7 @@ class AdminControllerCore extends EphController {
         $lang['select_google_calendar'] = 'Choisir un calendrier Google';
         $lang['select_google_calendar_prompt'] = 'Sélectionnez le calendrier souhaité pour synchroniser votre rendez-vous. Si vous ne sélectionnez pas de calendrier spécifique, le calendrier par défaut sera sélectionné pour vous.';
         $lang['google_calendar_selected'] = 'Le calendrier Google a été sélectionné avec succès .';
-        $lang['ooEPH_something_went_wrong'] = 'Oups ! Une erreur s\'est produite .';
+        $lang['oops_something_went_wrong'] = 'Oups ! Une erreur s\'est produite .';
         $lang['could_not_add_to_google_calendar'] = 'Votre rendez-vous ne peux pas être ajouté à votre Calendrier Google.';
         $lang['ea_update_success'] = 'Easy!Appointments à été mis à jour avec succès .';
         $lang['require_captcha'] = 'CAPTCHA obligatoire';
@@ -3400,7 +3412,7 @@ class AdminControllerCore extends EphController {
                 'toolbar_btn'               => $this->page_header_toolbar_btn,
                 'page_header_toolbar_btn'   => $this->page_header_toolbar_btn,
                 'controller'                => Tools::getValue('controller'),
-                'bo_imgdir'                 => __EPH_BASE_URI__ . $this->admin_webpath . '/themes/' . $this->bo_theme . '/img/',
+                'bo_imgdir'                 => __EPH_BASE_URI__ .  '/content/themes/' . $this->bo_theme . '/img/',
                 'link'                      => $this->context->link,
                 'versionTheme'              => Configuration::get('_EPHENYX_THEME_VERSION_'),
             ]
@@ -4288,7 +4300,7 @@ class AdminControllerCore extends EphController {
         $modulesOptions = [];
 
         $configureModule = [
-            'href'    => $linkAdminModules . '&configure=' . urlencode($module->name) . '&tab_module=' . $module->tab . '&ajax=1&module_name=' . urlencode($module->name),
+            'href'    => $linkAdminModules . '?configure=' . urlencode($module->name) . '&tab_module=' . $module->tab . '&ajax=1&module_name=' . urlencode($module->name),
             'onclick' => $module->onclick_option && isset($module->onclick_option_content['configure']) ? $module->onclick_option_content['configure'] : '',
             'title'   => '',
             'text'    => 'Configure',
@@ -4297,20 +4309,20 @@ class AdminControllerCore extends EphController {
         ];
 
         $deactivateModule = [
-            'href'  => $linkAdminModules . '&action=disableModule&ajax=1&module_name=' . urlencode($module->name) . '&tab_module=' . $module->tab,
+            'href'  => $linkAdminModules . '?action=disableModule&ajax=1&module_name=' . urlencode($module->name) . '&tab_module=' . $module->tab,
             'title' => Shop::isFeatureActive() ? htmlspecialchars($module->active ? $this->translationsTab['Disable this module'] : $this->translationsTab['Enable this module for all shops']) : '',
             'text'  => 'Disable',
             'cond'  => $module->id,
             'icon'  => 'off',
         ];
         $activateModule = [
-            'href'  => $linkAdminModules . '&action=enableModule&ajax=1&module_name=' . urlencode($module->name) . '&tab_module=' . $module->tab,
+            'href'  => $linkAdminModules . '?action=enableModule&ajax=1&module_name=' . urlencode($module->name) . '&tab_module=' . $module->tab,
             'title' => Shop::isFeatureActive() ? htmlspecialchars($module->active ? $this->translationsTab['Disable this module'] : $this->translationsTab['Enable this module for all shops']) : '',
             'text'  => 'Enable',
             'cond'  => $module->id,
             'icon'  => 'off',
         ];
-        $linkResetModule = $linkAdminModules . '&action=resetModule&ajax=1&module_name=' . urlencode($module->name);
+        $linkResetModule = $linkAdminModules . '?action=resetModule&ajax=1&module_name=' . urlencode($module->name);
 
         $isResetReady = false;
 
@@ -4333,7 +4345,7 @@ class AdminControllerCore extends EphController {
         ];
 
         $deleteModule = [
-            'href'  => $linkAdminModules . '&action=deleteModule&ajax=1&module_name=' . urlencode($module->name),
+            'href'  => $linkAdminModules . '?action=deleteModule&ajax=1&module_name=' . urlencode($module->name),
             'title' => '',
             'text'  => 'Delete',
             'cond'  => true,
@@ -4342,7 +4354,7 @@ class AdminControllerCore extends EphController {
         ];
 
         $displayMobile = [
-            'href'    => $linkAdminModules . '&module_name=' . urlencode($module->name) . '&' . ($module->enable_device & Context::DEVICE_MOBILE ? 'disable_device' : 'enable_device') . '=' . Context::DEVICE_MOBILE . '&tab_module=' . $module->tab,
+            'href'    => $linkAdminModules . '?module_name=' . urlencode($module->name) . '&' . ($module->enable_device & Context::DEVICE_MOBILE ? 'disable_device' : 'enable_device') . '=' . Context::DEVICE_MOBILE . '&tab_module=' . $module->tab,
             'onclick' => '',
             'title'   => htmlspecialchars($module->enable_device & Context::DEVICE_MOBILE ? $this->translationsTab['Disable on mobiles'] : $this->translationsTab['Display on mobiles']),
             'text'    => $module->enable_device & Context::DEVICE_MOBILE ? 'DisableOnMobiles' : 'DisplayOnMobiles',
@@ -4351,7 +4363,7 @@ class AdminControllerCore extends EphController {
         ];
 
         $displayTablet = [
-            'href'    => $linkAdminModules . '&module_name=' . urlencode($module->name) . '&' . ($module->enable_device & Context::DEVICE_TABLET ? 'disable_device' : 'enable_device') . '=' . Context::DEVICE_TABLET . '&tab_module=' . $module->tab,
+            'href'    => $linkAdminModules . '?module_name=' . urlencode($module->name) . '&' . ($module->enable_device & Context::DEVICE_TABLET ? 'disable_device' : 'enable_device') . '=' . Context::DEVICE_TABLET . '&tab_module=' . $module->tab,
             'onclick' => '',
             'title'   => htmlspecialchars($module->enable_device & Context::DEVICE_TABLET ? $this->translationsTab['Disable on tablets'] : $this->translationsTab['Display on tablets']),
             'text'    => $module->enable_device & Context::DEVICE_TABLET ? 'DisableOnTablets' : 'DisplayOnTablets',
@@ -4360,7 +4372,7 @@ class AdminControllerCore extends EphController {
         ];
 
         $displayComputer = [
-            'href'    => $linkAdminModules . '&module_name=' . urlencode($module->name) . '&' . ($module->enable_device & Context::DEVICE_COMPUTER ? 'disable_device' : 'enable_device') . '=' . Context::DEVICE_COMPUTER . '&tab_module=' . $module->tab,
+            'href'    => $linkAdminModules . '?module_name=' . urlencode($module->name) . '&' . ($module->enable_device & Context::DEVICE_COMPUTER ? 'disable_device' : 'enable_device') . '=' . Context::DEVICE_COMPUTER . '&tab_module=' . $module->tab,
             'onclick' => '',
             'title'   => htmlspecialchars($module->enable_device & Context::DEVICE_COMPUTER ? $this->translationsTab['Disable on computers'] : $this->translationsTab['Display on computers']),
             'text'    => $module->enable_device & Context::DEVICE_COMPUTER ? 'DisableOnComputers' : 'DisplayOnComputers',
@@ -4369,7 +4381,7 @@ class AdminControllerCore extends EphController {
         ];
 
         $install = [
-            'href'    => $linkAdminModules . '&install=' . urlencode($module->name) . '&action=installModule&ajax=1&module_name=' . $module->name . '&anchor=' . ucfirst($module->name) . (!is_null($back) ? '&back=' . urlencode($back) : ''),
+            'href'    => $linkAdminModules . '?install=' . urlencode($module->name) . '&action=installModule&ajax=1&module_name=' . $module->name . '&anchor=' . ucfirst($module->name) . (!is_null($back) ? '&back=' . urlencode($back) : ''),
             'onclick' => '',
             'title'   => $this->translationsTab['Install'],
             'text'    => 'Install',
@@ -4378,7 +4390,7 @@ class AdminControllerCore extends EphController {
         ];
 
         $uninstall = [
-            'href'    => $linkAdminModules . '&uninstall=' . urlencode($module->name) . '&tab_module=' . $module->tab . '&module_name=' . $module->name . '&anchor=' . ucfirst($module->name) . (!is_null($back) ? '&back=' . urlencode($back) : ''),
+            'href'    => $linkAdminModules . '?uninstall=' . urlencode($module->name) . '&module_name=' . $module->name . '&action=unstallModule&ajax=1&anchor=' . ucfirst($module->name) . (!is_null($back) ? '&back=' . urlencode($back) : ''),
             'onclick' => (isset($module->onclick_option_content['uninstall']) ? $module->onclick_option_content['uninstall'] : 'return confirm(\'' . $this->translationsTab['confirm_uninstall_popup'] . '\');'),
             'title'   => $this->translationsTab['Uninstall'],
             'text'    => 'Uninstall',
@@ -4626,7 +4638,7 @@ class AdminControllerCore extends EphController {
 		$this->openajax = !is_null(Tools::getValue('openajax')) ? Tools::getValue('openajax') : '';
         $this->context->smarty->assign(
             [
-                'EPH_version'  => _EPH_VERSION_,
+                'ps_version'  => _EPH_VERSION_,
                 'ephversion'  => _EPH_VERSION_,
                 'timer_start' => $this->timer_start,
                 'iso_is_fr'   => strtoupper($this->context->language->iso_code) == 'FR',
@@ -4859,9 +4871,7 @@ class AdminControllerCore extends EphController {
         // Has to be removed for the next PhenyxShop version
         global $currentIndex;
 
-        parent::init();
-		
-		$file = fopen("testAdminInit.txt","w");
+        parent::init();		
 
         if (Tools::getValue('ajax')) {
             $this->ajax = '1';
@@ -4896,19 +4906,17 @@ class AdminControllerCore extends EphController {
         }
 		
 		$pageName = Performer::getInstance()->getController();
-		fwrite($file, $pageName.PHP_EOL);
         $pageName = (preg_match('/^[0-9]/', $pageName) ? 'page_' . $pageName : $pageName);
 		
 		
 		$this->context->smarty->assign('request_uri', Tools::safeOutput(urldecode($_SERVER['REQUEST_URI'])));
 
         if (!empty($this->php_self) && !Tools::getValue('ajax')) {
-			fwrite($file, 'cannonicalRedirection'.PHP_EOL);
             $this->canonicalRedirection($this->context->link->getAdminLink($this->php_self));
         }
-		fwrite($file, $this->controller_name.PHP_EOL);
+		
         if ($this->controller_name != 'AdminLogin' && (!isset($this->context->employee) || !$this->context->employee->isLoggedBack())) {
-			fwrite($file, 'on part pour un redirect'.PHP_EOL);
+			
             if (isset($this->context->employee)) {
                 $this->context->employee->logout();
             }
@@ -5252,172 +5260,7 @@ class AdminControllerCore extends EphController {
 
     }
 
-    public function generateExcelSheet($fieldEntetes, $values, $valuesKey) {
-
-        $shopUrl = Tools::getShopProtocol() . ShopUrl::getMainShopDomain($this->context->shop->id) . DIRECTORY_SEPARATOR;
-        $name = $this->l('File') . '-' . $this->publicName . '.xlsx';
-        $tag = $this->l('File') . ' ' . $this->publicName;
-
-        $nbEntete = sizeof($fieldEntetes);
-
-        $spreadsheet = new Spreadsheet();
-        $spreadsheet->getProperties()->setCreator('Ephenyx Shop')
-            ->setTitle($this->className)
-            ->setSubject($this->context->language->id)
-            ->setDescription($this->l('Listing') . ' ' . $this->className);
-
-        $drawing = new Drawing();
-        $drawing->setName('Logo Ephenyx Shop');
-        $drawing->setPath(_SHOP_ROOT_DIR_ . '/themes/' . $this->bo_theme . '/img/ephenyx-avatar-header_shopname.png');
-        $drawing->setHeight(80);
-        $drawing->setCoordinates('A1');
-        $drawing->setWorksheet($spreadsheet->getActiveSheet());
-        $letter = chr(64 + $nbEntete);
-        $spreadsheet->getActiveSheet()->mergeCells('A1:' . $letter . '4');
-        $fieldFormat = $this->getExportFormatFields();
-        $i = 5;
-        $j = 1;
-
-        foreach ($fieldEntetes as $key => $value) {
-            $letter = chr(64 + $j);
-
-            $spreadsheet->getActiveSheet(0)->getStyle($letter . $i)->getFont()->setBold(true);
-            $spreadsheet->setActiveSheetIndex(0)
-                ->setCellValue($letter . $i, $value);
-            $spreadsheet->getActiveSheet(0)->getStyle($letter . $i)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
-            $spreadsheet->getActiveSheet(0)->getStyle($letter . $i)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-
-            if (isset($fieldFormat[$key])) {
-
-                if (isset($fieldFormat[$key]['width'])) {
-                    $spreadsheet->getActiveSheet(0)->getColumnDimension($letter)->setWidth($fieldFormat[$key]['width']);
-                }
-
-            }
-
-            $j++;
-        }
-
-        $i++;
-
-        foreach ($values as $object) {
-
-            $j = 1;
-
-            foreach ($fieldEntetes as $key => $field) {
-                $letter = chr(64 + $j);
-
-                if (isset($fieldFormat[$key]['numberFormat'])) {
-                    $spreadsheet->getActiveSheet(0)->getStyle($letter . $i)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE);
-                }
-
-                if ($key == 'active') {
-
-                    $spreadsheet->getActiveSheet()->getStyle($letter . $i)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                    $drawing = new Drawing();
-                    $drawing->setName('Active Field');
-                    $pos = strpos($object[$key], 'inactive');
-
-                    if ($pos !== false) {
-                        $drawing->setPath(_SHOP_ROOT_DIR_ . '/themes/' . $this->bo_theme . '/img/icons/no.png');
-                    } else {
-                        $drawing->setPath(_SHOP_ROOT_DIR_ . '/themes/' . $this->bo_theme . '/img/icons/ok.png');
-                    }
-
-                    $drawing->setHeight(16);
-                    $drawing->setCoordinates($letter . $i);
-                    $drawing->setWorksheet($spreadsheet->getActiveSheet());
-                    $j++;
-                    continue;
-                }
-
-                if (isset($fieldFormat[$key]['halign'])) {
-
-                    switch ($fieldFormat[$key]['halign']) {
-                    case 'HORIZONTAL_CENTER':
-                        $spreadsheet->getActiveSheet()->getStyle($letter . $i)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                        break;
-                    case 'HORIZONTAL_LEFT':
-                        $spreadsheet->getActiveSheet()->getStyle($letter . $i)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
-                        break;
-                    case 'HORIZONTAL_RIGHT':
-                        $spreadsheet->getActiveSheet()->getStyle($letter . $i)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
-                        break;
-                    case 'HORIZONTAL_JUSTIFY':
-                        $spreadsheet->getActiveSheet()->getStyle($letter . $i)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_JUSTIFY);
-                        break;
-                    case 'HORIZONTAL_FILL':
-                        $spreadsheet->getActiveSheet()->getStyle($letter . $i)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_FILL);
-                        break;
-                    default:
-                        $spreadsheet->getActiveSheet()->getStyle($letter . $i)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
-                        break;
-                    }
-
-                }
-
-                if (isset($fieldFormat[$key]['date']) && $fieldFormat[$key]['date']) {
-                    $date = new DateTime($object[$key]);
-                    $object[$key] = $date->format('d/m/Y');
-                }
-
-                if (isset($fieldFormat[$key]['image']) && $fieldFormat[$key]['image']) {
-
-                    $image = str_replace('<img src="', '', explode("-", explode("/", str_replace($shopUrl, '', $object[$key]))[0])[0]);
-
-                    $path = Image::getImgFolderStatic($image) . $image . '-cart_default.jpg';
-
-                    if (file_exists(_EPH_PROD_IMG_DIR_ . $path)) {
-                        $src = _EPH_PROD_IMG_DIR_ . $path;
-                    } else {
-                        $src = _SHOP_ROOT_DIR_ . '/themes/' . $this->bo_theme . '/img/default.jpg';
-                    }
-
-                    $drawing = new Drawing();
-                    $drawing->setName('Image' . $image);
-                    $drawing->setPath($src);
-                    $drawing->setHeight(80);
-                    $drawing->setOffsetX(50);
-                    $drawing->setOffsetY(10);
-                    $drawing->setCoordinates($letter . $i);
-                    $drawing->setWorksheet($spreadsheet->getActiveSheet());
-                    $spreadsheet->getActiveSheet(0)->getRowDimension($i)->setRowHeight(
-                        $drawing->getHeight()
-                    );
-                    $spreadsheet->getActiveSheet()->getStyle($letter . $i)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                    $spreadsheet->getActiveSheet(0)->getStyle($letter . $i)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
-                    $j++;
-                    continue;
-
-                }
-
-                $spreadsheet->setActiveSheetIndex(0)
-                    ->setCellValue($letter . $i, $object[$key]);
-
-                $spreadsheet->getActiveSheet(0)->getStyle($letter . $i)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
-
-                $j++;
-            }
-
-            $spreadsheet->getActiveSheet(0)->getStyle('A' . $i . ':' . $letter . $i)->getAlignment()->setWrapText(true);
-
-            $i++;
-        }
-
-        $spreadsheet->getActiveSheet(0)->setTitle($tag);
-        $spreadsheet->setActiveSheetIndex(0);
-        $filePath = _SHOP_ROOT_DIR_ . DIRECTORY_SEPARATOR . 'fileExport' . DIRECTORY_SEPARATOR;
-        $fileSave = new Xlsx($spreadsheet);
-        $fileSave->save($filePath . $name);
-        $fileToUpload = 'fileExport' . DIRECTORY_SEPARATOR . $name;
-
-        $result = [
-            'link' => '<a download="' . $name . '" id="objectFile" class="btn btn-default" href="' . $fileToUpload . '"><i class="process-export-excel"></i>' . $this->l('Click here to Download the file') . '</a>',
-        ];
-        die(Tools::jsonEncode($result));
-
-    }
-
+    
     public function ajaxProcessUpdateEmployeeTheme() {
 
         $theme = Tools::getValue('theme');
@@ -8066,11 +7909,10 @@ class AdminControllerCore extends EphController {
             (new DbQuery())
                 ->select('c.id_category, c.id_parent, cl.name')
                 ->from('category', 'c')
-                ->join(Shop::addSqlAssociation('category', 'c'))
                 ->leftJoin('category_lang', 'cl', 'c.`id_category` = cl.`id_category` AND cl.`id_lang` = ' . (int) $this->context->language->id)
                 ->rightJoin('category', 'c2', 'c2.`id_category` = ' . (int) $root->id . ' AND c.`nleft` >= c2.`nleft` AND c.`nright` <= c2.`nright`')
                 ->where('id_lang = ' . (int) $this->context->language->id)
-                ->orderBy('c.`level_depth` ASC, category_shop.`position` ASC')
+                ->orderBy('c.`level_depth` ASC, c.`position` ASC')
 
         );
 

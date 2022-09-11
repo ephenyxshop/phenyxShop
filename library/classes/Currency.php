@@ -53,8 +53,7 @@ class CurrencyCore extends ObjectModel {
      */
     public static $definition = [
         'table'          => 'currency',
-        'primary'        => 'id_currency',
-        'multilang_shop' => true,
+        'primary'        => 'id_currency',        
         'fields'         => [
             'name'            => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName', 'required' => true, 'size' => 32],
             'iso_code'        => ['type' => self::TYPE_STRING, 'validate' => 'isLanguageIsoCode', 'required' => true, 'size' => 3],
@@ -84,9 +83,9 @@ class CurrencyCore extends ObjectModel {
      * @version 1.8.1.0 Initial version
      * @throws PhenyxShopException
      */
-    public function __construct($id = null, $idLang = null, $idShop = null) {
+    public function __construct($id = null, $idLang = null) {
 
-        parent::__construct($id, $idLang, $idShop);
+        parent::__construct($id, $idLang);
         // prefix and suffix are convenient shortcut for displaying
         // price sign before or after the price number
         $this->prefix = $this->format % 2 != 0 ? $this->sign . ' ' : '';
@@ -326,7 +325,6 @@ class CurrencyCore extends ObjectModel {
             (new DbQuery())
                 ->select('*')
                 ->from('currency', 'c')
-                ->join(Shop::addSqlAssociation('currency', 'c'))
                 ->where('`deleted` = 0')
                 ->where($active ? 'c.`active` = 1' : '')
                 ->groupBy($groupBy ? 'c.`id_currency`' : '')

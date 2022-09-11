@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Class ObjectModelCore
+ * Class PhenyxObjectModelCore
  *
  * @since 1.9.1.0
  */
-abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterface {
+abstract class PhenyxObjectModelCore implements Core_Foundation_Database_EntityInterface {
 
     /**
      * List of field types
@@ -40,7 +40,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
     public $id_lang = null;
 
 
-    /** @var array|null Holds required fields for each ObjectModel class */
+    /** @var array|null Holds required fields for each PhenyxObjectModel class */
     protected static $fieldsRequiredDatabase = null;
 
     /**
@@ -113,7 +113,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
     public static $definition = [];
 
     /**
-     * Holds compiled definitions of each ObjectModel class.
+     * Holds compiled definitions of each PhenyxObjectModel class.
      * Values are assigned during object initialization.
      *
      * @var array
@@ -178,18 +178,18 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
 
         $className = get_class($this);
 
-        if (!isset(ObjectModel::$loaded_classes[$className])) {
-            $this->def = ObjectModel::getDefinition($className);
+        if (!isset(PhenyxObjectModel::$loaded_classes[$className])) {
+            $this->def = PhenyxObjectModel::getDefinition($className);
             $this->setDefinitionRetrocompatibility();
 
             if (!Validate::isTableOrIdentifier($this->def['primary']) || !Validate::isTableOrIdentifier($this->def['table'])) {
                 throw new PhenyxShopException('Identifier or table format not valid for class ' . $className);
             }
 
-            ObjectModel::$loaded_classes[$className] = get_object_vars($this);
+            PhenyxObjectModel::$loaded_classes[$className] = get_object_vars($this);
         } else {
 
-            foreach (ObjectModel::$loaded_classes[$className] as $key => $value) {
+            foreach (PhenyxObjectModel::$loaded_classes[$className] as $key => $value) {
                 $this->{$key}
 
                 = $value;
@@ -348,7 +348,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
             $purify = (isset($data['validate']) && mb_strtolower($data['validate']) == 'iscleanhtml') ? true : false;
             // Format field value
 			
-            $fields[$field] = ObjectModel::formatValue($value, $data['type'], false, $purify, !empty($data['allow_null']));
+            $fields[$field] = PhenyxObjectModel::formatValue($value, $data['type'], false, $purify, !empty($data['allow_null']));
         }
 
         return $fields;
@@ -502,7 +502,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
     
     public function duplicateObject() {
 
-        $definition = ObjectModel::getDefinition($this);
+        $definition = PhenyxObjectModel::getDefinition($this);
 
         $res = Db::getInstance()->getRow('
                     SELECT *
@@ -519,7 +519,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
         foreach ($res as $field => &$value) {
 
             if (isset($definition['fields'][$field])) {
-                $value = ObjectModel::formatValue($value, $definition['fields'][$field]['type'], false, true, !empty($definition['fields'][$field]['allow_null']));
+                $value = PhenyxObjectModel::formatValue($value, $definition['fields'][$field]['type'], false, true, !empty($definition['fields'][$field]['allow_null']));
             }
 
         }
@@ -545,7 +545,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
                 foreach ($row as $field => &$value) {
 
                     if (isset($definition['fields'][$field])) {
-                        $value = ObjectModel::formatValue($value, $definition['fields'][$field]['type'], false, true, !empty($definition['fields'][$field]['allow_null']));
+                        $value = PhenyxObjectModel::formatValue($value, $definition['fields'][$field]['type'], false, true, !empty($definition['fields'][$field]['allow_null']));
                     }
 
                 }
@@ -1173,10 +1173,10 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
     public function clearCache($all = false) {
 
         if ($all) {
-            Cache::clean('objectmodel_' . $this->def['classname'] . '_*');
+            Cache::clean('PhenyxObjectModel_' . $this->def['classname'] . '_*');
         } else
         if ($this->id) {
-            Cache::clean('objectmodel_' . $this->def['classname'] . '_' . (int) $this->id . '_*');
+            Cache::clean('PhenyxObjectModel_' . $this->def['classname'] . '_' . (int) $this->id . '_*');
         }
 
     }
@@ -1318,7 +1318,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
         $rows = [];
 
         if ($datas) {
-            $definition = ObjectModel::getDefinition($class);
+            $definition = PhenyxObjectModel::getDefinition($class);
 
             if (!array_key_exists($definition['primary'], $datas[0])) {
                 throw new PhenyxShopException("Identifier '{$definition['primary']}' not found for class '$class'");
@@ -1358,7 +1358,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
         // Hydrate objects
 
         foreach ($rows as $row) {
-            /** @var ObjectModel $obj */
+            /** @var PhenyxObjectModel $obj */
             $obj = new $class();
             $obj->hydrate($row, $idLang);
             $collection[] = $obj;
@@ -1374,7 +1374,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
         }
 
         if ($field === null) {
-            $cacheId = 'objectmodel_def_' . $class;
+            $cacheId = 'PhenyxObjectModel_def_' . $class;
         }
 
         if ($field !== null || !Cache::isStored($cacheId)) {
@@ -1500,7 +1500,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
 
     public function getFieldByLang($fieldName, $idLang = null) {
 
-        $definition = ObjectModel::getDefinition($this);
+        $definition = PhenyxObjectModel::getDefinition($this);
         // Is field in definition?
 
         if ($definition && isset($definition['fields'][$fieldName])) {
@@ -1531,12 +1531,12 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
 
     public static function enableCache() {
 
-        ObjectModel::$cache_objects = true;
+        PhenyxObjectModel::$cache_objects = true;
     }
 
     public static function disableCache() {
 
-        ObjectModel::$cache_objects = false;
+        PhenyxObjectModel::$cache_objects = false;
     }
 
     public static function createDatabase($className = null) {
@@ -1666,7 +1666,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
             $className = get_called_class();
         }
 
-        $definition = \ObjectModel::getDefinition($className);
+        $definition = \PhenyxObjectModel::getDefinition($className);
 
         $success &= Db::getInstance()->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . bqSQL($definition['table']) . '`');
 
@@ -1683,7 +1683,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
             $className = get_called_class();
         }
 
-        $definition = \ObjectModel::getDefinition($className);
+        $definition = \PhenyxObjectModel::getDefinition($className);
 
         $sql = 'SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=\'' . _DB_NAME_ . '\' AND TABLE_NAME=\'' . _DB_PREFIX_ . pSQL($definition['table']) . '\'';
 

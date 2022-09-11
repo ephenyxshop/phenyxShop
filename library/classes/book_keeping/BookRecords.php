@@ -16,8 +16,8 @@ class BookRecordsCore extends ObjectModel {
             'id_book_diary' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],
             'validate'      => ['type' => self::TYPE_BOOL],
             'piece_type'    => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
-            'date_add'      => ['type' => self::TYPE_DATE, 'shop' => true, 'validate' => 'isDate'],
-            'date_upd'      => ['type' => self::TYPE_DATE, 'shop' => true, 'validate' => 'isDate'],
+            'date_add'      => ['type' => self::TYPE_DATE,  'validate' => 'isDate'],
+            'date_upd'      => ['type' => self::TYPE_DATE,  'validate' => 'isDate'],
 
             /* Lang fields */
             'name'          => ['type' => self::TYPE_STRING, 'validate' => 'isString', 'required' => true, 'size' => 256],

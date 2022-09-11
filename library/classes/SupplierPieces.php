@@ -300,7 +300,7 @@ class SupplierPiecesCore extends ObjectModel {
         foreach (static::$definition['fields'] as $fieldName => $field) {
 
             if ($field['type'] === static::TYPE_FLOAT && isset($this->$fieldName)) {
-                $this->$fieldName = Tools::EPH_round($this->$fieldName, _EPH_PRICE_DATABASE_PRECISION_);
+                $this->$fieldName = Tools::ps_round($this->$fieldName, _EPH_PRICE_DATABASE_PRECISION_);
             }
 
         }

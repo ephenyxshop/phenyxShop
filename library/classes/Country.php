@@ -391,7 +391,6 @@ class CountryCore extends ObjectModel {
 			(new DbQuery())
 				->select('c.*, cl.*')
 				->from('country', 'c')
-				->join(Shop::addSqlAssociation('country', 'c', false))
 				->leftJoin('state', 's', 's.`id_country` = c.`id_country`')
 				->leftJoin('country_lang', 'cl', 'c.`id_country` = cl.`id_country` AND cl.`id_lang` = ' . (int) $idLang)
 				->where('c.`id_zone` = ' . (int) $idZone . ' OR s.`id_zone` = ' . (int) $idZone)

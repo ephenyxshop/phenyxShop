@@ -31,9 +31,9 @@ class PaymentTypeCore extends ObjectModel {
 	 *
 	 * @since 2.1.0.0
 	 */
-	public function __construct($id = null, $idLang = null, $idShop = null) {
+	public function __construct($id = null, $idLang = null) {
 
-		parent::__construct($id, $idLang, $idShop);
+		parent::__construct($id, $idLang);
 
 	}
 

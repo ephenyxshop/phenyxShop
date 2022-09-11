@@ -246,6 +246,160 @@ class ToolsCore {
 		
 		return $subject;
     }
+    
+    public static function str_replace_first($search, $replace, $subject) {
+    	$search = '/'.preg_quote($search, '/').'/';
+    	return preg_replace($search, $replace, $subject, 1);
+	}
+    
+    public static function display_gallery_page($files_array, $pageno = 1, $path = '', $resultspp = 4096, $display = true) {
+		
+		$base_link = Context::getContext()->link->getBaseFrontLink();
+    	$pagination = array();
+    	$pagination['resultspp'] = $resultspp;
+    	$pagination['startres'] = 1 + (($pageno - 1) * $pagination['resultspp']);
+    	$pagination['endres'] = $pagination['startres'] + $pagination['resultspp'] - 1;
+    	$pagination['counter'] = 1;
+    	$pagination['totalres'] = count($files_array);
+    	$pagination['totalpages'] = ceil($pagination['totalres'] / $pagination['resultspp']);
+
+    	$imagepath = $base_link.'content/img/';
+    	$array_count = 0;
+    	$output = '';
+
+    	foreach ($files_array as $file_name) {
+        	$file_path = $imagepath.$path.$file_name;
+
+        	if (($pagination['counter'] >= $pagination['startres']) && ($pagination['counter'] <= $pagination['endres'])) {
+            	$addcbr = '';
+
+            	if (($pagination['counter'] > ($pagination['endres'] - 5)) && ($pagination['counter'] > ($pagination['totalres'] - 5))) {
+                	$addcbr = ' br';
+            	}
+
+            	$file = array();    // ???
+            	$file['name'] = $file_name;
+
+            	$files_array[$array_count] = array($file);
+            	$array_count++;
+
+            	if (preg_match('/\.(jpg|jpe|jpeg|png|gif|bmp)$/', $file_name)) {
+                	$output .= '<a href="'.$file_path.'" title="'.$file_name.'" data-gallery="gallery">';
+                	$output .= "<div class=\"thumb$addcbr\" style=\"background-image:url('$file_path')\"></div>";
+                	$output .= '<label class="file-name">'.$file_name.'</label>';
+                	$output .= '</a>';
+            	} else {
+                	$output .= '<a href="'.$file_path.'" title="'.$file_name.'" data-folder="folder">';
+                	$output .= "<div class=\"thumb folder$addcbr\"></div>";
+                	$output .= '<label class="file-name">'.$file_name.'</label>';
+                	$output .= '</a>';
+            	}
+        	}
+        	$pagination['counter']++;
+    	}
+
+    	if ($display == true) {
+        	echo $output;
+    	} else {
+        	return $output;
+    	}
+	}
+	
+	public static function display_gallery_pagination($url = '', $totalresults = 0, $pageno = 1, $resultspp = 4096, $display = true) {
+		
+    	$configp = array();
+    	$configp['results_per_page'] = $resultspp;
+    	$configp['total_no_results'] = $totalresults;
+    	$configp['page_url'] = $url;
+    	$configp['current_page_segment'] = 4;
+    	$configp['url'] = $url;
+    	$configp['pageno'] = $pageno;
+
+    	$output = Tools::get_html($configp);
+
+    	if ($display == true) {
+        	echo $output;
+    	} else {
+        	return $output;
+    	}
+	}
+	
+	public static function get_html($pconfig) {
+    
+		$links_html = '';
+
+    // $pageAddress = $pconfig['url'];
+    	$resultspp = $pconfig['results_per_page'];
+    	$current_page = $pconfig['pageno'];
+    	$start_res = $current_page * $resultspp;
+    // $endRes = $start_res + $resultspp;
+
+    	$tot_pages = $pconfig['total_no_results'] / $resultspp;
+
+    	$round_pages = ceil($tot_pages);
+
+    	$links_html .= '<ul>';
+
+    	if ($current_page > 1) {
+        	if ($tot_pages > 1) {
+            	$links_html .= '<li id="gliFirst"><a data-target-page="1" href="#">&lt; First</a></li>';
+        	}
+        	$links_html .= '<li id="gliPrev"><a data-target-page="prev" href="#">Prev</a></li>';
+    	} else {
+        	if ($tot_pages > 1) {
+            	$links_html .= '<li class="disabled" id="gliFirst"><a data-target-page="1" href="#">&lt; First</a></li>';
+        	}
+        	$links_html .= '<li class="disabled" id="gliPrev"><a data-target-page="prev" href="#">Prev</a></li>';
+    	}
+
+    // $pageLimit = 9;
+
+    	if (($current_page - 3) > 0) {
+        	$start_page = $current_page - 3;
+    	} else {
+        	$start_page = 1;
+        	$end_add = 1 - ($current_page - 3);
+    	}
+
+    	$end_page = $round_pages;
+    	$start_add = 0;
+
+    	if (($start_page + $start_add) > 0) {
+        	$start_page = $start_page - $start_add;
+    	} else {
+        	$start_page = 1;
+    	}
+
+    	if ($start_page <= 0) {
+        	$start_page = 1;
+    	}
+
+    	for ($i = $start_page; $i <= $end_page; $i++) {
+        	if ($i == $current_page) {
+            	$links_html .= '<li class="disabled" id="gli$i"><a href="#" data-target-page="$i">$i</a></span></li>';
+        	} else {
+            	$links_html .= '<li id="gli$i"><a href="#" data-target-page="$i">$i</a></li>';
+			}
+    	}
+
+    	if ($current_page < $round_pages) {
+        // $nextPage = $current_page + 1;
+        	$links_html .= '<li id="gliNext"><a href="#" data-target-page="next">Next</a></li>';
+
+        	if ($tot_pages > 1) {
+            	$links_html .= '<li id="gliLast"><a href="#" data-target-page="$round_pages">Last &gt;</a></li>';
+        	}
+    	} else {
+        	$links_html .= '<li id="gliNext" class="disabled"><a href="#" data-target-page="next">Next</a></li>';
+
+        	if ($tot_pages > 1) {
+            	$links_html .= '<li id="gliLast" class="disabled"><a href="#" data-target-page="$round_pages">Last &gt;</a><li>';
+        	}
+    	}
+		//if ($round_pages > 9) {}
+    	$links_html .= '</ul>';
+    	return $links_html;
+	}
 
     /**
      * Redirect URLs already containing EPH_BASE_URI
@@ -527,7 +681,7 @@ class ToolsCore {
         if ($cookie->id_lang) {
             $lang = new Language((int) $cookie->id_lang);
 
-            if (!Validate::isLoadedObject($lang) || !$lang->active || !$lang->isAssociatedToShop()) {
+            if (!Validate::isLoadedObject($lang) || !$lang->active ) {
                 $cookie->id_lang = null;
             }
 
@@ -548,7 +702,7 @@ class ToolsCore {
             if (Validate::isLanguageCode($string)) {
                 $lang = Language::getLanguageByIETFCode($string);
 
-                if (Validate::isLoadedObject($lang) && $lang->active && $lang->isAssociatedToShop()) {
+                if (Validate::isLoadedObject($lang) && $lang->active ) {
                     Context::getContext()->language = $lang;
                     $cookie->id_lang = (int) $lang->id;
                 }
@@ -700,7 +854,7 @@ class ToolsCore {
             /** @var Currency $currency */
             $currency = Currency::getCurrencyInstance((int) $idCurrency);
 
-            if (is_object($currency) && $currency->id && !$currency->deleted && $currency->isAssociatedToShop()) {
+            if (is_object($currency) && $currency->id && !$currency->deleted) {
                 $cookie->id_currency = (int) $currency->id;
             }
 
@@ -718,19 +872,7 @@ class ToolsCore {
 
         $cookie->id_currency = (int) $currency->id;
 
-        if ($currency->isAssociatedToShop()) {
-            return $currency;
-        } else {
-            // get currency from context
-            $currency = Shop::getEntityIds('currency', Context::getContext()->shop->id, true, true);
-
-            if (isset($currency[0]) && $currency[0]['id_currency']) {
-                $cookie->id_currency = $currency[0]['id_currency'];
-
-                return Currency::getCurrencyInstance((int) $cookie->id_currency);
-            }
-
-        }
+        
 
         return $currency;
     }
@@ -875,7 +1017,7 @@ class ToolsCore {
                 $price *= -1;
             }
 
-            $price = Tools::EPH_round($price, $cDecimals);
+            $price = Tools::ps_round($price, $cDecimals);
 
             /*
                                             * If the language is RTL and the selected currency format contains spaces as thousands separator
@@ -926,7 +1068,7 @@ class ToolsCore {
             return $ret;
         }
 
-        $price = Tools::EPH_round($price, $currencyDecimals);
+        $price = Tools::ps_round($price, $currencyDecimals);
         $languageIso = $context->language->language_code;
 
         $currencyRepository = new CurrencyRepository();
@@ -971,7 +1113,7 @@ class ToolsCore {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function EPH_round($value, $precision = 0, $roundMode = null) {
+    public static function ps_round($value, $precision = 0, $roundMode = null) {
 
         if ($roundMode === null) {
 
@@ -1041,6 +1183,7 @@ class ToolsCore {
      * @return float
      *
      * @since 1.9.1.0
+
      * @version 1.8.1.0 Initial version
      */
     public static function floorf($value, $precision = 0) {
@@ -1174,6 +1317,7 @@ class ToolsCore {
     }
 
     /**
+
      * Return price converted
      *
      * @param float        $price      Product price
@@ -1294,7 +1438,7 @@ class ToolsCore {
         }
 
         if ($round) {
-            $amount = Tools::EPH_round($amount, _EPH_PRICE_DATABASE_PRECISION_);
+            $amount = Tools::ps_round($amount, _EPH_PRICE_DATABASE_PRECISION_);
         }
 
         return $amount;
@@ -1942,8 +2086,7 @@ class ToolsCore {
             if ($interval) {
                 $sql = 'SELECT c.id_category, cl.name, cl.link_rewrite
 						FROM '._DB_PREFIX_.'category c
-						LEFT JOIN '._DB_PREFIX_.'category_lang cl ON (cl.id_category = c.id_category'.Shop::addSqlRestrictionOnLang('cl').')
-						'.Shop::addSqlAssociation('category', 'c').'
+						LEFT JOIN '._DB_PREFIX_.'category_lang cl ON (cl.id_category = c.id_category)
 						WHERE c.nleft <= '.$interval['nleft'].'
 							AND c.nright >= '.$interval['nright'].'
 							AND c.nleft >= '.$intervalRoot['nleft'].'
@@ -3430,9 +3573,6 @@ class ToolsCore {
         fwrite($write_fd, 'RewriteRule ^api$ api/ [L]' . "\n\n");
         fwrite($write_fd, 'RewriteRule ^api/(.*)$ %{ENV:REWRITEBASE}webephenyx/dispatcher.php?url=$1 [QSA,L]' . "\n\n");
 		
-		fwrite($write_fd, 'RewriteRule ^veille$ veille/ [L]' . "\n\n");
-        fwrite($write_fd, 'RewriteRule ^veille/(.*)$ %{ENV:REWRITEBASE}webephenyx/veille.php?url=$1 [QSA,L]' . "\n\n");
-
         $media_domains = '';
 
         foreach ($medias as $media) {
@@ -3465,11 +3605,8 @@ class ToolsCore {
 
                 // Webservice
                 fwrite($write_fd, 'RewriteRule ^api$ api/ [L]' . "\n\n");
-                fwrite($write_fd, 'RewriteRule ^api/(.*)$ %{ENV:REWRITEBASE}webservice/dispatcher.php?url=$1 [QSA,L]' . "\n\n");
+                fwrite($write_fd, 'RewriteRule ^api/(.*)$ %{ENV:REWRITEBASE}webephenyx/dispatcher.php?url=$1 [QSA,L]' . "\n\n");
 				
-				fwrite($write_fd, 'RewriteRule ^veille$ veille/ [L]' . "\n\n");
-        		fwrite($write_fd, 'RewriteRule ^veille/(.*)$ %{ENV:REWRITEBASE}webephenyx/veille.php?url=$1 [QSA,L]' . "\n\n");
-
                 if (!$rewrite_settings) {
                     $rewrite_settings = (int) Configuration::get('EPH_REWRITING_SETTINGS', null, null, (int) $uri['id_shop']);
                 }
@@ -3693,6 +3830,9 @@ FileETag none
      */
     public static function jsonDecode($json, $assoc = false) {
 		
+        if(is_array($json)) {
+            return $json;
+        }
 		if(is_null($assoc)) {
 			if(!is_null($json)) {
 				return json_decode($json);
@@ -6284,53 +6424,14 @@ FileETag none
 
     }
 
-    public static function generateThemeJson() {
-
-        $iterator = new AppendIterator();
-        $iterator->append(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_EPH_ROOT_DIR_ . _EPH_THEMES_DIR_.'phenyx-theme-default/')));
-
-        foreach ($iterator as $file) {
-            $filePath = $file->getPathname();
-            $filePath = str_replace(_EPH_ROOT_DIR_, '', $filePath);
-
-            if (in_array($file->getFilename(), ['.', '..', 'index.php', 'index.tpl', 'list-services-container.tpl', 'list-certifications-container.tpl', '.htaccess', 'custom.css', 'root.css', 'fonts.css'])) {
-                continue;
-            }
-
-            if (is_dir($file->getPathname())) {
-                continue;
-            }
-
-            if (strpos($filePath, _EPH_THEMES_DIR_.'phenyx-theme-default/cache') !== false) {
-                continue;
-            }
-
-            if (strpos($filePath, _EPH_THEMES_DIR_. 'phenyx-theme-default/catalogue') !== false) {
-                continue;
-            }
-
-            if (strpos($filePath, _EPH_THEMES_DIR_. 'phenyx-theme-default/img') !== false) {
-                continue;
-            }
-
-            if (strpos($filePath, _EPH_THEMES_DIR_. 'phenyx-theme-default/font') !== false) {
-                continue;
-            }
-
-            $md5List[$filePath] = md5_file($file->getPathname());
-        }
-
-        return $md5List;
-    }
-	
 	public static function cleanEmptyDirectory() {
 		
 		
-		$recursive_directory = ['administration/app/classes', 'administration/app/controllers', 'administration/js', '../administration/template', 'administration/themes', 'common_class', 'plugins'];		
+		$recursive_directory = ['includes/classes', 'includes/controllers', 'includes/plugins', 'content/js', 'content/themes'];		
        
 
         foreach ($recursive_directory as $key => $directory) {
-            Tools::RemoveEmptySubFolders(_SHOP_ROOT_DIR_ . '/' . $directory . '/');
+            Tools::RemoveEmptySubFolders(_EPH_ROOT_DIR_ . '/' . $directory . '/');
         }
 		
 	}
@@ -6370,19 +6471,17 @@ FileETag none
 
         
 		$recursive_directory = [
-			'../administration/app', 
-			'../administration/js', 
-			'../administration/template',
-			'../administration/themes',
-			'../administration/webephenyx',
-			'../common_class',
-			'app',
-			'js',
-			'mails',
-			'modules',
-			'pdf',
-			'translations',
-			'webephenyx'
+			'content/js', 
+            'content/mails', 
+            'content/pdf', 
+            'content/translations', 
+            'content/themes/backend', 
+            'content/themes/blacktie', 
+            'content/themes/phenyx-theme-default', 
+			'includes/classes',		
+            'includes/controllers',		
+            'includes/plugins',	
+			'webephenyx',
 		];
 		
         $iterator = new AppendIterator();
@@ -6392,41 +6491,16 @@ FileETag none
 				$iterator->append(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_EPH_ROOT_DIR_ . '/' . $directory . '/')));
 			}
         }
-		$iterator->append(new DirectoryIterator(_EPH_ROOT_DIR_ . '/../administration'));
-		$iterator->append(new DirectoryIterator(_EPH_ROOT_DIR_ . '/app'));
+		$iterator->append(new DirectoryIterator(_EPH_ROOT_DIR_ . '/app/'));
+        $iterator->append(new DirectoryIterator(_EPH_ROOT_DIR_ . '/'));
+        $iterator->append(new DirectoryIterator(_EPH_ROOT_DIR_ . '/content/themes/'));
 
 
         foreach ($iterator as $file) {
             $filePath = $file->getPathname();
             $filePath = str_replace(_EPH_ROOT_DIR_, '', $filePath);
-			if (strpos($filePath, '/smarty/compile') !== false) {
-				continue;
-			}
-			if (strpos($filePath, '/smarty/cache') !== false) {
-				continue;
-			}
-			if (strpos($filePath, '/purifier/CSS') !== false) {
-				continue;
-			}
 			
-			if (strpos($filePath, '/purifier/URI') !== false) {
-				continue;
-			}
-			if (strpos($filePath, '/cachefs') !== false) {
-				continue;
-			}
-			if (strpos($filePath, '/cache/push/') !== false) {
-				continue;
-			}
-			if (strpos($filePath, '/app/specific_classes/') !== false) {
-				continue;
-			}
-			if (strpos($filePath, '/app/specific_controllers/') !== false) {
-				continue;
-			}
-			
-
-            if (in_array($file->getFilename(), ['.', '..', 'index.php', '.htaccess', 'dwsync.xml', 'settings.inc.php', 'class_index.php', 'favicon.ico'])) {
+            if (in_array($file->getFilename(), ['.', '..', '.htaccess', 'settings.inc.php', 'root.css', 'custom.css', 'polygon.css', 'layout.css', 'custom_menu.css', 'root.js', '.php-ini', '.php-version'])) {
                 continue;
             }
 			
@@ -6444,9 +6518,24 @@ FileETag none
 				continue;
 			}
 			if ($ext == 'xml') {
-                continue;
-            }
-			if ($ext == 'html') {
+				continue;
+			}
+            if (strpos($filePath, '/uploads/') !== false) {
+				continue;
+			}
+            if (strpos($filePath, '/phenyx-theme-default/cache/') !== false) {
+				continue;
+			}
+            if (strpos($filePath, '/phenyx-theme-default/css/plugins/') !== false) {
+				continue;
+			}
+            if (strpos($filePath, '/phenyx-theme-default/js/plugins/') !== false) {
+				continue;
+			}
+			if (strpos($filePath, '/phenyx-theme-default/img/') !== false) {
+				continue;
+			}
+            if (strpos($filePath, '/phenyx-theme-default/plugins/') !== false) {
 				continue;
 			}
 
@@ -7656,6 +7745,84 @@ FileETag none
             return $link;
         }
 
+    }
+    
+    public static function cleanModuleDataBase() {
+        
+        $modules = Db::getInstance()->executeS(
+            (new DbQuery())
+	         ->select('`id_module`, name')
+            ->from('module')
+        );
+        foreach($modules as $module) {
+                
+            if(!file_exists(_EPH_MODULE_DIR_.$module['name'].'/'.$module['name'].'.php')) {                    
+            
+                $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'hook_module WHERE id_module = '.$module['id_module'];
+                Db::getInstance()->execute($sql);
+                $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'hook_module_exceptions WHERE id_module = '.$module['id_module'];
+                Db::getInstance()->execute($sql);
+                $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'module WHERE id_module = '.$module['id_module'];
+                Db::getInstance()->execute($sql);
+                $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'modules_perfs WHERE module LIKE \''.$module['name'].'\'';
+                Db::getInstance()->execute($sql);
+                $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'module_access WHERE id_module = '.$module['id_module'];
+                Db::getInstance()->execute($sql);
+                $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'module_carrier WHERE id_module = '.$module['id_module'];
+                Db::getInstance()->execute($sql);
+                $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'module_country WHERE id_module = '.$module['id_module'];
+                Db::getInstance()->execute($sql);
+                $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'module_currency WHERE id_module = '.$module['id_module'];
+                Db::getInstance()->execute($sql);
+                $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'module_group WHERE id_module = '.$module['id_module'];
+                Db::getInstance()->execute($sql);
+                $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'module_preference WHERE module LIKE \''.$module['name'].'\'';
+                Db::getInstance()->execute($sql);
+                $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'module_shop WHERE id_module = '.$module['id_module'];
+            }
+        
+        }
+        
+        $hooks = Hook::getModuleHook();
+        
+        foreach($hooks as $hook) {
+            $modules = Db::getInstance()->executeS(
+                (new DbQuery())
+	            ->select('m.`id_module`, m.name')
+                ->from('module', 'm')
+                ->leftJoin('hook_module', 'hm', 'hm.`id_module` = m.`id_module`')
+                ->where('hm.`id_hook` = '.$hook['id_hook'])
+                ->orderBy('m.`id_module` ASC')
+            );
+            foreach($modules as $module) {
+                
+                if(!file_exists(_EPH_MODULE_DIR_.$module['name'].'/'.$module['name'].'.php')) {                    
+            
+                    $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'hook_module WHERE id_module = '.$module['id_module'];
+                    Db::getInstance()->execute($sql);
+                    $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'hook_module_exceptions WHERE id_module = '.$module['id_module'];
+                    Db::getInstance()->execute($sql);
+                    $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'module WHERE id_module = '.$module['id_module'];
+                    Db::getInstance()->execute($sql);
+                    $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'modules_perfs WHERE module LIKE \''.$module['name'].'\'';
+                    Db::getInstance()->execute($sql);
+                    $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'module_access WHERE id_module = '.$module['id_module'];
+                    Db::getInstance()->execute($sql);
+                    $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'module_carrier WHERE id_module = '.$module['id_module'];
+                    Db::getInstance()->execute($sql);
+                    $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'module_country WHERE id_module = '.$module['id_module'];
+                    Db::getInstance()->execute($sql);
+                    $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'module_currency WHERE id_module = '.$module['id_module'];
+                    Db::getInstance()->execute($sql);
+                    $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'module_group WHERE id_module = '.$module['id_module'];
+                    Db::getInstance()->execute($sql);
+                    $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'module_preference WHERE module LIKE \''.$module['name'].'\'';
+                    Db::getInstance()->execute($sql);
+                    $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'module_shop WHERE id_module = '.$module['id_module'];
+                }
+        
+            }
+        }
     }
 
 

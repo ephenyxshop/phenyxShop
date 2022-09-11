@@ -83,10 +83,10 @@ class PhenyxShopAutoload {
     public function generateIndex() {
 
         $classes = array_merge(
-            $this->getClassesFromDir('vendor/ephenyxshop/phenyxshop/lib/classes/'),			
-            $this->getClassesFromDir('vendor/ephenyxshop/phenyxshop/lib/controllers/'),	
-            $this->getClassesFromDir('vendor/ephenyxshop/phenyxshop/lib/Adapter/'),
-            $this->getClassesFromDir('vendor/ephenyxshop/phenyxshop/lib/Core/')
+            $this->getClassesFromDir('vendor/ephenyxshop/phenyxshop/library/classes/'),			
+            $this->getClassesFromDir('vendor/ephenyxshop/phenyxshop/library/controllers/'),	
+            $this->getClassesFromDir('vendor/ephenyxshop/phenyxshop/library/Adapter/'),
+            $this->getClassesFromDir('vendor/ephenyxshop/phenyxshop/library/Core/')
         );
 		
 

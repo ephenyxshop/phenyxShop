@@ -29,7 +29,7 @@ class UrlRewriteCore extends Objectmodel {
     public static $definition = [
         'table'          => 'url_rewrite',
         'primary'        => 'id_url_rewrite',
-        'multilang_shop' => true,
+        
         'fields'         => [
             'entity'    => ['type' => self::TYPE_INT, 'required' => true, 'validate' => 'isUnsignedInt'],
             'id_entity' => ['type' => self::TYPE_INT, 'required' => true, 'validate' => 'isUnsignedInt '],

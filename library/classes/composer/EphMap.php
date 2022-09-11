@@ -26,7 +26,7 @@ class EphMap extends EphComposer {
 
 			$this->user_role = 'author';
 
-			$this->settings = Configuration::get('wpb_js_grouEPH_access_rules');
+			$this->settings = Configuration::get('wpb_js_groups_access_rules');
 		}
 
 		return $this->settings;

@@ -467,7 +467,7 @@ class CustomerPiecesCore extends ObjectModel {
         foreach (static::$definition['fields'] as $fieldName => $field) {
 
             if ($field['type'] === static::TYPE_FLOAT && isset($this->$fieldName)) {
-                $this->$fieldName = Tools::EPH_round($this->$fieldName, _EPH_PRICE_DATABASE_PRECISION_);
+                $this->$fieldName = Tools::ps_round($this->$fieldName, _EPH_PRICE_DATABASE_PRECISION_);
             }
 
         }
@@ -583,8 +583,8 @@ class CustomerPiecesCore extends ObjectModel {
         $row['tax_calculator'] = $taxCalculator;
         $row['tax_rate'] = $taxCalculator->getTotalRate();
 
-        $row['unit_tax_excl'] = Tools::EPH_round($row['unit_tax_excl'], 2);
-        $row['unit_tax_incl'] = Tools::EPH_round($row['unit_tax_incl'], 2);
+        $row['unit_tax_excl'] = Tools::ps_round($row['unit_tax_excl'], 2);
+        $row['unit_tax_incl'] = Tools::ps_round($row['unit_tax_incl'], 2);
 
         $row['product_price_wt_but_ecotax'] = $row['unit_tax_incl'] - $row['ecotax'];
 
@@ -618,9 +618,8 @@ class CustomerPiecesCore extends ObjectModel {
         if (isset($product['id_product_attribute']) && $product['id_product_attribute']) {
             $idImage = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
-                    ->select('image_shop.`id_image`')
+                    ->select('i.`id_image`')
                     ->from('product_attribute_image', 'pai')
-                    ->join(Shop::addSqlAssociation('image', 'pai', true))
                     ->leftJoin('image', 'i', 'i.`id_image` = pai.`id_image`')
                     ->where('`id_product_attribute` = '.(int) $product['id_product_attribute'])
                     ->orderBy('i.`position` ASC')
@@ -630,9 +629,8 @@ class CustomerPiecesCore extends ObjectModel {
         if (!isset($idImage) || !$idImage) {
             $idImage = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
-                    ->select('image_shop.`id_image`')
+                    ->select('i.`id_image`')
                     ->from('image', 'i')
-                    ->join(Shop::addSqlAssociation('image', 'i', true, 'image_shop.`cover` = 1'))
                     ->where('i.`id_product` = '.(int) $product['id_product'])
             );
         }

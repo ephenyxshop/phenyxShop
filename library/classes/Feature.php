@@ -72,13 +72,12 @@ class FeatureCore extends ObjectModel {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function getFeatures($idLang, $withShop = true) {
+    public static function getFeatures($idLang) {
 
         return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('DISTINCT f.`id_feature`, f.*, fl.*')
                 ->from('feature', 'f')
-                ->join($withShop ? Shop::addSqlAssociation('feature', 'f') : '')
                 ->leftJoin('feature_lang', 'fl', 'f.`id_feature` = fl.`id_feature` And fl.`id_lang` = ' . (int) $idLang)
                 ->orderBy('f.`position` ASC')
         );

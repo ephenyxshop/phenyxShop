@@ -364,7 +364,7 @@ class LinkCore {
 
         $idLang = Context::getContext()->language->id;
 		$controller = Tools::strReplaceFirst('.php', '', $controller);
-        if((bool) Configuration::get('EPH_REWRITING_SETTINGS')) {
+        if(!is_null($controller) && (bool) Configuration::get('EPH_REWRITING_SETTINGS')) {
             $controller = strtolower($controller);
         }
         $params =  [];
@@ -443,48 +443,24 @@ class LinkCore {
         if (!$format) {
             $format = 'jpg';
         }
-
+        $context = Context::getContext();
+        
         $notDefault = false;
-
-        // Check if module is installed, enabled, customer is logged in and watermark logged option is on
-
-        if (($type != '')
-            && Configuration::get('WATERMARK_LOGGED')
-            && (Module::isInstalled('watermark')
-                && Module::isEnabled('watermark'))
-            && isset(Context::getContext()->customer->id)
-        ) {
-            $type .= '-' . Configuration::get('WATERMARK_HASH');
-        }
-
-        // legacy mode or default image
-        $theme = ((Shop::isFeatureActive() && file_exists(_EPH_PROD_IMG_DIR_ . $ids . ($type ? '-' . $type : '') . '-' . (int) Context::getContext()->shop->id_theme . ($highDpi ? '2x.' : '.') . $format)) ? '-' . Context::getContext()->shop->id_theme : '');
-
-        if ((Configuration::get('EPH_LEGACY_IMAGES')
-            && (file_exists(_EPH_PROD_IMG_DIR_ . $ids . ($type ? '-' . $type : '') . $theme . ($highDpi ? '2x.' : '.') . $format)))
-            || ($notDefault = strpos($ids, 'default') !== false)
-        ) {
-
-            if ($this->allow == 1 && !$notDefault) {
-                $uriPath = __EPH_BASE_URI__ . $ids . ($type ? '-' . $type : '') . $theme . '/' . $name . ($highDpi ? '2x.' : '.') . $format;
-            } else {
-                $uriPath = _THEME_PROD_DIR_ . $ids . ($type ? '-' . $type : '') . $theme . ($highDpi ? '2x.' : '.') . $format;
-            }
-
-        } else {
-            // if ids if of the form id_product-id_image, we want to extract the id_image part
-            $splitIds = explode('-', $ids);
-            $idImage = (isset($splitIds[1]) ? $splitIds[1] : $splitIds[0]);
-            $theme = ((Shop::isFeatureActive() && file_exists(_EPH_PROD_IMG_DIR_ . Image::getImgFolderStatic($idImage) . $idImage . ($type ? '-' . $type : '') . '-' . (int) Context::getContext()->shop->id_theme . ($highDpi ? '2x.' : '.') . $format)) ? '-' . Context::getContext()->shop->id_theme : '');
-
-            if ($this->allow == 1) {
+        
+        $splitIds = explode('-', $ids);
+        $idImage = (isset($splitIds[1]) ? $splitIds[1] : $splitIds[0]);
+        $theme = ((Shop::isFeatureActive() && file_exists(_EPH_PROD_IMG_DIR_ . Image::getImgFolderStatic($idImage) . $idImage . ($type ? '-' . $type : '') . '-' . (int) $context->shop->id_theme . ($highDpi ? '2x.' : '.') . $format)) ? '-' . $context->shop->id_theme : '');
+        if ($this->allow == 1) {
+            if($idImage > 0) {
                 $uriPath = __EPH_BASE_URI__ . $idImage . ($type ? '-' . $type : '') . $theme . '/' . $name . ($highDpi ? '2x.' : '.') . $format;
             } else {
-                $uriPath = _THEME_PROD_DIR_ . Image::getImgFolderStatic($idImage) . $idImage . ($type ? '-' . $type : '') . $theme . ($highDpi ? '2x.' : '.') . $format;
+                $uriPath = __EPH_BASE_URI__ . 'content/img/p/'.$context->language->iso_code. ($type ? '-default-' . $type : '')  . '.'.$format;
             }
-
+            
+        } else {
+            $uriPath = _THEME_PROD_DIR_ . Image::getImgFolderStatic($idImage) . $idImage . ($type ? '-' . $type : '') . $theme . ($highDpi ? '2x.' : '.') . $format;
         }
-
+       
         $url = $this->protocol_content . Tools::getMediaServer($uriPath) . $uriPath;
 
         if ($this->webpSupported) {

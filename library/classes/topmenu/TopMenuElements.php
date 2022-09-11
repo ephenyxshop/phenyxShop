@@ -120,23 +120,20 @@ class TopMenuElementsCore extends ObjectModel {
 
     public static function getMenuColumnElements($id_topmenu_column, $id_lang, $active = true, $groupRestrict = false) {
 
-        $sql_grouEPH_join = '';
-        $sql_grouEPH_where = '';
+        $sql_groups_join = '';
+        $sql_groups_where = '';
 		$file = fopen("testgetMenuColumnElements.txt","w");
         $sql = 'SELECT ate.*, atel.*,
         cl.link_rewrite, cl.meta_title
         FROM `' . _DB_PREFIX_ . 'topmenu_elements` ate
                 LEFT JOIN `' . _DB_PREFIX_ . 'topmenu_elements_lang` atel ON (ate.`id_topmenu_elements` = atel.`id_topmenu_elements` AND atel.`id_lang` = ' . (int) $id_lang . ')
                 LEFT JOIN ' . _DB_PREFIX_ . 'cms c ON (c.id_cms = ate.`id_cms`)
-                ' . Shop::addSqlAssociation('cms', 'c', false) . '
                 LEFT JOIN ' . _DB_PREFIX_ . 'cms_lang cl ON (c.id_cms = cl.id_cms AND cl.id_lang = ' . (int) $id_lang . ')
                 LEFT JOIN ' . _DB_PREFIX_ . 'cms_category cc ON (cc.id_cms_category = ate.`id_cms_category`)
-                ' . Shop::addSqlAssociation('cms_category', 'cc', false) . '
                 LEFT JOIN ' . _DB_PREFIX_ . 'cms_category_lang ccl ON (cc.id_cms_category = ccl.id_cms_category AND ccl.id_lang = ' . (int) $id_lang . ')
                 WHERE ' . ($active ? ' ate.`active` = 1 AND (ate.`active_desktop` = 1 || ate.`active_mobile` = 1) AND' : '') . ' ate.`id_topmenu_column` = ' . (int) $id_topmenu_column . '
                 ' . ($active ? 'AND ((ate.`id_cms` = 0 AND ate.`id_cms_category` = 0)
                 OR c.id_cms IS NOT NULL OR cc.id_cms_category IS NOT NULL )' : '') . '
-                AND (cms_shop.`id_shop` = ' . (int) Context::getContext()->shop->id . ' OR cms_shop.`id_shop` IS NULL)
                 GROUP BY ate.`id_topmenu_elements`
                 ORDER BY ate.`position`';
 		fwrite($file,$sql);

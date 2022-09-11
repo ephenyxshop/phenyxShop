@@ -472,7 +472,7 @@ class PFGRenderer {
 		}
 
 		if ($contains_files) {
-			$destination_directory = _EPH_ROOT_ADMIN_DIR_ . '/upload/pfg/';
+			$destination_directory = _EPH_ROOT_DIR_ . '/upload/pfg/';
 
 			if (!file_exists($destination_directory)) {
 				mkdir($destination_directory, 0777, true);

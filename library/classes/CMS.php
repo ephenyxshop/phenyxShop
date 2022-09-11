@@ -14,8 +14,7 @@ class CMSCore extends ObjectModel {
     public static $definition = [
         'table'          => 'cms',
         'primary'        => 'id_cms',
-        'multilang'      => true,
-        'multilang_shop' => true,
+        'multilang'      => true,        
         'fields'         => [
             'id_cms_category'  => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'],
             'position'         => ['type' => self::TYPE_INT],
@@ -70,7 +69,6 @@ class CMSCore extends ObjectModel {
                 ->select('c.`id_cms`, cl.`link_rewrite`, cl.`meta_title`')
                 ->from('cms', 'c')
                 ->leftJoin('cms_lang', 'cl', 'c.`id_cms` = cl.`id_cms` AND cl.`id_lang` = ' . (int) $idLang)
-                ->join(Shop::addSqlAssociation('cms', 'c'))
                 ->where($selection !== null ? 'c.`id_cms` IN (' . implode(',', array_map('intval', $selection)) . ')' : '')
                 ->where($active ? 'c.`active` = 1 ' : '')
                 ->groupBy('c.`id_cms`')

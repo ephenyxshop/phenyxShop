@@ -673,7 +673,7 @@ function vc_loop_include_templates() {
 	require_once vc_path_dir( 'TEMPLATES_DIR', 'params/loop/templates.html' );
 }
 
-JsComposer::$sds_action_hooks['EPH_admin_footer'] = 'vc_loop_include_templates';
+JsComposer::$sds_action_hooks['ps_admin_footer'] = 'vc_loop_include_templates';
 
 
 //add_action('admin_footer', 'vc_loop_include_templates');

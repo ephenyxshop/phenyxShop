@@ -497,6 +497,11 @@ class FrontControllerCore extends Controller {
                     'HOOK_RIGHT_COLUMN' => ($this->display_column_right ? Hook::exec('displayRightColumn', ['cart' => $this->context->cart]) : ''),
                     'usePhenyxMenu'     => $this->usePhenyxMenu,
                     'menuvars'          => $this->menuVars,
+                    'showSlider'		=> Configuration::get('EPH_HOME_SLIDER_ACTIVE'),
+                    'showVideo'		    => Configuration::get('EPH_HOME_VIDEO_ACTIVE'),
+                    'videoLink'		    => Configuration::get('EPH_HOME_VIDEO_LINK'),
+                    'showParallax'		=> Configuration::get('EPH_HOME_PARALLAX_ACTIVE'),
+                    'imgParallax'		=> Configuration::get('EPH_HOME_PARALLAX_FILE'),
 					'baseUrl'			=> $this->context->link->getBaseLink(),
                     'oggPic'            => Configuration::get('EPH_OGGPIC'),
 					'fonts'				=> $font
@@ -862,7 +867,8 @@ class FrontControllerCore extends Controller {
                 'token'                 => Tools::getToken(),
                 'priceDisplayPrecision' => _EPH_PRICE_DISPLAY_PRECISION_,
                 'content_only'          => (int) Tools::getValue('content_only'),
-                'customer_is_admin'         => $this->customer_is_admin,
+                'customer_is_admin'     => $this->customer_is_admin,
+                'head_script'           => Configuration::get('EPH_HEAD_SCRIPT'),
 
             ]
         );
@@ -1262,7 +1268,7 @@ class FrontControllerCore extends Controller {
 
             return true;
         }
-
+        $this->addCSS(_THEME_CSS_DIR_ . 'root.css', 'all');	
         $this->addCSS(_THEME_CSS_DIR_ . 'grid_ephenyxshop.css', 'all'); // retro compat themes 1.5.0.1
         $this->addCSS(_THEME_CSS_DIR_ . 'global.css', 'all');
 		$this->addCSS(_EPH_JS_DIR_. 'confirm-box.css', 'all');
@@ -1327,7 +1333,7 @@ class FrontControllerCore extends Controller {
         if (Configuration::get('EPH_COMPARATOR_MAX_ITEM') > 0) {
             $this->addJS(_THEME_JS_DIR_ . 'products-comparison.js');
         }
-
+        $this->addCSS(_THEME_CSS_DIR_ . 'layout.css', 'all');
         if ($this->usePhenyxMenuTheme()) {
             $this->setPhenyxMenuMedia();
         }
@@ -2073,7 +2079,7 @@ class FrontControllerCore extends Controller {
         );
 
         $assignArray = [
-            'img_EPH_dir'    => _EPH_IMG_,
+            'img_ps_dir'    => _EPH_IMG_,
             'img_cat_dir'   => _THEME_CAT_DIR_,
             'img_lang_dir'  => _THEME_LANG_DIR_,
             'img_prod_dir'  => _THEME_PROD_DIR_,

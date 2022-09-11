@@ -762,7 +762,7 @@ class PerformerCore {
             if(_USE_SPECIFIC_CONTROLLER_) {
 					$controller_directories = [
 						_EPH_ADMIN_CONTROLLER_DIR_, 
-						_EPH_ADMIN_SPECIFIC_CONTROLLER_DIR_,
+						_EPH_SPECIFIC_CONTROLLER_DIR_,
 						_EPH_OVERRIDE_DIR_ . 'controllers/admin/'
 					];	
 				} else {
@@ -797,6 +797,7 @@ class PerformerCore {
             throw new PhenyxShopException('Bad front controller chosen');
         }
         fwrite($file,"controllerClass : ".$controllerClass.PHP_EOL);
+        $_GET['controller'] = $controllerClass;
         // Instantiate controller
         try {
             // Loading controller
@@ -837,6 +838,7 @@ class PerformerCore {
             }
         }
         fwrite($file,"this->request_uri : ".$this->request_uri.PHP_EOL);
+        fwrite($file,"this->controller : ".$this->controller.PHP_EOL);
        
         if ($this->controller) {
             $_GET['controller'] = $this->controller;

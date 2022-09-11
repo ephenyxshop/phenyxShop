@@ -15,7 +15,7 @@ class CategoryCore extends ObjectModel {
         'table'          => 'category',
         'primary'        => 'id_category',
         'multilang'      => true,
-        'multilang_shop' => true,
+        
         'fields'         => [
             'nleft'            => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'],
             'nright'           => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'],
@@ -108,9 +108,9 @@ class CategoryCore extends ObjectModel {
      *
      * @throws PhenyxShopException
      */
-    public function __construct($idCategory = null, $idLang = null, $idShop = null) {
+    public function __construct($idCategory = null, $idLang = null) {
 
-        parent::__construct($idCategory, $idLang, $idShop);
+        parent::__construct($idCategory, $idLang);
         $this->id_image = ($this->id && file_exists(_EPH_CAT_IMG_DIR_ . (int) $this->id . '.jpg')) ? (int) $this->id : false;
         $this->image_dir = _EPH_CAT_IMG_DIR_;
     }
@@ -2237,7 +2237,7 @@ class CategoryCore extends ObjectModel {
      */
     public function getGroups() {
 
-        $cache_id = 'Category::getGrouEPH_' . (int) $this->id;
+        $cache_id = 'Category::getGroups_' . (int) $this->id;
 
         if (!Cache::isStored($cache_id)) {
             $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
