@@ -1715,7 +1715,6 @@ class PerformerCore {
         $sql->from('category_lang');
         $sql->where('`link_rewrite` = \'' . pSQL($rewrite) . '\'');
         $sql->where('`id_lang` = ' . (int) $idLang);
-        $sql->where('`id_shop` = ' . (int) $idShop);
 
         $results = Db::getInstance()->executeS($sql);
 
