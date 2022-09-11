@@ -1635,7 +1635,6 @@ class PerformerCore {
         $context = Context::getContext();
         $link = $context->link;
         $idLang = $context->language->id;
-        $idShop = $context->shop->id;
 
         // Context sometimes contains no link in older versions of PS
 
@@ -1702,7 +1701,6 @@ class PerformerCore {
         $context = Context::getContext();
         $link = $context->link;
         $idLang = $context->language->id;
-        $idShop = $context->shop->id;
 
         // Context sometimes contains no link in older versions of PS
 
