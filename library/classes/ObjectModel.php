@@ -220,7 +220,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
         }
 
         if ($idLang !== null) {
-            $this->id_lang = (Language::getLanguage($idLang) !== false) ? $idLang : Configuration::get('PS_LANG_DEFAULT');
+            $this->id_lang = (Language::getLanguage($idLang) !== false) ? $idLang : Configuration::get('EPH_LANG_DEFAULT');
         }
 
         if ($idShop && $this->isMultishop()) {
@@ -237,7 +237,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
             $entityMapper->load($id, $idLang, $this, $this->def, $this->id_shop, static::$cache_objects);
         }
 
-        if (!defined('_PS_ROOT_DIR_')) {
+        if (!defined('_EPH_ROOT_DIR_')) {
             $class = get_class($this);
 
             if ($class == 'CategoriesClass') {
@@ -459,7 +459,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
                     $value = $value[$idLang];
                 } else
                 if (!empty($data['required'])) {
-                    $value = $value[Configuration::get('PS_LANG_DEFAULT')];
+                    $value = $value[Configuration::get('EPH_LANG_DEFAULT')];
                 } else {
                     $value = '';
                 }
@@ -620,7 +620,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
         // Database insertion
 
         if (Shop::checkIdShopDefault($this->def['table'])) {
-            $this->id_shop_default = (in_array(Configuration::get('PS_SHOP_DEFAULT'), $idShopList) == true) ? Configuration::get('PS_SHOP_DEFAULT') : min($idShopList);
+            $this->id_shop_default = (in_array(Configuration::get('EPH_SHOP_DEFAULT'), $idShopList) == true) ? Configuration::get('EPH_SHOP_DEFAULT') : min($idShopList);
         }
 
         $fields = $this->getFields();
@@ -823,7 +823,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
         }
 
         if (Shop::checkIdShopDefault($this->def['table']) && !$this->id_shop_default) {
-            $this->id_shop_default = (in_array(Configuration::get('PS_SHOP_DEFAULT'), $idShopList) == true) ? Configuration::get('PS_SHOP_DEFAULT') : min($idShopList);
+            $this->id_shop_default = (in_array(Configuration::get('EPH_SHOP_DEFAULT'), $idShopList) == true) ? Configuration::get('EPH_SHOP_DEFAULT') : min($idShopList);
         }
 
         // Database update
@@ -1124,7 +1124,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
             if (in_array($fieldName, $this->fieldsRequiredLang)) {
                 $fields[$idLanguage][$fieldName] = pSQL($this->id_lang ? $this->$fieldName : $this->{$fieldName}
 
-                    [Configuration::get('PS_LANG_DEFAULT')], $html);
+                    [Configuration::get('EPH_LANG_DEFAULT')], $html);
             } else {
                 $fields[$idLanguage][$fieldName] = '';
             }
@@ -1188,7 +1188,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
      */
     public function validateFieldsLang($die = true, $errorReturn = false) {
 
-        $idLangDefault = Configuration::get('PS_LANG_DEFAULT');
+        $idLangDefault = Configuration::get('EPH_LANG_DEFAULT');
 
         foreach ($this->def['fields'] as $field => $data) {
 
@@ -1256,11 +1256,11 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
         static $psAllowHtmlIframe = null;
 
         if ($psLangDefault === null) {
-            $psLangDefault = Configuration::get('PS_LANG_DEFAULT');
+            $psLangDefault = Configuration::get('EPH_LANG_DEFAULT');
         }
 
         if ($psAllowHtmlIframe === null) {
-            $psAllowHtmlIframe = (int) Configuration::get('PS_ALLOW_HTML_IFRAME');
+            $psAllowHtmlIframe = (int) Configuration::get('EPH_ALLOW_HTML_IFRAME');
         }
 
         $this->cacheFieldsRequiredDatabase();
@@ -1424,8 +1424,8 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
             $context = Context::getContext();
         }
 
-        if ($_FIELDS === null && file_exists(_PS_TRANSLATIONS_DIR_ . $context->language->iso_code . '/fields.php')) {
-            include_once _PS_TRANSLATIONS_DIR_ . $context->language->iso_code . '/fields.php';
+        if ($_FIELDS === null && file_exists(_EPH_TRANSLATIONS_DIR_ . $context->language->iso_code . '/fields.php')) {
+            include_once _EPH_TRANSLATIONS_DIR_ . $context->language->iso_code . '/fields.php';
         }
 
         $key = $class . '_' . md5($field);
@@ -1730,7 +1730,7 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
         ' . ($sqlSort != '' ? $sqlSort : '') . '
         ' . ($sqlLimit != '' ? $sqlLimit : '');
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
     }
 
     /**
@@ -2159,13 +2159,13 @@ abstract class ObjectModelCore implements Core_Foundation_Database_EntityInterfa
 
             }
 
-            if (file_exists(_PS_TMP_IMG_DIR_ . $this->def['table'] . '_' . $this->id . '.' . $this->image_format)
-                && !unlink(_PS_TMP_IMG_DIR_ . $this->def['table'] . '_' . $this->id . '.' . $this->image_format)) {
+            if (file_exists(_EPH_TMP_IMG_DIR_ . $this->def['table'] . '_' . $this->id . '.' . $this->image_format)
+                && !unlink(_EPH_TMP_IMG_DIR_ . $this->def['table'] . '_' . $this->id . '.' . $this->image_format)) {
                 return false;
             }
 
-            if (file_exists(_PS_TMP_IMG_DIR_ . $this->def['table'] . '_mini_' . $this->id . '.' . $this->image_format)
-                && !unlink(_PS_TMP_IMG_DIR_ . $this->def['table'] . '_mini_' . $this->id . '.' . $this->image_format)) {
+            if (file_exists(_EPH_TMP_IMG_DIR_ . $this->def['table'] . '_mini_' . $this->id . '.' . $this->image_format)
+                && !unlink(_EPH_TMP_IMG_DIR_ . $this->def['table'] . '_mini_' . $this->id . '.' . $this->image_format)) {
                 return false;
             }
 

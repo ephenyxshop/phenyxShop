@@ -303,19 +303,19 @@ class AdminBackUsersControllerCore extends AdminController {
         $data = $this->createTemplate('controllers/back_users/newwemployee.tpl');
 
         $extracss = $this->pushCSS([
-            _PS_JS_DIR_ . 'trumbowyg/ui/trumbowyg.min.css',
-            _PS_JS_DIR_ . 'jquery-ui/general.min.css',
+            _EPH_JS_DIR_ . 'trumbowyg/ui/trumbowyg.min.css',
+            _EPH_JS_DIR_ . 'jquery-ui/general.min.css',
 
         ]);
         $pusjJs = $this->pushJS([
-            _PS_JS_DIR_ . 'employee.js',
-            _PS_JS_DIR_ . 'trumbowyg/trumbowyg.min.js',
-            _PS_JS_DIR_ . 'jquery-jeditable/jquery.jeditable.min.js',
-            _PS_JS_DIR_ . 'jquery-ui/jquery-ui-timepicker-addon.min.js',
-            _PS_JS_DIR_ . 'moment/moment.min.js',
-            _PS_JS_DIR_ . 'moment/moment-timezone-with-data.min.js',
-            _PS_JS_DIR_ . 'calendar/working_plan_exceptions_modal.min.js',
-            _PS_JS_DIR_ . 'datejs/date.min.js',
+            _EPH_JS_DIR_ . 'employee.js',
+            _EPH_JS_DIR_ . 'trumbowyg/trumbowyg.min.js',
+            _EPH_JS_DIR_ . 'jquery-jeditable/jquery.jeditable.min.js',
+            _EPH_JS_DIR_ . 'jquery-ui/jquery-ui-timepicker-addon.min.js',
+            _EPH_JS_DIR_ . 'moment/moment.min.js',
+            _EPH_JS_DIR_ . 'moment/moment-timezone-with-data.min.js',
+            _EPH_JS_DIR_ . 'calendar/working_plan_exceptions_modal.min.js',
+            _EPH_JS_DIR_ . 'datejs/date.min.js',
 
         ]);
 
@@ -358,7 +358,7 @@ class AdminBackUsersControllerCore extends AdminController {
             $availableProfiles = Profile::getProfiles($this->context->language->id);
             $data = $this->createTemplate('controllers/back_users/editEmployee.tpl');
 
-            $image = _PS_EMPLOYEE_IMG_DIR_ . $employee->id . '.jpg';
+            $image = _EPH_EMPLOYEE_IMG_DIR_ . $employee->id . '.jpg';
 
             if (file_exists($image)) {
                 $imageUrl = $this->context->link->getBaseFrontLink() . 'img/e/' . $employee->id . '.jpg';
@@ -366,12 +366,12 @@ class AdminBackUsersControllerCore extends AdminController {
                 $imageUrl = $this->context->link->getBaseFrontLink() . 'img/e/Unknown.png';
             }
 
-            $extracss = $this->pushCSS([_PS_JS_DIR_ . 'trumbowyg/ui/trumbowyg.min.css', _PS_JS_DIR_ . 'jquery-ui/general.min.css',
+            $extracss = $this->pushCSS([_EPH_JS_DIR_ . 'trumbowyg/ui/trumbowyg.min.css', _EPH_JS_DIR_ . 'jquery-ui/general.min.css',
 
             ]);
-            $pusjJs = $this->pushJS([_PS_JS_DIR_ . 'employee.js', _PS_JS_DIR_ . 'trumbowyg/trumbowyg.min.js',
-                $this->admin_webpath . _PS_JS_DIR_ . 'jquery-jeditable/jquery.jeditable.min.js', _PS_JS_DIR_ . 'jquery-ui/jquery-ui-timepicker-addon.min.js', _PS_JS_DIR_ . 'moment/moment.min.js', _PS_JS_DIR_ . 'moment/moment-timezone-with-data.min.js', _PS_JS_DIR_ . 'calendar/working_plan_exceptions_modal.min.js',
-                $this->admin_webpath . _PS_JS_DIR_ . 'datejs/date.min.js',
+            $pusjJs = $this->pushJS([_EPH_JS_DIR_ . 'employee.js', _EPH_JS_DIR_ . 'trumbowyg/trumbowyg.min.js',
+                $this->admin_webpath . _EPH_JS_DIR_ . 'jquery-jeditable/jquery.jeditable.min.js', _EPH_JS_DIR_ . 'jquery-ui/jquery-ui-timepicker-addon.min.js', _EPH_JS_DIR_ . 'moment/moment.min.js', _EPH_JS_DIR_ . 'moment/moment-timezone-with-data.min.js', _EPH_JS_DIR_ . 'calendar/working_plan_exceptions_modal.min.js',
+                $this->admin_webpath . _EPH_JS_DIR_ . 'datejs/date.min.js',
 
             ]);
 
@@ -460,7 +460,7 @@ class AdminBackUsersControllerCore extends AdminController {
             if (is_array($files) && count($files)) {
 
                 foreach ($files as $image) {
-                    $destinationFile = _PS_EMPLOYEE_IMG_DIR_ . $object->id . '.jpg';
+                    $destinationFile = _EPH_EMPLOYEE_IMG_DIR_ . $object->id . '.jpg';
                     $fileName = $object->id . '.jpg';
                     copy($image['save_path'], $destinationFile);
                 }
@@ -546,7 +546,7 @@ class AdminBackUsersControllerCore extends AdminController {
             if (is_array($files) && count($files)) {
 
                 foreach ($files as $image) {
-                    $destinationFile = _PS_EMPLOYEE_IMG_DIR_ . $object->id . '.jpg';
+                    $destinationFile = _EPH_EMPLOYEE_IMG_DIR_ . $object->id . '.jpg';
                     $fileName = $object->id . '.jpg';
                     copy($image['save_path'], $destinationFile);
                 }
@@ -616,7 +616,7 @@ class AdminBackUsersControllerCore extends AdminController {
             return false;
         }
 
-        if (Tools::getValue('id_profile') == _PS_ADMIN_PROFILE_ && $this->context->employee->id_profile != _PS_ADMIN_PROFILE_) {
+        if (Tools::getValue('id_profile') == _EPH_ADMIN_PROFILE_ && $this->context->employee->id_profile != _EPH_ADMIN_PROFILE_) {
             $this->errors[] = Tools::displayError('The provided profile is invalid');
         }
 
@@ -709,8 +709,8 @@ class AdminBackUsersControllerCore extends AdminController {
         parent::afterImageUpload();
 
         if (($id_employee = (int) Tools::getValue('id_employy')) &&
-            isset($_FILES) && count($_FILES) && file_exists(_PS_EMPLOYEE_IMG_DIR_ . $id_employee . '.jpg')) {
-            $current_file = _PS_TMP_IMG_DIR_ . 'emplyee_mini_' . $id_employee . '_' . $this->context->shop->id . '.jpg';
+            isset($_FILES) && count($_FILES) && file_exists(_EPH_EMPLOYEE_IMG_DIR_ . $id_employee . '.jpg')) {
+            $current_file = _EPH_TMP_IMG_DIR_ . 'emplyee_mini_' . $id_employee . '_' . $this->context->shop->id . '.jpg';
 
             if (file_exists($current_file)) {
                 unlink($current_file);

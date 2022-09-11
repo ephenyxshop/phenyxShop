@@ -41,7 +41,7 @@ class CompareControllerCore extends FrontController {
             if (Tools::getValue('action') == 'add') {
                 $idCompare = isset($this->context->cookie->id_compare) ? $this->context->cookie->id_compare : false;
 
-                if (CompareProduct::getNumberProducts($idCompare) < Configuration::get('PS_COMPARATOR_MAX_ITEM')) {
+                if (CompareProduct::getNumberProducts($idCompare) < Configuration::get('EPH_COMPARATOR_MAX_ITEM')) {
                     CompareProduct::addCompareProduct($idCompare, (int) Tools::getValue('id_product'));
                 } else {
                     $this->ajaxDie('0');
@@ -87,7 +87,7 @@ class CompareControllerCore extends FrontController {
 
         $hasProduct = false;
 
-        if (!Configuration::get('PS_COMPARATOR_MAX_ITEM')) {
+        if (!Configuration::get('EPH_COMPARATOR_MAX_ITEM')) {
             Tools::redirect('index.php?controller=404');
 
             return;
@@ -110,8 +110,8 @@ class CompareControllerCore extends FrontController {
 
             if (count($ids) > 0) {
 
-                if (count($ids) > Configuration::get('PS_COMPARATOR_MAX_ITEM')) {
-                    $ids = array_slice($ids, 0, Configuration::get('PS_COMPARATOR_MAX_ITEM'));
+                if (count($ids) > Configuration::get('EPH_COMPARATOR_MAX_ITEM')) {
+                    $ids = array_slice($ids, 0, Configuration::get('EPH_COMPARATOR_MAX_ITEM'));
                 }
 
                 $listProducts = [];
@@ -172,7 +172,7 @@ class CompareControllerCore extends FrontController {
 
         $this->context->smarty->assign('hasProduct', $hasProduct);
 
-        $this->setTemplate(_PS_THEME_DIR_ . 'products-comparison.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'products-comparison.tpl');
     }
 
 }

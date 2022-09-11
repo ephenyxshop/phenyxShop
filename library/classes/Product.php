@@ -418,9 +418,9 @@ class ProductCore extends ObjectModel {
             $this->supplier_name = Supplier::getNameById((int) $this->id_supplier);
             $address = null;
 
-            if (is_object($context->cart) && $context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')}
+            if (is_object($context->cart) && $context->cart->{Configuration::get('EPH_TAX_ADDRESS_TYPE')}
                 != null) {
-                $address = $context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')};
+                $address = $context->cart->{Configuration::get('EPH_TAX_ADDRESS_TYPE')};
             }
 
             $this->tax_rate = $this->getTaxesRate(new Address($address));
@@ -506,7 +506,7 @@ class ProductCore extends ObjectModel {
                 product_shop.`date_add`,
                 DATE_SUB(
                     "' . date('Y-m-d') . ' 00:00:00",
-                    INTERVAL ' . (Validate::isUnsignedInt(Configuration::get('PS_NB_DAYS_NEW_PRODUCT')) ? Configuration::get('PS_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY
+                    INTERVAL ' . (Validate::isUnsignedInt(Configuration::get('EPH_NB_DAYS_NEW_PRODUCT')) ? Configuration::get('EPH_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY
                 )
             ) > 0
         ', true, false
@@ -625,7 +625,7 @@ class ProductCore extends ObjectModel {
                 FROM `' . _DB_PREFIX_ . 'cart_product`
                 WHERE `id_product` = ' . (int) $idProduct . '
                 AND `id_cart` = ' . (int) $idCart;
-                $cartQuantity = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+                $cartQuantity = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($sql);
                 Cache::store($cacheId, $cartQuantity);
             } else {
                 $cartQuantity = Cache::retrieve($cacheId);
@@ -633,7 +633,7 @@ class ProductCore extends ObjectModel {
 
         }
 
-        $idCurrency = Validate::isLoadedObject($context->currency) ? (int) $context->currency->id : (int) Configuration::get('PS_CURRENCY_DEFAULT');
+        $idCurrency = Validate::isLoadedObject($context->currency) ? (int) $context->currency->id : (int) Configuration::get('EPH_CURRENCY_DEFAULT');
 
         // retrieve address informations
         $idCountry = (int) $context->country->id;
@@ -641,7 +641,7 @@ class ProductCore extends ObjectModel {
         $zipcode = 0;
 
         if (!$idAddress && Validate::isLoadedObject($curCart)) {
-            $idAddress = $curCart->{Configuration::get('PS_TAX_ADDRESS_TYPE')};
+            $idAddress = $curCart->{Configuration::get('EPH_TAX_ADDRESS_TYPE')};
         }
 
         if ($idAddress) {
@@ -667,7 +667,7 @@ class ProductCore extends ObjectModel {
         //        Hook::exec('isVatExemption', ['address' => &$address]);
 
         if (Module::isEnabled('vatnumber') && $idAddress) {
-            require_once _PS_MODULE_DIR_ . '/vatnumber/VATNumberTaxManager.php';
+            require_once _EPH_MODULE_DIR_ . '/vatnumber/VATNumberTaxManager.php';
 
             $address = new Address($idAddress);
             $usetax = $usetax
@@ -828,7 +828,7 @@ class ProductCore extends ObjectModel {
                 $sql->select('0 as id_product_attribute');
             }
 
-            $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+            $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
 
             if (is_array($res) && count($res)) {
 
@@ -916,7 +916,7 @@ class ProductCore extends ObjectModel {
                 // reinit the tax manager for ecotax handling
                 $taxManager = TaxManagerFactory::getManager(
                     $address,
-                    (int) Configuration::get('PS_ECOTAX_TAX_RULES_GROUP_ID')
+                    (int) Configuration::get('EPH_ECOTAX_TAX_RULES_GROUP_ID')
                 );
                 $ecotaxTaxCalculator = $taxManager->getTaxCalculator();
                 $price += $ecotaxTaxCalculator->addTaxes($ecotax);
@@ -1008,7 +1008,7 @@ class ProductCore extends ObjectModel {
                     6
                 );
             } else {
-                return Tools::ps_round($specificPriceReduction, $decimals);
+                return Tools::EPH_round($specificPriceReduction, $decimals);
             }
 
         }
@@ -1016,7 +1016,7 @@ class ProductCore extends ObjectModel {
         if ($decimals >= 6) {
             $price = round($price, 6);
         } else {
-            $price = Tools::ps_round($price, $decimals);
+            $price = Tools::EPH_round($price, $decimals);
         }
 
         if ($price < 0) {
@@ -1174,7 +1174,7 @@ class ProductCore extends ObjectModel {
 
         if (!Cache::isStored($key)) {
 
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 '
                             SELECT `id_tax_rules_group`
                             FROM `' . _DB_PREFIX_ . 'product_shop`
@@ -1267,20 +1267,20 @@ class ProductCore extends ObjectModel {
             $idAddress = 0;
 
             if (Validate::isLoadedObject($curCart)) {
-                $idAddress = (int) $curCart->{Configuration::get('PS_TAX_ADDRESS_TYPE')};
+                $idAddress = (int) $curCart->{Configuration::get('EPH_TAX_ADDRESS_TYPE')};
             }
 
             // @TODO: Use a hook for this. Like:
             //        Hook::exec('isVatExemption', ['address' => &$address]);
 
             if (Module::isEnabled('vatnumber')
-                && static::$_taxCalculationMethod != PS_TAX_EXC) {
-                require_once _PS_MODULE_DIR_ . '/vatnumber/VATNumberTaxManager.php';
+                && static::$_taxCalculationMethod != EPH_TAX_EXC) {
+                require_once _EPH_MODULE_DIR_ . '/vatnumber/VATNumberTaxManager.php';
 
                 $address = new Address($idAddress);
 
                 if (VATNumberTaxManager::isAvailableForThisAddress($address)) {
-                    static::$_taxCalculationMethod = PS_TAX_EXC;
+                    static::$_taxCalculationMethod = EPH_TAX_EXC;
                 }
 
             }
@@ -1331,7 +1331,7 @@ class ProductCore extends ObjectModel {
             $sql .= ' AND pa.`id_product` = ' . (int) $idProduct . ' AND pa.`id_product_attribute` = ' . (int) $idProductAttribute;
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($sql);
 
         if ($result == '0000-00-00') {
             $result = null;
@@ -1430,7 +1430,7 @@ class ProductCore extends ObjectModel {
         ($onlyActive ? ' AND product_shop.`active` = 1' : '') . '
                 ORDER BY ' . (isset($orderByPrefix) ? pSQL($orderByPrefix) . '.' : '') . '`' . pSQL($orderBy) . '` ' . pSQL($orderWay) .
             ($limit > 0 ? ' LIMIT ' . (int) $start . ',' . (int) $limit : '');
-        $rq = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        $rq = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
 
         if ($orderBy == 'price') {
             Tools::orderbyPrice($rq, $orderWay);
@@ -1507,7 +1507,7 @@ class ProductCore extends ObjectModel {
                 ' . ($front ? ' AND product_shop.`visibility` IN ("both", "catalog")' : '') . '
                 ORDER BY pl.`name`';
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
     }
 
     /**
@@ -1620,18 +1620,18 @@ class ProductCore extends ObjectModel {
                     FROM `' . _DB_PREFIX_ . 'product` p
                     ' . Shop::addSqlAssociation('product', 'p') . '
                     WHERE product_shop.`active` = 1
-                    AND product_shop.`date_add` > "' . date('Y-m-d', strtotime('-' . (Configuration::get('PS_NB_DAYS_NEW_PRODUCT') ? (int) Configuration::get('PS_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY')) . '"
+                    AND product_shop.`date_add` > "' . date('Y-m-d', strtotime('-' . (Configuration::get('EPH_NB_DAYS_NEW_PRODUCT') ? (int) Configuration::get('EPH_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY')) . '"
                     ' . ($front ? ' AND product_shop.`visibility` IN ("both", "catalog")' : '') . '
                     ' . $sqlGroups;
 
-            return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+            return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($sql);
         }
 
         $sql = new DbQuery();
         $sql->select(
             'p.*, product_shop.*, stock.out_of_stock, IFNULL(stock.quantity, 0) as quantity, pl.`description`, pl.`description_short`, pl.`link_rewrite`, pl.`meta_description`,
             pl.`meta_keywords`, pl.`meta_title`, pl.`name`, pl.`available_now`, pl.`available_later`, image_shop.`id_image` id_image, il.`legend`, m.`name` AS manufacturer_name,
-            product_shop.`date_add` > "' . date('Y-m-d', strtotime('-' . (Configuration::get('PS_NB_DAYS_NEW_PRODUCT') ? (int) Configuration::get('PS_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY')) . '" as new'
+            product_shop.`date_add` > "' . date('Y-m-d', strtotime('-' . (Configuration::get('EPH_NB_DAYS_NEW_PRODUCT') ? (int) Configuration::get('EPH_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY')) . '" as new'
         );
 
         $sql->from('product', 'p');
@@ -1652,7 +1652,7 @@ class ProductCore extends ObjectModel {
             $sql->where('product_shop.`visibility` IN ("both", "catalog")');
         }
 
-        $sql->where('product_shop.`date_add` > "' . date('Y-m-d', strtotime('-' . (Configuration::get('PS_NB_DAYS_NEW_PRODUCT') ? (int) Configuration::get('PS_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY')) . '"');
+        $sql->where('product_shop.`date_add` > "' . date('Y-m-d', strtotime('-' . (Configuration::get('EPH_NB_DAYS_NEW_PRODUCT') ? (int) Configuration::get('EPH_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY')) . '"');
 
         if (Group::isFeatureActive()) {
             $groups = FrontController::getCurrentCustomerGroups();
@@ -1673,7 +1673,7 @@ class ProductCore extends ObjectModel {
 
         $sql->join(static::sqlStock('p', 0));
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
 
         if (!$result) {
             return false;
@@ -1724,7 +1724,7 @@ class ProductCore extends ObjectModel {
             return;
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
         SELECT id_product, name, value, pf.id_feature
         FROM ' . _DB_PREFIX_ . 'feature_product pf
@@ -1868,7 +1868,7 @@ class ProductCore extends ObjectModel {
         );
         $row['price_without_reduction'] = static::getPriceStatic(
             (int) $row['id_product'],
-            static::$_taxCalculationMethod != PS_TAX_EXC,
+            static::$_taxCalculationMethod != EPH_TAX_EXC,
             $idProductAttribute,
             6,
             null,
@@ -1877,7 +1877,7 @@ class ProductCore extends ObjectModel {
         );
         $row['reduction'] = static::getPriceStatic(
             (int) $row['id_product'],
-            static::$_taxCalculationMethod != PS_TAX_EXC,
+            static::$_taxCalculationMethod != EPH_TAX_EXC,
             $idProductAttribute,
             6,
             null,
@@ -1960,7 +1960,7 @@ class ProductCore extends ObjectModel {
         static $psStockManagement = null;
 
         if ($psStockManagement === null) {
-            $psStockManagement = Configuration::get('PS_STOCK_MANAGEMENT');
+            $psStockManagement = Configuration::get('EPH_STOCK_MANAGEMENT');
         }
 
         if (!$psStockManagement) {
@@ -1969,7 +1969,7 @@ class ProductCore extends ObjectModel {
             static $psOrderOutOfStock = null;
 
             if ($psOrderOutOfStock === null) {
-                $psOrderOutOfStock = Configuration::get('PS_ORDER_OUT_OF_STOCK');
+                $psOrderOutOfStock = Configuration::get('EPH_ORDER_OUT_OF_STOCK');
             }
 
             return (int) $outOfStock == 2 ? (int) $psOrderOutOfStock : (int) $outOfStock;
@@ -2054,7 +2054,7 @@ class ProductCore extends ObjectModel {
         }
 
         if (!array_key_exists($idProduct . '-' . $idLang, static::$_frontFeaturesCache)) {
-            static::$_frontFeaturesCache[$idProduct . '-' . $idLang] = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            static::$_frontFeaturesCache[$idProduct . '-' . $idLang] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 '
                 SELECT name, value, pf.id_feature
                 FROM ' . _DB_PREFIX_ . 'feature_product pf
@@ -2083,7 +2083,7 @@ class ProductCore extends ObjectModel {
      */
     public static function getAttachmentsStatic($idLang, $idProduct) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
         SELECT *
         FROM ' . _DB_PREFIX_ . 'product_attachment pa
@@ -2193,7 +2193,7 @@ class ProductCore extends ObjectModel {
                         pl.`link_rewrite`, pl.`meta_description`, pl.`meta_keywords`, pl.`meta_title`, pl.`name`, pl.`available_now`, pl.`available_later`,
                         p.`ean13`, p.`upc`, image_shop.`id_image` id_image, il.`legend`,
                         DATEDIFF(product_shop.`date_add`, DATE_SUB("' . date('Y-m-d') . ' 00:00:00",
-                        INTERVAL ' . (Validate::isUnsignedInt(Configuration::get('PS_NB_DAYS_NEW_PRODUCT')) ? Configuration::get('PS_NB_DAYS_NEW_PRODUCT') : 20) . '
+                        INTERVAL ' . (Validate::isUnsignedInt(Configuration::get('EPH_NB_DAYS_NEW_PRODUCT')) ? Configuration::get('EPH_NB_DAYS_NEW_PRODUCT') : 20) . '
                             DAY)) > 0 AS new
                     FROM `' . _DB_PREFIX_ . 'product` p
                     LEFT JOIN `' . _DB_PREFIX_ . 'product_lang` pl ON (
@@ -2207,7 +2207,7 @@ class ProductCore extends ObjectModel {
                     ' . static::sqlStock('p', 0) . '
                     WHERE p.id_product = ' . (int) $idProduct;
 
-            $row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
+            $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow($sql);
 
             if (!$row) {
                 return false;
@@ -2241,11 +2241,11 @@ class ProductCore extends ObjectModel {
             $context = Context::getContext();
         }
 
-        $idAddress = $context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')};
+        $idAddress = $context->cart->{Configuration::get('EPH_TAX_ADDRESS_TYPE')};
         $ids = Address::getCountryAndState($idAddress);
         $idCountry = ($ids && $ids['id_country'])
         ? (int) $ids['id_country']
-        : (int) Configuration::get('PS_COUNTRY_DEFAULT');
+        : (int) Configuration::get('EPH_COUNTRY_DEFAULT');
 
         return SpecificPrice::getProductIdByDate(
             $context->shop->id,
@@ -2357,7 +2357,7 @@ class ProductCore extends ObjectModel {
         }
 
         if ($count) {
-            return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 '
             SELECT COUNT(DISTINCT p.`id_product`)
             FROM `' . _DB_PREFIX_ . 'product` p
@@ -2385,7 +2385,7 @@ class ProductCore extends ObjectModel {
                 p.`date_add`,
                 DATE_SUB(
                     "' . date('Y-m-d') . ' 00:00:00",
-                    INTERVAL ' . (Validate::isUnsignedInt(Configuration::get('PS_NB_DAYS_NEW_PRODUCT')) ? Configuration::get('PS_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY
+                    INTERVAL ' . (Validate::isUnsignedInt(Configuration::get('EPH_NB_DAYS_NEW_PRODUCT')) ? Configuration::get('EPH_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY
                 )
             ) > 0 AS new
         FROM `' . _DB_PREFIX_ . 'product` p
@@ -2409,7 +2409,7 @@ class ProductCore extends ObjectModel {
         ORDER BY ' . (isset($orderByPrefix) ? pSQL($orderByPrefix) . '.' : '') . pSQL($orderBy) . ' ' . pSQL($orderWay) . '
         LIMIT ' . (int) ($pageNumber * $nbProducts) . ', ' . (int) $nbProducts;
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
 
         if (!$result) {
             return false;
@@ -2440,7 +2440,7 @@ class ProductCore extends ObjectModel {
         }
 
         $ret = [];
-        $row = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
             SELECT cp.`id_category`, cl.`name`, cl.`link_rewrite` FROM `' . _DB_PREFIX_ . 'category_product` cp
             LEFT JOIN `' . _DB_PREFIX_ . 'category` c ON (c.id_category = cp.id_category)
@@ -2499,7 +2499,7 @@ class ProductCore extends ObjectModel {
         }
 
         $idGroup = $context->customer->id_default_group;
-        $cartQuantity = !$context->cart ? 0 : Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $cartQuantity = !$context->cart ? 0 : Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
             SELECT SUM(`quantity`)
             FROM `' . _DB_PREFIX_ . 'cart_product`
@@ -2508,8 +2508,8 @@ class ProductCore extends ObjectModel {
         $quantity = $cartQuantity ? $cartQuantity : $quantity;
 
         $idCurrency = (int) $context->currency->id;
-        $ids = Address::getCountryAndState((int) $context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
-        $idCountry = $ids['id_country'] ? (int) $ids['id_country'] : (int) Configuration::get('PS_COUNTRY_DEFAULT');
+        $ids = Address::getCountryAndState((int) $context->cart->{Configuration::get('EPH_TAX_ADDRESS_TYPE')});
+        $idCountry = $ids['id_country'] ? (int) $ids['id_country'] : (int) Configuration::get('EPH_COUNTRY_DEFAULT');
 
         return (bool) SpecificPrice::getSpecificPrice((int) $idProduct, $context->shop->id, $idCurrency, $idCountry, $idGroup, $quantity, null, 0, 0, $quantity);
     }
@@ -2632,7 +2632,7 @@ class ProductCore extends ObjectModel {
 
         $idLang = Context::getContext()->language->id;
 
-        $checkStock = !Configuration::get('PS_DISP_UNAVAILABLE_ATTR');
+        $checkStock = !Configuration::get('EPH_DISP_UNAVAILABLE_ATTR');
 
         if (!$res = Db::getInstance()->executeS(
             '
@@ -2656,7 +2656,7 @@ class ProductCore extends ObjectModel {
 
         foreach ($res as $row) {
 
-            if (Tools::isEmpty($row['color']) && !@filemtime(_PS_COL_IMG_DIR_ . $row['id_attribute'] . '.jpg')) {
+            if (Tools::isEmpty($row['color']) && !@filemtime(_EPH_COL_IMG_DIR_ . $row['id_attribute'] . '.jpg')) {
                 continue;
             }
 
@@ -2759,7 +2759,7 @@ class ProductCore extends ObjectModel {
             return;
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
         SELECT id_feature, id_product, id_feature_value
         FROM `' . _DB_PREFIX_ . 'feature_product`
@@ -2874,7 +2874,7 @@ class ProductCore extends ObjectModel {
 
         foreach ($result as $row) {
             $idProductAttributeOld = (int) $row['id_product_attribute'];
-            $quantityAttributeOld = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $quantityAttributeOld = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`quantity`')
                     ->from('stock_available')
@@ -3119,7 +3119,7 @@ class ProductCore extends ObjectModel {
 
         foreach ($results as $row) {
             $newFilename = ProductDownload::getNewFilename();
-            copy(_PS_DOWNLOAD_DIR_ . $row['filename'], _PS_DOWNLOAD_DIR_ . $newFilename);
+            copy(_EPH_DOWNLOAD_DIR_ . $row['filename'], _EPH_DOWNLOAD_DIR_ . $newFilename);
 
             $data[] = [
                 'id_product'         => (int) $idProductNew,
@@ -3619,11 +3619,11 @@ class ProductCore extends ObjectModel {
 
         if (!isset(static::$_incat[$hash])) {
 
-            if (!Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql)) {
+            if (!Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($sql)) {
                 return false;
             }
 
-            static::$_incat[$hash] = (Db::getInstance(_PS_USE_SQL_SLAVE_)->NumRows() > 0 ? true : false);
+            static::$_incat[$hash] = (Db::getInstance(_EPH_USE_SQL_SLAVE_)->NumRows() > 0 ? true : false);
         }
 
         return static::$_incat[$hash];
@@ -3641,7 +3641,7 @@ class ProductCore extends ObjectModel {
      */
     public static function getUrlRewriteInformations($idProduct) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
             SELECT pl.`id_lang`, pl.`link_rewrite`, p.`ean13`, cl.`link_rewrite` AS category_rewrite
             FROM `' . _DB_PREFIX_ . 'product` p
@@ -3892,11 +3892,11 @@ class ProductCore extends ObjectModel {
 
         static $manager = null;
 
-        if (Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT') && is_null($manager)) {
+        if (Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT') && is_null($manager)) {
             $manager = StockManagerFactory::getManager();
         }
 
-        if (Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT') && static::usesAdvancedStockManagement($idProduct) &&
+        if (Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT') && static::usesAdvancedStockManagement($idProduct) &&
             StockAvailable::dependsOnStock($idProduct, $idShop)
         ) {
             return $manager->getProductRealQuantities($idProduct, $idProductAttribute, $idWarehouse, true);
@@ -3991,7 +3991,7 @@ class ProductCore extends ObjectModel {
         $query->from('product', 'p');
         $query->where('p.ean13 = \'' . pSQL($ean13) . '\'');
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
     }
 
     /**
@@ -4143,7 +4143,7 @@ class ProductCore extends ObjectModel {
     public function validateField($field, $value, $idLang = null, $skip = [], $humanErrors = false) {
 
         if ($field == 'description_short') {
-            $limit = (int) Configuration::get('PS_PRODUCT_SHORT_DESC_LIMIT');
+            $limit = (int) Configuration::get('EPH_PRODUCT_SHORT_DESC_LIMIT');
 
             if ($limit <= 0) {
                 $limit = 800;
@@ -4234,7 +4234,7 @@ class ProductCore extends ObjectModel {
             PageCache::invalidateEntity('product', $this->id);
         }
 
-        if (Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT') && $this->advanced_stock_management) {
+        if (Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT') && $this->advanced_stock_management) {
             $stockManager = StockManagerFactory::getManager();
             $physicalQuantity = $stockManager->getProductPhysicalQuantities($this->id, 0);
             $realQuantity = $stockManager->getProductRealQuantities($this->id, 0);
@@ -4903,7 +4903,7 @@ class ProductCore extends ObjectModel {
         $currentCategories = array_map('intval', $currentCategories);
 
         // for new categ, put product at last position
-        $resCategNewPos = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $resCategNewPos = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
             SELECT id_category, MAX(position)+1 newPos
             FROM `' . _DB_PREFIX_ . 'category_product`
@@ -4976,7 +4976,7 @@ class ProductCore extends ObjectModel {
         if (!Cache::isStored($cacheId)) {
             $ret = [];
 
-            $row = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 '
                 SELECT `id_category` FROM `' . _DB_PREFIX_ . 'category_product`
                 WHERE `id_product` = ' . (int) $idProduct
@@ -5074,7 +5074,7 @@ class ProductCore extends ObjectModel {
             return false;
         }
 
-        $totalQuantity = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $totalQuantity = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
             SELECT SUM(quantity) AS quantity
             FROM ' . _DB_PREFIX_ . 'stock_available
@@ -5103,11 +5103,11 @@ class ProductCore extends ObjectModel {
 
         Tools::clearColorListCache($this->id);
 
-        if (Configuration::get('PS_DEFAULT_WAREHOUSE_NEW_PRODUCT') != 0 && Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT')) {
+        if (Configuration::get('EPH_DEFAULT_WAREHOUSE_NEW_PRODUCT') != 0 && Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT')) {
             $warehouseLocationEntity = new WarehouseProductLocation();
             $warehouseLocationEntity->id_product = $this->id;
             $warehouseLocationEntity->id_product_attribute = (int) $combination->id;
-            $warehouseLocationEntity->id_warehouse = Configuration::get('PS_DEFAULT_WAREHOUSE_NEW_PRODUCT');
+            $warehouseLocationEntity->id_warehouse = Configuration::get('EPH_DEFAULT_WAREHOUSE_NEW_PRODUCT');
             $warehouseLocationEntity->location = pSQL('');
             $warehouseLocationEntity->save();
         }
@@ -5345,7 +5345,7 @@ class ProductCore extends ObjectModel {
 
         // Sync stock Reference, EAN13 and UPC
 
-        if (Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT') && StockAvailable::dependsOnStock($this->id, Context::getContext()->shop->id)) {
+        if (Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT') && StockAvailable::dependsOnStock($this->id, Context::getContext()->shop->id)) {
             Db::getInstance()->update(
                 'stock',
                 [
@@ -5360,8 +5360,8 @@ class ProductCore extends ObjectModel {
         Hook::exec('actionProductSave', ['id_product' => (int) $this->id, 'product' => $this]);
         Hook::exec('actionProductUpdate', ['id_product' => (int) $this->id, 'product' => $this]);
 
-        if ($this->getType() == static::PTYPE_VIRTUAL && $this->active && !Configuration::get('PS_VIRTUAL_PROD_FEATURE_ACTIVE')) {
-            Configuration::updateGlobalValue('PS_VIRTUAL_PROD_FEATURE_ACTIVE', '1');
+        if ($this->getType() == static::PTYPE_VIRTUAL && $this->active && !Configuration::get('EPH_VIRTUAL_PROD_FEATURE_ACTIVE')) {
+            Configuration::updateGlobalValue('EPH_VIRTUAL_PROD_FEATURE_ACTIVE', '1');
         }
 
         return $return;
@@ -5569,7 +5569,7 @@ class ProductCore extends ObjectModel {
      */
     public function hasAttributesInOtherShops() {
 
-        return (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
             SELECT pa.id_product_attribute
             FROM `' . _DB_PREFIX_ . 'product_attribute` pa
@@ -5677,7 +5677,7 @@ class ProductCore extends ObjectModel {
 
         // Sync stock Reference, EAN13 and UPC for this attribute
 
-        if (Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT') && StockAvailable::dependsOnStock($this->id, Context::getContext()->shop->id)) {
+        if (Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT') && StockAvailable::dependsOnStock($this->id, Context::getContext()->shop->id)) {
             Db::getInstance()->update(
                 'stock',
                 [
@@ -5976,7 +5976,7 @@ class ProductCore extends ObjectModel {
             return 0;
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(*)')
                 ->from('product_attribute', 'pa')
@@ -5999,7 +5999,7 @@ class ProductCore extends ObjectModel {
      */
     public function getCarriers() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
             SELECT c.*
             FROM `' . _DB_PREFIX_ . 'product_carrier` pc
@@ -6155,7 +6155,7 @@ class ProductCore extends ObjectModel {
             return 0;
         }
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
         SELECT pa.`id_product_attribute`
         FROM `' . _DB_PREFIX_ . 'product_attribute` pa
@@ -6178,7 +6178,7 @@ class ProductCore extends ObjectModel {
             return 0;
         }
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
             SELECT pa.`id_product_attribute`
             FROM `' . _DB_PREFIX_ . 'product_attribute` pa
@@ -6361,7 +6361,7 @@ class ProductCore extends ObjectModel {
                         p.`date_add`,
                         DATE_SUB(
                             "' . date('Y-m-d') . ' 00:00:00",
-                            INTERVAL ' . (Validate::isUnsignedInt(Configuration::get('PS_NB_DAYS_NEW_PRODUCT')) ? Configuration::get('PS_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY
+                            INTERVAL ' . (Validate::isUnsignedInt(Configuration::get('EPH_NB_DAYS_NEW_PRODUCT')) ? Configuration::get('EPH_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY
                         )
                     ) > 0 AS new
                 FROM `' . _DB_PREFIX_ . 'accessory`
@@ -6386,7 +6386,7 @@ class ProductCore extends ObjectModel {
             ($active ? ' AND product_shop.`active` = 1 AND product_shop.`visibility` != \'none\'' : '') . '
                 GROUP BY product_shop.id_product';
 
-        if (!$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql)) {
+        if (!$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql)) {
             return false;
         }
 
@@ -6609,7 +6609,7 @@ class ProductCore extends ObjectModel {
         }
 
         // Set cache of feature detachable to true
-        Configuration::updateGlobalValue('PS_CUSTOMIZATION_FEATURE_ACTIVE', '1');
+        Configuration::updateGlobalValue('EPH_CUSTOMIZATION_FEATURE_ACTIVE', '1');
 
         return true;
     }
@@ -6785,7 +6785,7 @@ class ProductCore extends ObjectModel {
         }
 
         // Refresh cache of feature detachable
-        Configuration::updateGlobalValue('PS_CUSTOMIZATION_FEATURE_ACTIVE', Customization::isCurrentlyUsed());
+        Configuration::updateGlobalValue('EPH_CUSTOMIZATION_FEATURE_ACTIVE', Customization::isCurrentlyUsed());
 
         return true;
     }
@@ -6971,7 +6971,7 @@ class ProductCore extends ObjectModel {
         if (!Cache::isStored($cacheId)) {
 
             if (!$idCustomer) {
-                $result = (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                $result = (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                     '
                 SELECT ctg.`id_group`
                 FROM `' . _DB_PREFIX_ . 'category_product` cp
@@ -6979,7 +6979,7 @@ class ProductCore extends ObjectModel {
                 WHERE cp.`id_product` = ' . (int) $idProduct . ' AND ctg.`id_group` = ' . (int) Group::getCurrent()->id
                 );
             } else {
-                $result = (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                $result = (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                     '
                 SELECT cg.`id_group`
                 FROM `' . _DB_PREFIX_ . 'category_product` cp
@@ -7153,7 +7153,7 @@ class ProductCore extends ObjectModel {
         }
 
         if (!array_key_exists($idProduct, static::$_cacheFeatures)) {
-            static::$_cacheFeatures[$idProduct] = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            static::$_cacheFeatures[$idProduct] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 '
                 SELECT fp.id_feature, fp.id_product, fp.id_feature_value, custom
                 FROM `' . _DB_PREFIX_ . 'feature_product` fp
@@ -7314,7 +7314,7 @@ class ProductCore extends ObjectModel {
      */
     public function getWsCategories() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('cp.`id_category` AS `id`')
                 ->from('category_product', 'cp')
@@ -7355,7 +7355,7 @@ class ProductCore extends ObjectModel {
      */
     public function getWsAccessories() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('p.`id_product` AS `id`')
                 ->from('accessory', 'a')
@@ -7849,7 +7849,7 @@ class ProductCore extends ObjectModel {
 
         $attributes = static::getAttributesParams($this->id, $idProductAttribute);
         $anchor = '#';
-        $sep = Configuration::get('PS_ATTRIBUTE_ANCHOR_SEPARATOR');
+        $sep = Configuration::get('EPH_ATTRIBUTE_ANCHOR_SEPARATOR');
 
         foreach ($attributes as &$a) {
 
@@ -7999,7 +7999,7 @@ class ProductCore extends ObjectModel {
 
         $success = $this->add($autodate, $nullValues);
 
-        if ($success && Configuration::get('PS_SEARCH_INDEXATION')) {
+        if ($success && Configuration::get('EPH_SEARCH_INDEXATION')) {
             Search::indexation(false, $this->id);
         }
 
@@ -8031,8 +8031,8 @@ class ProductCore extends ObjectModel {
                 StockAvailable::setProductOutOfStock((int) $this->id, 1, $value);
             }
 
-            if ($this->active && !Configuration::get('PS_VIRTUAL_PROD_FEATURE_ACTIVE')) {
-                Configuration::updateGlobalValue('PS_VIRTUAL_PROD_FEATURE_ACTIVE', '1');
+            if ($this->active && !Configuration::get('EPH_VIRTUAL_PROD_FEATURE_ACTIVE')) {
+                Configuration::updateGlobalValue('EPH_VIRTUAL_PROD_FEATURE_ACTIVE', '1');
             }
 
         } else {
@@ -8062,7 +8062,7 @@ class ProductCore extends ObjectModel {
 
         $success = parent::update($nullValues);
 
-        if ($success && Configuration::get('PS_SEARCH_INDEXATION')) {
+        if ($success && Configuration::get('EPH_SEARCH_INDEXATION')) {
             Search::indexation(false, $this->id);
         }
 
@@ -8095,7 +8095,7 @@ class ProductCore extends ObjectModel {
         $sql->where('c.nleft <= ' . (int) $interval['nleft'] . ' AND c.nright >= ' . (int) $interval['nright']);
         $sql->orderBy('c.nleft');
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
     }
 
     /**

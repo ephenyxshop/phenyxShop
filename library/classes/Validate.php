@@ -455,7 +455,7 @@ class ValidateCore {
      */
     public static function isLinkRewrite($link) {
 
-        if (Configuration::get('PS_ALLOW_ACCENTED_CHARS_URL')) {
+        if (Configuration::get('EPH_ALLOW_ACCENTED_CHARS_URL')) {
             return (bool) preg_match(Tools::cleanNonUnicodeSupport('/^[_a-zA-Z0-9\pL\pS-]+$/u'), $link);
         }
 
@@ -475,7 +475,7 @@ class ValidateCore {
      */
     public static function isRoutePattern($pattern) {
 
-        if (Configuration::get('PS_ALLOW_ACCENTED_CHARS_URL')) {
+        if (Configuration::get('EPH_ALLOW_ACCENTED_CHARS_URL')) {
             return (bool) preg_match(Tools::cleanNonUnicodeSupport('/^[_a-zA-Z0-9\(\)\.{}:\/\pL\pS-]+$/u'), $pattern);
         }
 
@@ -1242,7 +1242,7 @@ class ValidateCore {
      */
     public static function isPriceDisplayMethod($data) {
 
-        return ($data == PS_TAX_EXC || $data == PS_TAX_INC);
+        return ($data == EPH_TAX_EXC || $data == EPH_TAX_INC);
     }
 
     /**
@@ -1588,7 +1588,7 @@ class ValidateCore {
      */
     public static function isOrderInvoiceNumber($id) {
 
-        return (preg_match('/^(?:' . Configuration::get('PS_INVOICE_PREFIX', Context::getContext()->language->id) . ')\s*([0-9]+)$/i', $id));
+        return (preg_match('/^(?:' . Configuration::get('EPH_INVOICE_PREFIX', Context::getContext()->language->id) . ')\s*([0-9]+)$/i', $id));
     }
 
 }

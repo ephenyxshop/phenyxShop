@@ -54,7 +54,7 @@ class AttachmentCore extends ObjectModel
      */
     public function add($autoDate = true, $nullValues = false)
     {
-        $this->file_size = filesize(_PS_DOWNLOAD_DIR_.$this->file);
+        $this->file_size = filesize(_EPH_DOWNLOAD_DIR_.$this->file);
 
         return parent::add($autoDate, $nullValues);
     }
@@ -69,7 +69,7 @@ class AttachmentCore extends ObjectModel
      */
     public function update($nullValues = false)
     {
-        $this->file_size = filesize(_PS_DOWNLOAD_DIR_.$this->file);
+        $this->file_size = filesize(_EPH_DOWNLOAD_DIR_.$this->file);
 
         return parent::update($nullValues);
     }
@@ -84,9 +84,9 @@ class AttachmentCore extends ObjectModel
      */
     public function delete()
     {
-        @unlink(_PS_DOWNLOAD_DIR_.$this->file);
+        @unlink(_EPH_DOWNLOAD_DIR_.$this->file);
 
-        $products = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $products = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_product`')
                 ->from('product_attachment')
@@ -120,7 +120,7 @@ class AttachmentCore extends ObjectModel
 
         $return = true;
 
-        $attachmentsData = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $attachmentsData = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from(bqSQL(Attachment::$definition['table']))
@@ -276,7 +276,7 @@ class AttachmentCore extends ObjectModel
                 $idAttachments[] = $attachment['id_attachment'];
             }
 
-            $tmp = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $tmp = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('*')
                     ->from('product_attachment', 'pa')

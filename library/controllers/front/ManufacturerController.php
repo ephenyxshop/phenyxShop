@@ -86,10 +86,10 @@ class ManufacturerControllerCore extends FrontController {
         if (Validate::isLoadedObject($this->manufacturer) && $this->manufacturer->active && $this->manufacturer->isAssociatedToShop()) {
             $this->productSort();
             $this->assignOne();
-            $this->setTemplate(_PS_THEME_DIR_ . 'manufacturer.tpl');
+            $this->setTemplate(_EPH_THEME_DIR_ . 'manufacturer.tpl');
         } else {
             $this->assignAll();
-            $this->setTemplate(_PS_THEME_DIR_ . 'manufacturer-list.tpl');
+            $this->setTemplate(_EPH_THEME_DIR_ . 'manufacturer-list.tpl');
         }
 
     }
@@ -116,7 +116,7 @@ class ManufacturerControllerCore extends FrontController {
                 'products'            => $products,
                 'path'                => ($this->manufacturer->active ? Tools::safeOutput($this->manufacturer->name) : ''),
                 'manufacturer'        => $this->manufacturer,
-                'comparator_max_item' => Configuration::get('PS_COMPARATOR_MAX_ITEM'),
+                'comparator_max_item' => Configuration::get('EPH_COMPARATOR_MAX_ITEM'),
                 'body_classes'        => [$this->php_self . '-' . $this->manufacturer->id, $this->php_self . '-' . $this->manufacturer->link_rewrite],
             ]
         );
@@ -131,14 +131,14 @@ class ManufacturerControllerCore extends FrontController {
      */
     protected function assignAll() {
 
-        if (Configuration::get('PS_DISPLAY_SUPPLIERS')) {
+        if (Configuration::get('EPH_DISPLAY_SUPPLIERS')) {
             $data = Manufacturer::getManufacturers(false, $this->context->language->id, true, false, false, false);
             $nbProducts = count($data);
             $this->pagination($nbProducts);
             $data = Manufacturer::getManufacturers(true, $this->context->language->id, true, $this->p, $this->n, false);
 
             foreach ($data as &$item) {
-                $item['image'] = (!file_exists(_PS_MANU_IMG_DIR_ . $item['id_manufacturer'] . '-' . ImageType::getFormatedName('medium') . '.jpg')) ? $this->context->language->iso_code . '-default' : $item['id_manufacturer'];
+                $item['image'] = (!file_exists(_EPH_MANU_IMG_DIR_ . $item['id_manufacturer'] . '-' . ImageType::getFormatedName('medium') . '.jpg')) ? $this->context->language->iso_code . '-default' : $item['id_manufacturer'];
             }
 
             $this->context->smarty->assign(
@@ -147,7 +147,7 @@ class ManufacturerControllerCore extends FrontController {
                     'nbManufacturers'  => $nbProducts,
                     'mediumSize'       => Image::getSize(ImageType::getFormatedName('medium')),
                     'manufacturers'    => $data,
-                    'add_prod_display' => Configuration::get('PS_ATTRIBUTE_CATEGORY_DISPLAY'),
+                    'add_prod_display' => Configuration::get('EPH_ATTRIBUTE_CATEGORY_DISPLAY'),
                 ]
             );
         } else {

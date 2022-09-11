@@ -67,7 +67,7 @@ class PaymentCore extends ObjectModel {
 	
 	public function delete() {
 
-		$details = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$details = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('id_payment_detail')
                 ->from('payment_details')
@@ -88,7 +88,7 @@ class PaymentCore extends ObjectModel {
 
     public static function getByCustomerPieceId($idCustomerPiece, $idLang) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('pd.*, p.`id_payment_mode`, p.`payment_method`, pm.`name`')
                 ->from('payment_details', 'pd')
@@ -101,7 +101,7 @@ class PaymentCore extends ObjectModel {
 	public function generatePaymentNumber() {
 	
 		$year = date('Y');
-		$lastValue = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		$lastValue = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 			(new DbQuery())
 			->select('`payment_number`')
 			->from('payment')
@@ -128,7 +128,7 @@ class PaymentCore extends ObjectModel {
 		
 		
 		$year = date('Y');
-		$lastValue = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		$lastValue = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 				(new DbQuery())
 				->select('`id_payment`')
 				->from('payment')

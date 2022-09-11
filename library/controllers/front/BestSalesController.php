@@ -21,7 +21,7 @@ class BestSalesControllerCore extends FrontController {
      */
     public function initContent() {
 
-        if (Configuration::get('PS_DISPLAY_BEST_SELLERS')) {
+        if (Configuration::get('EPH_DISPLAY_BEST_SELLERS')) {
             parent::initContent();
 
             $this->productSort();
@@ -38,14 +38,14 @@ class BestSalesControllerCore extends FrontController {
             $this->context->smarty->assign(
                 [
                     'products'            => $products,
-                    'add_prod_display'    => Configuration::get('PS_ATTRIBUTE_CATEGORY_DISPLAY'),
+                    'add_prod_display'    => Configuration::get('EPH_ATTRIBUTE_CATEGORY_DISPLAY'),
                     'nbProducts'          => $nbProducts,
                     'homeSize'            => Image::getSize(ImageType::getFormatedName('home')),
-                    'comparator_max_item' => Configuration::get('PS_COMPARATOR_MAX_ITEM'),
+                    'comparator_max_item' => Configuration::get('EPH_COMPARATOR_MAX_ITEM'),
                 ]
             );
 
-            $this->setTemplate(_PS_THEME_DIR_ . 'best-sales.tpl');
+            $this->setTemplate(_EPH_THEME_DIR_ . 'best-sales.tpl');
         } else {
             Tools::redirect('index.php?controller=404');
         }

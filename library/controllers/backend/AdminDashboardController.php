@@ -43,16 +43,16 @@ class AdminDashboardControllerCore extends AdminController {
 
 		$this->addJS(
 			[
-				_PS_JS_DIR_ . 'nav.js',
+				_EPH_JS_DIR_ . 'nav.js',
 				'https://cdn.ephenyxapi.com/shop/dashactivity.js',
-				_PS_JS_DIR_ . 'datejs/date.min.js',
-				_PS_JS_DIR_ . 'tools.js',
-				_PS_JS_DIR_ . 'dashtrends.js',
+				_EPH_JS_DIR_ . 'datejs/date.min.js',
+				_EPH_JS_DIR_ . 'tools.js',
+				_EPH_JS_DIR_ . 'dashtrends.js',
 				'https://cdn.ephenyxapi.com/vendor/d3.v7.min.js',
-				_PS_JS_DIR_ . 'jquery.datetimepicker.full.js',
-				_PS_JS_DIR_ . 'colorpicker/colorpicker.js',
-				_PS_JS_DIR_ . 'dashboard.js',
-				_PS_JS_DIR_ . 'tabs.js',
+				_EPH_JS_DIR_ . 'jquery.datetimepicker.full.js',
+				_EPH_JS_DIR_ . 'colorpicker/colorpicker.js',
+				_EPH_JS_DIR_ . 'dashboard.js',
+				_EPH_JS_DIR_ . 'tabs.js',
 
 			]
 		);
@@ -171,9 +171,9 @@ class AdminDashboardControllerCore extends AdminController {
 			'hookDashboardZoneTwo'    => Hook::exec('dashboardZoneTwo', $params),
 			'action'                  => '#',
 			'new_version_url'         => isset($phenyxCurl['tpl']) ? $phenyxCurl['tpl'] : '',
-			'dashboard_use_push'      => Configuration::get('PS_DASHBOARD_USE_PUSH'),
+			'dashboard_use_push'      => Configuration::get('EPH_DASHBOARD_USE_PUSH'),
 			'calendar'                => $calendarHelper->generate(),
-			'PS_DASHBOARD_SIMULATION' => Configuration::get('PS_DASHBOARD_SIMULATION'),
+			'EPH_DASHBOARD_SIMULATION' => Configuration::get('EPH_DASHBOARD_SIMULATION'),
 			'datepickerFrom'          => Tools::getValue('datepickerFrom', $this->context->employee->stats_date_from),
 			'datepickerTo'            => Tools::getValue('datepickerTo', $this->context->employee->stats_date_to),
 			'preselect_date_range'    => Tools::getValue('preselectDateRange', $this->context->employee->preselect_date_range),
@@ -333,8 +333,8 @@ class AdminDashboardControllerCore extends AdminController {
 
 	public function ajaxProcessSetSimulationMode() {
 
-		Configuration::updateValue('PS_DASHBOARD_SIMULATION', (int) Tools::getValue('PS_DASHBOARD_SIMULATION'));
-		$this->ajaxDie('k' . Configuration::get('PS_DASHBOARD_SIMULATION') . 'k');
+		Configuration::updateValue('EPH_DASHBOARD_SIMULATION', (int) Tools::getValue('EPH_DASHBOARD_SIMULATION'));
+		$this->ajaxDie('k' . Configuration::get('EPH_DASHBOARD_SIMULATION') . 'k');
 	}
 
 	public function ajaxProcessGetBlogRss() {
@@ -350,7 +350,7 @@ class AdminDashboardControllerCore extends AdminController {
 		}
 
 		if (!$return['has_errors']) {
-			$rss = @simplexml_load_file(_PS_ROOT_DIR_ . '/app/xml/blog-' . $this->context->language->iso_code . '.xml');
+			$rss = @simplexml_load_file(_EPH_ROOT_DIR_ . '/app/xml/blog-' . $this->context->language->iso_code . '.xml');
 
 			if (!$rss) {
 				$return['has_errors'] = true;
@@ -372,7 +372,7 @@ class AdminDashboardControllerCore extends AdminController {
 							$utmContent = 'download';
 						}
 
-						$shopDefaultCountryId = (int) Configuration::get('PS_COUNTRY_DEFAULT');
+						$shopDefaultCountryId = (int) Configuration::get('EPH_COUNTRY_DEFAULT');
 						$shopDefaultIsoCountry = (string) mb_strtoupper(Country::getIsoById($shopDefaultCountryId));
 						$analyticsParams = [
 							'utm_source'   => 'back-office',
@@ -421,18 +421,18 @@ class AdminDashboardControllerCore extends AdminController {
 		}
 
 		$extracss = $this->pushCSS([
-			_PS_JS_DIR_ . 'trumbowyg/ui/trumbowyg.min.css',
-			_PS_JS_DIR_ . 'jquery-ui/general.min.css',
+			_EPH_JS_DIR_ . 'trumbowyg/ui/trumbowyg.min.css',
+			_EPH_JS_DIR_ . 'jquery-ui/general.min.css',
 
 		]);
 		$pusjJs = $this->pushJS([
-			_PS_JS_DIR_ . 'society.js',
-			_PS_JS_DIR_ . 'trumbowyg/trumbowyg.min.js',
-			_PS_JS_DIR_ . 'jquery-jeditable/jquery.jeditable.min.js',
-			_PS_JS_DIR_ . 'jquery-ui/jquery-ui-timepicker-addon.min.js',
-			_PS_JS_DIR_ . 'moment/moment.min.js',
-			_PS_JS_DIR_ . 'moment/moment-timezone-with-data.min.js',
-			_PS_JS_DIR_ . 'calendar/working_plan_exceptions_modal.min.js',
+			_EPH_JS_DIR_ . 'society.js',
+			_EPH_JS_DIR_ . 'trumbowyg/trumbowyg.min.js',
+			_EPH_JS_DIR_ . 'jquery-jeditable/jquery.jeditable.min.js',
+			_EPH_JS_DIR_ . 'jquery-ui/jquery-ui-timepicker-addon.min.js',
+			_EPH_JS_DIR_ . 'moment/moment.min.js',
+			_EPH_JS_DIR_ . 'moment/moment-timezone-with-data.min.js',
+			_EPH_JS_DIR_ . 'calendar/working_plan_exceptions_modal.min.js',
 
 		]);
 
@@ -496,10 +496,10 @@ class AdminDashboardControllerCore extends AdminController {
 			];
 		}
 
-		Configuration::updateValue('PS_SHOP_EMAIL', $company->company_email);
-		Configuration::updateValue('PS_SHOP_ADMIN_EMAIL', $company->administratif_email);
-		Configuration::updateValue('PS_SHOP_NAME', $company->company_name);
-		Configuration::updateValue('PS_SHOP_URL', $company->company_url);
+		Configuration::updateValue('EPH_SHOP_EMAIL', $company->company_email);
+		Configuration::updateValue('EPH_SHOP_ADMIN_EMAIL', $company->administratif_email);
+		Configuration::updateValue('EPH_SHOP_NAME', $company->company_name);
+		Configuration::updateValue('EPH_SHOP_URL', $company->company_url);
 
 		die(Tools::jsonEncode($return));
 
@@ -591,7 +591,7 @@ class AdminDashboardControllerCore extends AdminController {
 	public function ajaxProcessUploadProfilPicture() {
 
 		$id_employee = $this->context->employee->id;
-		$dir = _PS_EMPLOYEE_IMG_DIR_;
+		$dir = _EPH_EMPLOYEE_IMG_DIR_;
 		$name = 'PicProfil';
 		$type == 'profil';
 
@@ -655,7 +655,7 @@ class AdminDashboardControllerCore extends AdminController {
 
 		$_GET['page'] = 'revslider';
 		$sliderRevvolution = new AdminRevsliderSlidersController();
-		require_once _PS_MODULE_DIR_ . 'revslider/rev-loader.php';
+		require_once _EPH_MODULE_DIR_ . 'revslider/rev-loader.php';
 		$data = $this->createTemplate('controllers/revslider_sliders/revslider.tpl');
 
 		$rsaf = new RevSliderFunctionsAdmin();
@@ -741,7 +741,7 @@ class AdminDashboardControllerCore extends AdminController {
 			'AdminControllerUrl'         => $AdminControllerUrl,
 			'jsDef'                      => $jsDef,
 			'link'                       => $this->context->link,
-			'id_lang_default'            => Configuration::get('PS_LANG_DEFAULT'),
+			'id_lang_default'            => Configuration::get('EPH_LANG_DEFAULT'),
 			'extracss'                   => $sliderRevvolution->extracss,
 			'obj'                        => $rsaf->json_encode_client_side($rsa),
 			'addOns_to_update'           => (!empty($rs_addon_update)) ? $rsaf->json_encode_client_side($rs_addon_update) : '',
@@ -796,7 +796,7 @@ class AdminDashboardControllerCore extends AdminController {
 		$_GET['view'] = 'slide';
 		$_GET['id'] = $idSlider;
 
-		require_once _PS_MODULE_DIR_ . 'revslider/rev-loader.php';
+		require_once _EPH_MODULE_DIR_ . 'revslider/rev-loader.php';
 
 		$rs_data = new RevSliderData();
 		$rs_f = new RevSliderFunctions();
@@ -824,7 +824,7 @@ class AdminDashboardControllerCore extends AdminController {
 		$json_tax_with_cats = $rs_f->json_encode_client_side($post_types_with_categories);
 
 		$gethooks = RevLoader::getHooks();
-		$shops_arr = Shop::getShops();
+		$shoEPH_arr = Shop::getShops();
 		$uslider = new RevSliderSlider();
 		$pop_posts = $uslider->get_popular_posts(15);
 		$rec_posts = $uslider->get_latest_posts(15);
@@ -923,7 +923,7 @@ class AdminDashboardControllerCore extends AdminController {
 		$datas = [
 			'rsaf'                     => $rsaf,
 			'gethooks'                 => $gethooks,
-			'shops_arr'                => $shops_arr,
+			'shoEPH_arr'                => $shoEPH_arr,
 			'json_tax_with_cats'       => $json_tax_with_cats,
 			'idSlider'                 => $idSlider,
 			'slide_alias'              => $slide_alias,
@@ -934,7 +934,7 @@ class AdminDashboardControllerCore extends AdminController {
 			'AdminControllerUrl'       => $AdminControllerUrl,
 			'jsDef'                    => $jsDef,
 			'link'                     => $this->context->link,
-			'id_lang_default'          => Configuration::get('PS_LANG_DEFAULT'),
+			'id_lang_default'          => Configuration::get('EPH_LANG_DEFAULT'),
 			'extracss'                 => $sliderRevvolution->extracss,
 			'obj'                      => $rsaf->json_encode_client_side($rsa),
 			'addOns_to_update'         => (!empty($rs_addon_update)) ? $rsaf->json_encode_client_side($rs_addon_update) : '',

@@ -42,8 +42,8 @@ class AuthControllerCore extends FrontController {
         if($customer->is_admin) {
             $employee = new Employee($customer->id_employee);
             if(Validate::isLoadedObject($employee)) {
-                if (!defined('_PS_ADMIN_DIR_')) {
-                    define('_PS_ADMIN_DIR_', _SHOP_ROOT_DIR_);
+                if (!defined('_EPH_ADMIN_DIR_')) {
+                    define('_EPH_ADMIN_DIR_', _SHOP_ROOT_DIR_);
                 }
                 $this->context->cookie->id_employee = (int) $employee->id;
                 $this->context->employee = $employee;
@@ -71,14 +71,14 @@ class AuthControllerCore extends FrontController {
     
     protected function sendConfirmationMail(Customer $customer) {
 
-        $tpl = $this->context->smarty->createTemplate(_PS_MAIL_DIR_ . '/account.tpl');
+        $tpl = $this->context->smarty->createTemplate(_EPH_MAIL_DIR_ . '/account.tpl');
         $tpl->assign([
             'customer' => $customer,
         ]);
         $postfields = [
             'sender'      => [
-                'name'  => "Sevice Commerciale ".Configuration::get('PS_SHOP_NAME'),
-                'email' => 'no-reply@'.Configuration::get('PS_SHOP_URL'),
+                'name'  => "Sevice Commerciale ".Configuration::get('EPH_SHOP_NAME'),
+                'email' => 'no-reply@'.Configuration::get('EPH_SHOP_URL'),
             ],
             'to'          => [
                 [
@@ -87,25 +87,25 @@ class AuthControllerCore extends FrontController {
                 ],
             ],
 
-            'subject'     => $customer->firstname . ' ! Bienvenue sur '.Configuration::get('PS_SHOP_NAME'),
+            'subject'     => $customer->firstname . ' ! Bienvenue sur '.Configuration::get('EPH_SHOP_NAME'),
             "htmlContent" => $tpl->fetch(),
         ];
 
         $result = Tools::sendEmail($postfields);
 
-        $tpl = $this->context->smarty->createTemplate(_PS_MAIL_DIR_ . '/account_report.tpl');
+        $tpl = $this->context->smarty->createTemplate(_EPH_MAIL_DIR_ . '/account_report.tpl');
         $tpl->assign([
             'customer' => $customer,
         ]);
         $postfields = [
             'sender'      => [
-                'name'  => "Sevice Administratif ".Configuration::get('PS_SHOP_NAME'),
-                'email' => 'no-reply@'.Configuration::get('PS_SHOP_URL'),
+                'name'  => "Sevice Administratif ".Configuration::get('EPH_SHOP_NAME'),
+                'email' => 'no-reply@'.Configuration::get('EPH_SHOP_URL'),
             ],
             'to'          => [
                 [
-                    'name'  => "Sevice Administratif ".Configuration::get('PS_SHOP_NAME'),
-                    'email' => Configuration::get('PS_SHOP_EMAIL'),
+                    'name'  => "Sevice Administratif ".Configuration::get('EPH_SHOP_NAME'),
+                    'email' => Configuration::get('EPH_SHOP_EMAIL'),
                 ],
             ],
             
@@ -298,7 +298,7 @@ class AuthControllerCore extends FrontController {
             } else {
 
                 $token = md5($customer->password);
-                $tpl = $this->context->smarty->createTemplate(_PS_MAIL_DIR_ . '/fr/password_query.tpl');
+                $tpl = $this->context->smarty->createTemplate(_EPH_MAIL_DIR_ . '/fr/password_query.tpl');
                 $tpl->assign([
                     'email'     => $customer->email,
                     'lastname'  => $customer->lastname,
@@ -309,7 +309,7 @@ class AuthControllerCore extends FrontController {
                 $postfields = [
                     'sender'      => [
                         'name'  => "Votre Sevice client",
-                        'email' => Configuration::get('PS_SHOP_EMAIL'),
+                        'email' => Configuration::get('EPH_SHOP_EMAIL'),
                     ],
                     'to'          => [
                         [

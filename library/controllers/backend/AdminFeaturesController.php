@@ -178,7 +178,7 @@ class AdminFeaturesControllerCore extends AdminController {
                 'show_page_header_toolbar'  => $this->show_page_header_toolbar,
                 'page_header_toolbar_title' => $this->page_header_toolbar_title,
                 'page_header_toolbar_btn'   => $this->page_header_toolbar_btn,
-                'bo_imgdir'                 => __PS_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+                'bo_imgdir'                 => __EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
             ]
         );
     }
@@ -562,7 +562,7 @@ class AdminFeaturesControllerCore extends AdminController {
                 $query->from('feature_value', 'fv');
                 $query->where('fv.id_feature =' . (int) $item['id_feature']);
                 $query->where('(fv.custom=0 OR fv.custom IS NULL)');
-                $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+                $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
                 $item['value'] = (int) $res;
                 unset($query);
             }

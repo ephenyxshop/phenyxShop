@@ -71,7 +71,7 @@ class AdminFrontParallaxControllerCore extends AdminController {
             'tableName'       => $this->table,
             'className'       => $this->className,
             'link'            => $this->context->link,
-            'id_lang_default' => Configuration::get('PS_LANG_DEFAULT'),
+            'id_lang_default' => Configuration::get('EPH_LANG_DEFAULT'),
             'extraJs'         => $this->push_js_files,
             'extracss'        => $this->extracss,
         ]);
@@ -90,7 +90,7 @@ class AdminFrontParallaxControllerCore extends AdminController {
 
     public function setAjaxMedia() {
 
-        return $this->pushJS([_PS_JS_DIR_ . 'tinymce.min.js', _PS_JS_DIR_ . 'tinymce.inc.js', _PS_JS_DIR_ . 'themeuploadify.min.js',
+        return $this->pushJS([_EPH_JS_DIR_ . 'tinymce.min.js', _EPH_JS_DIR_ . 'tinymce.inc.js', _EPH_JS_DIR_ . 'themeuploadify.min.js',
         ]);
     }
 
@@ -114,7 +114,7 @@ class AdminFrontParallaxControllerCore extends AdminController {
             'AjaxLink'       => $this->context->link->getAdminLink($this->controller_name),
             'paragridScript' => $this->generateParaGridScript(),
             'titleBar'       => $this->TitleBar,
-            'bo_imgdir'      => __PS_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+            'bo_imgdir'      => __EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
             'idController'   => '',
         ]);
 
@@ -381,7 +381,7 @@ class AdminFrontParallaxControllerCore extends AdminController {
     public function renderForm() {
 
         $obj = $this->loadObject(true);
-        $image = _PS_PARALLAX_IMG_DIR_ . $obj->image;
+        $image = _EPH_PARALLAX_IMG_DIR_ . $obj->image;
         $image_url = _PARALLAX_IMG_DIR . $obj->image;
         $imageSize = file_exists($image) ? filesize($image) / 1000 : false;
         $this->fields_form = [
@@ -717,7 +717,7 @@ class AdminFrontParallaxControllerCore extends AdminController {
                     }
 
                     $image_name = $image['name'];
-                    copy($image['save_path'], _PS_PARALLAX_IMG_DIR_ . $image_name);
+                    copy($image['save_path'], _EPH_PARALLAX_IMG_DIR_ . $image_name);
                 }
 
             }
@@ -812,7 +812,7 @@ class AdminFrontParallaxControllerCore extends AdminController {
                 }
 
                 $image_name = $image['name'];
-                copy($image['save_path'], _PS_PARALLAX_IMG_DIR_ . $image_name);
+                copy($image['save_path'], _EPH_PARALLAX_IMG_DIR_ . $image_name);
             }
 
         }
@@ -855,7 +855,7 @@ class AdminFrontParallaxControllerCore extends AdminController {
 
             if ($initPosition > $stopIndex) {
 
-                $objects = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+                $objects = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                     (new DbQuery())
                         ->select('id_xprtparrallaxblocktbl,  `position` ')
                         ->from('xprtparrallaxblocktbl')
@@ -880,7 +880,7 @@ class AdminFrontParallaxControllerCore extends AdminController {
 
             } else {
 
-                $objects = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+                $objects = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                     (new DbQuery())
                         ->select('id_xprtparrallaxblocktbl,  `position` ')
                         ->from('xprtparrallaxblocktbl')

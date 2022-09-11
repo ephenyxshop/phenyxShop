@@ -73,7 +73,7 @@ class MailCore extends ObjectModel {
         $fromName = null,
         $fileAttachment = null,
         $modeSmtp = null,
-        $templatePath = _PS_MAIL_DIR_,
+        $templatePath = _EPH_MAIL_DIR_,
         $die = false,
         $idShop = null,
         $bcc = null,
@@ -113,16 +113,16 @@ class MailCore extends ObjectModel {
 
         $configuration = Configuration::getMultiple(
             [
-                'PS_SHOP_EMAIL',
-                'PS_SHOP_NAME',
-                'PS_MAIL_TYPE',
+                'EPH_SHOP_EMAIL',
+                'EPH_SHOP_NAME',
+                'EPH_MAIL_TYPE',
             ],
             null,
             null,
             $idShop
         );
 
-        $themePath = _PS_THEME_DIR_;
+        $themePath = _EPH_THEME_DIR_;
 
         // Get the path of theme by id_shop if exist
 
@@ -131,14 +131,14 @@ class MailCore extends ObjectModel {
             $themeName = $shop->getTheme();
 
             if (_THEME_NAME_ != $themeName) {
-                $themePath = _PS_ROOT_DIR_ . '/themes/' . $themeName . '/';
+                $themePath = _EPH_ROOT_DIR_ . '/themes/' . $themeName . '/';
             }
 
         }
 
         if (!isset($fromName) || !Validate::isMailName($fromName)) {
-            $fromName = $configuration['PS_SHOP_NAME'];
-            $sender['name'] = $configuration['PS_SHOP_NAME'];
+            $fromName = $configuration['EPH_SHOP_NAME'];
+            $sender['name'] = $configuration['EPH_SHOP_NAME'];
         }
 
         if (!Validate::isMailName($fromName)) {
@@ -150,8 +150,8 @@ class MailCore extends ObjectModel {
         // Sending an e-mail can be of vital importance for the merchant, when his password is lost for example, so we must not die but do our best to send the e-mail
 
         if (!isset($from) || !Validate::isEmail($from)) {
-            //$from = $configuration['PS_SHOP_EMAIL'];
-            $sender['email'] = $configuration['PS_SHOP_EMAIL'];
+            //$from = $configuration['EPH_SHOP_EMAIL'];
+            $sender['email'] = $configuration['EPH_SHOP_EMAIL'];
         }
 
         if (!Validate::isEmail($from)) {
@@ -303,12 +303,12 @@ class MailCore extends ObjectModel {
         $templateVars = array_map(['Tools', 'htmlentitiesDecodeUTF8'], $templateVars);
         $templateVars = array_map(['Tools', 'stripslashes'], $templateVars);
 
-        if (Configuration::get('PS_LOGO_MAIL') !== false && file_exists(_PS_IMG_DIR_ . Configuration::get('PS_LOGO_MAIL', null, null, $idShop))) {
-            $templateVars['shop_logo'] = Tools::getShopDomainSsl(true) . '/img/' . Configuration::get('PS_LOGO_MAIL', null, null, $idShop);
+        if (Configuration::get('EPH_LOGO_MAIL') !== false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_MAIL', null, null, $idShop))) {
+            $templateVars['shop_logo'] = Tools::getShopDomainSsl(true) . '/img/' . Configuration::get('EPH_LOGO_MAIL', null, null, $idShop);
         } else {
 
-            if (file_exists(_PS_IMG_DIR_ . Configuration::get('PS_LOGO', null, null, $idShop))) {
-                $templateVars['shop_logo'] = Tools::getShopDomainSsl(true) . '/img/' . Configuration::get('PS_LOGO', null, null, $idShop);
+            if (file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop))) {
+                $templateVars['shop_logo'] = Tools::getShopDomainSsl(true) . '/img/' . Configuration::get('EPH_LOGO', null, null, $idShop);
             } else {
                 $templateVars['shop_logo'] = '';
             }
@@ -321,12 +321,12 @@ class MailCore extends ObjectModel {
             Context::getContext()->link = new Link();
         }
 
-        $templateVars['shop_name'] = Tools::safeOutput(Configuration::get('PS_SHOP_NAME', null, null, $idShop));
+        $templateVars['shop_name'] = Tools::safeOutput(Configuration::get('EPH_SHOP_NAME', null, null, $idShop));
         $templateVars['shop_url'] = Context::getContext()->link->getPageLink('index', true, Context::getContext()->language->id, null, false, $idShop);
         $templateVars['my_account_url'] = Context::getContext()->link->getPageLink('my-account', true, Context::getContext()->language->id, null, false, $idShop);
         $templateVars['guest_tracking_url'] = Context::getContext()->link->getPageLink('guest-tracking', true, Context::getContext()->language->id, null, false, $idShop);
         $templateVars['history_url'] = Context::getContext()->link->getPageLink('history', true, Context::getContext()->language->id, null, false, $idShop);
-        $templateVars['color'] = Tools::safeOutput(Configuration::get('PS_MAIL_COLOR', null, null, $idShop));
+        $templateVars['color'] = Tools::safeOutput(Configuration::get('EPH_MAIL_COLOR', null, null, $idShop));
         // Get extra template_vars
         $extraTemplateVars = [];
         Hook::exec(
@@ -389,7 +389,7 @@ class MailCore extends ObjectModel {
         $fromName = null,
         $fileAttachment = null,
         $modeSmtp = null,
-        $templatePath = _PS_MAIL_DIR_,
+        $templatePath = _EPH_MAIL_DIR_,
         $die = false,
         $idShop = null,
         $bcc = null,
@@ -427,22 +427,22 @@ class MailCore extends ObjectModel {
 
         $configuration = Configuration::getMultiple(
             [
-                'PS_SHOP_EMAIL',
-                'PS_MAIL_METHOD',
-                'PS_MAIL_SERVER',
-                'PS_MAIL_USER',
-                'PS_MAIL_PASSWD',
-                'PS_SHOP_NAME',
-                'PS_MAIL_SMTP_ENCRYPTION',
-                'PS_MAIL_SMTP_PORT',
-                'PS_MAIL_TYPE',
+                'EPH_SHOP_EMAIL',
+                'EPH_MAIL_METHOD',
+                'EPH_MAIL_SERVER',
+                'EPH_MAIL_USER',
+                'EPH_MAIL_PASSWD',
+                'EPH_SHOP_NAME',
+                'EPH_MAIL_SMTP_ENCRYPTION',
+                'EPH_MAIL_SMTP_PORT',
+                'EPH_MAIL_TYPE',
             ],
             null,
             null,
             $idShop
         );
 
-        if ($configuration['PS_MAIL_METHOD'] == 4) {
+        if ($configuration['EPH_MAIL_METHOD'] == 4) {
 
             return Mail::SendSendInBlue(
                 $idLang,
@@ -467,7 +467,7 @@ class MailCore extends ObjectModel {
             );
         }
 
-        $themePath = _PS_THEME_DIR_;
+        $themePath = _EPH_THEME_DIR_;
 
         // Get the path of theme by id_shop if exist
 
@@ -476,23 +476,23 @@ class MailCore extends ObjectModel {
             $themeName = $shop->getTheme();
 
             if (_THEME_NAME_ != $themeName) {
-                $themePath = _PS_ROOT_DIR_ . _EPH_THEMES_DIR_ . $themeName . '/';
+                $themePath = _EPH_ROOT_DIR_ . _EPH_THEMES_DIR_ . $themeName . '/';
             }
 
         }
 
-        if (!isset($configuration['PS_MAIL_SMTP_ENCRYPTION']) || mb_strtolower($configuration['PS_MAIL_SMTP_ENCRYPTION']) === 'off') {
-            $configuration['PS_MAIL_SMTP_ENCRYPTION'] = false;
+        if (!isset($configuration['EPH_MAIL_SMTP_ENCRYPTION']) || mb_strtolower($configuration['EPH_MAIL_SMTP_ENCRYPTION']) === 'off') {
+            $configuration['EPH_MAIL_SMTP_ENCRYPTION'] = false;
         }
 
-        if (!isset($configuration['PS_MAIL_SMTP_PORT'])) {
-            $configuration['PS_MAIL_SMTP_PORT'] = 'default';
+        if (!isset($configuration['EPH_MAIL_SMTP_PORT'])) {
+            $configuration['EPH_MAIL_SMTP_PORT'] = 'default';
         }
 
         // Sending an e-mail can be of vital importance for the merchant, when his password is lost for example, so we must not die but do our best to send the e-mail
 
         if (!isset($from) || !Validate::isEmail($from)) {
-            $from = $configuration['PS_SHOP_EMAIL'];
+            $from = $configuration['EPH_SHOP_EMAIL'];
         }
 
         if (!Validate::isEmail($from)) {
@@ -504,7 +504,7 @@ class MailCore extends ObjectModel {
         // $from_name is not that important, no need to die if it is not valid
 
         if (!isset($fromName) || !Validate::isMailName($fromName)) {
-            $fromName = $configuration['PS_SHOP_NAME'];
+            $fromName = $configuration['EPH_SHOP_NAME'];
         }
 
         if (!Validate::isMailName($fromName)) {
@@ -614,15 +614,15 @@ class MailCore extends ObjectModel {
         try {
             /* Connect with the appropriate configuration */
 
-            if ($configuration['PS_MAIL_METHOD'] == 2) {
+            if ($configuration['EPH_MAIL_METHOD'] == 2) {
 
-                if (empty($configuration['PS_MAIL_SERVER']) || empty($configuration['PS_MAIL_SMTP_PORT'])) {
+                if (empty($configuration['EPH_MAIL_SERVER']) || empty($configuration['EPH_MAIL_SMTP_PORT'])) {
                     return static::logError(Tools::displayError('Error: invalid SMTP server or SMTP port'), $die);
                 }
 
-                $connection = Swift_SmtpTransport::newInstance($configuration['PS_MAIL_SERVER'], $configuration['PS_MAIL_SMTP_PORT'], $configuration['PS_MAIL_SMTP_ENCRYPTION'])
-                    ->setUsername($configuration['PS_MAIL_USER'])
-                    ->setPassword($configuration['PS_MAIL_PASSWD']);
+                $connection = Swift_SmtpTransport::newInstance($configuration['EPH_MAIL_SERVER'], $configuration['EPH_MAIL_SMTP_PORT'], $configuration['EPH_MAIL_SMTP_ENCRYPTION'])
+                    ->setUsername($configuration['EPH_MAIL_USER'])
+                    ->setPassword($configuration['EPH_MAIL_PASSWD']);
 
             } else {
                 $connection = Swift_MailTransport::newInstance();
@@ -661,10 +661,10 @@ class MailCore extends ObjectModel {
                 $overrideMail = true;
             }
 
-            if (!file_exists($templatePath . $isoTemplate . '.txt') && ($configuration['PS_MAIL_TYPE'] == Mail::TYPE_BOTH || $configuration['PS_MAIL_TYPE'] == Mail::TYPE_TEXT)) {
+            if (!file_exists($templatePath . $isoTemplate . '.txt') && ($configuration['EPH_MAIL_TYPE'] == Mail::TYPE_BOTH || $configuration['EPH_MAIL_TYPE'] == Mail::TYPE_TEXT)) {
                 return static::logError(Tools::displayError('Error - The following e-mail template is missing:') . ' ' . $templatePath . $isoTemplate . '.txt', $die);
             } else
-            if (!file_exists($templatePath . $isoTemplate . '.html') && ($configuration['PS_MAIL_TYPE'] == Mail::TYPE_BOTH || $configuration['PS_MAIL_TYPE'] == Mail::TYPE_HTML)) {
+            if (!file_exists($templatePath . $isoTemplate . '.html') && ($configuration['EPH_MAIL_TYPE'] == Mail::TYPE_BOTH || $configuration['EPH_MAIL_TYPE'] == Mail::TYPE_HTML)) {
                 return static::logError(Tools::displayError('Error - The following e-mail template is missing:') . ' ' . $templatePath . $isoTemplate . '.html', $die);
             }
 
@@ -695,8 +695,8 @@ class MailCore extends ObjectModel {
             if ($moduleName && file_exists($themePath . 'mails/' . $iso . '/lang.php')) {
                 include_once $themePath . 'mails/' . $iso . '/lang.php';
             } else
-            if (file_exists(_PS_MAIL_DIR_ . $iso . '/lang.php')) {
-                include_once _PS_MAIL_DIR_ . $iso . '/lang.php';
+            if (file_exists(_EPH_MAIL_DIR_ . $iso . '/lang.php')) {
+                include_once _EPH_MAIL_DIR_ . $iso . '/lang.php';
             } else {
                 return static::logError(Tools::displayError('Error - The language file is missing for:') . ' ' . $iso, $die);
             }
@@ -721,12 +721,12 @@ class MailCore extends ObjectModel {
             $templateVars = array_map(['Tools', 'htmlentitiesDecodeUTF8'], $templateVars);
             $templateVars = array_map(['Tools', 'stripslashes'], $templateVars);
 
-            if (Configuration::get('PS_LOGO_MAIL') !== false && file_exists(_PS_IMG_DIR_ . Configuration::get('PS_LOGO_MAIL', null, null, $idShop))) {
-                $logo = _PS_IMG_DIR_ . Configuration::get('PS_LOGO_MAIL', null, null, $idShop);
+            if (Configuration::get('EPH_LOGO_MAIL') !== false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_MAIL', null, null, $idShop))) {
+                $logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_MAIL', null, null, $idShop);
             } else {
 
-                if (file_exists(_PS_IMG_DIR_ . Configuration::get('PS_LOGO', null, null, $idShop))) {
-                    $logo = _PS_IMG_DIR_ . Configuration::get('PS_LOGO', null, null, $idShop);
+                if (file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop))) {
+                    $logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop);
                 } else {
                     $templateVars['{shop_logo}'] = '';
                 }
@@ -744,12 +744,12 @@ class MailCore extends ObjectModel {
                 Context::getContext()->link = new Link();
             }
 
-            $templateVars['{shop_name}'] = Tools::safeOutput(Configuration::get('PS_SHOP_NAME', null, null, $idShop));
+            $templateVars['{shop_name}'] = Tools::safeOutput(Configuration::get('EPH_SHOP_NAME', null, null, $idShop));
             $templateVars['{shop_url}'] = Context::getContext()->link->getPageLink('index', true, Context::getContext()->language->id, null, false, $idShop);
             $templateVars['{my_account_url}'] = Context::getContext()->link->getPageLink('my-account', true, Context::getContext()->language->id, null, false, $idShop);
             $templateVars['{guest_tracking_url}'] = Context::getContext()->link->getPageLink('guest-tracking', true, Context::getContext()->language->id, null, false, $idShop);
             $templateVars['{history_url}'] = Context::getContext()->link->getPageLink('history', true, Context::getContext()->language->id, null, false, $idShop);
-            $templateVars['{color}'] = Tools::safeOutput(Configuration::get('PS_MAIL_COLOR', null, null, $idShop));
+            $templateVars['{color}'] = Tools::safeOutput(Configuration::get('EPH_MAIL_COLOR', null, null, $idShop));
             // Get extra template_vars
             $extraTemplateVars = [];
             Hook::exec(
@@ -763,11 +763,11 @@ class MailCore extends ObjectModel {
             $templateVars = array_merge($templateVars, $extraTemplateVars);
             $swift->registerPlugin(new Swift_Plugins_DecoratorPlugin([$toPlugin => $templateVars]));
 
-            if ($configuration['PS_MAIL_TYPE'] == Mail::TYPE_BOTH || $configuration['PS_MAIL_TYPE'] == Mail::TYPE_TEXT) {
+            if ($configuration['EPH_MAIL_TYPE'] == Mail::TYPE_BOTH || $configuration['EPH_MAIL_TYPE'] == Mail::TYPE_TEXT) {
                 $message->addPart($templateTxt, 'text/plain', 'utf-8');
             }
 
-            if ($configuration['PS_MAIL_TYPE'] == Mail::TYPE_BOTH || $configuration['PS_MAIL_TYPE'] == Mail::TYPE_HTML) {
+            if ($configuration['EPH_MAIL_TYPE'] == Mail::TYPE_BOTH || $configuration['EPH_MAIL_TYPE'] == Mail::TYPE_HTML) {
                 $message->addPart($templateHtml, 'text/html', 'utf-8');
             }
 
@@ -790,12 +790,12 @@ class MailCore extends ObjectModel {
 
             /* Send mail */
             $message->setFrom([$from => $fromName]);
-            $shouldSend = $configuration['PS_MAIL_METHOD'] != 3;
+            $shouldSend = $configuration['EPH_MAIL_METHOD'] != 3;
             $send = $shouldSend ? $swift->send($message) : true;
 
             ShopUrl::resetMainDomainCache();
 
-            if ($send && Configuration::get('PS_LOG_EMAILS')) {
+            if ($send && Configuration::get('EPH_LOG_EMAILS')) {
                 $mail = new Mail();
                 $mail->template = mb_substr($template, 0, 62);
                 $mail->subject = mb_substr($subject, 0, 254);
@@ -963,7 +963,7 @@ class MailCore extends ObjectModel {
 
                 switch ($key) {
                 case '{shop_name}':
-                    $template = str_replace($key, Configuration::get('PS_SHOP_NAME', null, null, $idShop), $template);
+                    $template = str_replace($key, Configuration::get('EPH_SHOP_NAME', null, null, $idShop), $template);
                     break;
                 case '{subject}':
                     $template = str_replace($key, $subject, $template);
@@ -1031,7 +1031,7 @@ class MailCore extends ObjectModel {
         $fromName = null;
         $fileAttachment = null;
         $modeSmtp = null;
-        $templatePath = _PS_MAIL_DIR_;
+        $templatePath = _EPH_MAIL_DIR_;
         $die = false;
         $idShop = null;
         $bcc = null;
@@ -1089,18 +1089,18 @@ class MailCore extends ObjectModel {
         }
 
         if ($idLang == null) {
-            $idLang = (!isset($context->language) || !is_object($context->language)) ? (int) Configuration::get('PS_LANG_DEFAULT') : (int) $context->language->id;
+            $idLang = (!isset($context->language) || !is_object($context->language)) ? (int) Configuration::get('EPH_LANG_DEFAULT') : (int) $context->language->id;
         }
 
         $isoCode = Language::getIsoById((int) $idLang);
 
-        $fileCore = _PS_ROOT_DIR_ . '/mails/' . $isoCode . '/lang.php';
+        $fileCore = _EPH_ROOT_DIR_ . '/mails/' . $isoCode . '/lang.php';
 
         if (file_exists($fileCore) && empty($_LANGMAIL)) {
             include $fileCore;
         }
 
-        $fileTheme = _PS_THEME_DIR_ . 'mails/' . $isoCode . '/lang.php';
+        $fileTheme = _EPH_THEME_DIR_ . 'mails/' . $isoCode . '/lang.php';
 
         if (file_exists($fileTheme)) {
             include $fileTheme;

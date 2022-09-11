@@ -23,7 +23,7 @@ class EphComposerParamTypeCore extends EphComposer {
 	
 	public static function getParamTypes() {
 		
-		 return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		 return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_composer_param_type`, `value`')
                 ->from('composer_param_type')

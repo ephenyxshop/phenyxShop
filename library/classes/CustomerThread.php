@@ -102,7 +102,7 @@ class CustomerThreadCore extends ObjectModel {
             $sql->where('ct.`id_order` = ' . (int) $idOrder);
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
     }
 
     /**
@@ -117,7 +117,7 @@ class CustomerThreadCore extends ObjectModel {
      */
     public static function getIdCustomerThreadByEmailAndIdOrder($email, $idOrder) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('cm.`id_customer_thread`')
                 ->from('customer_thread', 'cm')
@@ -137,7 +137,7 @@ class CustomerThreadCore extends ObjectModel {
      */
     public static function getContacts() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('cl.*, COUNT(*) as `total`')
                 ->select('(SELECT `id_customer_thread` FROM `' . _DB_PREFIX_ . 'customer_thread` ct2 WHERE status = "open" AND ct.`id_contact` = ct2.`id_contact` ' . Shop::addSqlRestriction() . ' ORDER BY `date_upd` ASC LIMIT 1) AS `id_customer_thread`')
@@ -162,7 +162,7 @@ class CustomerThreadCore extends ObjectModel {
      */
     public static function getTotalCustomerThreads($where = null) {
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(*)')
                 ->from('customer_thread')
@@ -181,7 +181,7 @@ class CustomerThreadCore extends ObjectModel {
      */
     public static function getMessageCustomerThreads($idCustomerThread) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('ct.*, cm.*, cl.name subject, CONCAT(e.firstname, \' \', e.lastname) employee_name')
                 ->select('CONCAT(c.firstname, \' \', c.lastname) customer_name, c.firstname')
@@ -208,7 +208,7 @@ class CustomerThreadCore extends ObjectModel {
 
         $context = Context::getContext();
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_customer_thread`')
                 ->from('customer_thread', 'ct')
@@ -234,7 +234,7 @@ class CustomerThreadCore extends ObjectModel {
      */
     public function getWsCustomerMessages() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_customer_message` AS `id`')
                 ->from('customer_message')

@@ -108,7 +108,7 @@ class SpecificPriceCore extends ObjectModel {
      */
     public static function getByProductId($idProduct, $idProductAttribute = false, $idCart = false) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('specific_price')
@@ -151,7 +151,7 @@ class SpecificPriceCore extends ObjectModel {
      */
     public static function getIdsByProductId($idProduct, $idProductAttribute = false, $idCart = 0) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_specific_price`')
                 ->from('specific_price')
@@ -195,9 +195,9 @@ class SpecificPriceCore extends ObjectModel {
 
         if (!array_key_exists($key, static::$_specificPriceCache)) {
             $queryExtra = static::computeExtraConditions($idProduct, $idProductAttribute, $idCustomer, $idCart);
-            $fromQuantity = (Configuration::get('PS_QTY_DISCOUNT_ON_COMBINATION') || !$idCart || !$realQuantity) ? (int) $quantity : max(1, (int) $realQuantity);
+            $fromQuantity = (Configuration::get('EPH_QTY_DISCOUNT_ON_COMBINATION') || !$idCart || !$realQuantity) ? (int) $quantity : max(1, (int) $realQuantity);
 
-            static::$_specificPriceCache[$key] = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            static::$_specificPriceCache[$key] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('*, ' . static::_getScoreQuery($idProduct, $idShop, $idCurrency, $idCountry, $idGroup, $idCustomer))
                     ->from(bqSQL(static::$definition['table']))
@@ -227,7 +227,7 @@ class SpecificPriceCore extends ObjectModel {
         static $featureActive = null;
 
         if ($featureActive === null) {
-            $featureActive = Configuration::get('PS_SPECIFIC_PRICE_FEATURE_ACTIVE');
+            $featureActive = Configuration::get('EPH_SPECIFIC_PRICE_FEATURE_ACTIVE');
         }
 
         return $featureActive;
@@ -288,13 +288,13 @@ class SpecificPriceCore extends ObjectModel {
             $key = __FUNCTION__ . '-' . $firstDate . '-' . $lastDate;
 
             if (!array_key_exists($key, static::$_filterOutCache)) {
-                $fromSpecificCount = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                $fromSpecificCount = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                     (new DbQuery())
                         ->select('1')
                         ->from('specific_price')
                         ->where('`from` BETWEEN \'' . $firstDate . '\' AND \'' . $lastDate . '\'')
                 );
-                $toSpecificCount = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                $toSpecificCount = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                     (new DbQuery())
                         ->select('1')
                         ->from('specific_price')
@@ -349,7 +349,7 @@ class SpecificPriceCore extends ObjectModel {
 
         if (!array_key_exists($keyCache, static::$_filterOutCache)) {
             $queryCount = 'SELECT COUNT(DISTINCT `' . $fieldName . '`) FROM `' . _DB_PREFIX_ . 'specific_price` WHERE `' . $fieldName . '` != 0';
-            $specificCount = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($queryCount);
+            $specificCount = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($queryCount);
 
             if ($specificCount == 0) {
                 // @codingStandardsIgnoreStart
@@ -361,7 +361,7 @@ class SpecificPriceCore extends ObjectModel {
 
             if ($specificCount < $threshold) {
                 $query = 'SELECT DISTINCT `' . $fieldName . '` FROM `' . _DB_PREFIX_ . 'specific_price` WHERE `' . $fieldName . '` != 0';
-                $tmpSpecificList = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+                $tmpSpecificList = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
 
                 foreach ($tmpSpecificList as $key => $value) {
                     $specificList[] = $value[$fieldName];
@@ -442,13 +442,13 @@ class SpecificPriceCore extends ObjectModel {
     public static function getPriority($idProduct) {
 
         if (!static::isFeatureActive()) {
-            return explode(';', Configuration::get('PS_SPECIFIC_PRICE_PRIORITIES'));
+            return explode(';', Configuration::get('EPH_SPECIFIC_PRICE_PRIORITIES'));
         }
 
         // @codingStandardsIgnoreStart
 
         if (!isset(static::$_cache_priorities[(int) $idProduct])) {
-            static::$_cache_priorities[(int) $idProduct] = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            static::$_cache_priorities[(int) $idProduct] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`priority`, `id_specific_price_priority`')
                     ->from('specific_price_priority')
@@ -462,7 +462,7 @@ class SpecificPriceCore extends ObjectModel {
         // @codingStandardsIgnoreEnd
 
         if (!$priority) {
-            $priority = Configuration::get('PS_SPECIFIC_PRICE_PRIORITIES');
+            $priority = Configuration::get('EPH_SPECIFIC_PRICE_PRIORITIES');
         }
 
         $priority = 'id_customer;' . $priority;
@@ -493,7 +493,7 @@ class SpecificPriceCore extends ObjectModel {
 
         static::deletePriorities();
 
-        return Configuration::updateValue('PS_SPECIFIC_PRICE_PRIORITIES', rtrim($value, ';'));
+        return Configuration::updateValue('EPH_SPECIFIC_PRICE_PRIORITIES', rtrim($value, ';'));
     }
 
     /**
@@ -559,7 +559,7 @@ class SpecificPriceCore extends ObjectModel {
         }
 
         $queryExtra = static::computeExtraConditions($idProduct, ((!$allCombinations) ? $idProductAttribute : null), $idCustomer, null);
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*, ' . static::_getScoreQuery($idProduct, $idShop, $idCurrency, $idCountry, $idGroup, $idCustomer))
                 ->from('specific_price')
@@ -619,7 +619,7 @@ class SpecificPriceCore extends ObjectModel {
 
         $queryExtra = static::computeExtraConditions($idProduct, $idProductAttribute, $idCustomer, null);
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('*, ' . static::_getScoreQuery($idProduct, $idShop, $idCurrency, $idCountry, $idGroup, $idCustomer))
                 ->from('specific_price')
@@ -656,7 +656,7 @@ class SpecificPriceCore extends ObjectModel {
         }
 
         $queryExtra = static::computeExtraConditions(null, null, $idCustomer, null, $beginning, $ending);
-        $results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_product`, `id_product_attribute`')
                 ->from('specific_price')
@@ -690,7 +690,7 @@ class SpecificPriceCore extends ObjectModel {
 
         if (Db::getInstance()->delete('specific_price', '`id_product` = ' . (int) $idProduct)) {
             // Refresh cache of feature detachable
-            Configuration::updateGlobalValue('PS_SPECIFIC_PRICE_FEATURE_ACTIVE', static::isCurrentlyUsed('specific_price'));
+            Configuration::updateGlobalValue('EPH_SPECIFIC_PRICE_FEATURE_ACTIVE', static::isCurrentlyUsed('specific_price'));
 
             return true;
         }
@@ -721,7 +721,7 @@ class SpecificPriceCore extends ObjectModel {
 
         $rule = ' AND `id_specific_price_rule`' . (!$rule ? ' = 0' : ' != 0');
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_specific_price`')
                 ->from('specific_price')
@@ -788,7 +788,7 @@ class SpecificPriceCore extends ObjectModel {
             // Flush cache when we deletind a new specific price
             $this->flushCache();
             // Refresh cache of feature detachable
-            Configuration::updateGlobalValue('PS_SPECIFIC_PRICE_FEATURE_ACTIVE', static::isCurrentlyUsed($this->def['table']));
+            Configuration::updateGlobalValue('EPH_SPECIFIC_PRICE_FEATURE_ACTIVE', static::isCurrentlyUsed($this->def['table']));
 
             return true;
         }
@@ -832,7 +832,7 @@ class SpecificPriceCore extends ObjectModel {
             // Flush cache when we adding a new specific price
             $this->flushCache();
             // Set cache of feature detachable to true
-            Configuration::updateGlobalValue('PS_SPECIFIC_PRICE_FEATURE_ACTIVE', '1');
+            Configuration::updateGlobalValue('EPH_SPECIFIC_PRICE_FEATURE_ACTIVE', '1');
 
             return true;
         }

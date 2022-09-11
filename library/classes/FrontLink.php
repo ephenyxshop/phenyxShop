@@ -56,7 +56,7 @@ class FrontLinkCore extends ObjectModel {
 	
 	public static function getLastPosition($idBlockLink) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('MAX(`position`) + 1')
                 ->from('blocklink')

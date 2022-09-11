@@ -51,7 +51,7 @@ class EmployeeThreadCore extends ObjectModel {
     public function add($autoDate = true, $nullValues = false) {
         
         $url = 'https://ephenyx.io/ticket';
-		$string = Configuration::get('_EPHENYX_LICENSE_KEY_').'/'.Configuration::get('PS_SHOP_DOMAIN');
+		$string = Configuration::get('_EPHENYX_LICENSE_KEY_').'/'.Configuration::get('EPH_SHOP_DOMAIN');
 		$crypto_key = Tools::encrypt_decrypt('encrypt', $string, _PHP_ENCRYPTION_KEY_, _COOKIE_KEY_);
 		
 		$data_array = [
@@ -72,7 +72,7 @@ class EmployeeThreadCore extends ObjectModel {
     public static function getEmployeeMessages() {
 
         $url = 'https://ephenyx.io/ticket';
-		$string = Configuration::get('_EPHENYX_LICENSE_KEY_').'/'.Configuration::get('PS_SHOP_DOMAIN');
+		$string = Configuration::get('_EPHENYX_LICENSE_KEY_').'/'.Configuration::get('EPH_SHOP_DOMAIN');
 		$crypto_key = Tools::encrypt_decrypt('encrypt', $string, _PHP_ENCRYPTION_KEY_, _COOKIE_KEY_);
 		
 		$data_array = [
@@ -93,7 +93,7 @@ class EmployeeThreadCore extends ObjectModel {
     public static function getEmployeeThreadDetails($id_employee_thread) {
 
         $url = 'https://ephenyx.io/ticket';
-		$string = Configuration::get('_EPHENYX_LICENSE_KEY_').'/'.Configuration::get('PS_SHOP_DOMAIN');
+		$string = Configuration::get('_EPHENYX_LICENSE_KEY_').'/'.Configuration::get('EPH_SHOP_DOMAIN');
 		$crypto_key = Tools::encrypt_decrypt('encrypt', $string, _PHP_ENCRYPTION_KEY_, _COOKIE_KEY_);
 		
 		$data_array = [
@@ -115,7 +115,7 @@ class EmployeeThreadCore extends ObjectModel {
     public static function getEmployeeNotification($idLastElement) {
 
         $url = 'https://ephenyx.io/ticket';
-		$string = Configuration::get('_EPHENYX_LICENSE_KEY_').'/'.Configuration::get('PS_SHOP_DOMAIN');
+		$string = Configuration::get('_EPHENYX_LICENSE_KEY_').'/'.Configuration::get('EPH_SHOP_DOMAIN');
 		$crypto_key = Tools::encrypt_decrypt('encrypt', $string, _PHP_ENCRYPTION_KEY_, _COOKIE_KEY_);
 		
 		$data_array = [
@@ -137,7 +137,7 @@ class EmployeeThreadCore extends ObjectModel {
     public static function getMaxMessageId() {
 
         $url = 'https://ephenyx.io/ticket';
-		$string = Configuration::get('_EPHENYX_LICENSE_KEY_').'/'.Configuration::get('PS_SHOP_DOMAIN');
+		$string = Configuration::get('_EPHENYX_LICENSE_KEY_').'/'.Configuration::get('EPH_SHOP_DOMAIN');
 		$crypto_key = Tools::encrypt_decrypt('encrypt', $string, _PHP_ENCRYPTION_KEY_, _COOKIE_KEY_);
 		
 		$data_array = [
@@ -168,7 +168,7 @@ class EmployeeThreadCore extends ObjectModel {
      */
     public static function getTotalEmployeeThreads($where = null) {
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(*)')
                 ->from('employee_thread')
@@ -187,7 +187,7 @@ class EmployeeThreadCore extends ObjectModel {
      */
     public static function getMessageCustomerThreads($idCustomerThread) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('ct.*, cm.*')
                 ->from('employee_thread', 'ct')
@@ -212,7 +212,7 @@ class EmployeeThreadCore extends ObjectModel {
 
         $context = Context::getContext();
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_employee_thread`')
                 ->from('employee_thread', 'ct')

@@ -99,7 +99,7 @@ class CustomerPieceStateCore extends ObjectModel {
         $cacheId = 'CustomerPieceState::getCustomerPieceStates_' . (int) $idLang;
 
         if (!Cache::isStored($cacheId)) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('*')
                     ->from('customer_piece_state', 'os')
@@ -131,8 +131,8 @@ class CustomerPieceStateCore extends ObjectModel {
 
         $result = false;
 
-        if (Configuration::get('PS_INVOICE')) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        if (Configuration::get('EPH_INVOICE')) {
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`invoice`')
                     ->from('customer_piece_state')

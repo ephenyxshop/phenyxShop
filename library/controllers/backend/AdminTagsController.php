@@ -122,7 +122,7 @@ class AdminTagsControllerCore extends AdminController {
 
                 }
 
-                if (Configuration::get('PS_SEARCH_INDEXATION')) {
+                if (Configuration::get('EPH_SEARCH_INDEXATION')) {
                     Search::removeProductsSearchIndex($removedProducts);
                 }
 

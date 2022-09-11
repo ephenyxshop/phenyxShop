@@ -22,7 +22,7 @@ class AdminBookingsControllerCore extends AdminController {
 		parent::setMedia($isNewTheme);
 
 		$this->addCss(_EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/bookings.css', 'all');
-		$this->addJS(_PS_JS_DIR_ . 'bookings.js');
+		$this->addJS(_EPH_JS_DIR_ . 'bookings.js');
 
 		Media::addJsDef([
 			'AjaxLink' . $this->controller_name => $this->context->link->getAdminLink($this->controller_name),
@@ -310,7 +310,7 @@ class AdminBookingsControllerCore extends AdminController {
 		$data->assign([
 			'paragridScript'     => $this->paragridScript,
 			'manageHeaderFields' => false,
-			'id_lang_default'    => Configuration::get('PS_LANG_DEFAULT'),
+			'id_lang_default'    => Configuration::get('EPH_LANG_DEFAULT'),
 		]);
 
 		$li = '<li id="uperEducations" data-controller="' . $this->controller_name . '"><a href="#contentEducations">Nos Formations</a><button type="button" class="close tabdetail" data-id="uperEducations"><i class="icon icon-times-circle"></i></button></li>';

@@ -22,7 +22,7 @@ class AdminGeolocationControllerCore extends AdminController {
                 'title'  => $this->l('Geolocation by IP address'),
                 'icon'   => 'icon-map-marker',
                 'fields' => [
-                    'PS_GEOLOCATION_ENABLED' => [
+                    'EPH_GEOLOCATION_ENABLED' => [
                         'title'      => $this->l('Geolocation by IP address'),
                         'hint'       => $this->l('This option allows you, among other things, to restrict access to your shop for certain countries. See below.'),
                         'validation' => 'isUnsignedId',
@@ -37,23 +37,23 @@ class AdminGeolocationControllerCore extends AdminController {
                 'icon'        => 'icon-map-marker',
                 'description' => $this->l('The following features are only available if you enable the Geolocation by IP address feature.'),
                 'fields'      => [
-                    'PS_GEOLOCATION_BEHAVIOR'    => [
+                    'EPH_GEOLOCATION_BEHAVIOR'    => [
                         'title'      => $this->l('Geolocation behavior for restricted countries'),
                         'type'       => 'select',
                         'identifier' => 'key',
                         'list'       => [
-                            ['key' => _PS_GEOLOCATION_NO_CATALOG_, 'name' => $this->l('Visitors cannot see your catalog.')],
-                            ['key' => _PS_GEOLOCATION_NO_ORDER_, 'name' => $this->l('Visitors can see your catalog but cannot place an order.')],
+                            ['key' => _EPH_GEOLOCATION_NO_CATALOG_, 'name' => $this->l('Visitors cannot see your catalog.')],
+                            ['key' => _EPH_GEOLOCATION_NO_ORDER_, 'name' => $this->l('Visitors can see your catalog but cannot place an order.')],
                         ],
                     ],
-                    'PS_GEOLOCATION_NA_BEHAVIOR' => [
+                    'EPH_GEOLOCATION_NA_BEHAVIOR' => [
                         'title'      => $this->l('Geolocation behavior for other countries'),
                         'type'       => 'select',
                         'identifier' => 'key',
                         'list'       => [
                             ['key' => '-1', 'name' => $this->l('All features are available')],
-                            ['key' => _PS_GEOLOCATION_NO_CATALOG_, 'name' => $this->l('Visitors cannot see your catalog.')],
-                            ['key' => _PS_GEOLOCATION_NO_ORDER_, 'name' => $this->l('Visitors can see your catalog but cannot place an order.')],
+                            ['key' => _EPH_GEOLOCATION_NO_CATALOG_, 'name' => $this->l('Visitors cannot see your catalog.')],
+                            ['key' => _EPH_GEOLOCATION_NO_ORDER_, 'name' => $this->l('Visitors can see your catalog but cannot place an order.')],
                         ],
                     ],
                 ],
@@ -64,7 +64,7 @@ class AdminGeolocationControllerCore extends AdminController {
                 'icon'        => 'icon-sitemap',
                 'description' => $this->l('You can add IP addresses that will always be allowed to access your shop (e.g. Google bots\' IP).'),
                 'fields'      => [
-                    'PS_GEOLOCATION_WHITELIST' => ['title' => $this->l('Whitelisted IP addresses'), 'type' => 'textarea_newlines', 'cols' => 15, 'rows' => 30],
+                    'EPH_GEOLOCATION_WHITELIST' => ['title' => $this->l('Whitelisted IP addresses'), 'type' => 'textarea_newlines', 'cols' => 15, 'rows' => 30],
                 ],
                 'submit'      => ['title' => $this->l('Save')],
             ],
@@ -74,9 +74,9 @@ class AdminGeolocationControllerCore extends AdminController {
     public function setMedia($isNewTheme = false) {
 
         parent::setMedia($isNewTheme);
-        $this->addCSS(__PS_BASE_URI__ . _PS_JS_DIR_ . '' . $this->bo_theme . '/css/jquery-ui.css');
+        $this->addCSS(__EPH_BASE_URI__ . _EPH_JS_DIR_ . '' . $this->bo_theme . '/css/jquery-ui.css');
         $this->addJquery('3.4.1');
-        $this->addJS(__PS_BASE_URI__ . _PS_JS_DIR_ . 'jquery-ui/jquery-ui.js');
+        $this->addJS(__EPH_BASE_URI__ . _EPH_JS_DIR_ . 'jquery-ui/jquery-ui.js');
 
     }
 
@@ -88,12 +88,12 @@ class AdminGeolocationControllerCore extends AdminController {
     public function processUpdateOptions() {
 
         if ($this->isGeoLiteCityAvailable()) {
-            Configuration::updateValue('PS_GEOLOCATION_ENABLED', (int) Tools::getValue('PS_GEOLOCATION_ENABLED'));
+            Configuration::updateValue('EPH_GEOLOCATION_ENABLED', (int) Tools::getValue('EPH_GEOLOCATION_ENABLED'));
         }
 
         // stop processing if geolocation is set to yes but geolite pack is not available
         else
-        if (Tools::getValue('PS_GEOLOCATION_ENABLED')) {
+        if (Tools::getValue('EPH_GEOLOCATION_ENABLED')) {
             $this->errors[] = Tools::displayError('The geolocation database is unavailable.');
         }
 
@@ -103,19 +103,19 @@ class AdminGeolocationControllerCore extends AdminController {
                 $this->errors[] = Tools::displayError('Country selection is invalid.');
             } else {
                 Configuration::updateValue(
-                    'PS_GEOLOCATION_BEHAVIOR',
-                    (!(int) Tools::getValue('PS_GEOLOCATION_BEHAVIOR') ? _PS_GEOLOCATION_NO_CATALOG_ : _PS_GEOLOCATION_NO_ORDER_)
+                    'EPH_GEOLOCATION_BEHAVIOR',
+                    (!(int) Tools::getValue('EPH_GEOLOCATION_BEHAVIOR') ? _EPH_GEOLOCATION_NO_CATALOG_ : _EPH_GEOLOCATION_NO_ORDER_)
                 );
-                Configuration::updateValue('PS_GEOLOCATION_NA_BEHAVIOR', (int) Tools::getValue('PS_GEOLOCATION_NA_BEHAVIOR'));
-                Configuration::updateValue('PS_ALLOWED_COUNTRIES', implode(';', Tools::getValue('countries')));
+                Configuration::updateValue('EPH_GEOLOCATION_NA_BEHAVIOR', (int) Tools::getValue('EPH_GEOLOCATION_NA_BEHAVIOR'));
+                Configuration::updateValue('EPH_ALLOWED_COUNTRIES', implode(';', Tools::getValue('countries')));
             }
 
-            if (!Validate::isCleanHtml(Tools::getValue('PS_GEOLOCATION_WHITELIST'))) {
+            if (!Validate::isCleanHtml(Tools::getValue('EPH_GEOLOCATION_WHITELIST'))) {
                 $this->errors[] = Tools::displayError('Invalid whitelist');
             } else {
                 Configuration::updateValue(
-                    'PS_GEOLOCATION_WHITELIST',
-                    str_replace("\n", ';', str_replace("\r", '', Tools::getValue('PS_GEOLOCATION_WHITELIST')))
+                    'EPH_GEOLOCATION_WHITELIST',
+                    str_replace("\n", ';', str_replace("\r", '', Tools::getValue('EPH_GEOLOCATION_WHITELIST')))
                 );
             }
 
@@ -133,7 +133,7 @@ class AdminGeolocationControllerCore extends AdminController {
      */
     protected function isGeoLiteCityAvailable() {
 
-        if (@filemtime(_PS_GEOIP_DIR_ . _PS_GEOIP_CITY_FILE_)) {
+        if (@filemtime(_EPH_GEOIP_DIR_ . _EPH_GEOIP_CITY_FILE_)) {
             return true;
         }
 
@@ -160,7 +160,7 @@ class AdminGeolocationControllerCore extends AdminController {
             'controller' => Tools::getValue('controller'),
         ];
 
-        $this->tpl_option_vars = ['allowed_countries' => explode(';', Configuration::get('PS_ALLOWED_COUNTRIES'))];
+        $this->tpl_option_vars = ['allowed_countries' => explode(';', Configuration::get('EPH_ALLOWED_COUNTRIES'))];
 
         return parent::renderOptions();
     }
@@ -180,7 +180,7 @@ class AdminGeolocationControllerCore extends AdminController {
             $this->displayWarning(
                 $this->l('In order to use Geolocation, please download') . ' <a href="http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz">' . $this->l('this file') . '</a> ' . $this->l('and extract it (using Winrar or Gzip) into the /tools/geoip/ directory.')
             );
-            Configuration::updateValue('PS_GEOLOCATION_ENABLED', 0);
+            Configuration::updateValue('EPH_GEOLOCATION_ENABLED', 0);
         }
 
         parent::initContent();

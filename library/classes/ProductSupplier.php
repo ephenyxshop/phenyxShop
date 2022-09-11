@@ -79,7 +79,7 @@ class ProductSupplierCore extends ObjectModel {
      */
     public static function getProductSupplierReference($idProduct, $idProductAttribute, $idSupplier) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('ps.`product_supplier_reference`')
                 ->from('product_supplier', 'ps')
@@ -121,10 +121,10 @@ class ProductSupplierCore extends ObjectModel {
         );
 
         if (!$withCurrency) {
-            return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+            return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
         }
 
-        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
 
         if (isset($res[0])) {
             return $res[0];
@@ -148,7 +148,7 @@ class ProductSupplierCore extends ObjectModel {
      */
     public static function getIdByProductAndSupplier($idProduct, $idProductAttribute, $idSupplier) {
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('ps.id_product_supplier')
                 ->from('product_supplier', 'ps')
@@ -179,7 +179,7 @@ class ProductSupplierCore extends ObjectModel {
             return false;
         }
 
-        $row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('product_supplier_price_te as price_te, id_currency')
                 ->from('product_supplier')

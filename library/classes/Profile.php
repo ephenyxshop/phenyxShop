@@ -42,7 +42,7 @@ class ProfileCore extends ObjectModel {
      */
     public static function getProfiles($idLang) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('p.`id_profile`, `name`')
                 ->from('profile', 'p')
@@ -68,10 +68,10 @@ class ProfileCore extends ObjectModel {
     public static function getProfile($idProfile, $idLang = null) {
 
         if (!$idLang) {
-            $idLang = Configuration::get('PS_LANG_DEFAULT');
+            $idLang = Configuration::get('EPH_LANG_DEFAULT');
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('`name`')
                 ->from('profile', 'p')
@@ -126,10 +126,10 @@ class ProfileCore extends ObjectModel {
         if (!isset(static::$_cache_employee_accesses[$idProfile][$type])) {
             static::$_cache_employee_accesses[$idProfile][$type] = [];
 			
-            if ($idProfile == _PS_ADMIN_PROFILE_) {
+            if ($idProfile == _EPH_ADMIN_PROFILE_) {
                 foreach (EmployeeMenu::getEmployeeMenus(Context::getContext()->language->id) as $tab) {
                     static::$_cache_employee_accesses[$idProfile][$type][$tab['id_employee_menu']] = [
-                        'id_profile' => _PS_ADMIN_PROFILE_,
+                        'id_profile' => _EPH_ADMIN_PROFILE_,
                         'id_employee_menu'  => $tab['id_employee_menu'],
                         'view'       => '1',
                         'add'        => '1',
@@ -139,7 +139,7 @@ class ProfileCore extends ObjectModel {
                 }
 
             } else {
-                $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+                $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                     (new DbQuery())
                         ->select('*')
                         ->from('employee_access', 'a')
@@ -165,11 +165,11 @@ class ProfileCore extends ObjectModel {
       
 		
 		$accesses = [];
-        if ($idProfile == _PS_ADMIN_PROFILE_) {
+        if ($idProfile == _EPH_ADMIN_PROFILE_) {
 
         	foreach (EmployeeMenu::getEmployeeMenus(Context::getContext()->language->id) as $tab) {
             	$accesses[$idProfile][$type][$tab[$type]] = [
-                	'id_profile' => _PS_ADMIN_PROFILE_,
+                	'id_profile' => _EPH_ADMIN_PROFILE_,
                     'id_employee_menu'  => $tab['id_employee_menu'],
                     'view'       => '1',
                     'add'        => '1',

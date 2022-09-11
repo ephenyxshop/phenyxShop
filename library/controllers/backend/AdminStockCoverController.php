@@ -419,7 +419,7 @@ class AdminStockCoverControllerCore extends AdminController {
         $query->where('o.valid = 1');
         $query->where('os.logable = 1 AND os.delivery = 1 AND os.shipped = 1');
 
-        $quantity = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        $quantity = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
 
         return $quantity;
     }
@@ -433,8 +433,8 @@ class AdminStockCoverControllerCore extends AdminController {
      */
     public function initContent() {
 
-        if (!Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT')) {
-            $this->warnings[md5('PS_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management before using this feature.');
+        if (!Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT')) {
+            $this->warnings[md5('EPH_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management before using this feature.');
 
             return;
         }
@@ -451,8 +451,8 @@ class AdminStockCoverControllerCore extends AdminController {
      */
     public function initProcess() {
 
-        if (!Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT')) {
-            $this->warnings[md5('PS_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management before using this feature.');
+        if (!Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT')) {
+            $this->warnings[md5('EPH_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management before using this feature.');
 
             return;
         }

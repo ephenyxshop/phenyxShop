@@ -74,7 +74,7 @@ class CustomerMessageCore extends ObjectModel {
      */
     public static function getMessagesByOrderId($idOrder, $private = true) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('cm.*')
                 ->select('c.`firstname` AS `cfirstname`')
@@ -106,7 +106,7 @@ class CustomerMessageCore extends ObjectModel {
     public static function getTotalCustomerMessages($where = null) {
 
         if (is_null($where)) {
-            return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('COUNT(*)')
                     ->from('customer_message')
@@ -134,7 +134,7 @@ class CustomerMessageCore extends ObjectModel {
     public function delete() {
 
         if (!empty($this->file_name)) {
-            @unlink(_PS_UPLOAD_DIR_ . $this->file_name);
+            @unlink(_EPH_UPLOAD_DIR_ . $this->file_name);
         }
 
         return parent::delete();

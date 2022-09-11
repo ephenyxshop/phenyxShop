@@ -155,7 +155,7 @@ abstract class CurrencyRateModuleCore extends Module
             $sql->where('c.`deleted` = 0');
         }
 
-        $results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        $results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
 
         if (!$results) {
             return false;
@@ -376,7 +376,7 @@ abstract class CurrencyRateModuleCore extends Module
         $sql->from('currency_module');
         $sql->where('`id_currency` = '.(int) $idCurrency);
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($sql);
     }
 
     /**

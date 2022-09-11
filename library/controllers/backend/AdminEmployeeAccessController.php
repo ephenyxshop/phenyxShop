@@ -34,7 +34,7 @@ class AdminEmployeeAccessControllerCore extends AdminController {
 
     public function ajaxProcessOpenTargetController() {
 
-        $domaine = Configuration::get('PS_SHOP_DOMAIN');
+        $domaine = Configuration::get('EPH_SHOP_DOMAIN');
 
         $currentProfile = (int) $this->getCurrentProfileId();
         $profiles = Profile::getProfiles($this->context->language->id);
@@ -50,7 +50,7 @@ class AdminEmployeeAccessControllerCore extends AdminController {
         $modules = [];
 
         foreach ($profiles as $profile) {
-            $modules[$profile['id_profile']] = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $modules[$profile['id_profile']] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 '
                 SELECT ma.`id_module`, m.`name`, ma.`view`, ma.`configure`, ma.`uninstall`
                 FROM ' . _DB_PREFIX_ . 'module_access ma
@@ -108,7 +108,7 @@ class AdminEmployeeAccessControllerCore extends AdminController {
             'accesses'        => $accesses,
             'tabs'            => $tabs,
             'current_profile' => (int) $currentProfile,
-            'admin_profile'   => (int) _PS_ADMIN_PROFILE_,
+            'admin_profile'   => (int) _EPH_ADMIN_PROFILE_,
             'access_edit'     => $this->tabAccess['edit'],
             'perms'           => ['view', 'add', 'edit', 'delete'],
             'link'            => $this->context->link,
@@ -149,7 +149,7 @@ class AdminEmployeeAccessControllerCore extends AdminController {
      */
     public function ajaxProcessUpdateAccess() {
 
-        if (_PS_MODE_DEMO_) {
+        if (_EPH_MODE_DEMO_) {
             $result = [
                 'success' => false,
                 'message' => 'Vous êtes en mode Démo',
@@ -250,7 +250,7 @@ class AdminEmployeeAccessControllerCore extends AdminController {
      */
     public function ajaxProcessUpdateModuleAccess() {
 
-        if (_PS_MODE_DEMO_) {
+        if (_EPH_MODE_DEMO_) {
             throw new PhenyxShopException(Tools::displayError('This functionality has been disabled.'));
         }
 

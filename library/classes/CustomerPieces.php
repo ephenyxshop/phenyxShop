@@ -227,7 +227,7 @@ class CustomerPiecesCore extends ObjectModel {
     }
 	
 	public function getCartRules()  {
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('order_cart_rule', 'ocr')
@@ -253,7 +253,7 @@ class CustomerPiecesCore extends ObjectModel {
     public function getFields() {
 
         if (!$this->id_lang) {
-            $this->id_lang = Configuration::get('PS_LANG_DEFAULT', null, null, $this->id_shop);
+            $this->id_lang = Configuration::get('EPH_LANG_DEFAULT', null, null, $this->id_shop);
         }
 
         return parent::getFields();
@@ -299,7 +299,7 @@ class CustomerPiecesCore extends ObjectModel {
 	
 	public static function getCartIdStatic($idOrder, $idCustomer = 0)
     {
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_cart`')
                 ->from('customer_pieces')
@@ -310,7 +310,7 @@ class CustomerPiecesCore extends ObjectModel {
 	
 	public function getParentTransfert() {
 		
-		$idParent = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		$idParent = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
             ->select('id_customer_piece')
             ->from('customer_pieces')
@@ -334,7 +334,7 @@ class CustomerPiecesCore extends ObjectModel {
 	
 	public static function getInvoicesbyidSession($idSession) {
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('id_customer_piece')
 				->from('customer_pieces')
@@ -361,7 +361,7 @@ class CustomerPiecesCore extends ObjectModel {
 		}
         $query->orderBy('a.`date_add` DESC');
 		fwrite($file,$query);
-		$orders = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+		$orders = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
 		
 		return $orders;
        
@@ -386,7 +386,7 @@ class CustomerPiecesCore extends ObjectModel {
 		
 		if(empty($this->piece_number)) {
 			$year = date('Y');
-			$lastValue = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+			$lastValue = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 				(new DbQuery())
 				->select('`piece_number`')
 				->from('customer_pieces')
@@ -412,7 +412,7 @@ class CustomerPiecesCore extends ObjectModel {
 	
 	public static function getCreditCardInfo($idCustomerPiece) {
 		
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('*')
                 ->from('order_credit_card')
@@ -423,7 +423,7 @@ class CustomerPiecesCore extends ObjectModel {
 	
 	public static function getSepaInfo($idCustomerPiece) {
 		
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('ba.*')
                 ->from('sepa', 's')
@@ -438,7 +438,7 @@ class CustomerPiecesCore extends ObjectModel {
 		
 		if(empty($this->piece_number)) {
 			$year = date('Y');
-			$lastValue = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+			$lastValue = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 				(new DbQuery())
 				->select('`piece_number`')
 				->from('customer_pieces')
@@ -467,7 +467,7 @@ class CustomerPiecesCore extends ObjectModel {
         foreach (static::$definition['fields'] as $fieldName => $field) {
 
             if ($field['type'] === static::TYPE_FLOAT && isset($this->$fieldName)) {
-                $this->$fieldName = Tools::ps_round($this->$fieldName, _EPH_PRICE_DATABASE_PRECISION_);
+                $this->$fieldName = Tools::EPH_round($this->$fieldName, _EPH_PRICE_DATABASE_PRECISION_);
             }
 
         }
@@ -510,7 +510,7 @@ class CustomerPiecesCore extends ObjectModel {
 	
     public function getProductsDetail() {
 		
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('customer_piece_detail', 'od')
@@ -583,8 +583,8 @@ class CustomerPiecesCore extends ObjectModel {
         $row['tax_calculator'] = $taxCalculator;
         $row['tax_rate'] = $taxCalculator->getTotalRate();
 
-        $row['unit_tax_excl'] = Tools::ps_round($row['unit_tax_excl'], 2);
-        $row['unit_tax_incl'] = Tools::ps_round($row['unit_tax_incl'], 2);
+        $row['unit_tax_excl'] = Tools::EPH_round($row['unit_tax_excl'], 2);
+        $row['unit_tax_incl'] = Tools::EPH_round($row['unit_tax_incl'], 2);
 
         $row['product_price_wt_but_ecotax'] = $row['unit_tax_incl'] - $row['ecotax'];
 
@@ -604,7 +604,7 @@ class CustomerPiecesCore extends ObjectModel {
 	
 	protected function setProductCurrentStock(&$product)
     {
-        if (Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT')
+        if (Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT')
             && (int) $product['advanced_stock_management'] == 1
             && (int) $product['id_warehouse'] > 0) {
             $product['current_stock'] = StockManagerFactory::getManager()->getProductPhysicalQuantities($product['id_product'], $product['id_product_attribute'], (int) $product['id_warehouse'], true);
@@ -616,7 +616,7 @@ class CustomerPiecesCore extends ObjectModel {
 	protected function setProductImageInformations(&$product)
     {
         if (isset($product['id_product_attribute']) && $product['id_product_attribute']) {
-            $idImage = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $idImage = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('image_shop.`id_image`')
                     ->from('product_attribute_image', 'pai')
@@ -628,7 +628,7 @@ class CustomerPiecesCore extends ObjectModel {
         }
 
         if (!isset($idImage) || !$idImage) {
-            $idImage = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $idImage = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('image_shop.`id_image`')
                     ->from('image', 'i')
@@ -648,7 +648,7 @@ class CustomerPiecesCore extends ObjectModel {
 
     public function getVirtualProducts() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_product`, `id_product_attribute`, `download_hash`, `download_deadline`')
                 ->from('customer_piece_detail', 'od')
@@ -695,7 +695,7 @@ class CustomerPiecesCore extends ObjectModel {
 		$orders = [];
 		foreach($pieceTypes as $key => $pieceType) {
 			
-			$res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+			$res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 				(new DbQuery())
                 	->select('o.*, (SELECT SUM(od.`product_quantity`) FROM `' . _DB_PREFIX_ . 'customer_piece_detail` od WHERE od.`id_customer_piece` = o.`id_customer_piece`) nb_products, osl.name as order_state, os.`color` AS `order_state_color`')
                 	->from('customer_pieces', 'o')
@@ -778,7 +778,7 @@ class CustomerPiecesCore extends ObjectModel {
 
     public static function getCustomerNbOrders($idCustomer) {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('COUNT(`id_customer_piece`) AS `nb`')
                 ->from('customer_pieces')
@@ -790,7 +790,7 @@ class CustomerPiecesCore extends ObjectModel {
 
     public function getTotalWeight() {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('SUM(`product_weight` * `product_quantity`)')
                 ->from('customer_piece_detail')
@@ -804,7 +804,7 @@ class CustomerPiecesCore extends ObjectModel {
 
         Tools::displayAsDeprecated();
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('`invoice_number`, `id_customer_piece`')
                 ->from('orders')
@@ -843,7 +843,7 @@ class CustomerPiecesCore extends ObjectModel {
 	public static function getLastInvoiceNumber() {
 		
 		$sql = 'SELECT `AUTO_INCREMENT` FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = \''._DB_NAME_.'\' AND   TABLE_NAME   = \''._DB_PREFIX_.'customer_pieces\'';
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->execute($sql);
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->execute($sql);
 	}
 	
 	public static function mergeCartTable(Order $order, $pieceNumber, $valid = null) {
@@ -905,7 +905,7 @@ class CustomerPiecesCore extends ObjectModel {
 	
 	public static function getValidOrderState() {
 		
-		$validates = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$validates = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
             ->select('id_order_state')
             ->from('order_state')
@@ -942,7 +942,7 @@ class CustomerPiecesCore extends ObjectModel {
 		
 		$date = new dateTime($order->date_add);
 		$year =  $date->format('Y');
-		$lastValue = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		$lastValue = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
             ->select('`piece_number`')
             ->from('customer_pieces')
@@ -966,7 +966,7 @@ class CustomerPiecesCore extends ObjectModel {
 	
 	public static function isMergeOrderTable($idOrder) {
 		
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_customer_piece`')
                 ->from('customer_pieces')
@@ -980,7 +980,7 @@ class CustomerPiecesCore extends ObjectModel {
 		
 		
 		$year = date('Y');
-		$lastValue = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		$lastValue = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
             ->select('`piece_number`')
             ->from('customer_pieces')
@@ -1061,7 +1061,7 @@ class CustomerPiecesCore extends ObjectModel {
 	
 	public static function getProductsOrderDetail($idOrder) {
 		
-       	return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+       	return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
             ->select('od.*, odt.`id_tax`, odt.`total_amount` as `total_line_tax`, t.`rate` as `rateTaxe`')
             ->from('order_detail', 'od')
@@ -1073,7 +1073,7 @@ class CustomerPiecesCore extends ObjectModel {
 	
 	public static function getPieceIdbyTransfert($lastTransfert) {
 		
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
             ->select('id_customer_piece')
             ->from('customer_pieces')
@@ -1084,7 +1084,7 @@ class CustomerPiecesCore extends ObjectModel {
 	public static function generatePayment(Order $order, CustomerPieces $piece) {
 		
 		
-		$payments = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$payments = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('*')
                     ->from('order_payment')
@@ -1282,8 +1282,8 @@ class CustomerPiecesCore extends ObjectModel {
 					$newPiece->id_shop = (int) $context->shop->id;
 					$newPiece->id_shop_group = (int) $context->shop->id_shop_group;
 					$newPiece->id_lang = $context->language->id;
-					$newPiece->round_mode = Configuration::get('PS_PRICE_ROUND_MODE');
-					$newPiece->round_type = Configuration::get('PS_ROUND_TYPE');
+					$newPiece->round_mode = Configuration::get('EPH_PRICE_ROUND_MODE');
+					$newPiece->round_type = Configuration::get('EPH_ROUND_TYPE');
 					$newPiece->date_add = $session_date;
 					$result = $newPiece->add();
 
@@ -1515,7 +1515,7 @@ class CustomerPiecesCore extends ObjectModel {
 		$productDetails = $this->getProductsDetail();
 		$customer = new Customer($this->id_customer);
 
-		$model = Configuration::get('PS_INVOICE_MODEL');
+		$model = Configuration::get('EPH_INVOICE_MODEL');
 		$template = new InvoiceModel($model);
 		$address = new Address($this->id_address_invoice);
 
@@ -1554,12 +1554,12 @@ class CustomerPiecesCore extends ObjectModel {
 			'margin_footer' => 10,
 		]);
 
-		$data = $context->smarty->createTemplate(_PS_PDF_DIR_.'headertemplate.tpl');
+		$data = $context->smarty->createTemplate(_EPH_PDF_DIR_.'headertemplate.tpl');
 
 		$data->assign(
 			[
 				'company'        => $context->company,
-				'free_text'      => Configuration::get('PS_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->shop->id),
+				'free_text'      => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->shop->id),
 				'logo_path'      => $pathLogo,
 				'width_logo'     => $width,
 				'height_logo'    => $height,
@@ -1573,12 +1573,12 @@ class CustomerPiecesCore extends ObjectModel {
 		);
 		$mpdf->SetHTMLHeader($data->fetch());
 
-		$data = $context->smarty->createTemplate(_PS_PDF_DIR_.'footertemplate.tpl');
+		$data = $context->smarty->createTemplate(_EPH_PDF_DIR_.'footertemplate.tpl');
 
 		$data->assign(
 			[
 				'company'        => $context->company,
-				'free_text'      => Configuration::get('PS_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->shop->id),
+				'free_text'      => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->shop->id),
 				'logo_path'      => $pathLogo,
 				'piece'          => $this,
 				'payments'       => $payments,
@@ -1590,7 +1590,7 @@ class CustomerPiecesCore extends ObjectModel {
 		);
 		$mpdf->SetHTMLFooter($data->fetch(), 'O');
 
-		$data = $context->smarty->createTemplate(_PS_PDF_DIR_.'pdf.css.tpl');
+		$data = $context->smarty->createTemplate(_EPH_PDF_DIR_.'pdf.css.tpl');
 		$data->assign(
 			[
 				'color' => $template->color,
@@ -1598,12 +1598,12 @@ class CustomerPiecesCore extends ObjectModel {
 		);
 		$stylesheet = $data->fetch();
 
-		$data = $context->smarty->createTemplate(_PS_PDF_DIR_.'bodytemplate.tpl');
+		$data = $context->smarty->createTemplate(_EPH_PDF_DIR_.'bodytemplate.tpl');
 
 		$data->assign(
 			[
 				'company'          => $context->company,
-				'free_text'        => Configuration::get('PS_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->shop->id),
+				'free_text'        => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->shop->id),
 				'logo_path'        => $pathLogo,
 				'piece'            => $this,
 				'payments'         => $payments,
@@ -1624,7 +1624,7 @@ class CustomerPiecesCore extends ObjectModel {
 			$mpdf->SetProtection(['copy', 'print'], '', _DB_PASSWD_);
 		}
 
-		$filePath = _PS_INVOICE_DIR_ ;
+		$filePath = _EPH_INVOICE_DIR_ ;
 
 		$mpdf->SetTitle($context->company->company_name . " " . $this->getStaticPieceName($this->piece_type) . " " . $this->prefix . $this->piece_number);
 		$mpdf->SetAuthor($context->company->company_name);
@@ -1650,12 +1650,12 @@ class CustomerPiecesCore extends ObjectModel {
 		$context = Context::getContext();
 		$idShop = (int) $context->shop->id;
 
-		if (Configuration::get('PS_LOGO_INVOICE', null, null, $idShop) != false && file_exists(_PS_IMG_DIR_ . Configuration::get('PS_LOGO_INVOICE', null, null, $idShop))) {
-			$logo = _PS_IMG_DIR_ . Configuration::get('PS_LOGO_INVOICE', null, null, $idShop);
+		if (Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop))) {
+			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop);
 		} else
 
-		if (Configuration::get('PS_LOGO', null, null, $idShop) != false && file_exists(_PS_IMG_DIR_ . Configuration::get('PS_LOGO', null, null, $idShop))) {
-			$logo = _PS_IMG_DIR_ . Configuration::get('PS_LOGO', null, null, $idShop);
+		if (Configuration::get('EPH_LOGO', null, null, $idShop) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop))) {
+			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop);
 		}
 
 		return $logo;
@@ -1698,7 +1698,7 @@ class CustomerPiecesCore extends ObjectModel {
 		
         $cacheId = 'CustomerPieces::getDiscountsCustomer_'.(int) $idCustomer.'-'.(int) $idCartRule;
         if (!Cache::isStored($cacheId)) {
-            $result = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $result = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('COUNT(*)')
                     ->from(bqSQL(static::$definition['table']), 'o')
@@ -1756,7 +1756,7 @@ class CustomerPiecesCore extends ObjectModel {
 
         if (!isset(static::$_historyCache[$this->id.'_'.$idOrderState.'_'.$filters]) || $noHidden) {
             $idLang = $idLang ? (int) $idLang : 'o.`id_lang`';
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('os.*, oh.*, e.`firstname` AS `employee_firstname`, e.`lastname` AS `employee_lastname`, osl.`name` AS `ostate_name`')
                     ->from('customer_pieces', 'o')
@@ -1818,7 +1818,7 @@ class CustomerPiecesCore extends ObjectModel {
 	
 	public function getOrdersTotalPaid() {
 		
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('SUM(`total_paid`)')
                 ->from('customer_pieces')
@@ -1829,7 +1829,7 @@ class CustomerPiecesCore extends ObjectModel {
 	
 	public function getCurrentStateFull($idLang) {
 		
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('os.`id_customer_piece_state`, osl.`name`, os.`logable`, os.`shipped`')
                 ->from('customer_piece_state', 'os')
@@ -1849,7 +1849,7 @@ class CustomerPiecesCore extends ObjectModel {
 
     public static function getCarrierId($idCustomerPiece)
     {
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_carrier`')
                 ->from('customer_pieces')

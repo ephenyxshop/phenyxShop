@@ -105,7 +105,7 @@ class WarehouseCore extends ObjectModel
         $query->leftJoin('shop', 's', 's.id_shop = ws.id_shop');
         $query->where($this->def['primary'].' = '.(int) $this->id);
 
-        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
 
         return $res;
     }
@@ -132,7 +132,7 @@ class WarehouseCore extends ObjectModel
         $query->innerJoin('carrier', 'c', 'c.id_reference = wc.id_carrier');
         $query->where($this->def['primary'].' = '.(int) $this->id);
         $query->where('c.deleted = 0');
-        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
 
         if (!is_array($res)) {
             return $idsCarrier;
@@ -216,7 +216,7 @@ class WarehouseCore extends ObjectModel
         $query->from('stock', 's');
         $query->where($this->def['primary'].' = '.(int) $this->id);
 
-        return (Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query) == 0);
+        return (Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query) == 0);
     }
 
     /**
@@ -238,7 +238,7 @@ class WarehouseCore extends ObjectModel
         $query->where('id_warehouse = '.(int) $idWarehouse);
         $query->where('deleted = 0');
 
-        return (Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query));
+        return (Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query));
     }
 
     /**
@@ -314,7 +314,7 @@ class WarehouseCore extends ObjectModel
         $query->where('id_product = '.(int) $idProduct);
         $query->where('id_product_attribute = '.(int) $idProductAttribute);
 
-        return (Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query));
+        return (Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query));
     }
 
     /**
@@ -364,7 +364,7 @@ class WarehouseCore extends ObjectModel
         $query->where('w.deleted = 0');
         $query->groupBy('wpl.id_warehouse');
 
-        return (Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query));
+        return (Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query));
     }
 
     /**
@@ -398,7 +398,7 @@ class WarehouseCore extends ObjectModel
             $query->innerJoin('warehouse_shop', 'ws', 'ws.id_warehouse = w.id_warehouse AND ws.id_shop = '.(int) $idShop);
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
     }
 
     /**
@@ -448,7 +448,7 @@ class WarehouseCore extends ObjectModel
 				 	GROUP BY s.id_product, s.id_product_attribute
 				 ) as t';
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
     }
 
     /**
@@ -467,7 +467,7 @@ class WarehouseCore extends ObjectModel
 			FROM '._DB_PREFIX_.'stock s
 			WHERE s.id_warehouse = '.(int) $this->id;
 
-        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
 
         return ($res ? $res : 0);
     }
@@ -488,7 +488,7 @@ class WarehouseCore extends ObjectModel
         $query->from('stock', 's');
         $query->where('s.`id_warehouse` = '.(int) $this->id);
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
     }
 
     /**
@@ -510,7 +510,7 @@ class WarehouseCore extends ObjectModel
         $query->from('warehouse', 'w');
         $query->where('w.id_employee = '.(int) $idEmployee);
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
     }
 
     /**
@@ -544,7 +544,7 @@ class WarehouseCore extends ObjectModel
         }
         $query->orderBy('w.reference ASC');
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
     }
 
     /**
@@ -565,7 +565,7 @@ class WarehouseCore extends ObjectModel
         $query->from('warehouse');
         $query->where('id_warehouse = '.(int) $idWarehouse);
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
     }
 
     /**
@@ -595,7 +595,7 @@ class WarehouseCore extends ObjectModel
         // warehouses of the pack
         $packWarehouses = WarehouseProductLocation::getCollection((int) $idProduct);
         // products in the pack
-        $products = Pack::getItems((int) $idProduct, Configuration::get('PS_LANG_DEFAULT'));
+        $products = Pack::getItems((int) $idProduct, Configuration::get('EPH_LANG_DEFAULT'));
 
         // array with all warehouses id to check
         $list = [];
@@ -678,7 +678,7 @@ class WarehouseCore extends ObjectModel
         $query->from('stock', 's');
         $query->where('s.id_warehouse ='.(int) $this->id);
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
     }
 
     /**
@@ -699,7 +699,7 @@ class WarehouseCore extends ObjectModel
         $query->leftJoin('shop', 's', 's.id_shop = ws.id_shop');
         $query->where($this->def['primary'].' = '.(int) $this->id);
 
-        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
 
         return $res;
     }
@@ -723,7 +723,7 @@ class WarehouseCore extends ObjectModel
         $query->from('warehouse_carrier', 'wc');
         $query->where($this->def['primary'].' = '.(int) $this->id);
 
-        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
 
         if (!is_array($res)) {
             return $idsCarrier;

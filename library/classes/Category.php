@@ -111,8 +111,8 @@ class CategoryCore extends ObjectModel {
     public function __construct($idCategory = null, $idLang = null, $idShop = null) {
 
         parent::__construct($idCategory, $idLang, $idShop);
-        $this->id_image = ($this->id && file_exists(_PS_CAT_IMG_DIR_ . (int) $this->id . '.jpg')) ? (int) $this->id : false;
-        $this->image_dir = _PS_CAT_IMG_DIR_;
+        $this->id_image = ($this->id && file_exists(_EPH_CAT_IMG_DIR_ . (int) $this->id . '.jpg')) ? (int) $this->id : false;
+        $this->image_dir = _EPH_CAT_IMG_DIR_;
     }
 
     /**
@@ -128,7 +128,7 @@ class CategoryCore extends ObjectModel {
     public static function recurseCategory($categories, $current, $idCategory = null, $idSelected = 1) {
 
         if (!$idCategory) {
-            $idCategory = (int) Configuration::get('PS_ROOT_CATEGORY');
+            $idCategory = (int) Configuration::get('EPH_ROOT_CATEGORY');
         }
 
         echo '<option value="' . $idCategory . '"' . (($idSelected == $idCategory) ? ' selected="selected"' : '') . '>' .
@@ -168,7 +168,7 @@ class CategoryCore extends ObjectModel {
             die(Tools::displayError());
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
             SELECT *
             FROM `' . _DB_PREFIX_ . 'category` c
@@ -239,7 +239,7 @@ class CategoryCore extends ObjectModel {
         );
 
         if (!Cache::isStored($cacheId)) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 '
                 SELECT c.id_category, cl.name
                 FROM `' . _DB_PREFIX_ . 'category` c
@@ -309,7 +309,7 @@ class CategoryCore extends ObjectModel {
         );
 
         if (!Cache::isStored($cacheId)) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 '
                 SELECT c.*, cl.*
                 FROM `' . _DB_PREFIX_ . 'category` c
@@ -374,7 +374,7 @@ class CategoryCore extends ObjectModel {
         if (!$shop) {
 
             if (Shop::isFeatureActive() && Shop::getContext() != Shop::CONTEXT_SHOP) {
-                $shop = new Shop(Configuration::get('PS_SHOP_DEFAULT'));
+                $shop = new Shop(Configuration::get('EPH_SHOP_DEFAULT'));
             } else {
                 $shop = $context->shop;
             }
@@ -407,7 +407,7 @@ class CategoryCore extends ObjectModel {
         $cacheId = 'Category::getCategoriesWithoutParent_' . (int) Context::getContext()->language->id;
 
         if (!Cache::isStored($cacheId)) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 '
             SELECT DISTINCT c.*
             FROM `' . _DB_PREFIX_ . 'category` c
@@ -440,7 +440,7 @@ class CategoryCore extends ObjectModel {
         $cacheId = 'Category::getTopCategory_' . (int) $idLang;
 
         if (!Cache::isStored($cacheId)) {
-            $idCategory = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $idCategory = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`id_category`')
                     ->from('category')
@@ -467,13 +467,13 @@ class CategoryCore extends ObjectModel {
      */
     public static function getSimpleCategories($idLang) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('c.`id_category`, cl.`name`')
                 ->from('category', 'c')
                 ->leftJoin('category_lang', 'cl', 'c.`id_category` = cl.`id_category` ')
                 ->where('cl.`id_lang` = ' . (int) $idLang)
-                ->where('c.`id_category` != ' . Configuration::get('PS_ROOT_CATEGORY'))
+                ->where('c.`id_category` != ' . Configuration::get('EPH_ROOT_CATEGORY'))
                 ->groupBy('c.`id_category`')
                 ->orderBy('c.`id_category`, c.`position`')
         );
@@ -532,7 +532,7 @@ class CategoryCore extends ObjectModel {
      */
     public static function getHomeCategories($idLang, $active = true, $idShop = false) {
 
-        return static::getChildren(Configuration::get('PS_HOME_CATEGORY'), $idLang, $active, $idShop);
+        return static::getChildren(Configuration::get('EPH_HOME_CATEGORY'), $idLang, $active, $idShop);
     }
 
     /**
@@ -566,7 +566,7 @@ class CategoryCore extends ObjectModel {
             ' . ($active ? 'AND `active` = 1' : '') . '
             GROUP BY c.`id_category`
             ORDER BY c.`position` ASC';
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
             Cache::store($cacheId, $result);
 
             return $result;
@@ -604,7 +604,7 @@ class CategoryCore extends ObjectModel {
             WHERE `id_lang` = ' . (int) $idLang . '
             AND c.`id_parent` = ' . (int) $idParent . '
             ' . ($active ? 'AND `active` = 1' : '') . ' LIMIT 1';
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
             Cache::store($cacheId, $result);
 
             return $result;
@@ -635,7 +635,7 @@ class CategoryCore extends ObjectModel {
             $shop = Context::getContext()->shop;
         }
 
-        $idShop = $shop->id ? $shop->id : Configuration::get('PS_SHOP_DEFAULT');
+        $idShop = $shop->id ? $shop->id : Configuration::get('EPH_SHOP_DEFAULT');
         $selectedCat = explode(',', str_replace(' ', '', $selectedCat));
         $sql = '
         SELECT c.`id_category`, c.`level_depth`, cl.`name`,
@@ -660,7 +660,7 @@ class CategoryCore extends ObjectModel {
             $sql .= ' ORDER BY cs.`position` ASC';
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
     }
 
     /**
@@ -681,7 +681,7 @@ class CategoryCore extends ObjectModel {
         $sql = 'SELECT `id_category`
                 FROM `' . _DB_PREFIX_ . 'category_product`
                 WHERE `id_product` = ' . (int) $idOld;
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
 
         $row = [];
 
@@ -729,14 +729,14 @@ class CategoryCore extends ObjectModel {
             return false;
         }
 
-        if ($idParent == Configuration::get('PS_HOME_CATEGORY')) {
+        if ($idParent == Configuration::get('EPH_HOME_CATEGORY')) {
             return true;
         }
 
         $i = (int) $idParent;
 
         while (42) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow('SELECT `id_parent` FROM `' . _DB_PREFIX_ . 'category` WHERE `id_category` = ' . (int) $i);
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow('SELECT `id_parent` FROM `' . _DB_PREFIX_ . 'category` WHERE `id_category` = ' . (int) $i);
 
             if (!isset($result['id_parent'])) {
                 return false;
@@ -746,7 +746,7 @@ class CategoryCore extends ObjectModel {
                 return false;
             }
 
-            if ($result['id_parent'] == Configuration::get('PS_HOME_CATEGORY')) {
+            if ($result['id_parent'] == Configuration::get('EPH_HOME_CATEGORY')) {
                 return true;
             }
 
@@ -772,7 +772,7 @@ class CategoryCore extends ObjectModel {
         }
 
         if (!isset(static::$_links[$idCategory . '-' . $idLang])) {
-            static::$_links[$idCategory . '-' . $idLang] = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            static::$_links[$idCategory . '-' . $idLang] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 '
             SELECT cl.`link_rewrite`
             FROM `' . _DB_PREFIX_ . 'category_lang` cl
@@ -846,7 +846,7 @@ class CategoryCore extends ObjectModel {
      */
     public static function searchByNameAndParentCategoryId($idLang, $categoryName, $idParentCategory) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             '
         SELECT c.*, cl.*
         FROM `' . _DB_PREFIX_ . 'category` c
@@ -854,7 +854,7 @@ class CategoryCore extends ObjectModel {
             ON (c.`id_category` = cl.`id_category`
             AND `id_lang` = ' . (int) $idLang . ')
         WHERE `name` = \'' . pSQL($categoryName) . '\'
-            AND c.`id_category` != ' . (int) Configuration::get('PS_HOME_CATEGORY') . '
+            AND c.`id_category` != ' . (int) Configuration::get('EPH_HOME_CATEGORY') . '
             AND c.`id_parent` = ' . (int) $idParentCategory
         );
     }
@@ -880,7 +880,7 @@ class CategoryCore extends ObjectModel {
             $key = 'Category::searchByName_' . $query;
 
             if ($skipCache || !Cache::isStored($key)) {
-                $categories = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+                $categories = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                     (new DbQuery())
                         ->select('c.*, cl.*')
                         ->from('category', 'c')
@@ -897,13 +897,13 @@ class CategoryCore extends ObjectModel {
 
             return Cache::retrieve($key);
         } else {
-            return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('c.*, cl.*')
                     ->from('category', 'c')
                     ->leftJoin('category_lang', 'cl', 'c.`id_category` = cl.`id_category` AND `id_lang` = ' . (int) $idLang)
                     ->where('`name` LIKE \'%' . pSQL($query) . '%\'')
-                    ->where('c.`id_category` != ' . (int) Configuration::get('PS_HOME_CATEGORY'))
+                    ->where('c.`id_category` != ' . (int) Configuration::get('EPH_HOME_CATEGORY'))
             );
         }
 
@@ -923,7 +923,7 @@ class CategoryCore extends ObjectModel {
      */
     public static function categoryExists($idCategory) {
 
-        $row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('`id_category`')
                 ->from('category', 'c')
@@ -974,7 +974,7 @@ class CategoryCore extends ObjectModel {
      */
     public static function getUrlRewriteInformations($idCategory) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('l.`id_lang`, c.`link_rewrite`')
                 ->from('category_lang', 'c')
@@ -1005,7 +1005,7 @@ class CategoryCore extends ObjectModel {
         }
 
         try {
-            $row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('`nleft`, `nright`')
                     ->from('category')
@@ -1035,7 +1035,7 @@ class CategoryCore extends ObjectModel {
         $cacheId = 'Category::getInterval_' . (int) $id;
 
         if (!Cache::isStored($cacheId)) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('`nleft`, `nright`, `level_depth`')
                     ->from('category')
@@ -1072,7 +1072,7 @@ class CategoryCore extends ObjectModel {
         }
 
         $categories = [];
-        $results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('c.`id_category`, cl.`name`, cl.`link_rewrite`, cl.`id_lang`')
                 ->from('category', 'c')
@@ -1105,7 +1105,7 @@ class CategoryCore extends ObjectModel {
             $idLang = Context::getContext()->language->id;
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('DISTINCT(c.`id_category`), cl.`name`')
                 ->from('category', 'c')
@@ -1127,7 +1127,7 @@ class CategoryCore extends ObjectModel {
      */
     public static function getShopsByCategory($idCategory) {
 
-        return Configuration::get('PS_SHOP_DEFAULT');
+        return Configuration::get('EPH_SHOP_DEFAULT');
     }
 
     /**
@@ -1162,7 +1162,7 @@ class CategoryCore extends ObjectModel {
      */
     public static function getLastPosition($idCategoryParent, $idShop) {
 
-        if ((int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        if ((int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
                 SELECT COUNT(c.`id_category`)
                 FROM `' . _DB_PREFIX_ . 'category` c
@@ -1171,7 +1171,7 @@ class CategoryCore extends ObjectModel {
         ) {
             return 0;
         } else {
-            return (1 + (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            return (1 + (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 '
                 SELECT MAX(c.`position`)
                 FROM `' . _DB_PREFIX_ . 'category` c
@@ -1198,7 +1198,7 @@ class CategoryCore extends ObjectModel {
             $this->level_depth = $this->calcLevelDepth();
         }
 
-        if ($this->is_root_category && ($idRootCategory = (int) Configuration::get('PS_ROOT_CATEGORY'))) {
+        if ($this->is_root_category && ($idRootCategory = (int) Configuration::get('EPH_ROOT_CATEGORY'))) {
             $this->id_parent = $idRootCategory;
         }
 
@@ -1268,8 +1268,8 @@ class CategoryCore extends ObjectModel {
     public static function regenerateEntireNtree() {
 
         $id = Context::getContext()->shop->id;
-        $idShop = $id ? $id : Configuration::get('PS_SHOP_DEFAULT');
-        $categories = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $idShop = $id ? $id : Configuration::get('EPH_SHOP_DEFAULT');
+        $categories = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('c.`id_category`, c.`id_parent`')
                 ->from('category', 'c')
@@ -1348,7 +1348,7 @@ class CategoryCore extends ObjectModel {
         $this->cleanGroups();
 
         if (empty($list)) {
-            $list = [Configuration::get('PS_UNIDENTIFIED_GROUP'), Configuration::get('PS_GUEST_GROUP'), Configuration::get('PS_CUSTOMER_GROUP')];
+            $list = [Configuration::get('EPH_UNIDENTIFIED_GROUP'), Configuration::get('EPH_GUEST_GROUP'), Configuration::get('EPH_CUSTOMER_GROUP')];
         }
 
         $this->addGroups($list);
@@ -1408,7 +1408,7 @@ class CategoryCore extends ObjectModel {
             PageCache::invalidateEntity('category', $this->id);
         }
 
-        if ($this->is_root_category && $this->id_parent != (int) Configuration::get('PS_ROOT_CATEGORY')) {
+        if ($this->is_root_category && $this->id_parent != (int) Configuration::get('EPH_ROOT_CATEGORY')) {
             $this->is_root_category = 0;
         }
 
@@ -1472,7 +1472,7 @@ class CategoryCore extends ObjectModel {
      */
     public function getDuplicatePosition() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
         SELECT c.`id_category`
         FROM `' . _DB_PREFIX_ . 'category` c
@@ -1503,7 +1503,7 @@ class CategoryCore extends ObjectModel {
         }
 
         $return = true;
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('c.`id_category`')
                 ->from('category', 'c')
@@ -1542,14 +1542,14 @@ class CategoryCore extends ObjectModel {
         }
 
         /* Gets all children */
-        $categories = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $categories = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_category`, `id_parent`, `level_depth`')
                 ->from('category')
                 ->where('`id_parent` = ' . (int) $idCategory)
         );
         /* Gets level_depth */
-        $level = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $level = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('level_depth')
                 ->from('category')
@@ -1668,7 +1668,7 @@ class CategoryCore extends ObjectModel {
             $sqlGroupsWhere = 'AND cg.`id_group` ' . (count($groups) ? 'IN (' . implode(',', $groups) . ')' : '=' . (int) Group::getCurrent()->id);
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
         SELECT c.*, cl.id_lang, cl.name, cl.description, cl.link_rewrite, cl.meta_title, cl.meta_keywords, cl.meta_description
         FROM `' . _DB_PREFIX_ . 'category` c
@@ -1682,7 +1682,7 @@ class CategoryCore extends ObjectModel {
         );
 
         foreach ($result as &$row) {
-            $row['id_image'] = (file_exists(_PS_CAT_IMG_DIR_ . (int) $row['id_category'] . '.jpg') || file_exists(_PS_CAT_IMG_DIR_ . (int) $row['id_category'] . '_thumb.jpg')) ? (int) $row['id_category'] : Language::getIsoById($idLang) . '-default';
+            $row['id_image'] = (file_exists(_EPH_CAT_IMG_DIR_ . (int) $row['id_category'] . '.jpg') || file_exists(_EPH_CAT_IMG_DIR_ . (int) $row['id_category'] . '_thumb.jpg')) ? (int) $row['id_category'] : Language::getIsoById($idLang) . '-default';
             $row['legend'] = 'no picture';
         }
 
@@ -1739,7 +1739,7 @@ class CategoryCore extends ObjectModel {
      */
     public function isRootCategoryForAShop() {
 
-        return (bool) Configuration::get('PS_SHOP_DEFAULT');
+        return (bool) Configuration::get('EPH_SHOP_DEFAULT');
     }
 
     /**
@@ -1752,7 +1752,7 @@ class CategoryCore extends ObjectModel {
      */
     public function delete() {
 
-        if ((int) $this->id === 0 || (int) $this->id === (int) Configuration::get('PS_ROOT_CATEGORY')) {
+        if ((int) $this->id === 0 || (int) $this->id === (int) Configuration::get('EPH_ROOT_CATEGORY')) {
             return false;
         }
 
@@ -1918,7 +1918,7 @@ class CategoryCore extends ObjectModel {
                 ($id_manufacturer ? ' AND p.`id_manufacturer` = ' . (int) $id_manufacturer : '') .
                 ($idSupplier ? 'AND p.id_supplier = ' . (int) $idSupplier : '');
             fwrite($file, $sql . PHP_EOL);
-            return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+            return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($sql);
         }
 
         if ($p < 1) {
@@ -1952,7 +1952,7 @@ class CategoryCore extends ObjectModel {
             $orderBy = 'orderprice';
         }
 
-        $nbDaysNewProduct = Configuration::get('PS_NB_DAYS_NEW_PRODUCT');
+        $nbDaysNewProduct = Configuration::get('EPH_NB_DAYS_NEW_PRODUCT');
 
         if (!Validate::isUnsignedInt($nbDaysNewProduct)) {
             $nbDaysNewProduct = 20;
@@ -1988,7 +1988,7 @@ class CategoryCore extends ObjectModel {
         }
 
         fwrite($file, $sql . PHP_EOL);
-        $results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql, true, false);
+        $results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql, true, false);
 
         if (!$results) {
             return [];
@@ -2021,14 +2021,14 @@ class CategoryCore extends ObjectModel {
         if (!Cache::isStored($cacheId)) {
 
             if (!$idCustomer) {
-                $result = (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                $result = (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                     '
                 SELECT ctg.`id_group`
                 FROM ' . _DB_PREFIX_ . 'category_group ctg
                 WHERE ctg.`id_category` = ' . (int) $this->id . ' AND ctg.`id_group` = ' . (int) Group::getCurrent()->id
                 );
             } else {
-                $result = (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                $result = (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                     '
                 SELECT ctg.`id_group`
                 FROM ' . _DB_PREFIX_ . 'category_group ctg
@@ -2111,7 +2111,7 @@ class CategoryCore extends ObjectModel {
             if (isset($this->name[Context::getContext()->language->id])) {
                 $idLang = Context::getContext()->language->id;
             } else {
-                $idLang = (int) Configuration::get('PS_LANG_DEFAULT');
+                $idLang = (int) Configuration::get('EPH_LANG_DEFAULT');
             }
 
         }
@@ -2145,12 +2145,12 @@ class CategoryCore extends ObjectModel {
         $categories = null;
         $idCurrent = $this->id;
 
-        if (count(Category::getCategoriesWithoutParent()) > 1 && Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') && count(Shop::getShops(true, null, true)) != 1) {
-            $context->shop->id_category = (int) Configuration::get('PS_ROOT_CATEGORY');
+        if (count(Category::getCategoriesWithoutParent()) > 1 && Configuration::get('EPH_MULTISHOP_FEATURE_ACTIVE') && count(Shop::getShops(true, null, true)) != 1) {
+            $context->shop->id_category = (int) Configuration::get('EPH_ROOT_CATEGORY');
         } else
 
         if (!$context->shop->id) {
-            $context->shop = new Shop(Configuration::get('PS_SHOP_DEFAULT'));
+            $context->shop = new Shop(Configuration::get('EPH_SHOP_DEFAULT'));
         }
 
         $idShop = $context->shop->id;
@@ -2185,7 +2185,7 @@ class CategoryCore extends ObjectModel {
                     $sql->where('c.`id_parent` != 0');
                 }
 
-                $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
+                $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow($sql);
                 $parentCategoryCache[$idShop][$idLang][$idCurrent] = $result;
             }
 
@@ -2237,10 +2237,10 @@ class CategoryCore extends ObjectModel {
      */
     public function getGroups() {
 
-        $cache_id = 'Category::getGroups_' . (int) $this->id;
+        $cache_id = 'Category::getGrouEPH_' . (int) $this->id;
 
         if (!Cache::isStored($cache_id)) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('cg.`id_group`')
                     ->from('category_group', 'cg')
@@ -2273,7 +2273,7 @@ class CategoryCore extends ObjectModel {
      */
     public function updatePosition($way, $position) {
 
-        if (!$res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        if (!$res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
             ->select('cp.`id_category`, cp.`position`, cp.`id_parent`')
             ->from('category', 'cp')
@@ -2359,7 +2359,7 @@ class CategoryCore extends ObjectModel {
      */
     public function getChildrenWs() {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
         SELECT c.`id_category` AS id
         FROM `' . _DB_PREFIX_ . 'category` c
@@ -2381,7 +2381,7 @@ class CategoryCore extends ObjectModel {
      */
     public function getProductsWs() {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
         SELECT cp.`id_product` AS id
         FROM `' . _DB_PREFIX_ . 'category_product` cp
@@ -2401,7 +2401,7 @@ class CategoryCore extends ObjectModel {
      */
     public function getWsNbProductsRecursive() {
 
-        $nb_product_recursive = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $nb_product_recursive = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
             SELECT COUNT(DISTINCT(id_product))
             FROM  `' . _DB_PREFIX_ . 'category_product`
@@ -2436,9 +2436,9 @@ class CategoryCore extends ObjectModel {
     public function isParentCategoryAvailable($idShop) {
 
         $id = Context::getContext()->shop->id;
-        $idShop = $id ? $id : Configuration::get('PS_SHOP_DEFAULT');
+        $idShop = $id ? $id : Configuration::get('EPH_SHOP_DEFAULT');
 
-        return (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('c.`id_category`')
                 ->from('category', 'c')
@@ -2457,7 +2457,7 @@ class CategoryCore extends ObjectModel {
      */
     public function existsInShop($id_shop) {
 
-        return (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_category`')
                 ->from('category')
@@ -2486,7 +2486,7 @@ class CategoryCore extends ObjectModel {
             PageCache::invalidateEntity('category', $this->id);
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_category`')
                 ->from('category')
@@ -2511,7 +2511,7 @@ class CategoryCore extends ObjectModel {
      */
     public function getAllSubcategories() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_category`')
                 ->from('category')
@@ -2521,7 +2521,7 @@ class CategoryCore extends ObjectModel {
 
     public function getAgentCategories($id_lang, $id_parent, $active = true) {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS('
         SELECT c.*, cl.id_lang, cl.name, cl.description, cl.link_rewrite, cl.meta_title, cl.meta_keywords, cl.meta_description
         FROM `' . _DB_PREFIX_ . 'category` c
         LEFT JOIN `' . _DB_PREFIX_ . 'category_lang` cl ON (c.`id_category` = cl.`id_category` AND `id_lang` = ' . (int) $id_lang . ')
@@ -2533,7 +2533,7 @@ class CategoryCore extends ObjectModel {
         $formated_medium = ImageType::getFormatedName('medium');
 
         foreach ($result as &$row) {
-            $row['id_image'] = (Tools::file_exists_cache(_PS_CAT_IMG_DIR_ . (int) $row['id_category'] . '.jpg') || Tools::file_exists_cache(_PS_CAT_IMG_DIR_ . (int) $row['id_category'] . '_thumb.jpg')) ? (int) $row['id_category'] : Language::getIsoById($id_lang) . '-default';
+            $row['id_image'] = (Tools::file_exists_cache(_EPH_CAT_IMG_DIR_ . (int) $row['id_category'] . '.jpg') || Tools::file_exists_cache(_EPH_CAT_IMG_DIR_ . (int) $row['id_category'] . '_thumb.jpg')) ? (int) $row['id_category'] : Language::getIsoById($id_lang) . '-default';
             $row['legend'] = 'no picture';
         }
 

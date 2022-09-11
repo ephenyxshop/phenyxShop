@@ -45,7 +45,7 @@ class EphComposerCategoryCore extends EphComposer {
 	
 	public static function getNewLastPosition() {
 
-		return (Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return (Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 			(new DbQuery())
 				->select('IFNULL(MAX(`position`), 0) + 1')
 				->from('composer_category')
@@ -58,7 +58,7 @@ class EphComposerCategoryCore extends EphComposer {
 			$idLang = Context::getContext()->language->id;
 		}
 		$titlesArray = [];
-		 $db_results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		 $db_results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('c.`id_composer_category`, cl.`name`')
                 ->from('composer_category', 'c')
@@ -76,7 +76,7 @@ class EphComposerCategoryCore extends EphComposer {
 	
 	public static function getMapsItems($idLang) {
 
-        $db_results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $db_results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('c.`base`, c.`type`, c.`icon`, c.`is_container`, cml.`name`, ccl.`name` as `category`, cml.`description`')
                 ->from('composer_map', 'c')
@@ -106,7 +106,7 @@ class EphComposerCategoryCore extends EphComposer {
 	
 	public static function getMapsCategories($idLang) {
 
-        $db_results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $db_results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`name`')
                 ->from('composer_category_lang')
@@ -125,7 +125,7 @@ class EphComposerCategoryCore extends EphComposer {
 	
 	public static function getMapsbaseItems() {
 
-        $db_results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $db_results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`base`')
                 ->from('composer_map')
@@ -142,7 +142,7 @@ class EphComposerCategoryCore extends EphComposer {
 	
 	public static function getDefaultTemplates($idLang) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('ct.`image_path`, ct.`content`, ctl.`name`')
                 ->from('composer_template', 'ct')

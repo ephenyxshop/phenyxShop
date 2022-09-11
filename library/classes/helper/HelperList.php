@@ -561,10 +561,10 @@ class HelperListCore extends Helper {
                     // item_id is the product id in a product image context, else it is the image id.
                     $itemId = isset($params['image_id']) ? $tr[$params['image_id']] : $id;
 
-                    if ($params['image'] != 'p' || Configuration::get('PS_LEGACY_IMAGES')) {
-                        $pathToImage = _PS_IMG_DIR_ . $params['image'] . '/' . $itemId . (isset($tr['id_image']) ? '-' . (int) $tr['id_image'] : '') . '.' . $this->imageType;
+                    if ($params['image'] != 'p' || Configuration::get('EPH_LEGACY_IMAGES')) {
+                        $pathToImage = _EPH_IMG_DIR_ . $params['image'] . '/' . $itemId . (isset($tr['id_image']) ? '-' . (int) $tr['id_image'] : '') . '.' . $this->imageType;
                     } else {
-                        $pathToImage = _PS_IMG_DIR_ . $params['image'] . '/' . Image::getImgFolderStatic($tr['id_image']) . (int) $tr['id_image'] . '.' . $this->imageType;
+                        $pathToImage = _EPH_IMG_DIR_ . $params['image'] . '/' . Image::getImgFolderStatic($tr['id_image']) . (int) $tr['id_image'] . '.' . $this->imageType;
                     }
 
                     $this->_list[$index][$key] = ImageManager::thumbnail($pathToImage, $this->table . '_mini_' . $itemId . '_' . $this->context->shop->id . '.' . $this->imageType, 45, $this->imageType);

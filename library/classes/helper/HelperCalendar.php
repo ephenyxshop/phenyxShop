@@ -364,12 +364,12 @@ class HelperCalendarCore extends Helper {
     public function generate() {
 
         $context = Context::getContext();
-        $adminWebpath = str_ireplace(_SHOP_CORE_DIR_, '', _PS_ROOT_DIR_);
+        $adminWebpath = str_ireplace(_SHOP_CORE_DIR_, '', _EPH_ROOT_DIR_);
         $adminWebpath = preg_replace('/^' . preg_quote(DIRECTORY_SEPARATOR, '/') . '/', '', $adminWebpath);
         $boTheme = ((Validate::isLoadedObject($context->employee)
             && $context->employee->bo_theme) ? $context->employee->bo_theme : 'blacktie');
 
-        if (!file_exists(_PS_BO_ALL_THEMES_DIR_ . $boTheme . DIRECTORY_SEPARATOR . 'template')) {
+        if (!file_exists(_EPH_BO_ALL_THEMES_DIR_ . $boTheme . DIRECTORY_SEPARATOR . 'template')) {
             $boTheme = 'blacktie';
         }
 
@@ -378,8 +378,8 @@ class HelperCalendarCore extends Helper {
             $html .= '<script type="text/javascript" src="/js/calendar.js"></script>';
         } else {
             $html = '';
-            $context->controller->addJS(_PS_JS_DIR_.'date-range-picker.js');
-            $context->controller->addJS(_PS_JS_DIR_.'calendar.js');
+            $context->controller->addJS(_EPH_JS_DIR_.'date-range-picker.js');
+            $context->controller->addJS(_EPH_JS_DIR_.'calendar.js');
         }
 
         $this->tpl = $this->createTemplate($this->base_tpl);

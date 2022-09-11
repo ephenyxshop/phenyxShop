@@ -65,9 +65,9 @@ class AdminTopMenuControllerCore extends AdminController {
 		$this->extracss = $this->pushCSS([
 			_EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/topmenu.css',
 			_EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/popover.css',
-			_EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/custom-font.css', _PS_JS_DIR_ . 'colorpicker/jquery.colorpicker.css',
+			_EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/custom-font.css', _EPH_JS_DIR_ . 'colorpicker/jquery.colorpicker.css',
 			_EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/codemirror/codemirror.css',
-			_EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/codemirror/default.css', _PS_JS_DIR_ . 'ace/aceinput.css',
+			_EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/codemirror/default.css', _EPH_JS_DIR_ . 'ace/aceinput.css',
 		]);
 
 		$this->extra_vars = [
@@ -444,7 +444,7 @@ class AdminTopMenuControllerCore extends AdminController {
 
 	public function setAjaxMedia() {
 
-		return $this->pushJS([_PS_JS_DIR_ . 'tinymce/tinymce.min.js', _PS_JS_DIR_ . 'tinymce.inc.js', _PS_JS_DIR_ . 'topmenu.js', _PS_JS_DIR_ . 'popover.js', _PS_JS_DIR_ . 'colorpicker/jquery.colorpicker.js', _PS_JS_DIR_ . 'colorpicker/i18n/jquery.ui.colorpicker-fr.js', _PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-pantone.js', _PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-crayola.js', _PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-ral-classic.js', _PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-x11.js', _PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-copic.js', _PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-prismacolor.js', _PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-isccnbs.js', _PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-din6164.js', _PS_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-rgbslider.js', _PS_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-memory.js', _PS_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-swatchesswitcher.js', _PS_JS_DIR_ . 'colorpicker/parsers/jquery.ui.colorpicker-cmyk-parser.js', _PS_JS_DIR_ . 'colorpicker/parsers/jquery.ui.colorpicker-cmyk-percentage-parser.js', _PS_JS_DIR_ . 'codemirror/codemirror.js', _PS_JS_DIR_ . 'codemirror/css.js', _PS_JS_DIR_ . 'jquery.tipTip.js', _PS_JS_DIR_ . 'ace/ace.js', _PS_JS_DIR_ . 'ace/ext-language_tools.js', _PS_JS_DIR_ . 'ace/ext-language_tools.js', _PS_JS_DIR_ . 'codemirror/css.js',
+		return $this->pushJS([_EPH_JS_DIR_ . 'tinymce/tinymce.min.js', _EPH_JS_DIR_ . 'tinymce.inc.js', _EPH_JS_DIR_ . 'topmenu.js', _EPH_JS_DIR_ . 'popover.js', _EPH_JS_DIR_ . 'colorpicker/jquery.colorpicker.js', _EPH_JS_DIR_ . 'colorpicker/i18n/jquery.ui.colorpicker-fr.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-pantone.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-crayola.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-ral-classic.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-x11.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-copic.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-prismacolor.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-isccnbs.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-din6164.js', _EPH_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-rgbslider.js', _EPH_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-memory.js', _EPH_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-swatchesswitcher.js', _EPH_JS_DIR_ . 'colorpicker/parsers/jquery.ui.colorpicker-cmyk-parser.js', _EPH_JS_DIR_ . 'colorpicker/parsers/jquery.ui.colorpicker-cmyk-percentage-parser.js', _EPH_JS_DIR_ . 'codemirror/codemirror.js', _EPH_JS_DIR_ . 'codemirror/css.js', _EPH_JS_DIR_ . 'jquery.tipTip.js', _EPH_JS_DIR_ . 'ace/ace.js', _EPH_JS_DIR_ . 'ace/ext-language_tools.js', _EPH_JS_DIR_ . 'ace/ext-language_tools.js', _EPH_JS_DIR_ . 'codemirror/css.js',
 		]);
 	}
 
@@ -466,9 +466,9 @@ class AdminTopMenuControllerCore extends AdminController {
 		$extracss = $this->pushCSS([
 			_EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/topmenu.css',
 			_EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/popover.css',
-			_EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/custom-font.css', _PS_JS_DIR_ . 'colorpicker/jquery.colorpicker.css',
+			_EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/custom-font.css', _EPH_JS_DIR_ . 'colorpicker/jquery.colorpicker.css',
 			_EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/codemirror/codemirror.css',
-			_EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/codemirror/default.css', _PS_JS_DIR_ . 'ace/aceinput.css',
+			_EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/codemirror/default.css', _EPH_JS_DIR_ . 'ace/aceinput.css',
 
 		]);
 
@@ -1820,7 +1820,7 @@ class AdminTopMenuControllerCore extends AdminController {
 		$url_no_image = $context->link->getBaseFrontLink() . 'img/fr.jpg';
 		$xprt = $this->AsignGlobalSettingValue();
 
-		$tpl = $context->smarty->createTemplate(_PS_ALL_THEMES_DIR_ . "xprtmenu_css_.tpl");
+		$tpl = $context->smarty->createTemplate(_EPH_ALL_THEMES_DIR_ . "xprtmenu_css_.tpl");
 
 		foreach ($xprt as $key => $value) {
 
@@ -1899,7 +1899,7 @@ class AdminTopMenuControllerCore extends AdminController {
 		$controller = Tools::getValue('controller');
 		$this->base_config_url = $_SERVER['SCRIPT_NAME'] . ($controller ? '?controller=' . $controller : '') . '&configure=' . $this->name . '&token=' . Tools::getValue('token');
 		$languages = Language::getLanguages(false);
-		$this->defaultLanguage = (int) Configuration::get('PS_LANG_DEFAULT');
+		$this->defaultLanguage = (int) Configuration::get('EPH_LANG_DEFAULT');
 		$this->_iso_lang = Language::getIsoById($this->context->cookie->id_lang);
 		$this->languages = $languages;
 	}
@@ -2000,7 +2000,7 @@ class AdminTopMenuControllerCore extends AdminController {
 			'menu_img_dir'         => '/themes/' . $context->employee->bo_theme . '/img/topmenu/',
 			'current_iso_lang'     => Language::getIsoById($this->context->cookie->id_lang),
 			'current_id_lang'      => (int) $this->context->language->id,
-			'default_language'     => (int) Configuration::get('PS_LANG_DEFAULT'),
+			'default_language'     => (int) Configuration::get('EPH_LANG_DEFAULT'),
 			'languages'            => Language::getLanguages(false),
 			'shopFeatureActive'    => Shop::isFeatureActive(),
 		];
@@ -2011,7 +2011,7 @@ class AdminTopMenuControllerCore extends AdminController {
 	public function getNestedCmsCategories($id_lang) {
 
 		$nestedArray = [];
-		$cmsCategories = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$cmsCategories = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			'SELECT cc.*, ccl.*
             FROM `' . _DB_PREFIX_ . 'cms_category` cc
             LEFT JOIN `' . _DB_PREFIX_ . 'cms_category_lang` ccl ON cc.`id_cms_category` = ccl.`id_cms_category`' . Shop::addSqlRestrictionOnLang('ccl') . '
@@ -2067,7 +2067,7 @@ class AdminTopMenuControllerCore extends AdminController {
 
 		$file = fopen("testdisplayConfig.txt", "w");
 
-		if (version_compare(_PS_VERSION_, '1.7.0.0', '<') && isset($this->_fieldsOptions['EPHTM_MENU_CONT_HOOK'])) {
+		if (version_compare(_EPH_VERSION_, '1.7.0.0', '<') && isset($this->_fieldsOptions['EPHTM_MENU_CONT_HOOK'])) {
 			unset($this->_fieldsOptions['EPHTM_MENU_CONT_HOOK']['list'][2]);
 		}
 
@@ -2259,11 +2259,11 @@ class AdminTopMenuControllerCore extends AdminController {
 				unset($fieldsOptions[$key]);
 			} else
 
-			if (!empty($field['mobile']) && version_compare(_PS_VERSION_, '1.7.0.0', '<') && $key == 'EPHTM_RESP_TOGGLE_ENABLED') {
+			if (!empty($field['mobile']) && version_compare(_EPH_VERSION_, '1.7.0.0', '<') && $key == 'EPHTM_RESP_TOGGLE_ENABLED') {
 				unset($fieldsOptions[$key]);
 			} else
 
-			if (!empty($field['advanced']) && version_compare(_PS_VERSION_, '1.7.0.0', '<') && $key == 'EPHTM_MENU_HAMBURGER_SELECTORS') {
+			if (!empty($field['advanced']) && version_compare(_EPH_VERSION_, '1.7.0.0', '<') && $key == 'EPHTM_MENU_HAMBURGER_SELECTORS') {
 				unset($fieldsOptions[$key]);
 			}
 
@@ -2783,7 +2783,7 @@ class AdminTopMenuControllerCore extends AdminController {
 
 					$return .= '<i class="pmAtmIcon ' . $row['image_class'] . '"></i>';
 				} else {
-					$return .= '<img src="' . _PS_IMG_ . $type . '_icons/' . $id . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
+					$return .= '<img src="' . _EPH_IMG_ . $type . '_icons/' . $id . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
 				}
 
 			}
@@ -2809,7 +2809,7 @@ class AdminTopMenuControllerCore extends AdminController {
 
 					$return .= '<i class="pmAtmIcon ' . $row['image_class'] . '"></i>';
 				} else {
-					$return .= '<img src="' . _PS_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
+					$return .= '<img src="' . _EPH_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
 				}
 
 			}
@@ -2834,7 +2834,7 @@ class AdminTopMenuControllerCore extends AdminController {
 
 					$return .= '<i class="pmAtmIcon ' . $row['image_class'] . '"></i>';
 				} else {
-					$return .= '<img src="' . _PS_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
+					$return .= '<img src="' . _EPH_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
 				}
 
 			}
@@ -2859,7 +2859,7 @@ class AdminTopMenuControllerCore extends AdminController {
 
 					$return .= '<i class="pmAtmIcon ' . $row['image_class'] . '"></i>';
 				} else {
-					$return .= '<img src="' . _PS_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
+					$return .= '<img src="' . _EPH_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
 				}
 
 			}
@@ -2884,7 +2884,7 @@ class AdminTopMenuControllerCore extends AdminController {
 
 					$return .= '<i class="pmAtmIcon ' . $row['image_class'] . '"></i>';
 				} else {
-					$return .= '<img src="' . _PS_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
+					$return .= '<img src="' . _EPH_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
 				}
 
 			}
@@ -2913,7 +2913,7 @@ class AdminTopMenuControllerCore extends AdminController {
 
 					$return .= '<i class="pmAtmIcon ' . $row['image_class'] . '"></i>';
 				} else {
-					$return .= '<img src="' . _PS_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
+					$return .= '<img src="' . _EPH_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
 				}
 
 			}
@@ -2942,7 +2942,7 @@ class AdminTopMenuControllerCore extends AdminController {
 
 					$return .= '<i class="pmAtmIcon ' . $row['image_class'] . '"></i>';
 				} else {
-					$return .= '<img src="' . _PS_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
+					$return .= '<img src="' . _EPH_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
 				}
 
 			}
@@ -2967,7 +2967,7 @@ class AdminTopMenuControllerCore extends AdminController {
 
 					$return .= '<i class="pmAtmIcon ' . $row['image_class'] . '"></i>';
 				} else {
-					$return .= '<img src="' . _PS_IMG_ . $type . '_icons/' . $row['id_topmenu_' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
+					$return .= '<img src="' . _EPH_IMG_ . $type . '_icons/' . $row['id_topmenu_' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
 				}
 
 			}
@@ -2983,7 +2983,7 @@ class AdminTopMenuControllerCore extends AdminController {
 			}
 
 			if ($withExtra && trim($row['have_icon'])) {
-				$return .= '<img src="' . _PS_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
+				$return .= '<img src="' . _EPH_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
 			} else {
 				$return .= htmlentities($row['name'], ENT_COMPAT, 'UTF-8');
 			}
@@ -3008,7 +3008,7 @@ class AdminTopMenuControllerCore extends AdminController {
 					$return .= '<i class="pmAtmIcon ' . $row['image_class'] . '"></i>';
 					$return .= htmlentities($row['name'], ENT_COMPAT, 'UTF-8');
 				} else {
-					$return .= '<img src="' . _PS_IMG_ . $type . '_icons/' . $row['id_' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
+					$return .= '<img src="' . _EPH_IMG_ . $type . '_icons/' . $row['id_' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
 				}
 
 			} else {
@@ -3046,7 +3046,7 @@ class AdminTopMenuControllerCore extends AdminController {
 
 	public function getNestedCategories($root_category = null, $id_lang = false) {
 
-		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			'SELECT c.*, cl.*
             FROM `' . _DB_PREFIX_ . 'category` c
             LEFT JOIN `' . _DB_PREFIX_ . 'category_lang` cl ON c.`id_category` = cl.`id_category`' . Shop::addSqlRestrictionOnLang('cl') . '
@@ -3214,7 +3214,7 @@ class AdminTopMenuControllerCore extends AdminController {
 
 		//$data = $this->createTemplate('controllers/top_menu/' . $tpl);
 		$context = Context::getContext();
-		$admin_webpath = str_ireplace(_SHOP_CORE_DIR_, '', _PS_ADMIN_DIR_);
+		$admin_webpath = str_ireplace(_SHOP_CORE_DIR_, '', _EPH_ADMIN_DIR_);
 		$admin_webpath = preg_replace('/^' . preg_quote(DIRECTORY_SEPARATOR, '/') . '/', '', $admin_webpath);
 
 		$tpl = $context->smarty->createTemplate('controllers/top_menu/' . $tpl, $context->smarty);
@@ -3225,7 +3225,7 @@ class AdminTopMenuControllerCore extends AdminController {
 				'menu_img_dir'           => '/themes/' . $context->employee->bo_theme . '/img/topmenu/',
 				'current_iso_lang'       => Language::getIsoById($context->cookie->id_lang),
 				'current_id_lang'        => (int) $context->language->id,
-				'default_language'       => (int) Configuration::get('PS_LANG_DEFAULT'),
+				'default_language'       => (int) Configuration::get('EPH_LANG_DEFAULT'),
 				'languages'              => Language::getLanguages(false),
 				'options'                => $configOptions,
 				'shopFeatureActive'      => Shop::isFeatureActive(),
@@ -3288,7 +3288,7 @@ class AdminTopMenuControllerCore extends AdminController {
 
 		$idTopMenu = Tools::getValue('id_topmenu');
 		$topmenu = new TopMenu($idTopMenu);
-		$imgIconMenuDirIsWritable = is_writable(_PS_ROOT_DIR_ . '/img/menu_icons');
+		$imgIconMenuDirIsWritable = is_writable(_EPH_ROOT_DIR_ . '/img/menu_icons');
 		$haveDepend = false;
 		$ids_lang = 'menuname¤menulink¤menu_value_over¤menu_value_under¤menuimage¤menuimagelegend¤iconPickingButton';
 		$img_src = '/themes/' . $this->context->employee->bo_theme . '/img/topmenu/no-icone.png';
@@ -3310,7 +3310,7 @@ class AdminTopMenuControllerCore extends AdminController {
 		$selected = ($topmenu ? $topmenu->id_category : 0);
 
 		$context = Context::getContext();
-		$admin_webpath = str_ireplace(_SHOP_CORE_DIR_, '', _PS_ADMIN_DIR_);
+		$admin_webpath = str_ireplace(_SHOP_CORE_DIR_, '', _EPH_ADMIN_DIR_);
 		$admin_webpath = preg_replace('/^' . preg_quote(DIRECTORY_SEPARATOR, '/') . '/', '', $admin_webpath);
 
 		$tpl = $this->createTemplate('controllers/top_menu/tabs/display_menu_form.tpl');
@@ -3335,13 +3335,13 @@ class AdminTopMenuControllerCore extends AdminController {
 				'pagesList'                 => $this->getPageList(),
 				'link_targets'              => $this->link_targets,
 				'selected'                  => $selected,
-				'iso'                       => file_exists(_PS_ROOT_ADMIN_DIR_ . '/js/tinymce/langs/' . $iso . '.js') ? $iso : 'en',
+				'iso'                       => file_exists(_EPH_ROOT_ADMIN_DIR_ . '/js/tinymce/langs/' . $iso . '.js') ? $iso : 'en',
 				'pathCSS'                   => _THEME_CSS_DIR_,
-				'ad'                        => __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_),
+				'ad'                        => __EPH_BASE_URI__ . basename(_EPH_ADMIN_DIR_),
 				'menu_img_dir'              => '/themes/' . $context->employee->bo_theme . '/img/topmenu/',
 				'current_iso_lang'          => Language::getIsoById($context->cookie->id_lang),
 				'current_id_lang'           => (int) $context->language->id,
-				'default_language'          => (int) Configuration::get('PS_LANG_DEFAULT'),
+				'default_language'          => (int) Configuration::get('EPH_LANG_DEFAULT'),
 				'languages'                 => Language::getLanguages(false),
 			]
 		);
@@ -3500,13 +3500,13 @@ class AdminTopMenuControllerCore extends AdminController {
 				'menu_img_dir'      => '/themes/' . $context->employee->bo_theme . '/img/topmenu/',
 				'current_iso_lang'  => Language::getIsoById($context->cookie->id_lang),
 				'current_id_lang'   => (int) $context->language->id,
-				'default_language'  => (int) Configuration::get('PS_LANG_DEFAULT'),
+				'default_language'  => (int) Configuration::get('EPH_LANG_DEFAULT'),
 				'languages'         => Language::getLanguages(false),
 				'shopFeatureActive' => Shop::isFeatureActive(),
 				'groups'            => Group::getGroups((int) $this->context->cookie->id_lang),
-				'iso'               => file_exists(_SHOP_CORE_DIR_ . _PS_JS_DIR_ . 'tiny_mce/langs/' . $iso . '.js') ? $iso : 'en',
+				'iso'               => file_exists(_SHOP_CORE_DIR_ . _EPH_JS_DIR_ . 'tiny_mce/langs/' . $iso . '.js') ? $iso : 'en',
 				'pathCSS'           => _THEME_CSS_DIR_,
-				'ad'                => __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_),
+				'ad'                => __EPH_BASE_URI__ . basename(_EPH_ADMIN_DIR_),
 			]
 		);
 
@@ -3604,13 +3604,13 @@ class AdminTopMenuControllerCore extends AdminController {
 				'menu_img_dir'        => '/themes/' . $context->employee->bo_theme . '/img/topmenu/',
 				'current_iso_lang'    => Language::getIsoById($context->cookie->id_lang),
 				'current_id_lang'     => (int) $context->language->id,
-				'default_language'    => (int) Configuration::get('PS_LANG_DEFAULT'),
+				'default_language'    => (int) Configuration::get('EPH_LANG_DEFAULT'),
 				'languages'           => Language::getLanguages(false),
 				'shopFeatureActive'   => Shop::isFeatureActive(),
 				'groups'              => Group::getGroups((int) $this->context->cookie->id_lang),
-				'iso'                 => file_exists(_SHOP_CORE_DIR_ . _PS_JS_DIR_ . 'tiny_mce/langs/' . $iso . '.js') ? $iso : 'en',
+				'iso'                 => file_exists(_SHOP_CORE_DIR_ . _EPH_JS_DIR_ . 'tiny_mce/langs/' . $iso . '.js') ? $iso : 'en',
 				'pathCSS'             => _THEME_CSS_DIR_,
-				'ad'                  => __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_),
+				'ad'                  => __EPH_BASE_URI__ . basename(_EPH_ADMIN_DIR_),
 				'columnsWrap'         => $columnsWrap,
 				'columnWrap_selected' => $ObjTopMenuColumn->id_topmenu_wrap,
 				'categoryList'        => $this->getCategoryList(),
@@ -3669,7 +3669,7 @@ class AdminTopMenuControllerCore extends AdminController {
 				'menu_img_dir'      => '/themes/' . $context->employee->bo_theme . '/img/topmenu/',
 				'current_iso_lang'  => Language::getIsoById($context->cookie->id_lang),
 				'current_id_lang'   => (int) $context->language->id,
-				'default_language'  => (int) Configuration::get('PS_LANG_DEFAULT'),
+				'default_language'  => (int) Configuration::get('EPH_LANG_DEFAULT'),
 				'languages'         => Language::getLanguages(false),
 				'shopFeatureActive' => Shop::isFeatureActive(),
 				'groups'            => Group::getGroups((int) $this->context->cookie->id_lang),
@@ -4207,7 +4207,7 @@ class AdminTopMenuControllerCore extends AdminController {
 
 					foreach ($files as $image) {
 						$ext = pathinfo($image['name'], PATHINFO_EXTENSION);
-						$destinationFile = _PS_IMG_DIR_ . 'menu_icons/' . $topmenu->id . '-' . $_iso_lang . '.' . $ext;
+						$destinationFile = _EPH_IMG_DIR_ . 'menu_icons/' . $topmenu->id . '-' . $_iso_lang . '.' . $ext;
 
 						if (copy($image['save_path'], $destinationFile)) {
 							$topmenu->have_icon[$this->context->language->id] = 1;
@@ -4841,7 +4841,7 @@ class AdminTopMenuControllerCore extends AdminController {
 
 		$orderBy = 'c.`position`';
 		$with_position_field = 'c.`position`';
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS('
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS('
             SELECT c.id_category' . ($with_position ? ', ' . $with_position_field : '') . '
             FROM `' . _DB_PREFIX_ . 'category` c
             WHERE `id_parent` = ' . (int) $id_category . '
@@ -4852,7 +4852,7 @@ class AdminTopMenuControllerCore extends AdminController {
 
 	public function getManufacturersId() {
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS('
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS('
     SELECT m.`id_manufacturer`
     FROM `' . _DB_PREFIX_ . 'manufacturer` m
     ORDER BY m.`name` ASC');
@@ -4860,7 +4860,7 @@ class AdminTopMenuControllerCore extends AdminController {
 
 	public function getSuppliersId() {
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS('
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS('
     SELECT s.`id_supplier`
     FROM `' . _DB_PREFIX_ . 'supplier` s
     ORDER BY s.`name` ASC');
@@ -4878,7 +4878,7 @@ class AdminTopMenuControllerCore extends AdminController {
 
 		$orderBy = 'c.`position`';
 		$with_position_field = 'c.`position`';
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS('
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS('
             SELECT c.id_cms_category' . ($with_position ? ', ' . $with_position_field : '') . '
             FROM `' . _DB_PREFIX_ . 'cms_category` c
             ' . Shop::addSqlAssociation('cms_category', 'c') . '
@@ -4890,7 +4890,7 @@ class AdminTopMenuControllerCore extends AdminController {
 
 	public function getCmsByCategory($idCategory) {
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			'SELECT c.*
             FROM `' . _DB_PREFIX_ . 'cms` c
             ' . Shop::addSqlAssociation('cms', 'c') . '

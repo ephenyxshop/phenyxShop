@@ -95,7 +95,7 @@ class TopMenuColumnWrapCore extends ObjectModel {
                 WHERE ' . ($active ? ' atmcw.`active` = 1 AND (atmcw.`active_desktop` = 1 || atmcw.`active_mobile` = 1) AND' : '') . ' atmcw.`id_topmenu` = ' . (int) $id_topmenu . '
                 ORDER BY atmcw.`position`';
 
-        $ColumnsWrap = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        $ColumnsWrap = Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
 
         return $ColumnsWrap;
     }
@@ -122,12 +122,12 @@ class TopMenuColumnWrapCore extends ObjectModel {
                 ' . ($id_lang ? 'LEFT JOIN `' . _DB_PREFIX_ . 'topmenu_columns_wrap_lang` atmcwl ON (atmcw.`id_topmenu_columns_wrap` = atmcwl.`id_topmenu_columns_wrap` AND atmcwl.`id_lang` = ' . (int) $id_lang . ')' : '') . '
                 WHERE 1 ' . ($active ? 'AND atmcw.`active` = 1 AND (atmcw.`active_desktop` = 1 || atmcw.`active_mobile` = 1)' : '') . '
                 ORDER BY atmcw.`position`';
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
     }
 
     public static function getColumnWrapIds($ids_menu) {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS('
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS('
         SELECT `id_topmenu_columns_wrap`
         FROM ' . _DB_PREFIX_ . 'topmenu_columns_wrap
         WHERE `id_topmenu` IN(' . pSQL($ids_menu) . ')');
@@ -152,7 +152,7 @@ class TopMenuColumnWrapCore extends ObjectModel {
 
     public static function getIdTopMenuColumnWrapByRef($reference) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_topmenu_columns_wrap`')
                 ->from('topmenu_columns_wrap')
@@ -162,7 +162,7 @@ class TopMenuColumnWrapCore extends ObjectModel {
 
     public static function getIdTopMenuByColumnWrapRef($parentReference) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_topmenu`')
                 ->from('topmenu')

@@ -166,7 +166,7 @@ class MediaCore {
 
                 if (function_exists('preg_last_error') && preg_last_error() == PREG_BACKTRACK_LIMIT_ERROR) {
 
-                    if (_PS_MODE_DEV_) {
+                    if (_EPH_MODE_DEV_) {
                         Tools::error_log('ERROR: PREG_BACKTRACK_LIMIT_ERROR in function packJSinHTML');
                     }
 
@@ -241,7 +241,7 @@ class MediaCore {
                 $jsContent = JSMin::minify($jsContent);
             } catch (Exception $e) {
 
-                if (_PS_MODE_DEV_) {
+                if (_EPH_MODE_DEV_) {
                     echo $e->getMessage();
                 }
 
@@ -298,7 +298,7 @@ class MediaCore {
 
         $addNoConflict = false;
         if ($version === null) {
-            $version = _PS_JQUERY_VERSION_;
+            $version = _EPH_JQUERY_VERSION_;
         }
         //set default version
         else if (preg_match('/^([0-9\.]+)$/Ui', $version)) {
@@ -308,7 +308,7 @@ class MediaCore {
         }
 
         if ($folder === null) {
-            $folder = _PS_JS_DIR_ . 'jquery/';
+            $folder = _EPH_JS_DIR_ . 'jquery/';
         }
         
         //set default folder
@@ -316,9 +316,9 @@ class MediaCore {
         $file = $folder . 'jquery-' . $version . ($minifier ? '.min.js' : '.js');
         
 
-        // remove PS_BASE_URI on _PS_ROOT_DIR_ for the following
+        // remove EPH_BASE_URI on _EPH_ROOT_DIR_ for the following
         $urlData = parse_url($file);
-        $fileUri = _PS_ROOT_DIR_ . Tools::str_replace_once(__PS_BASE_URI__, DIRECTORY_SEPARATOR, $urlData['path']);
+        $fileUri = _EPH_ROOT_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, DIRECTORY_SEPARATOR, $urlData['path']);
         // check if js files exists, if not try to load query from ajax.googleapis.com
         
         $return = [];
@@ -333,12 +333,12 @@ class MediaCore {
 
         if ($addNoConflict) {
             $return[] = Media::getJSPath(
-                Context::getContext()->shop->getBaseURL(true, false) . _PS_JS_DIR_ . 'jquery/jquery.noConflict.php?version=' . $version
+                Context::getContext()->shop->getBaseURL(true, false) . _EPH_JS_DIR_ . 'jquery/jquery.noConflict.php?version=' . $version
             );
         }
 
         //added query migrate for compatibility with new version of jquery will be removed in ps 1.6
-        $return[] = Media::getJSPath(_PS_JS_DIR_ . 'jquery/jquery-migrate-1.2.1.min.js');
+        $return[] = Media::getJSPath(_EPH_JS_DIR_ . 'jquery/jquery-migrate-1.2.1.min.js');
 
         return $return;
     }
@@ -404,11 +404,11 @@ class MediaCore {
 
         // Copy shop favicon if it does not exist
 
-        if (Shop::isFeatureActive() && !file_exists(_PS_IMG_DIR_ . "{$path}{$storePath}.{$ext}")) {
-            @copy(_PS_IMG_DIR_ . "{$path}.{$ext}", _PS_IMG_DIR_ . "{$path}{$storePath}.{$ext}");
+        if (Shop::isFeatureActive() && !file_exists(_EPH_IMG_DIR_ . "{$path}{$storePath}.{$ext}")) {
+            @copy(_EPH_IMG_DIR_ . "{$path}.{$ext}", _EPH_IMG_DIR_ . "{$path}{$storePath}.{$ext}");
         }
 
-        return (string) Media::getMediaPath(_PS_IMG_DIR_ . "{$path}.{$ext}");
+        return (string) Media::getMediaPath(_EPH_IMG_DIR_ . "{$path}.{$ext}");
     }
 
     /**
@@ -433,9 +433,9 @@ class MediaCore {
         }
 
         if (!array_key_exists('host', $urlData)) {
-            $mediaUri = '/' . ltrim(str_replace(str_replace(['/', '\\'], DIRECTORY_SEPARATOR, _PS_ROOT_DIR_), __PS_BASE_URI__, $mediaUri), '/\\');
-            // remove PS_BASE_URI on _PS_ROOT_DIR_ for the following
-            $fileUri = _PS_ROOT_DIR_ . Tools::str_replace_once(__PS_BASE_URI__, DIRECTORY_SEPARATOR, $mediaUri);
+            $mediaUri = '/' . ltrim(str_replace(str_replace(['/', '\\'], DIRECTORY_SEPARATOR, _EPH_ROOT_DIR_), __EPH_BASE_URI__, $mediaUri), '/\\');
+            // remove EPH_BASE_URI on _EPH_ROOT_DIR_ for the following
+            $fileUri = _EPH_ROOT_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, DIRECTORY_SEPARATOR, $mediaUri);
 
             if (!@filemtime($fileUri) || @filesize($fileUri) === 0) {
                 return false;
@@ -465,10 +465,10 @@ class MediaCore {
     public static function getJqueryUIPath($component, $theme, $checkDependencies) {
 
         $uiPath = ['js' => [], 'css' => []];
-        $folder = _PS_JS_DIR_ . 'jquery/ui';
+        $folder = _EPH_JS_DIR_ . 'jquery/ui';
         $file = '/jquery.' . $component . '.min.js';
         $urlData = parse_url($folder . $file);
-        $fileUri = _PS_ROOT_DIR_ . Tools::str_replace_once(__PS_BASE_URI__, DIRECTORY_SEPARATOR, $urlData['path']);
+        $fileUri = _EPH_ROOT_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, DIRECTORY_SEPARATOR, $urlData['path']);
         $uiTmp = [];
         // @codingStandardsIgnoreStart
 
@@ -588,13 +588,13 @@ class MediaCore {
         $pluginPath = ['js' => [], 'css' => []];
 
         if ($folder === null) {
-            $folder = _PS_JS_DIR_ . 'jquery/plugins/';
+            $folder = _EPH_JS_DIR_ . 'jquery/plugins/';
         }
         //set default folder
 
         $file = 'jquery.' . $name . '.js';
         $urlData = parse_url($folder);
-        $fileUri = _PS_ROOT_DIR_ . Tools::str_replace_once(__PS_BASE_URI__, DIRECTORY_SEPARATOR, $urlData['path']);
+        $fileUri = _EPH_ROOT_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, DIRECTORY_SEPARATOR, $urlData['path']);
 
         if (@file_exists($fileUri . $file)) {
             $pluginPath['js'] = Media::getJSPath($folder . $file);
@@ -622,12 +622,12 @@ class MediaCore {
     public static function getJqueryPluginCSSPath($name, $folder = null) {
 
         if ($folder === null) {
-            $folder = _PS_JS_DIR_ . 'jquery/plugins/';
+            $folder = _EPH_JS_DIR_ . 'jquery/plugins/';
         }
         //set default folder
         $file = 'jquery.' . $name . '.css';
         $urlData = parse_url($folder);
-        $fileUri = _PS_ROOT_DIR_ . Tools::str_replace_once(__PS_BASE_URI__, DIRECTORY_SEPARATOR, $urlData['path']);
+        $fileUri = _EPH_ROOT_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, DIRECTORY_SEPARATOR, $urlData['path']);
 
         if (@file_exists($fileUri . $file)) {
             return Media::getCSSPath($folder . $file);
@@ -661,7 +661,7 @@ class MediaCore {
         $compressedCssFilesInfos = [];
         $protocolLink = Tools::getCurrentUrlProtocolPrefix();
         //if cache_path not specified, set curent theme cache folder
-        $cachePath = $cachePath ? $cachePath : _PS_THEME_DIR_ . 'cache/';
+        $cachePath = $cachePath ? $cachePath : _EPH_THEME_DIR_ . 'cache/';
         $cssSplitNeedRefresh = false;
 
         // group css files by media
@@ -681,10 +681,10 @@ class MediaCore {
                 continue;
             }
 
-            $infos['path'] = _PS_ROOT_DIR_ . Tools::str_replace_once(__PS_BASE_URI__, '/', $urlData['path']);
+            $infos['path'] = _EPH_ROOT_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, '/', $urlData['path']);
 
             if (!@filemtime($infos['path'])) {
-                $infos['path'] = _PS_CORE_DIR_ . Tools::str_replace_once(__PS_BASE_URI__, '/', $urlData['path']);
+                $infos['path'] = _EPH_CORE_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, '/', $urlData['path']);
             }
 
             $cssFilesByMedia[$media]['files'][] = $infos;
@@ -706,7 +706,7 @@ class MediaCore {
         }
 
         // get compressed css file infos
-        $version = (int) Configuration::get('PS_CCCCSS_VERSION');
+        $version = (int) Configuration::get('EPH_CCCCSS_VERSION');
 
         foreach ($compressedCssFilesInfos as $media => &$info) {
             $key = md5($info['key'] . $protocolLink);
@@ -723,7 +723,7 @@ class MediaCore {
             if ($mediaInfos['date'] > $compressedCssFilesInfos[$media]['date']) {
 
                 if ($compressedCssFilesInfos[$media]['date']) {
-                    Configuration::updateValue('PS_CCCCSS_VERSION', ++$version);
+                    Configuration::updateValue('EPH_CCCCSS_VERSION', ++$version);
                     break;
                 }
 
@@ -771,7 +771,7 @@ class MediaCore {
         $cssFiles = [];
 
         foreach ($compressedCssFiles as $media => $filename) {
-            $url = str_replace(_PS_THEME_DIR_, _THEMES_DIR_ . _THEME_NAME_ . '/', $filename);
+            $url = str_replace(_EPH_THEME_DIR_, _THEMES_DIR_ . _THEME_NAME_ . '/', $filename);
             $cssFiles[$protocolLink . Tools::getMediaServer($url) . $url] = $media;
         }
 
@@ -869,7 +869,7 @@ class MediaCore {
             if (is_array($files)) {
 
                 foreach (array_diff($files, ['..', '.']) as $file) {
-                    $cssUrl = str_replace(_PS_ROOT_DIR_, '', $protocolLink . Tools::getMediaServer('') . $cachePath . DIRECTORY_SEPARATOR . $file);
+                    $cssUrl = str_replace(_EPH_ROOT_DIR_, '', $protocolLink . Tools::getMediaServer('') . $cachePath . DIRECTORY_SEPARATOR . $file);
                     $splittedCss[$cssUrl] = 'all';
                 }
 
@@ -888,7 +888,7 @@ class MediaCore {
         foreach ($compiledCss as $css => $media) {
             $fileInfo = parse_url($css);
             $fileBasename = basename($fileInfo['path']);
-            $cssContent = file_get_contents(_PS_ROOT_DIR_ . $fileInfo['path']);
+            $cssContent = file_get_contents(_EPH_ROOT_DIR_ . $fileInfo['path']);
             $count = $splitter->countSelectors($cssContent) - $cssRuleLimit;
 
             if (($count / $cssRuleLimit) > 0) {
@@ -896,7 +896,7 @@ class MediaCore {
 
                 for ($i = $count; $i > 0; $i -= $cssRuleLimit) {
                     $newCssName = 'ie_split_' . $part . '_' . $fileBasename;
-                    $cssUrl = str_replace(_PS_ROOT_DIR_, '', $protocolLink . Tools::getMediaServer('') . $cachePath . DIRECTORY_SEPARATOR . $newCssName);
+                    $cssUrl = str_replace(_EPH_ROOT_DIR_, '', $protocolLink . Tools::getMediaServer('') . $cachePath . DIRECTORY_SEPARATOR . $newCssName);
                     $splittedCss[$cssUrl] = $media;
                     file_put_contents($cachePath . DIRECTORY_SEPARATOR . $newCssName, $splitter->split($cssContent, $part));
                     chmod($cachePath . DIRECTORY_SEPARATOR . $newCssName, 0777);
@@ -934,7 +934,7 @@ class MediaCore {
         $compressedJsFilename = '';
         $jsExternalFiles = [];
         $protocolLink = Tools::getCurrentUrlProtocolPrefix();
-        $cachePath = _PS_THEME_DIR_ . 'cache/';
+        $cachePath = _EPH_THEME_DIR_ . 'cache/';
 
         // get js files infos
 
@@ -946,10 +946,10 @@ class MediaCore {
                 $infos = [];
                 $infos['uri'] = $filename;
                 $urlData = parse_url($filename);
-                $infos['path'] = _PS_ROOT_DIR_ . Tools::str_replace_once(__PS_BASE_URI__, '/', $urlData['path']);
+                $infos['path'] = _EPH_ROOT_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, '/', $urlData['path']);
 
                 if (!@filemtime($infos['path'])) {
-                    $infos['path'] = _PS_CORE_DIR_ . Tools::str_replace_once(__PS_BASE_URI__, '/', $urlData['path']);
+                    $infos['path'] = _EPH_CORE_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, '/', $urlData['path']);
                 }
 
                 $jsFilesInfos[] = $infos;
@@ -965,7 +965,7 @@ class MediaCore {
 
         // get compressed js file infos
         $compressedJsFilename = md5($compressedJsFilename);
-        $version = (int) Configuration::get('PS_CCCJS_VERSION');
+        $version = (int) Configuration::get('EPH_CCCJS_VERSION');
         $compressedJsPath = $cachePath . 'v_' . $version . '_' . $compressedJsFilename . '.js';
         $compressedJsFileDate = (int) @filemtime($compressedJsPath);
 
@@ -974,7 +974,7 @@ class MediaCore {
         if ($jsFilesDate > $compressedJsFileDate) {
 
             if ($compressedJsFileDate) {
-                Configuration::updateValue('PS_CCCJS_VERSION', ++$version);
+                Configuration::updateValue('EPH_CCCJS_VERSION', ++$version);
             }
 
             $compressedJsPath = $cachePath . 'v_' . $version . '_' . $compressedJsFilename . '.js';
@@ -1008,12 +1008,12 @@ class MediaCore {
         // rebuild the original js_files array
         $url = '';
 
-        if (strpos($compressedJsPath, _PS_ROOT_DIR_) !== false) {
-            $url = str_replace(_PS_ROOT_DIR_ . '/', __PS_BASE_URI__, $compressedJsPath);
+        if (strpos($compressedJsPath, _EPH_ROOT_DIR_) !== false) {
+            $url = str_replace(_EPH_ROOT_DIR_ . '/', __EPH_BASE_URI__, $compressedJsPath);
         }
 
-        if (strpos($compressedJsPath, _PS_CORE_DIR_) !== false) {
-            $url = str_replace(_PS_CORE_DIR_ . '/', __PS_BASE_URI__, $compressedJsPath);
+        if (strpos($compressedJsPath, _EPH_CORE_DIR_) !== false) {
+            $url = str_replace(_EPH_CORE_DIR_ . '/', __EPH_BASE_URI__, $compressedJsPath);
         }
 
         return array_merge([$protocolLink . Tools::getMediaServer($url) . $url], $jsExternalFiles);
@@ -1032,7 +1032,7 @@ class MediaCore {
 
         if (!Configuration::get('EPH_KEEP_CCC_FILES')) {
 
-            foreach ([_PS_THEME_DIR_ . 'cache'] as $dir) {
+            foreach ([_EPH_THEME_DIR_ . 'cache'] as $dir) {
 
                 if (file_exists($dir)) {
 
@@ -1046,10 +1046,10 @@ class MediaCore {
 
         }
 
-        $version = (int) Configuration::get('PS_CCCJS_VERSION');
-        Configuration::updateValue('PS_CCCJS_VERSION', ++$version);
-        $version = (int) Configuration::get('PS_CCCCSS_VERSION');
-        Configuration::updateValue('PS_CCCCSS_VERSION', ++$version);
+        $version = (int) Configuration::get('EPH_CCCJS_VERSION');
+        Configuration::updateValue('EPH_CCCJS_VERSION', ++$version);
+        $version = (int) Configuration::get('EPH_CCCCSS_VERSION');
+        Configuration::updateValue('EPH_CCCCSS_VERSION', ++$version);
     }
 
     /**
@@ -1195,7 +1195,7 @@ class MediaCore {
 
                             if ($version) {
 
-                                if ($version != _PS_JQUERY_VERSION_) {
+                                if ($version != _EPH_JQUERY_VERSION_) {
                                     Context::getContext()->controller->addJquery($version, null, $minifier);
                                 }
 

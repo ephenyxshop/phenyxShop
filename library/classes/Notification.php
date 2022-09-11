@@ -34,7 +34,7 @@ class NotificationCore {
     public function getLastElements() {
 
         $notifications = [];
-        $employeeInfos = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $employeeInfos = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('`id_last_customer_piece`, `id_last_customer_message`, `id_last_customer`')
                 ->from('employee')
@@ -98,8 +98,8 @@ class NotificationCore {
             break;
         }
 		
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql, true, false);
-        $total = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('SELECT FOUND_ROWS()', false);
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql, true, false);
+        $total = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue('SELECT FOUND_ROWS()', false);
         $json = ['total' => $total, 'results' => []];
 
         foreach ($result as $value) {

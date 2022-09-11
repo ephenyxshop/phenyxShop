@@ -32,11 +32,11 @@ class AdminModulesPositionsControllerCore extends AdminController {
     public function setAjaxMedia() {
 
         return $this->pushJS([
-            _PS_JS_DIR_ . 'jquery/plugins/select2/jquery.select2.js',
-            _PS_JS_DIR_ . 'jquery/plugins/select2/select2_locale_fr.js',
-            _PS_JS_DIR_ . 'modules-position.js',
-            _PS_JS_DIR_ . 'jquery/plugins/jquery.sortable.js',
-            _PS_JS_DIR_ . 'jquery/plugins/jquery.tablednd.js',
+            _EPH_JS_DIR_ . 'jquery/plugins/select2/jquery.select2.js',
+            _EPH_JS_DIR_ . 'jquery/plugins/select2/select2_locale_fr.js',
+            _EPH_JS_DIR_ . 'modules-position.js',
+            _EPH_JS_DIR_ . 'jquery/plugins/jquery.sortable.js',
+            _EPH_JS_DIR_ . 'jquery/plugins/jquery.tablednd.js',
         ]);
     }
 
@@ -132,8 +132,8 @@ class AdminModulesPositionsControllerCore extends AdminController {
 
         $this->addJS(
             [
-                _PS_JS_DIR_ . 'modules-position.js',
-                _PS_JS_DIR_ . 'jquery/plugins/select2/select2_locale_' . $this->context->language->iso_code . '.js',
+                _EPH_JS_DIR_ . 'modules-position.js',
+                _EPH_JS_DIR_ . 'jquery/plugins/select2/select2_locale_' . $this->context->language->iso_code . '.js',
             ]
         );
 
@@ -713,7 +713,7 @@ class AdminModulesPositionsControllerCore extends AdminController {
                     <option disabled="disabled">' . $this->l('___________ CUSTOM ___________') . '</option>';
 
         // @todo do something better with controllers
-        $controllers = Performer::getControllers(_PS_FRONT_CONTROLLER_DIR_);
+        $controllers = Performer::getControllers(_EPH_FRONT_CONTROLLER_DIR_);
         ksort($controllers);
 
         foreach ($fileList as $k => $v) {
@@ -762,7 +762,7 @@ class AdminModulesPositionsControllerCore extends AdminController {
         // Init toolbar
         $this->initToolbarTitle();
 
-        $adminDir = basename(_PS_ADMIN_DIR_);
+        $adminDir = basename(_EPH_ADMIN_DIR_);
         $modules = Module::getModulesInstalled();
 
         $assocModulesId = [];
@@ -859,7 +859,7 @@ class AdminModulesPositionsControllerCore extends AdminController {
 
         $languageIds = Language::getIDs(true);
 
-        if (Configuration::get('PS_REWRITING_SETTINGS') && !empty($languageIds) && count($languageIds) > 1) {
+        if (Configuration::get('EPH_REWRITING_SETTINGS') && !empty($languageIds) && count($languageIds) > 1) {
             $lang = Language::getIsoById($this->context->employee->id_lang) . '/';
         }
 
@@ -917,7 +917,7 @@ class AdminModulesPositionsControllerCore extends AdminController {
         if ($this->tabAccess['view'] === '1') {
             /* PhenyxShop demo mode */
 
-            if (_PS_MODE_DEMO_) {
+            if (_EPH_MODE_DEMO_) {
                 die('{"hasError" : true, "errors" : ["Live Edit: This functionality has been disabled."]}');
             }
 
@@ -979,7 +979,7 @@ class AdminModulesPositionsControllerCore extends AdminController {
         if ($this->tabAccess['view'] === '1') {
             /* PhenyxShop demo mode */
 
-            if (_PS_MODE_DEMO_) {
+            if (_EPH_MODE_DEMO_) {
                 $this->ajaxDie('{"hasError" : true, "errors" : ["Live Edit: This functionality has been disabled."]}');
             }
 
@@ -987,7 +987,7 @@ class AdminModulesPositionsControllerCore extends AdminController {
 
             $hookName = Tools::getValue('hook');
             $hookableModulesList = [];
-            $modules = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $modules = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('`id_module`, `name`')
                     ->from('module')
@@ -999,8 +999,8 @@ class AdminModulesPositionsControllerCore extends AdminController {
                     continue;
                 }
 
-                if (file_exists(_PS_MODULE_DIR_ . $module['name'] . '/' . $module['name'] . '.php')) {
-                    include_once _PS_MODULE_DIR_ . $module['name'] . '/' . $module['name'] . '.php';
+                if (file_exists(_EPH_MODULE_DIR_ . $module['name'] . '/' . $module['name'] . '.php')) {
+                    include_once _EPH_MODULE_DIR_ . $module['name'] . '/' . $module['name'] . '.php';
 
                     /** @var Module $mod */
                     $mod = new $module['name']();
@@ -1030,7 +1030,7 @@ class AdminModulesPositionsControllerCore extends AdminController {
         if ($this->tabAccess['edit'] === '1') {
             /* PhenyxShop demo mode */
 
-            if (_PS_MODE_DEMO_) {
+            if (_EPH_MODE_DEMO_) {
                 $this->ajaxDie('{"hasError" : true, "errors" : ["Live Edit: This functionality has been disabled."]}');
             }
 

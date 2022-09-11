@@ -672,9 +672,9 @@ class AdminAddressesControllerCore extends AdminController {
 					'type'     => 'text',
 					'label'    => $this->l('Home phone'),
 					'name'     => 'phone',
-					'required' => in_array('phone', $requiredFields) || Configuration::get('PS_ONE_PHONE_AT_LEAST'),
+					'required' => in_array('phone', $requiredFields) || Configuration::get('EPH_ONE_PHONE_AT_LEAST'),
 					'col'      => '4',
-					'hint'     => Configuration::get('PS_ONE_PHONE_AT_LEAST') ? sprintf($this->l('You must register at least one phone number.')) : '',
+					'hint'     => Configuration::get('EPH_ONE_PHONE_AT_LEAST') ? sprintf($this->l('You must register at least one phone number.')) : '',
 				];
 			} else
 			if ($addrFieldItem == 'phone_mobile') {
@@ -682,9 +682,9 @@ class AdminAddressesControllerCore extends AdminController {
 					'type'     => 'text',
 					'label'    => $this->l('Mobile phone'),
 					'name'     => 'phone_mobile',
-					'required' => in_array('phone_mobile', $requiredFields) || Configuration::get('PS_ONE_PHONE_AT_LEAST'),
+					'required' => in_array('phone_mobile', $requiredFields) || Configuration::get('EPH_ONE_PHONE_AT_LEAST'),
 					'col'      => '4',
-					'hint'     => Configuration::get('PS_ONE_PHONE_AT_LEAST') ? sprintf($this->l('You must register at least one phone number.')) : '',
+					'hint'     => Configuration::get('EPH_ONE_PHONE_AT_LEAST') ? sprintf($this->l('You must register at least one phone number.')) : '',
 				];
 			}
 
@@ -761,7 +761,7 @@ class AdminAddressesControllerCore extends AdminController {
 
 		$tmpAddr = new Address((int) Tools::getValue('id_address'));
 
-		$selectedCountry = ($tmpAddr && $tmpAddr->id_country) ? $tmpAddr->id_country : (int) Configuration::get('PS_COUNTRY_DEFAULT');
+		$selectedCountry = ($tmpAddr && $tmpAddr->id_country) ? $tmpAddr->id_country : (int) Configuration::get('EPH_COUNTRY_DEFAULT');
 
 		$invAdrFields = AddressFormat::getOrderedAddressFields($selectedCountry, false, true);
 		$dlvAdrFields = AddressFormat::getOrderedAddressFields($selectedCountry, false, true);
@@ -859,7 +859,7 @@ class AdminAddressesControllerCore extends AdminController {
 			$this->errors[] = Tools::displayError('The Zip/postal code is invalid.');
 		}
 
-		if (Configuration::get('PS_ONE_PHONE_AT_LEAST') && !Tools::getValue('phone') && !Tools::getValue('phone_mobile')) {
+		if (Configuration::get('EPH_ONE_PHONE_AT_LEAST') && !Tools::getValue('phone') && !Tools::getValue('phone_mobile')) {
 			$this->errors[] = Tools::displayError('You must register at least one phone number.');
 		}
 

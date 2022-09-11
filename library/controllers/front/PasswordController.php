@@ -37,7 +37,7 @@ class PasswordControllerCore extends FrontController {
                     $this->errors[] = Tools::displayError('There is no account registered for this email address.');
                 } else if (!$customer->active) {
                     $this->errors[] = Tools::displayError('You cannot regenerate the password for this account.');
-                } else if ((strtotime($customer->last_passwd_gen . '+' . ($minTime = (int) Configuration::get('PS_PASSWD_TIME_FRONT')) . ' minutes') - time()) > 0) {
+                } else if ((strtotime($customer->last_passwd_gen . '+' . ($minTime = (int) Configuration::get('EPH_PASSWD_TIME_FRONT')) . ' minutes') - time()) > 0) {
                     $this->errors[] = sprintf(Tools::displayError('You can regenerate your password only every %d minute(s)'), (int) $minTime);
                 } else {
                     $mailParams = [
@@ -58,7 +58,7 @@ class PasswordControllerCore extends FrontController {
             }
 
         } else if (($token = Tools::getValue('token')) && ($idCustomer = (int) Tools::getValue('id_customer'))) {
-            $email = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $email = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('c.`email`')
                     ->from('customer', 'c')
@@ -74,7 +74,7 @@ class PasswordControllerCore extends FrontController {
                     $this->errors[] = Tools::displayError('Customer account not found');
                 } else if (!$customer->active) {
                     $this->errors[] = Tools::displayError('You cannot regenerate the password for this account.');
-                } else if ((strtotime($customer->last_passwd_gen . '+' . (int) Configuration::get('PS_PASSWD_TIME_FRONT') . ' minutes') - time()) > 0) {
+                } else if ((strtotime($customer->last_passwd_gen . '+' . (int) Configuration::get('EPH_PASSWD_TIME_FRONT') . ' minutes') - time()) > 0) {
                     Tools::redirect('index.php?controller=authentication&error_regen_pwd');
                 } else {
                     $customer->passwd = Tools::hash($password = Tools::passwdGen(MIN_PASSWD_LENGTH, 'RANDOM'));
@@ -123,7 +123,7 @@ class PasswordControllerCore extends FrontController {
     public function initContent() {
 
         parent::initContent();
-        $this->setTemplate(_PS_THEME_DIR_ . 'password.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'password.tpl');
     }
 
 }

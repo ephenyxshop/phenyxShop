@@ -358,8 +358,8 @@ class AdminStockMvtControllerCore extends AdminController {
      */
     public function initContent() {
 
-        if (!Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT')) {
-            $this->warnings[md5('PS_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management before using this feature.');
+        if (!Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT')) {
+            $this->warnings[md5('EPH_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management before using this feature.');
 
             return;
         }
@@ -376,8 +376,8 @@ class AdminStockMvtControllerCore extends AdminController {
      */
     public function initProcess() {
 
-        if (!Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT')) {
-            $this->warnings[md5('PS_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management before using this feature.');
+        if (!Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT')) {
+            $this->warnings[md5('EPH_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management before using this feature.');
 
             return;
         }

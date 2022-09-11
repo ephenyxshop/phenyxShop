@@ -49,7 +49,7 @@ class PhenyxShopExceptionCore extends Exception {
 
         header('HTTP/1.1 500 Internal Server Error');
 
-        if (_PS_MODE_DEV_ || getenv('CI')) {
+        if (_EPH_MODE_DEV_ || getenv('CI')) {
             // Display error message
 
             echo '<style>
@@ -73,11 +73,11 @@ class PhenyxShopExceptionCore extends Exception {
             echo '<ul>';
 
             foreach ($this->trace as $id => $trace) {
-                $relativeFile = (isset($trace['file'])) ? ltrim(str_replace([_PS_ROOT_DIR_, '\\'], ['', '/'], $trace['file']), '/') : '';
+                $relativeFile = (isset($trace['file'])) ? ltrim(str_replace([_EPH_ROOT_DIR_, '\\'], ['', '/'], $trace['file']), '/') : '';
                 $currentLine = (isset($trace['line'])) ? $trace['line'] : '';
 
-                if (defined('_PS_ROOT_DIR_')) {
-                    $relativeFile = str_replace(basename(_PS_ROOT_DIR_) . DIRECTORY_SEPARATOR, 'admin' . DIRECTORY_SEPARATOR, $relativeFile);
+                if (defined('_EPH_ROOT_DIR_')) {
+                    $relativeFile = str_replace(basename(_EPH_ROOT_DIR_) . DIRECTORY_SEPARATOR, 'admin' . DIRECTORY_SEPARATOR, $relativeFile);
                 }
 
                 echo '<li>';
@@ -113,11 +113,11 @@ class PhenyxShopExceptionCore extends Exception {
             // Display debug backtrace
 
             foreach ($this->trace as $id => $trace) {
-                $relativeFile = (isset($trace['file'])) ? ltrim(str_replace([_PS_ROOT_DIR_, '\\'], ['', '/'], $trace['file']), '/') : '';
+                $relativeFile = (isset($trace['file'])) ? ltrim(str_replace([_EPH_ROOT_DIR_, '\\'], ['', '/'], $trace['file']), '/') : '';
                 $currentLine = (isset($trace['line'])) ? $trace['line'] : '';
 
-                if (defined('_PS_ROOT_DIR_')) {
-                    $relativeFile = str_replace(basename(_PS_ROOT_DIR_) . DIRECTORY_SEPARATOR, 'admin' . DIRECTORY_SEPARATOR, $relativeFile);
+                if (defined('_EPH_ROOT_DIR_')) {
+                    $relativeFile = str_replace(basename(_EPH_ROOT_DIR_) . DIRECTORY_SEPARATOR, 'admin' . DIRECTORY_SEPARATOR, $relativeFile);
                 }
 
                 $markdown .= '- ';
@@ -141,7 +141,7 @@ class PhenyxShopExceptionCore extends Exception {
             header('Content-Type: text/html');
             $markdown = Encryptor::getInstance()->encrypt($markdown);
 
-            echo $this->displayErrorTemplate(_PS_ROOT_DIR_ . '/error500.phtml', ['markdown' => $markdown]);
+            echo $this->displayErrorTemplate(_EPH_ROOT_DIR_ . '/error500.phtml', ['markdown' => $markdown]);
         }
 
         // Log the error to the disk
@@ -263,7 +263,7 @@ class PhenyxShopExceptionCore extends Exception {
     protected function logError() {
 
         $logger = new FileLogger();
-        $logger->setFilename(_PS_ROOT_DIR_ . '/log/' . date('Ymd') . '_exception.log');
+        $logger->setFilename(_EPH_ROOT_DIR_ . '/log/' . date('Ymd') . '_exception.log');
         $logger->logError($this->getExtendedMessage(false));
     }
 
@@ -296,7 +296,7 @@ class PhenyxShopExceptionCore extends Exception {
             $format,
             $this->getMessage(),
             $this->getLine(),
-            ltrim(str_replace([_PS_ROOT_DIR_, '\\'], ['', '/'], $this->getFile()), '/')
+            ltrim(str_replace([_EPH_ROOT_DIR_, '\\'], ['', '/'], $this->getFile()), '/')
         );
     }
 
@@ -315,7 +315,7 @@ class PhenyxShopExceptionCore extends Exception {
             $format,
             $this->getMessage(),
             $this->getLine(),
-            ltrim(str_replace([_PS_ROOT_DIR_, '\\'], ['', '/'], $this->getFile()), '/')
+            ltrim(str_replace([_EPH_ROOT_DIR_, '\\'], ['', '/'], $this->getFile()), '/')
         );
     }
 

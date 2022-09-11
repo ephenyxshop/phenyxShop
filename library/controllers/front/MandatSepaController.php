@@ -71,7 +71,7 @@ class MandatSepaControllerCore extends FrontController {
         );
 
 
-        $this->setTemplate(_PS_THEME_DIR_ . 'mandats.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'mandats.tpl');
     }
 
     /**
@@ -137,7 +137,7 @@ class MandatSepaControllerCore extends FrontController {
 			'margin_header' => 10,
 			'margin_footer' => 10,
 		]);
-		$data = $context->smarty->createTemplate(_PS_PDF_DIR_.'header.tpl');
+		$data = $context->smarty->createTemplate(_EPH_PDF_DIR_.'header.tpl');
 		$data->assign(
 			[
 				'company'     => $company,
@@ -150,7 +150,7 @@ class MandatSepaControllerCore extends FrontController {
 		);
 
 		$mpdf->SetHTMLHeader($data->fetch());
-		$data = $context->smarty->createTemplate(_PS_PDF_DIR_.'footer.tpl');
+		$data = $context->smarty->createTemplate(_EPH_PDF_DIR_.'footer.tpl');
 		$data->assign(
 			[
 				'mandat' => $mandat,
@@ -158,7 +158,7 @@ class MandatSepaControllerCore extends FrontController {
 		);
 		$mpdf->SetHTMLFooter($data->fetch(), 'O');
 
-		$data = $context->smarty->createTemplate(_PS_PDF_DIR_.'pdf.css.tpl');
+		$data = $context->smarty->createTemplate(_EPH_PDF_DIR_.'pdf.css.tpl');
 		$data->assign(
 			[
 				'color' => '#ef9331',
@@ -166,7 +166,7 @@ class MandatSepaControllerCore extends FrontController {
 		);
 		$stylesheet = $data->fetch();
 
-		$data = $context->smarty->createTemplate(_PS_PDF_DIR_.'' . $template);
+		$data = $context->smarty->createTemplate(_EPH_PDF_DIR_.'' . $template);
 
 		$data->assign(
 			[
@@ -180,7 +180,7 @@ class MandatSepaControllerCore extends FrontController {
 			]
 		);
 
-		$filePath = _PS_UPLOAD_DIR_;
+		$filePath = _EPH_UPLOAD_DIR_;
 		$fileName = $this->l('Mandat Sepa ').$bank->id.'.pdf';
 
 		$mpdf->SetTitle($company->company_name . $this->l('Mandat Sepa ') . $bank->id);

@@ -80,7 +80,7 @@ class LocalizationPackCore {
                 }
 
                 if (!$installMode) {
-                    Configuration::updateValue('PS_LANG_DEFAULT', $idLang);
+                    Configuration::updateValue('EPH_LANG_DEFAULT', $idLang);
                 }
 
             } else if (!isset($this->iso_code_lang) && $installMode) {
@@ -94,7 +94,7 @@ class LocalizationPackCore {
 
             if ($installMode && $res && isset($this->iso_currency)) {
                 Cache::clean('Currency::getIdByIsoCode_*');
-                $res &= Configuration::updateValue('PS_CURRENCY_DEFAULT', (int) Currency::getIdByIsoCode($this->iso_currency));
+                $res &= Configuration::updateValue('EPH_CURRENCY_DEFAULT', (int) Currency::getIdByIsoCode($this->iso_currency));
                 Currency::refreshCurrencies();
             }
 
@@ -219,7 +219,7 @@ class LocalizationPackCore {
                 }
 
                 $tax = new Tax();
-                $tax->name[(int) Configuration::get('PS_LANG_DEFAULT')] = (string) $attributes['name'];
+                $tax->name[(int) Configuration::get('EPH_LANG_DEFAULT')] = (string) $attributes['name'];
                 $tax->rate = (float) $attributes['rate'];
                 $tax->active = 1;
 
@@ -492,7 +492,7 @@ class LocalizationPackCore {
             if (isset($attributes['price_display_method']) && in_array((int) $attributes['price_display_method'], [0, 1])) {
                 Configuration::updateValue('PRICE_DISPLAY_METHOD', (int) $attributes['price_display_method']);
 
-                foreach ([(int) Configuration::get('PS_CUSTOMER_GROUP'), (int) Configuration::get('PS_GUEST_GROUP'), (int) Configuration::get('PS_UNIDENTIFIED_GROUP')] as $idGroup) {
+                foreach ([(int) Configuration::get('EPH_CUSTOMER_GROUP'), (int) Configuration::get('EPH_GUEST_GROUP'), (int) Configuration::get('EPH_UNIDENTIFIED_GROUP')] as $idGroup) {
                     $group = new Group((int) $idGroup);
                     $group->price_display_method = (int) $attributes['price_display_method'];
 
@@ -567,7 +567,7 @@ class LocalizationPackCore {
      */
     protected function _installUnits($xml) {
 
-        $varNames = ['weight' => 'PS_WEIGHT_UNIT', 'volume' => 'PS_VOLUME_UNIT', 'short_distance' => 'PS_DIMENSION_UNIT', 'base_distance' => 'PS_BASE_DISTANCE_UNIT', 'long_distance' => 'PS_DISTANCE_UNIT'];
+        $varNames = ['weight' => 'EPH_WEIGHT_UNIT', 'volume' => 'EPH_VOLUME_UNIT', 'short_distance' => 'EPH_DIMENSION_UNIT', 'base_distance' => 'EPH_BASE_DISTANCE_UNIT', 'long_distance' => 'EPH_DISTANCE_UNIT'];
 
         if (isset($xml->units->unit)) {
 

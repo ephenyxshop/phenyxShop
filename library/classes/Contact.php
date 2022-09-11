@@ -46,7 +46,7 @@ class ContactCore extends ObjectModel {
      */
     public static function getContacts($idLang) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('contact', 'c')
@@ -70,7 +70,7 @@ class ContactCore extends ObjectModel {
      */
     public static function getCategoriesContacts() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('cl.*')
                 ->from('contact', 'ct')

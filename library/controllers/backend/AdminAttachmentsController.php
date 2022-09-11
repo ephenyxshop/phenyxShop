@@ -85,7 +85,7 @@ class AdminAttachmentsControllerCore extends AdminController {
 
         parent::setMedia($isNewTheme);
 
-        $this->addJs(_PS_JS_DIR_ . 'attachments.js');
+        $this->addJs(_EPH_JS_DIR_ . 'attachments.js');
         Media::addJsDefL('confirm_text', $this->l('This attachment is associated with the following products, do you really want to  delete it?', null, true, false));
     }
 
@@ -113,8 +113,8 @@ class AdminAttachmentsControllerCore extends AdminController {
             /** @var Attachment $obj */
             $link = $this->context->link->getPageLink('attachment', true, null, 'id_attachment=' . $obj->id);
 
-            if (file_exists(_PS_DOWNLOAD_DIR_ . $obj->file)) {
-                $size = round(filesize(_PS_DOWNLOAD_DIR_ . $obj->file) / 1024);
+            if (file_exists(_EPH_DOWNLOAD_DIR_ . $obj->file)) {
+                $size = round(filesize(_EPH_DOWNLOAD_DIR_ . $obj->file) / 1024);
             }
 
         }
@@ -208,7 +208,7 @@ class AdminAttachmentsControllerCore extends AdminController {
      */
     public function postProcess() {
 
-        if (_PS_MODE_DEMO_) {
+        if (_EPH_MODE_DEMO_) {
             $this->errors[] = Tools::displayError('This functionality has been disabled.');
 
             return null;
@@ -226,27 +226,27 @@ class AdminAttachmentsControllerCore extends AdminController {
 
                 if (isset($_FILES['file']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
 
-                    if ($_FILES['file']['size'] > (Configuration::get('PS_ATTACHMENT_MAXIMUM_SIZE') * 1024 * 1024)) {
+                    if ($_FILES['file']['size'] > (Configuration::get('EPH_ATTACHMENT_MAXIMUM_SIZE') * 1024 * 1024)) {
                         $this->errors[] = sprintf(
                             $this->l('The file is too large. Maximum size allowed is: %1$d kB. The file you are trying to upload is %2$d kB.'),
-                            (Configuration::get('PS_ATTACHMENT_MAXIMUM_SIZE') * 1024),
+                            (Configuration::get('EPH_ATTACHMENT_MAXIMUM_SIZE') * 1024),
                             number_format(($_FILES['file']['size'] / 1024), 2, '.', '')
                         );
                     } else {
 
                         do {
                             $uniqid = sha1(microtime());
-                        } while (file_exists(_PS_DOWNLOAD_DIR_ . $uniqid));
+                        } while (file_exists(_EPH_DOWNLOAD_DIR_ . $uniqid));
 
-                        if (!move_uploaded_file($_FILES['file']['tmp_name'], _PS_DOWNLOAD_DIR_ . $uniqid)) {
+                        if (!move_uploaded_file($_FILES['file']['tmp_name'], _EPH_DOWNLOAD_DIR_ . $uniqid)) {
                             $this->errors[] = $this->l('Failed to copy the file.');
                         }
 
                         $_POST['file_name'] = $_FILES['file']['name'];
                         @unlink($_FILES['file']['tmp_name']);
 
-                        if (!sizeof($this->errors) && isset($a) && file_exists(_PS_DOWNLOAD_DIR_ . $a->file)) {
-                            unlink(_PS_DOWNLOAD_DIR_ . $a->file);
+                        if (!sizeof($this->errors) && isset($a) && file_exists(_EPH_DOWNLOAD_DIR_ . $a->file)) {
+                            unlink(_EPH_DOWNLOAD_DIR_ . $a->file);
                         }
 
                         $_POST['file'] = $uniqid;
@@ -266,7 +266,7 @@ class AdminAttachmentsControllerCore extends AdminController {
                     );
                 } else
 
-                if (!isset($a) || (isset($a) && !file_exists(_PS_DOWNLOAD_DIR_ . $a->file))) {
+                if (!isset($a) || (isset($a) && !file_exists(_EPH_DOWNLOAD_DIR_ . $a->file))) {
                     $this->errors[] = $this->l('Upload error. Please check your server configurations for the maximum upload size allowed.');
                 }
 
@@ -277,8 +277,8 @@ class AdminAttachmentsControllerCore extends AdminController {
 
         $return = parent::postProcess();
 
-        if (!$return && isset($uniqid) && file_exists(_PS_DOWNLOAD_DIR_ . $uniqid)) {
-            unlink(_PS_DOWNLOAD_DIR_ . $uniqid);
+        if (!$return && isset($uniqid) && file_exists(_EPH_DOWNLOAD_DIR_ . $uniqid)) {
+            unlink(_EPH_DOWNLOAD_DIR_ . $uniqid);
         }
 
         return $return;

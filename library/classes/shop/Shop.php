@@ -133,7 +133,7 @@ class ShopCore extends ObjectModel
     {
         $cacheId = 'Shop::setUrl_'.(int) $this->id;
         if (!Cache::isStored($cacheId)) {
-            $row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('su.physical_uri, su.virtual_uri, su.domain, su.domain_ssl, su.admin_ssl, t.id_theme, t.name, t.directory')
                     ->from('shop', 's')
@@ -199,7 +199,7 @@ class ShopCore extends ObjectModel
      */
     public function associateSuperAdmins()
     {
-        $superAdmins = Employee::getEmployeesByProfile(_PS_ADMIN_PROFILE_);
+        $superAdmins = Employee::getEmployeesByProfile(_EPH_ADMIN_PROFILE_);
         foreach ($superAdmins as $superAdmin) {
             $employee = new Employee((int) $superAdmin['id_employee']);
             $employee->associateTo((int) $this->id);
@@ -269,7 +269,7 @@ class ShopCore extends ObjectModel
     public static function hasDependency($idShop)
     {
         $hasDependency = false;
-        $nbrCustomer = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $nbrCustomer = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(*)')
                 ->from('customer')
@@ -278,7 +278,7 @@ class ShopCore extends ObjectModel
         if ($nbrCustomer) {
             $hasDependency = true;
         } else {
-            $nbrOrder = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $nbrOrder = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('COUNT(*)')
                     ->from('orders')
@@ -303,13 +303,13 @@ class ShopCore extends ObjectModel
     public static function initialize()
     {
         // Find current shop from URL
-        if (!($idShop = Tools::getValue('id_shop')) || defined('_PS_ROOT_DIR_')) {
+        if (!($idShop = Tools::getValue('id_shop')) || defined('_EPH_ROOT_DIR_')) {
             $foundUri = '';
             $isMainUri = false;
             $host = Tools::getHttpHost();
             $requestUri = rawurldecode($_SERVER['REQUEST_URI']);
 
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('s.`id_shop`, CONCAT(su.`physical_uri`, su.`virtual_uri`) AS `uri`, su.`domain`, su.`admin_ssl`, su.`main`')
                     ->from('shop_url', 'su')
@@ -339,12 +339,12 @@ class ShopCore extends ObjectModel
                 foreach ($result as $row) {
                     if ($row['id_shop'] == $idShop && $row['main']) {
                         $requestUri = substr($requestUri, strlen($foundUri));
-						if(defined('_PS_ROOT_DIR_')) {
+						if(defined('_EPH_ROOT_DIR_')) {
 							$url = str_replace('//', '/', $row['admin_ssl'].$row['uri'].$requestUri);   
 						} else {
 							$url = str_replace('//', '/', $row['domain'].$row['uri'].$requestUri);
 						}						                   
-                        $redirectType = Configuration::get('PS_CANONICAL_REDIRECT');
+                        $redirectType = Configuration::get('EPH_CANONICAL_REDIRECT');
                         $redirectCode = ($redirectType == 1 ? '302' : '301');
                         $redirectHeader = ($redirectType == 1 ? 'Found' : 'Moved Permanently');
                         header('HTTP/1.0 '.$redirectCode.' '.$redirectHeader);
@@ -357,23 +357,23 @@ class ShopCore extends ObjectModel
         }
 
         $httpHost = Tools::getHttpHost();
-        $allMedia = array_merge(Configuration::getMultiShopValues('PS_MEDIA_SERVER_1'), Configuration::getMultiShopValues('PS_MEDIA_SERVER_2'), Configuration::getMultiShopValues('PS_MEDIA_SERVER_3'));
+        $allMedia = array_merge(Configuration::getMultiShopValues('EPH_MEDIA_SERVER_1'), Configuration::getMultiShopValues('EPH_MEDIA_SERVER_2'), Configuration::getMultiShopValues('EPH_MEDIA_SERVER_3'));
 
-        if ((!$idShop && defined('_PS_ROOT_DIR_')) || Tools::isPHPCLI() || in_array($httpHost, $allMedia)) {
+        if ((!$idShop && defined('_EPH_ROOT_DIR_')) || Tools::isPHPCLI() || in_array($httpHost, $allMedia)) {
             // If in admin, we can access to the shop without right URL
-            if ((!$idShop && Tools::isPHPCLI()) || defined('_PS_ROOT_DIR_')) {
-                $idShop = (int) Configuration::get('PS_SHOP_DEFAULT');
+            if ((!$idShop && Tools::isPHPCLI()) || defined('_EPH_ROOT_DIR_')) {
+                $idShop = (int) Configuration::get('EPH_SHOP_DEFAULT');
             }
 
             $shop = new Shop((int) $idShop);
             if (!Validate::isLoadedObject($shop)) {
-                $shop = new Shop((int) Configuration::get('PS_SHOP_DEFAULT'));
+                $shop = new Shop((int) Configuration::get('EPH_SHOP_DEFAULT'));
             }
 
             $shop->virtual_uri = '';
 
             // Define some $_SERVER variables like HTTP_HOST if PHP is launched with php-cli
-            if (Tools::isPHPCLI() && defined('_PS_ROOT_DIR_')) {
+            if (Tools::isPHPCLI() && defined('_EPH_ROOT_DIR_')) {
                 if (!isset($_SERVER['HTTP_HOST']) || empty($_SERVER['HTTP_HOST'])) {
                     $_SERVER['HTTP_HOST'] = $shop->admin_ssl;
                 }
@@ -383,7 +383,7 @@ class ShopCore extends ObjectModel
                 if (!isset($_SERVER['REMOTE_ADDR']) || empty($_SERVER['REMOTE_ADDR'])) {
                     $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
                 }
-            } else if (Tools::isPHPCLI() && !defined('_PS_ROOT_DIR_')) {
+            } else if (Tools::isPHPCLI() && !defined('_EPH_ROOT_DIR_')) {
                 if (!isset($_SERVER['HTTP_HOST']) || empty($_SERVER['HTTP_HOST'])) {
                     $_SERVER['HTTP_HOST'] = $shop->domain;
                 }
@@ -400,7 +400,7 @@ class ShopCore extends ObjectModel
             $shop = new Shop($idShop);
             if (!Validate::isLoadedObject($shop) || !$shop->active) {
                 // No shop found ... too bad, let's redirect to default shop
-                $defaultShop = new Shop(Configuration::get('PS_SHOP_DEFAULT'));
+                $defaultShop = new Shop(Configuration::get('EPH_SHOP_DEFAULT'));
 
                 // Hmm there is something really bad in your PhenyxShop !
                 if (!Validate::isLoadedObject($defaultShop)) {
@@ -409,13 +409,13 @@ class ShopCore extends ObjectModel
 
                 $params = $_GET;
                 unset($params['id_shop']);
-				if(defined('_PS_ROOT_DIR_')) {
+				if(defined('_EPH_ROOT_DIR_')) {
 					$url = $defaultShop->admin_ssl;
 				} else {
 					$url = $defaultShop->domain;
 				}
                 
-                if (!Configuration::get('PS_REWRITING_SETTINGS')) {
+                if (!Configuration::get('EPH_REWRITING_SETTINGS')) {
                     $url .= $defaultShop->getBaseURI().'index.php?'.http_build_query($params);
                 } else {
                     // Catch url with subdomain "www"
@@ -430,14 +430,14 @@ class ShopCore extends ObjectModel
                     }
                 }
 
-                $redirectType = Configuration::get('PS_CANONICAL_REDIRECT');
+                $redirectType = Configuration::get('EPH_CANONICAL_REDIRECT');
                 $redirectCode = ($redirectType == 1 ? '302' : '301');
                 $redirectHeader = ($redirectType == 1 ? 'Found' : 'Moved Permanently');
                 header('HTTP/1.0 '.$redirectCode.' '.$redirectHeader);
                 header('Location: '.Tools::getShopProtocol().$url);
                 exit;
-            } elseif (defined('_PS_ROOT_DIR_') && empty($shop->physical_uri)) {
-                $shopDefault = new Shop((int) Configuration::get('PS_SHOP_DEFAULT'));
+            } elseif (defined('_EPH_ROOT_DIR_') && empty($shop->physical_uri)) {
+                $shopDefault = new Shop((int) Configuration::get('EPH_SHOP_DEFAULT'));
                 $shop->physical_uri = $shopDefault->physical_uri;
                 $shop->virtual_uri = $shopDefault->virtual_uri;
             }
@@ -463,13 +463,13 @@ class ShopCore extends ObjectModel
     {
         if (!isset($this->address)) {
             $address = new Address();
-            $address->company = Configuration::get('PS_SHOP_NAME');
-            $address->id_country = Configuration::get('PS_SHOP_COUNTRY_ID') ? Configuration::get('PS_SHOP_COUNTRY_ID') : Configuration::get('PS_COUNTRY_DEFAULT');
-            $address->id_state = Configuration::get('PS_SHOP_STATE_ID');
-            $address->address1 = Configuration::get('PS_SHOP_ADDR1');
-            $address->address2 = Configuration::get('PS_SHOP_ADDR2');
-            $address->postcode = Configuration::get('PS_SHOP_CODE');
-            $address->city = Configuration::get('PS_SHOP_CITY');
+            $address->company = Configuration::get('EPH_SHOP_NAME');
+            $address->id_country = Configuration::get('EPH_SHOP_COUNTRY_ID') ? Configuration::get('EPH_SHOP_COUNTRY_ID') : Configuration::get('EPH_COUNTRY_DEFAULT');
+            $address->id_state = Configuration::get('EPH_SHOP_STATE_ID');
+            $address->address1 = Configuration::get('EPH_SHOP_ADDR1');
+            $address->address2 = Configuration::get('EPH_SHOP_ADDR2');
+            $address->postcode = Configuration::get('EPH_SHOP_CODE');
+            $address->city = Configuration::get('EPH_SHOP_CITY');
 
             $this->address = $address;
         }
@@ -520,7 +520,7 @@ class ShopCore extends ObjectModel
 
         $url = [];
         $url['protocol'] = 'https://';
-		if(defined('_PS_ROOT_DIR_')) {
+		if(defined('_EPH_ROOT_DIR_')) {
         	$url['admin_ssl'] = $this->admin_ssl;
 		} else {
 			$url['domain'] = $autoSecureMode && Tools::usingSecureMode() ? $this->domain_ssl : $this->domain;
@@ -576,7 +576,7 @@ class ShopCore extends ObjectModel
      */
     public function getCategory()
     {
-        return (int) ($this->id_category ? $this->id_category : Configuration::get('PS_ROOT_CATEGORY'));
+        return (int) ($this->id_category ? $this->id_category : Configuration::get('EPH_ROOT_CATEGORY'));
     }
 
     /**
@@ -591,7 +591,7 @@ class ShopCore extends ObjectModel
      */
     public function getUrls()
     {
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('shop_url')
@@ -611,7 +611,7 @@ class ShopCore extends ObjectModel
      */
     public function isDefaultShop()
     {
-        return $this->id == Configuration::get('PS_SHOP_DEFAULT');
+        return $this->id == Configuration::get('EPH_SHOP_DEFAULT');
     }
 
     /**
@@ -750,12 +750,12 @@ class ShopCore extends ObjectModel
         ;
 
         // If the profile isn't a superAdmin
-        if (Validate::isLoadedObject($employee) && $employee->id_profile != _PS_ADMIN_PROFILE_) {
+        if (Validate::isLoadedObject($employee) && $employee->id_profile != _EPH_ADMIN_PROFILE_) {
             $sql->leftJoin('employee_shop', 'es', 'es.`id_shop` = s.`id_shop`');
             $sql->where('es.`id_employee` = '.(int) $employee->id);
         }
 
-        if ($results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql)) {
+        if ($results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql)) {
             foreach ($results as $row) {
                 if (!isset(static::$shops[$row['id_shop_group']])) {
                     static::$shops[$row['id_shop_group']] = [
@@ -797,7 +797,7 @@ class ShopCore extends ObjectModel
         $cacheId = 'Shop::getCompleteListOfShopsID';
         if (!Cache::isStored($cacheId)) {
             $list = [];
-            foreach (Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS((new DbQuery())->select('`id_shop`')->from('shop')) as $row) {
+            foreach (Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS((new DbQuery())->select('`id_shop`')->from('shop')) as $row) {
                 $list[] = $row['id_shop'];
             }
 
@@ -1053,7 +1053,7 @@ class ShopCore extends ObjectModel
      */
     public static function getShopById($id, $identifier, $table)
     {
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_shop`, `'.bqSQL($identifier).'`')
                 ->from(bqSQL($table).'_shop')
@@ -1249,7 +1249,7 @@ class ShopCore extends ObjectModel
             $idShop = (int) Context::getContext()->shop->id;
         }
         if (!$idShop) {
-            $idShop = (int) Configuration::get('PS_SHOP_DEFAULT');
+            $idShop = (int) Configuration::get('EPH_SHOP_DEFAULT');
         }
 
         return ' AND '.(($alias) ? $alias.'.' : '').'id_shop = '.$idShop.' ';
@@ -1284,7 +1284,7 @@ class ShopCore extends ObjectModel
         static $featureActive = null;
 
         if ($featureActive === null) {
-            $featureActive = (bool) Db::getInstance()->getValue('SELECT value FROM `'._DB_PREFIX_.'configuration` WHERE `name` = "PS_MULTISHOP_FEATURE_ACTIVE"')
+            $featureActive = (bool) Db::getInstance()->getValue('SELECT value FROM `'._DB_PREFIX_.'configuration` WHERE `name` = "EPH_MULTISHOP_FEATURE_ACTIVE"')
                 && (Db::getInstance()->getValue('SELECT COUNT(*) FROM '._DB_PREFIX_.'shop') > 1);
         }
 
@@ -1307,7 +1307,7 @@ class ShopCore extends ObjectModel
         // E.g. if carriers are duplicated for the shop, duplicate carriers langs too
 
         if (!$oldId) {
-            $oldId = Configuration::get('PS_SHOP_DEFAULT');
+            $oldId = Configuration::get('EPH_SHOP_DEFAULT');
         }
 
         if (isset($tablesImport['carrier'])) {
@@ -1427,7 +1427,7 @@ class ShopCore extends ObjectModel
         $query->from('category_shop', 'cs');
         $query->leftJoin('category_lang', 'cl', 'cl.`id_category` = cs.`id_category` AND cl.`id_lang` = '.(int) Context::getContext()->language->id);
         $query->where('cs.`id_shop` = '.(int) $id);
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
 
         if ($onlyId) {
             $array = [];
@@ -1470,7 +1470,7 @@ class ShopCore extends ObjectModel
             return false;
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('entity.`id_'.bqSQL($entity).'`')
                 ->from(bqSQL($entity).'_shop', 'es')

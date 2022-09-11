@@ -106,7 +106,7 @@ class ShopGroupCore extends ObjectModel
      */
     public function getTotalShops()
     {
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(*)')
                 ->from('shop', 's')
@@ -126,7 +126,7 @@ class ShopGroupCore extends ObjectModel
      */
     public static function getShopsFromGroup($idGroup)
     {
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('s.`id_shop`')
                 ->from('shop', 's')
@@ -147,7 +147,7 @@ class ShopGroupCore extends ObjectModel
      */
     public static function getIdByName($name)
     {
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_shop_group`')
                 ->from('shop_group')
@@ -175,7 +175,7 @@ class ShopGroupCore extends ObjectModel
         }
 
         if ($check == 'all' || $check == 'customer') {
-            $totalCustomer = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $totalCustomer = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('COUNT(*)')
                     ->from('customer')
@@ -187,7 +187,7 @@ class ShopGroupCore extends ObjectModel
         }
 
         if ($check == 'all' || $check == 'order') {
-            $totalOrder = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $totalOrder = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('COUNT(*)')
                     ->from('orders')
@@ -213,7 +213,7 @@ class ShopGroupCore extends ObjectModel
      */
     public function shopNameExists($name, $idShop = false)
     {
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_shop`')
                 ->from('shop')

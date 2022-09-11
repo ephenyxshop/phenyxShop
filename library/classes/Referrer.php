@@ -95,7 +95,7 @@ class ReferrerCore extends ObjectModel {
      */
     public static function getReferrers($idCustomer) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('DISTINCT c.`date_add`, r.`name`, s.`name` AS `shop_name`')
                 ->from('guest', 'g')
@@ -121,8 +121,8 @@ class ReferrerCore extends ObjectModel {
      */
     public static function getAjaxProduct($idReferrer, $idProduct, $employee = null) {
 
-        $product = new Product($idProduct, false, Configuration::get('PS_LANG_DEFAULT'));
-        $currency = Currency::getCurrencyInstance(Configuration::get('PS_CURRENCY_DEFAULT'));
+        $product = new Product($idProduct, false, Configuration::get('EPH_LANG_DEFAULT'));
+        $currency = Currency::getCurrencyInstance(Configuration::get('EPH_CURRENCY_DEFAULT'));
         $referrer = new Referrer($idReferrer);
         $statsVisits = $referrer->getStatsVisits($idProduct, $employee);
         $registrations = $referrer->getRegistrations($idProduct, $employee);
@@ -170,7 +170,7 @@ class ReferrerCore extends ObjectModel {
      */
     public function getStatsVisits($idProduct, $employee) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('COUNT(DISTINCT cs.`id_connections_source`) AS `visits`')
                 ->select('COUNT(DISTINCT cs.`id_connections`) AS `visitors`')
@@ -227,7 +227,7 @@ class ReferrerCore extends ObjectModel {
             $sql->where('p.`id_object` = ' . (int) $idProduct);
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow($sql);
 
         return (int) $result['registrations'];
     }
@@ -265,7 +265,7 @@ class ReferrerCore extends ObjectModel {
             $sql->where('od.`product_id` = ' . (int) $idProduct);
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
 
         $implode = [];
 
@@ -278,7 +278,7 @@ class ReferrerCore extends ObjectModel {
         }
 
         if ($implode) {
-            return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('COUNT(`id_order`) AS `orders`, SUM(`total_paid_real` / `conversion_rate`) AS `sales`')
                     ->from('orders')
@@ -330,7 +330,7 @@ class ReferrerCore extends ObjectModel {
     public static function refreshCache($referrers = null, $employee = null) {
 
         if (!$referrers || !is_array($referrers)) {
-            $referrers = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS((new DbQuery())->select('`id_referrer`')->from('referrer'));
+            $referrers = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS((new DbQuery())->select('`id_referrer`')->from('referrer'));
         }
 
         foreach ($referrers as $row) {
@@ -364,8 +364,8 @@ class ReferrerCore extends ObjectModel {
 
         }
 
-        Configuration::updateValue('PS_REFERRERS_CACHE_LIKE', ModuleGraph::getDateBetween($employee));
-        Configuration::updateValue('PS_REFERRERS_CACHE_DATE', date('Y-m-d H:i:s'));
+        Configuration::updateValue('EPH_REFERRERS_CACHE_LIKE', ModuleGraph::getDateBetween($employee));
+        Configuration::updateValue('EPH_REFERRERS_CACHE_DATE', date('Y-m-d H:i:s'));
 
         return true;
     }

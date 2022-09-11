@@ -56,32 +56,32 @@ class AdminStoresControllerCore extends AdminController {
             'general' => [
                 'title'  => $this->l('Parameters'),
                 'fields' => [
-                    'PS_STORES_DISPLAY_FOOTER'  => [
+                    'EPH_STORES_DISPLAY_FOOTER'  => [
                         'title' => $this->l('Display in the footer'),
                         'hint'  => $this->l('Display a link to the store locator in the footer.'),
                         'cast'  => 'intval',
                         'type'  => 'bool',
                     ],
-                    'PS_STORES_DISPLAY_SITEMAP' => [
+                    'EPH_STORES_DISPLAY_SITEMAP' => [
                         'title' => $this->l('Display in the sitemap page'),
                         'hint'  => $this->l('Display a link to the store locator in the sitemap page.'),
                         'cast'  => 'intval',
                         'type'  => 'bool',
                     ],
-                    'PS_STORES_SIMPLIFIED'      => [
+                    'EPH_STORES_SIMPLIFIED'      => [
                         'title' => $this->l('Show a simplified store locator'),
                         'hint'  => $this->l('No map, no search, only a store directory.'),
                         'cast'  => 'intval',
                         'type'  => 'bool',
                     ],
-                    'PS_STORES_CENTER_LAT'      => [
+                    'EPH_STORES_CENTER_LAT'      => [
                         'title' => $this->l('Default latitude'),
                         'hint'  => $this->l('Used for the initial position of the map.'),
                         'cast'  => 'floatval',
                         'type'  => 'text',
                         'size'  => '10',
                     ],
-                    'PS_STORES_CENTER_LONG'     => [
+                    'EPH_STORES_CENTER_LONG'     => [
                         'title' => $this->l('Default longitude'),
                         'hint'  => $this->l('Used for the initial position of the map.'),
                         'cast'  => 'floatval',
@@ -152,7 +152,7 @@ class AdminStoresControllerCore extends AdminController {
         }
 
         $formFields = [
-            'PS_SHOP_NAME'       => [
+            'EPH_SHOP_NAME'       => [
                 'title'      => $this->l('Shop name'),
                 'hint'       => $this->l('Displayed in emails and page titles.'),
                 'validation' => 'isGenericName',
@@ -160,14 +160,14 @@ class AdminStoresControllerCore extends AdminController {
                 'type'       => 'text',
                 'no_escape'  => true,
             ],
-            'PS_SHOP_EMAIL'      => [
+            'EPH_SHOP_EMAIL'      => [
                 'title'      => $this->l('Shop email'),
                 'hint'       => $this->l('Displayed in emails sent to customers.'),
                 'validation' => 'isEmail',
                 'required'   => true,
                 'type'       => 'text',
             ],
-            'PS_SHOP_DETAILS'    => [
+            'EPH_SHOP_DETAILS'    => [
                 'title'      => $this->l('Registration number'),
                 'hint'       => $this->l('Shop registration information (e.g. SIRET or RCS).'),
                 'validation' => 'isGenericName',
@@ -175,27 +175,27 @@ class AdminStoresControllerCore extends AdminController {
                 'cols'       => 30,
                 'rows'       => 5,
             ],
-            'PS_SHOP_ADDR1'      => [
+            'EPH_SHOP_ADDR1'      => [
                 'title'      => $this->l('Shop address line 1'),
                 'validation' => 'isAddress',
                 'type'       => 'text',
             ],
-            'PS_SHOP_ADDR2'      => [
+            'EPH_SHOP_ADDR2'      => [
                 'title'      => $this->l('Shop address line 2'),
                 'validation' => 'isAddress',
                 'type'       => 'text',
             ],
-            'PS_SHOP_CODE'       => [
+            'EPH_SHOP_CODE'       => [
                 'title'      => $this->l('Zip/postal code'),
                 'validation' => 'isGenericName',
                 'type'       => 'text',
             ],
-            'PS_SHOP_CITY'       => [
+            'EPH_SHOP_CITY'       => [
                 'title'      => $this->l('City'),
                 'validation' => 'isGenericName',
                 'type'       => 'text',
             ],
-            'PS_SHOP_COUNTRY_ID' => [
+            'EPH_SHOP_COUNTRY_ID' => [
                 'title'        => $this->l('Country'),
                 'validation'   => 'isInt',
                 'type'         => 'select',
@@ -204,7 +204,7 @@ class AdminStoresControllerCore extends AdminController {
                 'cast'         => 'intval',
                 'defaultValue' => (int) $this->context->country->id,
             ],
-            'PS_SHOP_STATE_ID'   => [
+            'EPH_SHOP_STATE_ID'   => [
                 'title'      => $this->l('State'),
                 'validation' => 'isInt',
                 'type'       => 'select',
@@ -212,12 +212,12 @@ class AdminStoresControllerCore extends AdminController {
                 'identifier' => 'id',
                 'cast'       => 'intval',
             ],
-            'PS_SHOP_PHONE'      => [
+            'EPH_SHOP_PHONE'      => [
                 'title'      => $this->l('Phone'),
                 'validation' => 'isGenericName',
                 'type'       => 'text',
             ],
-            'PS_SHOP_FAX'        => [
+            'EPH_SHOP_FAX'        => [
                 'title'      => $this->l('Fax'),
                 'validation' => 'isGenericName',
                 'type'       => 'text',
@@ -285,7 +285,7 @@ class AdminStoresControllerCore extends AdminController {
             'AjaxLink'           => $this->context->link->getAdminLink($this->controller_name),
             'paragridScript'     => $this->generateParaGridScript(),
             'titleBar'           => $this->TitleBar,
-            'bo_imgdir'          => __PS_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+            'bo_imgdir'          => __EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
             'current_id_lang'    => $this->context->language->id,
             'idController'       => '',
         ]);
@@ -640,7 +640,7 @@ class AdminStoresControllerCore extends AdminController {
             return '';
         }
 
-        $image = _PS_STORE_IMG_DIR_ . $obj->id . '.jpg';
+        $image = _EPH_STORE_IMG_DIR_ . $obj->id . '.jpg';
         $imageUrl = ImageManager::thumbnail(
             $image,
             $this->table . '_' . (int) $obj->id . '.' . $this->imageType,
@@ -820,8 +820,8 @@ class AdminStoresControllerCore extends AdminController {
         }
 
         $this->fields_value = [
-            'latitude'  => $this->getFieldValue($obj, 'latitude') ? $this->getFieldValue($obj, 'latitude') : Configuration::get('PS_STORES_CENTER_LAT'),
-            'longitude' => $this->getFieldValue($obj, 'longitude') ? $this->getFieldValue($obj, 'longitude') : Configuration::get('PS_STORES_CENTER_LONG'),
+            'latitude'  => $this->getFieldValue($obj, 'latitude') ? $this->getFieldValue($obj, 'latitude') : Configuration::get('EPH_STORES_CENTER_LAT'),
+            'longitude' => $this->getFieldValue($obj, 'longitude') ? $this->getFieldValue($obj, 'longitude') : Configuration::get('EPH_STORES_CENTER_LONG'),
             'days'      => $days,
             'hours'     => isset($hours) ? $hours : false,
         ];
@@ -915,10 +915,10 @@ class AdminStoresControllerCore extends AdminController {
      */
     public function beforeUpdateOptions() {
 
-        if (isset($_POST['PS_SHOP_STATE_ID']) && $_POST['PS_SHOP_STATE_ID'] != '0') {
+        if (isset($_POST['EPH_SHOP_STATE_ID']) && $_POST['EPH_SHOP_STATE_ID'] != '0') {
             $sql = 'SELECT `active` FROM `' . _DB_PREFIX_ . 'state`
-                    WHERE `id_country` = ' . (int) Tools::getValue('PS_SHOP_COUNTRY_ID') . '
-                        AND `id_state` = ' . (int) Tools::getValue('PS_SHOP_STATE_ID');
+                    WHERE `id_country` = ' . (int) Tools::getValue('EPH_SHOP_COUNTRY_ID') . '
+                        AND `id_state` = ' . (int) Tools::getValue('EPH_SHOP_STATE_ID');
             $isStateOk = Db::getInstance()->getValue($sql);
 
             if ($isStateOk != 1) {
@@ -942,8 +942,8 @@ class AdminStoresControllerCore extends AdminController {
             $country = new Country($value, $this->context->language->id);
 
             if ($country->id) {
-                Configuration::updateValue('PS_SHOP_COUNTRY_ID', $value);
-                Configuration::updateValue('PS_SHOP_COUNTRY', $country->name);
+                Configuration::updateValue('EPH_SHOP_COUNTRY_ID', $value);
+                Configuration::updateValue('EPH_SHOP_COUNTRY', $country->name);
             }
 
         }
@@ -963,8 +963,8 @@ class AdminStoresControllerCore extends AdminController {
             $state = new State($value);
 
             if ($state->id) {
-                Configuration::updateValue('PS_SHOP_STATE_ID', $value);
-                Configuration::updateValue('PS_SHOP_STATE', $state->name);
+                Configuration::updateValue('EPH_SHOP_STATE_ID', $value);
+                Configuration::updateValue('EPH_SHOP_STATE', $state->name);
             }
 
         }
@@ -982,21 +982,21 @@ class AdminStoresControllerCore extends AdminController {
 
         $ret = parent::postImage($id);
 
-        if (($idStore = (int) Tools::getValue('id_store')) && isset($_FILES) && count($_FILES) && file_exists(_PS_STORE_IMG_DIR_ . $idStore . '.jpg')) {
+        if (($idStore = (int) Tools::getValue('id_store')) && isset($_FILES) && count($_FILES) && file_exists(_EPH_STORE_IMG_DIR_ . $idStore . '.jpg')) {
             $imageTypes = ImageType::getImagesTypes('stores');
 
             foreach ($imageTypes as $k => $imageType) {
                 ImageManager::resize(
-                    _PS_STORE_IMG_DIR_ . $idStore . '.jpg',
-                    _PS_STORE_IMG_DIR_ . $idStore . '-' . stripslashes($imageType['name']) . '.jpg',
+                    _EPH_STORE_IMG_DIR_ . $idStore . '.jpg',
+                    _EPH_STORE_IMG_DIR_ . $idStore . '-' . stripslashes($imageType['name']) . '.jpg',
                     (int) $imageType['width'],
                     (int) $imageType['height']
                 );
 
                 if (ImageManager::retinaSupport()) {
                     ImageManager::resize(
-                        _PS_STORE_IMG_DIR_ . $idStore . '.jpg',
-                        _PS_STORE_IMG_DIR_ . $idStore . '-' . stripslashes($imageType['name']) . '2x.jpg',
+                        _EPH_STORE_IMG_DIR_ . $idStore . '.jpg',
+                        _EPH_STORE_IMG_DIR_ . $idStore . '-' . stripslashes($imageType['name']) . '2x.jpg',
                         (int) $imageType['width'] * 2,
                         (int) $imageType['height'] * 2
                     );
@@ -1004,8 +1004,8 @@ class AdminStoresControllerCore extends AdminController {
 
                 if (ImageManager::webpSupport()) {
                     ImageManager::resize(
-                        _PS_STORE_IMG_DIR_ . $idStore . '.jpg',
-                        _PS_STORE_IMG_DIR_ . $idStore . '-' . stripslashes($imageType['name']) . '.webp',
+                        _EPH_STORE_IMG_DIR_ . $idStore . '.jpg',
+                        _EPH_STORE_IMG_DIR_ . $idStore . '-' . stripslashes($imageType['name']) . '.webp',
                         (int) $imageType['width'],
                         (int) $imageType['height'],
                         'webp'
@@ -1013,8 +1013,8 @@ class AdminStoresControllerCore extends AdminController {
 
                     if (ImageManager::retinaSupport()) {
                         ImageManager::resize(
-                            _PS_STORE_IMG_DIR_ . $idStore . '.jpg',
-                            _PS_STORE_IMG_DIR_ . $idStore . '-' . stripslashes($imageType['name']) . '2x.webp',
+                            _EPH_STORE_IMG_DIR_ . $idStore . '.jpg',
+                            _EPH_STORE_IMG_DIR_ . $idStore . '-' . stripslashes($imageType['name']) . '2x.webp',
                             (int) $imageType['width'] * 2,
                             (int) $imageType['height'] * 2,
                             'webp'

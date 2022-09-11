@@ -78,9 +78,9 @@ class AdminCmsContentControllerCore extends AdminController {
 	public function setAjaxMedia() {
 
 		return $this->pushJS([
-			_PS_JS_DIR_ . 'cmsCategory.js',
-			_PS_JS_DIR_ . 'tinymce/tinymce.min.js',
-			_PS_JS_DIR_ . 'tinymce.inc.js',
+			_EPH_JS_DIR_ . 'cmsCategory.js',
+			_EPH_JS_DIR_ . 'tinymce/tinymce.min.js',
+			_EPH_JS_DIR_ . 'tinymce.inc.js',
 		]);
 	}
 
@@ -92,7 +92,7 @@ class AdminCmsContentControllerCore extends AdminController {
 		$data = $this->createTemplate('cmscontent.tpl');
 
 		$cmsGridId = [];
-		$cmsCategories = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$cmsCategories = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('a.`id_cms_category`, a.`id_parent`, b.`name`, a.`position`, a.`active`')
 				->from('cms_category', 'a')
@@ -134,7 +134,7 @@ class AdminCmsContentControllerCore extends AdminController {
 
 	public function generateParaGridScript($regenerate = false) {
 
-		$cmsCategories = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$cmsCategories = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('a.`id_cms_category`, a.`id_parent`, b.`name`, a.`position`, a.`active`')
 				->from('cms_category', 'a')
@@ -356,7 +356,7 @@ class AdminCmsContentControllerCore extends AdminController {
 
 	public function getCMSRequest($id_cms_category) {
 
-		$cmsPages = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$cmsPages = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('b.*, a.*, cml.`name`')
 				->from('cms', 'a')
@@ -801,7 +801,7 @@ class AdminCmsContentControllerCore extends AdminController {
 
 			if ($initPosition > $stopIndex) {
 
-				$objects = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+				$objects = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 					(new DbQuery())
 						->select('id_cms,  `position` ')
 						->from('cms')
@@ -841,7 +841,7 @@ class AdminCmsContentControllerCore extends AdminController {
 
 			if ($initPosition < $stopIndex) {
 
-				$objects = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+				$objects = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 					(new DbQuery())
 						->select('id_cms,  `position` ')
 						->from('cms')

@@ -69,7 +69,7 @@ class AdminStatesControllerCore extends AdminController {
             'AjaxLink'       => $this->context->link->getAdminLink($this->controller_name),
             'paragridScript' => $this->generateParaGridScript(),
             'titleBar'       => $this->TitleBar,
-            'bo_imgdir'      => __PS_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+            'bo_imgdir'      => __EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
             'idController'   => '',
         ]);
 

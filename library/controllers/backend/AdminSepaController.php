@@ -24,7 +24,7 @@ class AdminSepaControllerCore extends AdminController {
 
     public function setAjaxMedia() {
 
-        return $this->pushJS([_PS_JS_DIR_ . 'sepa.js',
+        return $this->pushJS([_EPH_JS_DIR_ . 'sepa.js',
         ]);
     }
 
@@ -64,7 +64,7 @@ class AdminSepaControllerCore extends AdminController {
             'company'             => $this->context->company,
             'ics_number'          => Configuration::get('EPH_ICS_NUMBER'),
             'account_regisration' => Configuration::get('EPH_BANK_IBAN'),
-            'b_to_b'              => Configuration::get('PS_B2B_ENABLE'),
+            'b_to_b'              => Configuration::get('EPH_B2B_ENABLE'),
             'btob_mode'           => unserialize(Configuration::get('BTOB_MODE')),
             'btob_groups'         => unserialize(Configuration::get('BTOB_GROUPS')),
             'countries'           => BankAccount::getCountries($this->context->language->id),
@@ -777,7 +777,7 @@ class AdminSepaControllerCore extends AdminController {
 
         $this->context->smarty->assign([
             'title'                => 'Export SEPA',
-            'logo_path'            => _PS_ROOT_DIR_ . '/img/' . Configuration::get('PS_LOGO', null, null, $this->context->shop->id),
+            'logo_path'            => _EPH_ROOT_DIR_ . '/img/' . Configuration::get('EPH_LOGO', null, null, $this->context->shop->id),
             'total_sepas'          => Sepa::getTotal(),
             'date'                 => date('d-m-Y'),
             'sepas'                => Sepa::getSepa((int) $this->context->language->id, true),
@@ -798,7 +798,7 @@ class AdminSepaControllerCore extends AdminController {
 
         $pdf->SetFont('helvetica', '', 8);
         $pdf->AddPage();
-        $html = $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'ephsepa/views/templates/admin/pdf/pdf_sepas.tpl');
+        $html = $this->context->smarty->fetch(_EPH_MODULE_DIR_ . 'ephsepa/views/templates/admin/pdf/pdf_sepas.tpl');
         $pdf->writeHTML($html, false);
         $mail_vars = [
             '{total_sepas}' => Sepa::getTotal(),
@@ -809,7 +809,7 @@ class AdminSepaControllerCore extends AdminController {
         $file_attachement['name'] = 'Pending SEPA';
         $file_attachement['mime'] = 'application/pdf';
         $pdf->Output(_EPH_EXPORT_DIR_ . 'Pending_SEPA.pdf', 'F');
-        $email = Configuration::get('PS_SHOP_EMAIL');
+        $email = Configuration::get('EPH_SHOP_EMAIL');
 
         if (Mail::Send(
             (int) $this->context->language->id,
@@ -876,7 +876,7 @@ class AdminSepaControllerCore extends AdminController {
             'margin_footer' => 10,
         ]);
 
-        $data = $this->context->smarty->createTemplate(_PS_PDF_DIR_ . 'header.tpl', $this->context->smarty);
+        $data = $this->context->smarty->createTemplate(_EPH_PDF_DIR_ . 'header.tpl', $this->context->smarty);
         $data->assign(
             [
                 'company'        => $company,
@@ -889,11 +889,11 @@ class AdminSepaControllerCore extends AdminController {
             ]
         );
         $mpdf->SetHTMLHeader($data->fetch());
-        $data = $this->context->smarty->createTemplate(_PS_PDF_DIR_ . 'pdf_footer.tpl', $this->context->smarty);
+        $data = $this->context->smarty->createTemplate(_EPH_PDF_DIR_ . 'pdf_footer.tpl', $this->context->smarty);
 
         $mpdf->SetHTMLFooter($data->fetch(), 'O');
 
-        $data = $this->context->smarty->createTemplate(_PS_PDF_DIR_ . 'pdf.css.tpl', $this->context->smarty);
+        $data = $this->context->smarty->createTemplate(_EPH_PDF_DIR_ . 'pdf.css.tpl', $this->context->smarty);
         $data->assign(
             [
                 'color' => '#ef9331',
@@ -901,7 +901,7 @@ class AdminSepaControllerCore extends AdminController {
         );
         $stylesheet = $data->fetch();
 
-        $data = $this->context->smarty->createTemplate(_PS_PDF_DIR_ . 'pdf_sepa.tpl', $this->context->smarty);
+        $data = $this->context->smarty->createTemplate(_EPH_PDF_DIR_ . 'pdf_sepa.tpl', $this->context->smarty);
 
         $data->assign(
             [

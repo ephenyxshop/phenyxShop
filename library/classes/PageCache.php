@@ -233,7 +233,7 @@ class PageCacheCore {
             $sql->where('`id_entity` = ' . (int) $idEntity);
         }
 
-        $results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        $results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
 
         if (!is_array($results)) {
             return [];

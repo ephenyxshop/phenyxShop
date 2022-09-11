@@ -20,8 +20,8 @@ class MySQLCore extends Db {
      */
     public function connect() {
 
-        if (!defined('_PS_MYSQL_REAL_ESCAPE_STRING_')) {
-            define('_PS_MYSQL_REAL_ESCAPE_STRING_', function_exists('mysql_real_escape_string'));
+        if (!defined('_EPH_MYSQL_REAL_ESCAPE_STRING_')) {
+            define('_EPH_MYSQL_REAL_ESCAPE_STRING_', function_exists('mysql_real_escape_string'));
         }
 
         if (!$this->link = mysql_connect($this->server, $this->user, $this->password)) {
@@ -183,7 +183,7 @@ class MySQLCore extends Db {
      */
     public function _escape($str) {
 
-        return _PS_MYSQL_REAL_ESCAPE_STRING_ ? mysql_real_escape_string($str, $this->link) : addslashes($str);
+        return _EPH_MYSQL_REAL_ESCAPE_STRING_ ? mysql_real_escape_string($str, $this->link) : addslashes($str);
     }
 
     /**

@@ -402,7 +402,7 @@ class PerformerCore {
 
         foreach ($modules as $mod) {
 
-            foreach (Performer::getControllersInDirectory(_PS_MODULE_DIR_ . $mod->name . '/controllers/') as $controller) {
+            foreach (Performer::getControllersInDirectory(_EPH_MODULE_DIR_ . $mod->name . '/controllers/') as $controller) {
 
                 if ($type == 'admin') {
 
@@ -437,7 +437,7 @@ class PerformerCore {
      */
     protected function __construct() {
 
-        $this->use_routes = (bool) Configuration::get('PS_REWRITING_SETTINGS');
+        $this->use_routes = (bool) Configuration::get('EPH_REWRITING_SETTINGS');
 
         // Select right front controller
 
@@ -627,7 +627,7 @@ class PerformerCore {
         if ($this->use_routes) {
             /* Load routes from meta table */
 
-            if ($results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            if ($results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                 ->select('m.`page`, m.`controller`, ml.`url_rewrite`, ml.`id_lang`')
                 ->from('meta', 'm')
@@ -691,7 +691,7 @@ class PerformerCore {
         switch ($this->front_controller) {
         // Dispatch front office controller
         case static::FC_FRONT:
-            $controllers = Performer::getControllers([_PS_FRONT_CONTROLLER_DIR_, _PS_OVERRIDE_DIR_ . 'controllers/front/']);
+            $controllers = Performer::getControllers([_EPH_FRONT_CONTROLLER_DIR_, _EPH_OVERRIDE_DIR_ . 'controllers/front/']);
             $controllers['index'] = 'IndexController';
 
             if (isset($controllers['auth'])) {
@@ -721,17 +721,17 @@ class PerformerCore {
             $controllerClass = 'PageNotFoundController';
 
             if (Validate::isLoadedObject($module) && $module->active) {
-                $controllers = Performer::getControllers(_PS_MODULE_DIR_ . $moduleName . '/controllers/front/');
+                $controllers = Performer::getControllers(_EPH_MODULE_DIR_ . $moduleName . '/controllers/front/');
 
                 if (isset($controllers[strtolower($this->controller)])) {
-                    include_once _PS_MODULE_DIR_ . $moduleName . '/controllers/front/' . $this->controller . '.php';
+                    include_once _EPH_MODULE_DIR_ . $moduleName . '/controllers/front/' . $this->controller . '.php';
                     $controllerClass = $moduleName . $this->controller . 'ModuleFrontController';
                 }
 
-                $ajaxControllers = Performer::getControllers(_PS_MODULE_DIR_ . $moduleName . '/controllers/ajax/');
+                $ajaxControllers = Performer::getControllers(_EPH_MODULE_DIR_ . $moduleName . '/controllers/ajax/');
 
                 if (isset($ajaxControllers[strtolower($this->controller)])) {
-                    include_once _PS_MODULE_DIR_ . $moduleName . '/controllers/ajax/' . $this->controller . '.php';
+                    include_once _EPH_MODULE_DIR_ . $moduleName . '/controllers/ajax/' . $this->controller . '.php';
                     $controllerClass = $moduleName . $this->controller . 'ModuleAjaxController';
                 }
 
@@ -743,32 +743,32 @@ class PerformerCore {
         // Dispatch back office controller + module back office controller
         case static::FC_ADMIN:
 
-            $tab = EmployeeMenu::getInstanceFromClassName($this->controller, Configuration::get('PS_LANG_DEFAULT'));
+            $tab = EmployeeMenu::getInstanceFromClassName($this->controller, Configuration::get('EPH_LANG_DEFAULT'));
             
             if ($tab->module) {
 
-                $controllers = Performer::getControllers(_PS_MODULE_DIR_ . $tab->module . '/controllers/admin/');
+                $controllers = Performer::getControllers(_EPH_MODULE_DIR_ . $tab->module . '/controllers/admin/');
 
                     if (!isset($controllers[strtolower($this->controller)])) {
                         $this->controller = $this->controller_not_found;
                         $controllerClass = 'AdminNotFoundController';
                     } else {
                         // Controllers in modules can be named AdminXXX.php or AdminXXXController.php
-                        include_once _PS_MODULE_DIR_ . $tab->module . '/controllers/admin/' . $controllers[strtolower($this->controller)] . '.php';
+                        include_once _EPH_MODULE_DIR_ . $tab->module . '/controllers/admin/' . $controllers[strtolower($this->controller)] . '.php';
                         $controllerClass = $controllers[strtolower($this->controller)] . (strpos($controllers[strtolower($this->controller)], 'Controller') ? '' : 'Controller');
                     }
                 $paramsHookActionDispatcher = ['controller_type' => static::FC_ADMIN, 'controller_class' => $controllerClass, 'is_module' => 1];
             } else {
             if(_USE_SPECIFIC_CONTROLLER_) {
 					$controller_directories = [
-						_PS_ADMIN_CONTROLLER_DIR_, 
-						_PS_ADMIN_SPECIFIC_CONTROLLER_DIR_,
-						_PS_OVERRIDE_DIR_ . 'controllers/admin/'
+						_EPH_ADMIN_CONTROLLER_DIR_, 
+						_EPH_ADMIN_SPECIFIC_CONTROLLER_DIR_,
+						_EPH_OVERRIDE_DIR_ . 'controllers/admin/'
 					];	
 				} else {
 					$controller_directories = [
-						_PS_ADMIN_CONTROLLER_DIR_, 
-						_PS_OVERRIDE_DIR_ . 'controllers/admin/'
+						_EPH_ADMIN_CONTROLLER_DIR_, 
+						_EPH_OVERRIDE_DIR_ . 'controllers/admin/'
 					];
 				}
 
@@ -1153,7 +1153,7 @@ class PerformerCore {
 
         if ($this->default_controller === null) {
 
-            if (defined('_PS_ROOT_DIR_')) {
+            if (defined('_EPH_ROOT_DIR_')) {
 
                 if (isset(Context::getContext()->employee) && Validate::isLoadedObject(Context::getContext()->employee) && isset(Context::getContext()->employee->default_tab)) {
                     $this->default_controller = Tab::getClassNameById((int) Context::getContext()->employee->default_tab);

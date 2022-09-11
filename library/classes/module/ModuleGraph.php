@@ -262,7 +262,7 @@ abstract class ModuleGraphCore extends Module
         if (!Validate::isModuleName($render)) {
             die(Tools::displayError());
         }
-        if (!file_exists($file = _PS_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php')) {
+        if (!file_exists($file = _EPH_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php')) {
             die(Tools::displayError());
         }
         require_once($file);
@@ -306,7 +306,7 @@ abstract class ModuleGraphCore extends Module
     public function engine($params)
     {
         $context = Context::getContext();
-        $render = Configuration::get('PS_STATS_RENDER');
+        $render = Configuration::get('EPH_STATS_RENDER');
         $idEmployee = (int) $context->employee->id;
         $idLang = (int) $context->language->id;
 
@@ -330,8 +330,8 @@ abstract class ModuleGraphCore extends Module
         $urlParams['id_lang'] = $idLang;
         $drawer = 'drawer.php?'.http_build_query(array_map('Tools::safeOutput', $urlParams), '', '&');
 
-        if (file_exists(_PS_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php')) {
-            require_once(_PS_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php');
+        if (file_exists(_EPH_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php')) {
+            require_once(_EPH_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php');
 
             return call_user_func([$render, 'hookGraphEngine'], $params, $drawer);
         } else {

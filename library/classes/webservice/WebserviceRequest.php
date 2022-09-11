@@ -436,17 +436,17 @@ class WebserviceRequestCore
         $arrReturn = [];
         foreach ($parameters as $name => $value) {
             $idShop = (int) Context::getContext()->shop->id;
-            $idCountry = (int) (isset($value['country']) ? $value['country'] : (Configuration::get('PS_COUNTRY_DEFAULT')));
+            $idCountry = (int) (isset($value['country']) ? $value['country'] : (Configuration::get('EPH_COUNTRY_DEFAULT')));
             $idState = (int) (isset($value['state']) ? $value['state'] : 0);
-            $idCurrency = (int) (isset($value['currency']) ? $value['currency'] : Configuration::get('PS_CURRENCY_DEFAULT'));
-            $idGroup = (int) (isset($value['group']) ? $value['group'] : (int) Configuration::get('PS_CUSTOMER_GROUP'));
+            $idCurrency = (int) (isset($value['currency']) ? $value['currency'] : Configuration::get('EPH_CURRENCY_DEFAULT'));
+            $idGroup = (int) (isset($value['group']) ? $value['group'] : (int) Configuration::get('EPH_CUSTOMER_GROUP'));
             $quantity = (int) (isset($value['quantity']) ? $value['quantity'] : 1);
-            $useTax = (int) (isset($value['use_tax']) ? $value['use_tax'] : Configuration::get('PS_TAX'));
-            $decimals = (int) (isset($value['decimals']) ? $value['decimals'] : Configuration::get('PS_PRICE_ROUND_MODE'));
+            $useTax = (int) (isset($value['use_tax']) ? $value['use_tax'] : Configuration::get('EPH_TAX'));
+            $decimals = (int) (isset($value['decimals']) ? $value['decimals'] : Configuration::get('EPH_PRICE_ROUND_MODE'));
             $idProductAttribute = (int) (isset($value['product_attribute']) ? $value['product_attribute'] : null);
             $onlyReduc = (int) (isset($value['only_reduction']) ? $value['only_reduction'] : false);
             $useReduc = (int) (isset($value['use_reduction']) ? $value['use_reduction'] : true);
-            $useEcotax = (int) (isset($value['use_ecotax']) ? $value['use_ecotax'] : Configuration::get('PS_USE_ECOTAX'));
+            $useEcotax = (int) (isset($value['use_ecotax']) ? $value['use_ecotax'] : Configuration::get('EPH_USE_ECOTAX'));
             $specificPriceOutput = null;
             $idCounty = (int) (isset($value['county']) ? $value['county'] : 0);
             $returnValue = Product::priceCalculation(
@@ -515,8 +515,8 @@ class WebserviceRequestCore
         global $webserviceCall, $displayErrors;
         $webserviceCall = true;
         $displayErrors = strtolower(ini_get('display_errors')) != 'off';
-        // __PS_BASE_URI__ is from Shop::$current_base_uri
-        $this->wsUrl = Tools::getHttpHost(true).__PS_BASE_URI__.'api/';
+        // __EPH_BASE_URI__ is from Shop::$current_base_uri
+        $this->wsUrl = Tools::getHttpHost(true).__EPH_BASE_URI__.'api/';
         // set the output object which manage the content and header structure and informations
         $this->objOutput = new WebserviceOutputBuilder($this->wsUrl);
 
@@ -878,7 +878,7 @@ class WebserviceRequestCore
      */
     protected function isActivated()
     {
-        if (!Configuration::get('PS_WEBSERVICE')) {
+        if (!Configuration::get('EPH_WEBSERVICE')) {
             $this->setError(503, 'The ephenyx webservice is disabled. Please activate it in the ephenyx Back Office', 22);
 
             return false;
@@ -1900,14 +1900,14 @@ class WebserviceRequestCore
 
         // write headers
         $this->objOutput->setHeaderParams('Access-Time', time())
-            ->setHeaderParams('PSWS-Version', _PS_VERSION_)
+            ->setHeaderParams('PSWS-Version', _EPH_VERSION_)
             ->setHeaderParams('Execution-Time', round(microtime(true) - $this->_startTime, 3));
 
         $return['type'] = strtolower($this->outputFormat);
 
         // write this header only now (avoid hackers happiness...)
         if ($this->_authenticated) {
-            $this->objOutput->setHeaderParams('PSWS-Version', _PS_VERSION_);
+            $this->objOutput->setHeaderParams('PSWS-Version', _EPH_VERSION_);
         }
 
         // If Specific Management is asked

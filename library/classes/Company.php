@@ -134,7 +134,7 @@ class CompanyCore extends ObjectModel {
 		/* Get and cache company country name */
 
 		if ($this->id) {
-			$this->country = Country::getNameById($idLang ? $idLang : Configuration::get('PS_LANG_DEFAULT'), $this->id_country_registration);
+			$this->country = Country::getNameById($idLang ? $idLang : Configuration::get('EPH_LANG_DEFAULT'), $this->id_country_registration);
 			$date = new DateTime($this->accounting_period_start);
 			$date->modify('+1 year');
 			$this->next_accounting_start = $date->format('Y-m-d');

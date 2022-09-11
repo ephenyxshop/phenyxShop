@@ -78,7 +78,7 @@ class StockMvtReasonCore extends ObjectModel
             $query->where('smr.sign = '.(int) $sign);
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
     }
 
     /**
@@ -109,7 +109,7 @@ class StockMvtReasonCore extends ObjectModel
             $query->where('smr.id_stock_mvt_reason NOT IN('.implode(', ', $idsIgnore).')');
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
     }
 
     /**
@@ -131,6 +131,6 @@ class StockMvtReasonCore extends ObjectModel
         $query->where('smr.id_stock_mvt_reason = '.(int) $idStockMvtReason);
         $query->where('smr.deleted = 0');
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
     }
 }

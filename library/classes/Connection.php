@@ -63,7 +63,7 @@ class ConnectionCore extends ObjectModel {
 
         // If we do not track the pages, no need to get the page id
 
-        if (!Configuration::get('PS_STATSDATA_PAGESVIEWS') && !Configuration::get('PS_STATSDATA_CUSTOMER_PAGESVIEWS')) {
+        if (!Configuration::get('EPH_STATSDATA_PAGESVIEWS') && !Configuration::get('EPH_STATSDATA_CUSTOMER_PAGESVIEWS')) {
             return [];
         }
 
@@ -73,7 +73,7 @@ class ConnectionCore extends ObjectModel {
 
         // If we do not track the page views by customer, the id_page is the only information needed
 
-        if (!Configuration::get('PS_STATSDATA_CUSTOMER_PAGESVIEWS')) {
+        if (!Configuration::get('EPH_STATSDATA_CUSTOMER_PAGESVIEWS')) {
             return ['id_page' => $idPage];
         }
 
@@ -175,7 +175,7 @@ class ConnectionCore extends ObjectModel {
      */
     public static function cleanConnectionsPages() {
 
-        $period = Configuration::get('PS_STATS_OLD_CONNECT_AUTO_CLEAN');
+        $period = Configuration::get('EPH_STATS_OLD_CONNECT_AUTO_CLEAN');
 
         if ($period === 'week') {
             $interval = '1 WEEK';

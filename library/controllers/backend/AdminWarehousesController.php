@@ -152,7 +152,7 @@ class AdminWarehousesControllerCore extends AdminController {
         $query->select('id_employee, CONCAT(lastname," ",firstname) as name');
         $query->from('employee');
         $query->where('active = 1');
-        $employeesArray = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        $employeesArray = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
 
         // sets the title of the toolbar
 
@@ -409,7 +409,7 @@ class AdminWarehousesControllerCore extends AdminController {
             // loads default country
             $this->fields_value = [
                 'id_address' => 0,
-                'id_country' => Configuration::get('PS_COUNTRY_DEFAULT'),
+                'id_country' => Configuration::get('EPH_COUNTRY_DEFAULT'),
             ];
         }
 
@@ -418,7 +418,7 @@ class AdminWarehousesControllerCore extends AdminController {
         $this->fields_value['ids_carriers'] = $carriers;
 
         if (!Validate::isLoadedObject($obj)) {
-            $this->fields_value['id_currency'] = (int) Configuration::get('PS_CURRENCY_DEFAULT');
+            $this->fields_value['id_currency'] = (int) Configuration::get('EPH_CURRENCY_DEFAULT');
         }
 
         return parent::renderForm();
@@ -461,7 +461,7 @@ class AdminWarehousesControllerCore extends AdminController {
             'address'                => $address,
             'shops'                  => $shops,
             'warehouse_num_products' => $warehouse->getNumberOfProducts(),
-            'warehouse_value'        => Tools::displayPrice(Tools::ps_round($warehouse->getStockValue(), 2), $currency),
+            'warehouse_value'        => Tools::displayPrice(Tools::EPH_round($warehouse->getStockValue(), 2), $currency),
             'warehouse_quantities'   => $warehouse->getQuantitiesofProducts(),
         ];
 
@@ -547,11 +547,11 @@ class AdminWarehousesControllerCore extends AdminController {
      */
     protected function isAdvancedStockManagementActive() {
 
-        if (Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT')) {
+        if (Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT')) {
             return true;
         }
 
-        $this->warnings[md5('PS_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management before using this feature.');
+        $this->warnings[md5('EPH_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management before using this feature.');
 
         return false;
     }
@@ -620,7 +620,7 @@ class AdminWarehousesControllerCore extends AdminController {
         $address->id_state = Tools::getValue('id_state', null);
         $address->city = Tools::getValue('city', null);
 
-        if (!($country = new Country($address->id_country, Configuration::get('PS_LANG_DEFAULT'))) || !Validate::isLoadedObject($country)) {
+        if (!($country = new Country($address->id_country, Configuration::get('EPH_LANG_DEFAULT'))) || !Validate::isLoadedObject($country)) {
             $this->errors[] = Tools::displayError('Country is invalid');
         }
 

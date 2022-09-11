@@ -285,16 +285,16 @@ abstract class ControllerCore {
      */
     public function init() {
 
-        if (_PS_MODE_DEV_ && $this->controller_type == 'admin') {
+        if (_EPH_MODE_DEV_ && $this->controller_type == 'admin') {
             set_error_handler([__CLASS__, 'myErrorHandler']);
         }
 
-        if (!defined('_PS_BASE_URL_')) {
-            define('_PS_BASE_URL_', Tools::getShopDomain(true));
+        if (!defined('_EPH_BASE_URL_')) {
+            define('_EPH_BASE_URL_', Tools::getShopDomain(true));
         }
 
-        if (!defined('_PS_BASE_URL_SSL_')) {
-            define('_PS_BASE_URL_SSL_', Tools::getShopDomainSsl(true));
+        if (!defined('_EPH_BASE_URL_SSL_')) {
+            define('_EPH_BASE_URL_SSL_', Tools::getShopDomainSsl(true));
         }
 
     }
@@ -413,7 +413,7 @@ abstract class ControllerCore {
             
 
             $domAvailable = extension_loaded('dom') ? true : false;
-            $defer = (bool) Configuration::get('PS_JS_DEFER');
+            $defer = (bool) Configuration::get('EPH_JS_DEFER');
 
             if ($defer && $domAvailable) {
                 $html = Media::deferInlineScripts($html);
@@ -427,7 +427,7 @@ abstract class ControllerCore {
                     'js_inline' => ($defer && $domAvailable) ? Media::getInlineScript() : [],
                 ]
             );
-            $javascript = $this->context->smarty->fetch(_PS_ALL_THEMES_DIR_ . 'javascript.tpl');
+            $javascript = $this->context->smarty->fetch(_EPH_ALL_THEMES_DIR_ . 'javascript.tpl');
 
             if ($defer && (!isset($this->ajax) || !$this->ajax)) {
                 echo $html . $javascript;

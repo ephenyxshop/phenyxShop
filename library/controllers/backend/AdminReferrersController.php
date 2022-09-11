@@ -14,8 +14,8 @@ class AdminReferrersControllerCore extends AdminController {
      */
     public function __construct() {
 
-        if (!defined('_PS_ADMIN_DIR_')) {
-            define('_PS_ADMIN_DIR_', getcwd() . '/..');
+        if (!defined('_EPH_ADMIN_DIR_')) {
+            define('_EPH_ADMIN_DIR_', getcwd() . '/..');
         }
 
         if (Tools::getValue('token') == Tools::getAdminToken('AdminReferrers' . (int) EmployeeMenu::getIdFromClassName('AdminReferrers') . (int) Tools::getValue('id_employee'))) {
@@ -330,7 +330,7 @@ class AdminReferrersControllerCore extends AdminController {
      */
     public function renderForm() {
 
-        $uri = Tools::getHttpHost(true, true) . __PS_BASE_URI__;
+        $uri = Tools::getHttpHost(true, true) . __EPH_BASE_URI__;
 
         $this->fields_form[0] = [
             'form' => [
@@ -545,7 +545,7 @@ class AdminReferrersControllerCore extends AdminController {
 
         }
 
-        if (ModuleGraph::getDateBetween() != Configuration::get('PS_REFERRERS_CACHE_LIKE') || Tools::isSubmit('submitRefreshCache')) {
+        if (ModuleGraph::getDateBetween() != Configuration::get('EPH_REFERRERS_CACHE_LIKE') || Tools::isSubmit('submitRefreshCache')) {
             Referrer::refreshCache();
         }
 

@@ -23,7 +23,7 @@ class AdminTaxesControllerCore extends AdminController {
 
         $ecotaxDesc = '';
 
-        if (Configuration::get('PS_USE_ECOTAX')) {
+        if (Configuration::get('EPH_USE_ECOTAX')) {
             $ecotaxDesc = $this->l('If you disable the ecotax, the ecotax for all your products will be set to 0.');
         }
 
@@ -36,18 +36,18 @@ class AdminTaxesControllerCore extends AdminController {
             'general' => [
                 'title'  => $this->l('Tax options'),
                 'fields' => [
-                    'PS_TAX'                             => [
+                    'EPH_TAX'                             => [
                         'title' => $this->l('Enable tax'),
                         'desc'  => $this->l('Select whether or not to include tax on purchases.'),
                         'cast'  => 'intval', 'type' => 'bool',
                     ],
-                    'PS_TAX_DISPLAY'                     => [
+                    'EPH_TAX_DISPLAY'                     => [
                         'title' => $this->l('Display tax in the shopping cart'),
                         'desc'  => $this->l('Select whether or not to display tax on a distinct line in the cart.'),
                         'cast'  => 'intval',
                         'type'  => 'bool',
                     ],
-                    'PS_TAX_ADDRESS_TYPE'                => [
+                    'EPH_TAX_ADDRESS_TYPE'                => [
                         'title'      => $this->l('Based on'),
                         'cast'       => 'pSQL',
                         'type'       => 'select',
@@ -63,7 +63,7 @@ class AdminTaxesControllerCore extends AdminController {
                         ],
                         'identifier' => 'id',
                     ],
-                    'PS_DEFAULT_SPECIFIC_PRICE_RULE_TAX' => [
+                    'EPH_DEFAULT_SPECIFIC_PRICE_RULE_TAX' => [
                         'title'      => $this->l('Default tax for specific price rules'),
                         'desc'       => $this->l('This is the default tax that applies to specific price rules. If you enter a specific price rule with tax and the customer can checkout without paying taxes, then this tax will be subtracted from the specific price rule amount. Does not apply to percentage discounts.'),
                         'validation' => 'isInt',
@@ -72,7 +72,7 @@ class AdminTaxesControllerCore extends AdminController {
                         'list'       => $availableTaxes,
                         'identifier' => 'id_tax',
                     ],
-                    'PS_USE_ECOTAX'                      => [
+                    'EPH_USE_ECOTAX'                      => [
                         'title'      => $this->l('Use ecotax'),
                         'desc'       => $ecotaxDesc,
                         'validation' => 'isBool',
@@ -84,8 +84,8 @@ class AdminTaxesControllerCore extends AdminController {
             ],
         ];
 
-        if (Configuration::get('PS_USE_ECOTAX') || Tools::getValue('PS_USE_ECOTAX')) {
-            $this->fields_options['general']['fields']['PS_ECOTAX_TAX_RULES_GROUP_ID'] = [
+        if (Configuration::get('EPH_USE_ECOTAX') || Tools::getValue('EPH_USE_ECOTAX')) {
+            $this->fields_options['general']['fields']['EPH_ECOTAX_TAX_RULES_GROUP_ID'] = [
                 'title'      => $this->l('Ecotax'),
                 'hint'       => $this->l('Define the ecotax (e.g. French ecotax: 19.6%).'),
                 'cast'       => 'intval',
@@ -123,13 +123,13 @@ class AdminTaxesControllerCore extends AdminController {
         ]);
 
         $this->addJS([
-            __PS_BASE_URI__ . _PS_JS_DIR_ . 'pgrid/pqSelect/pqselect.min.js',
-            __PS_BASE_URI__ . _PS_JS_DIR_ . 'pgrid/pqgrid.min.js',
-            __PS_BASE_URI__ . _PS_JS_DIR_ . 'pgrid/localize/pq-localize-fr.js',
-            __PS_BASE_URI__ . _PS_JS_DIR_ . 'pgrid/pqTouch/pqtouch.min.js',
-            __PS_BASE_URI__ . _PS_JS_DIR_ . 'pgrid/jsZip-2.5.0/jszip.min.js',
-            __PS_BASE_URI__ . _PS_JS_DIR_ . 'pgrid/FileSaver.js',
-            __PS_BASE_URI__ . _PS_JS_DIR_ . 'pgrid/javascript-detect-element-resize/jquery.resize.js',
+            __EPH_BASE_URI__ . _EPH_JS_DIR_ . 'pgrid/pqSelect/pqselect.min.js',
+            __EPH_BASE_URI__ . _EPH_JS_DIR_ . 'pgrid/pqgrid.min.js',
+            __EPH_BASE_URI__ . _EPH_JS_DIR_ . 'pgrid/localize/pq-localize-fr.js',
+            __EPH_BASE_URI__ . _EPH_JS_DIR_ . 'pgrid/pqTouch/pqtouch.min.js',
+            __EPH_BASE_URI__ . _EPH_JS_DIR_ . 'pgrid/jsZip-2.5.0/jszip.min.js',
+            __EPH_BASE_URI__ . _EPH_JS_DIR_ . 'pgrid/FileSaver.js',
+            __EPH_BASE_URI__ . _EPH_JS_DIR_ . 'pgrid/javascript-detect-element-resize/jquery.resize.js',
 
         ]);
 
@@ -154,7 +154,7 @@ class AdminTaxesControllerCore extends AdminController {
             'AjaxLink'       => $this->context->link->getAdminLink($this->controller_name),
             'paragridScript' => $this->generateParaGridScript(),
             'titleBar'       => $this->TitleBar,
-            'bo_imgdir'      => __PS_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+            'bo_imgdir'      => __EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
             'idController'   => '',
         ]);
 
@@ -643,7 +643,7 @@ class AdminTaxesControllerCore extends AdminController {
      */
     public function updateOptionPsUseEcotax($value) {
 
-        $oldValue = (int) Configuration::get('PS_USE_ECOTAX');
+        $oldValue = (int) Configuration::get('EPH_USE_ECOTAX');
 
         if ($oldValue != $value) {
             // Reset ecotax
@@ -652,7 +652,7 @@ class AdminTaxesControllerCore extends AdminController {
                 Product::resetEcoTax();
             }
 
-            Configuration::updateValue('PS_USE_ECOTAX', (int) $value);
+            Configuration::updateValue('EPH_USE_ECOTAX', (int) $value);
         }
 
     }

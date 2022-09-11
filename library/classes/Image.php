@@ -59,8 +59,8 @@ class ImageCore extends ObjectModel {
     public function __construct($id = null, $idLang = null) {
 
         parent::__construct($id, $idLang);
-        $this->image_dir = _PS_PROD_IMG_DIR_;
-        $this->source_index = _PS_PROD_IMG_DIR_ . 'index.php';
+        $this->image_dir = _EPH_PROD_IMG_DIR_;
+        $this->source_index = _EPH_PROD_IMG_DIR_ . 'index.php';
     }
 
     /**
@@ -83,7 +83,7 @@ class ImageCore extends ObjectModel {
         $cacheId = 'Image::getBestImageAttribute' . '-' . (int) $idProduct . '-' . (int) $idProductAttribute . '-' . (int) $idLang . '-' . (int) $idShop;
 
         if (!Cache::isStored($cacheId)) {
-            $row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('image_shop.`id_image` id_image, il.`legend`')
                     ->from('image', 'i')
@@ -174,7 +174,7 @@ class ImageCore extends ObjectModel {
      */
     public static function getAllImages() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_image`, `id_product`')
                 ->from('image')
@@ -196,7 +196,7 @@ class ImageCore extends ObjectModel {
      */
     public static function getImagesTotal($idProduct) {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('COUNT(`id_image`) AS `total`')
                 ->from('image')
@@ -224,8 +224,8 @@ class ImageCore extends ObjectModel {
             die(Tools::displayError());
         }
 
-        if (file_exists(_PS_TMP_IMG_DIR_ . 'product_' . $idProduct . '.jpg')) {
-            unlink(_PS_TMP_IMG_DIR_ . 'product_' . $idProduct . '.jpg');
+        if (file_exists(_EPH_TMP_IMG_DIR_ . 'product_' . $idProduct . '.jpg')) {
+            unlink(_EPH_TMP_IMG_DIR_ . 'product_' . $idProduct . '.jpg');
         }
 
         return (Db::getInstance()->update(
@@ -260,7 +260,7 @@ class ImageCore extends ObjectModel {
      */
     public static function getCover($idProduct) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('*')
                 ->from('image_shop')
@@ -283,7 +283,7 @@ class ImageCore extends ObjectModel {
      */
     public static function getGlobalCover($idProduct) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('*')
                 ->from('image', 'i')
@@ -309,7 +309,7 @@ class ImageCore extends ObjectModel {
     public static function duplicateProductImages($idProductOld, $idProductNew, $combinationImages) {
 
         $imageTypes = ImageType::getImagesTypes('products');
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_image`')
                 ->from('image')
@@ -329,19 +329,19 @@ class ImageCore extends ObjectModel {
 
                 foreach ($imageTypes as $imageType) {
 
-                    if (file_exists(_PS_PROD_IMG_DIR_ . $imageOld->getExistingImgPath() . '-' . $imageType['name'] . '.jpg')) {
+                    if (file_exists(_EPH_PROD_IMG_DIR_ . $imageOld->getExistingImgPath() . '-' . $imageType['name'] . '.jpg')) {
 
-                        if (!Configuration::get('PS_LEGACY_IMAGES')) {
+                        if (!Configuration::get('EPH_LEGACY_IMAGES')) {
                             $imageNew->createImgFolder();
                         }
 
                         copy(
-                            _PS_PROD_IMG_DIR_ . $imageOld->getExistingImgPath() . '-' . $imageType['name'] . '.jpg',
+                            _EPH_PROD_IMG_DIR_ . $imageOld->getExistingImgPath() . '-' . $imageType['name'] . '.jpg',
                             $newPath . '-' . $imageType['name'] . '.jpg'
                         );
 
                         if (Configuration::get('WATERMARK_HASH')) {
-                            $oldImagePath = _PS_PROD_IMG_DIR_ . $imageOld->getExistingImgPath() . '-' . $imageType['name'] . '-' . Configuration::get('WATERMARK_HASH') . '.jpg';
+                            $oldImagePath = _EPH_PROD_IMG_DIR_ . $imageOld->getExistingImgPath() . '-' . $imageType['name'] . '-' . Configuration::get('WATERMARK_HASH') . '.jpg';
 
                             if (file_exists($oldImagePath)) {
                                 copy($oldImagePath, $newPath . '-' . $imageType['name'] . '-' . Configuration::get('WATERMARK_HASH') . '.jpg');
@@ -353,8 +353,8 @@ class ImageCore extends ObjectModel {
 
                 }
 
-                if (file_exists(_PS_PROD_IMG_DIR_ . $imageOld->getExistingImgPath() . '.jpg')) {
-                    copy(_PS_PROD_IMG_DIR_ . $imageOld->getExistingImgPath() . '.jpg', $newPath . '.jpg');
+                if (file_exists(_EPH_PROD_IMG_DIR_ . $imageOld->getExistingImgPath() . '.jpg')) {
+                    copy(_EPH_PROD_IMG_DIR_ . $imageOld->getExistingImgPath() . '.jpg', $newPath . '.jpg');
                 }
 
                 static::replaceAttributeImageAssociationId($combinationImages, (int) $imageOld->id, (int) $imageNew->id);
@@ -410,7 +410,7 @@ class ImageCore extends ObjectModel {
      */
     public static function getHighestPosition($idProduct) {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('MAX(`position`) AS `max`')
                 ->from('image')
@@ -435,7 +435,7 @@ class ImageCore extends ObjectModel {
             return false;
         }
 
-        if (Configuration::get('PS_LEGACY_IMAGES')) {
+        if (Configuration::get('EPH_LEGACY_IMAGES')) {
 
             if (!$this->id_product) {
                 return false;
@@ -447,7 +447,7 @@ class ImageCore extends ObjectModel {
             $this->createImgFolder();
         }
 
-        return _PS_PROD_IMG_DIR_ . $path;
+        return _EPH_PROD_IMG_DIR_ . $path;
     }
 
     /**
@@ -464,20 +464,20 @@ class ImageCore extends ObjectModel {
             return false;
         }
 
-        if (!file_exists(_PS_PROD_IMG_DIR_ . $this->getImgFolder())) {
+        if (!file_exists(_EPH_PROD_IMG_DIR_ . $this->getImgFolder())) {
             // Apparently sometimes mkdir cannot set the rights, and sometimes chmod can't. Trying both.
             // @codingStandardsIgnoreStart
-            $success = @mkdir(_PS_PROD_IMG_DIR_ . $this->getImgFolder(), static::$access_rights, true);
-            $chmod = @chmod(_PS_PROD_IMG_DIR_ . $this->getImgFolder(), static::$access_rights);
+            $success = @mkdir(_EPH_PROD_IMG_DIR_ . $this->getImgFolder(), static::$access_rights, true);
+            $chmod = @chmod(_EPH_PROD_IMG_DIR_ . $this->getImgFolder(), static::$access_rights);
             // @codingStandardsIgnoreEnd
 
             // Create an index.php file in the new folder
 
             if (($success || $chmod)
-                && !file_exists(_PS_PROD_IMG_DIR_ . $this->getImgFolder() . 'index.php')
+                && !file_exists(_EPH_PROD_IMG_DIR_ . $this->getImgFolder() . 'index.php')
                 && file_exists($this->source_index)
             ) {
-                return @copy($this->source_index, _PS_PROD_IMG_DIR_ . $this->getImgFolder() . 'index.php');
+                return @copy($this->source_index, _EPH_PROD_IMG_DIR_ . $this->getImgFolder() . 'index.php');
             }
 
         }
@@ -578,7 +578,7 @@ class ImageCore extends ObjectModel {
     public static function getSize($type) {
 
         if (!isset(static::$_cacheGetSize[$type]) || static::$_cacheGetSize[$type] === null) {
-            static::$_cacheGetSize[$type] = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            static::$_cacheGetSize[$type] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('`width`, `height`')
                     ->from('image_type')
@@ -615,10 +615,10 @@ class ImageCore extends ObjectModel {
      */
     public static function clearTmpDir() {
 
-        foreach (scandir(_PS_TMP_IMG_DIR_) as $d) {
+        foreach (scandir(_EPH_TMP_IMG_DIR_) as $d) {
 
             if (preg_match('/(.*)\.jpg$/', $d)) {
-                unlink(_PS_TMP_IMG_DIR_ . $d);
+                unlink(_EPH_TMP_IMG_DIR_ . $d);
             }
 
         }
@@ -699,7 +699,7 @@ class ImageCore extends ObjectModel {
         $image = null;
         $tmpFolder = 'duplicates/';
 
-        foreach (scandir(_PS_PROD_IMG_DIR_) as $file) {
+        foreach (scandir(_EPH_PROD_IMG_DIR_) as $file) {
             // matches the base product image or the thumbnails
 
             if (preg_match('/^([0-9]+\-)([0-9]+)(\-(.*))?\.jpg$/', $file, $matches)) {
@@ -720,17 +720,17 @@ class ImageCore extends ObjectModel {
 
                     // if there's already a file at the new image path, move it to a dump folder
                     // most likely the preexisting image is a demo image not linked to a product and it's ok to replace it
-                    $newPath = _PS_PROD_IMG_DIR_ . $image->getImgPath() . (isset($matches[3]) ? $matches[3] : '') . '.jpg';
+                    $newPath = _EPH_PROD_IMG_DIR_ . $image->getImgPath() . (isset($matches[3]) ? $matches[3] : '') . '.jpg';
 
                     if (file_exists($newPath)) {
 
-                        if (!file_exists(_PS_PROD_IMG_DIR_ . $tmpFolder)) {
+                        if (!file_exists(_EPH_PROD_IMG_DIR_ . $tmpFolder)) {
                             // @codingStandardsIgnoreStart
-                            @mkdir(_PS_PROD_IMG_DIR_ . $tmpFolder, static::$access_rights);
-                            @chmod(_PS_PROD_IMG_DIR_ . $tmpFolder, static::$access_rights);
+                            @mkdir(_EPH_PROD_IMG_DIR_ . $tmpFolder, static::$access_rights);
+                            @chmod(_EPH_PROD_IMG_DIR_ . $tmpFolder, static::$access_rights);
                         }
 
-                        $tmp_path = _PS_PROD_IMG_DIR_ . $tmpFolder . basename($file);
+                        $tmp_path = _EPH_PROD_IMG_DIR_ . $tmpFolder . basename($file);
 
                         if (!@rename($newPath, $tmp_path) || !file_exists($tmp_path)) {
                             // @codingStandardsIgnoreEnd
@@ -741,7 +741,7 @@ class ImageCore extends ObjectModel {
 
                     // move the image
 
-                    if (!@rename(_PS_PROD_IMG_DIR_ . $file, $newPath) || !file_exists($newPath)) {
+                    if (!@rename(_EPH_PROD_IMG_DIR_ . $file, $newPath) || !file_exists($newPath)) {
                         return false;
                     }
 
@@ -768,7 +768,7 @@ class ImageCore extends ObjectModel {
      */
     public static function testFileSystem() {
 
-        $folder1 = _PS_PROD_IMG_DIR_ . 'testfilesystem/';
+        $folder1 = _EPH_PROD_IMG_DIR_ . 'testfilesystem/';
         $testFolder = $folder1 . 'testsubfolder/';
         // check if folders are already existing from previous failed test
 
@@ -911,8 +911,8 @@ class ImageCore extends ObjectModel {
         // delete index.php
         $filesToDelete[] = $this->image_dir . $this->getImgFolder() . 'index.php';
         // Delete tmp images
-        $filesToDelete[] = _PS_TMP_IMG_DIR_ . 'product_' . $this->id_product . '.' . $this->image_format;
-        $filesToDelete[] = _PS_TMP_IMG_DIR_ . 'product_mini_' . $this->id_product . '.' . $this->image_format;
+        $filesToDelete[] = _EPH_TMP_IMG_DIR_ . 'product_' . $this->id_product . '.' . $this->image_format;
+        $filesToDelete[] = _EPH_TMP_IMG_DIR_ . 'product_mini_' . $this->id_product . '.' . $this->image_format;
 
         foreach ($filesToDelete as $file) {
 
@@ -962,7 +962,7 @@ class ImageCore extends ObjectModel {
 
         if (!$this->existing_path) {
 
-            if (Configuration::get('PS_LEGACY_IMAGES') && file_exists(_PS_PROD_IMG_DIR_ . $this->id_product . '-' . $this->id . '.' . $this->image_format)) {
+            if (Configuration::get('EPH_LEGACY_IMAGES') && file_exists(_EPH_PROD_IMG_DIR_ . $this->id_product . '-' . $this->id . '.' . $this->image_format)) {
                 $this->existing_path = $this->id_product . '-' . $this->id;
             } else {
                 $this->existing_path = $this->getImgPath();

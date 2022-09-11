@@ -49,12 +49,12 @@ class MyAccountControllerCore extends FrontController {
             [
                 'has_customer_an_address' => empty($hasAddress),
                 'voucherAllowed'          => (int) CartRule::isFeatureActive(),
-                'returnAllowed'           => (int) Configuration::get('PS_ORDER_RETURN'),
+                'returnAllowed'           => (int) Configuration::get('EPH_ORDER_RETURN'),
 				'useSepa'				=> (int) Configuration::get('_EPHENYX_USE_SEPA_'),
             ]
         );
         $this->context->smarty->assign('HOOK_CUSTOMER_ACCOUNT', Hook::exec('displayCustomerAccount'));
 
-        $this->setTemplate(_PS_THEME_DIR_ . 'my-account.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'my-account.tpl');
     }
 }

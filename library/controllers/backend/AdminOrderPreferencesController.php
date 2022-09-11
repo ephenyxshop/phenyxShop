@@ -21,12 +21,12 @@ class AdminOrderPreferencesControllerCore extends AdminController {
 
         parent::__construct();
 
-        if (!Configuration::get('PS_ALLOW_MULTISHIPPING')) {
-            unset($this->fields_options['general']['fields']['PS_ALLOW_MULTISHIPPING']);
+        if (!Configuration::get('EPH_ALLOW_MULTISHIPPING')) {
+            unset($this->fields_options['general']['fields']['EPH_ALLOW_MULTISHIPPING']);
         }
 
-        if (Configuration::get('PS_ATCP_SHIPWRAP')) {
-            unset($this->fields_options['gift']['fields']['PS_GIFT_WRAPPING_TAX_RULES_GROUP']);
+        if (Configuration::get('EPH_ATCP_SHIPWRAP')) {
+            unset($this->fields_options['gift']['fields']['EPH_GIFT_WRAPPING_TAX_RULES_GROUP']);
         }
 
         $this->ajaxOptions = $this->generateOptions();
@@ -48,11 +48,11 @@ class AdminOrderPreferencesControllerCore extends AdminController {
         // List of order process types
         $orderProcessType = [
             [
-                'value' => PS_ORDER_PROCESS_STANDARD,
+                'value' => EPH_ORDER_PROCESS_STANDARD,
                 'name'  => $this->l('Standard (Five steps)'),
             ],
             [
-                'value' => PS_ORDER_PROCESS_OPC,
+                'value' => EPH_ORDER_PROCESS_OPC,
                 'name'  => $this->l('One-page checkout'),
             ],
         ];
@@ -62,7 +62,7 @@ class AdminOrderPreferencesControllerCore extends AdminController {
                 'title'  => $this->l('General'),
                 'icon'   => 'icon-cogs',
                 'fields' => [
-                    'PS_ORDER_PROCESS_TYPE'          => [
+                    'EPH_ORDER_PROCESS_TYPE'          => [
                         'title'      => $this->l('Order process type'),
                         'hint'       => $this->l('Please choose either the five-step or one-page checkout process.'),
                         'validation' => 'isInt',
@@ -71,42 +71,42 @@ class AdminOrderPreferencesControllerCore extends AdminController {
                         'list'       => $orderProcessType,
                         'identifier' => 'value',
                     ],
-                    'PS_GUEST_CHECKOUT_ENABLED'      => [
+                    'EPH_GUEST_CHECKOUT_ENABLED'      => [
                         'title'      => $this->l('Enable guest checkout'),
                         'hint'       => $this->l('Allow guest visitors to place an order without registering.'),
                         'validation' => 'isBool',
                         'cast'       => 'intval',
                         'type'       => 'bool',
                     ],
-                    'PS_DISALLOW_HISTORY_REORDERING' => [
+                    'EPH_DISALLOW_HISTORY_REORDERING' => [
                         'title'      => $this->l('Disable Reordering Option'),
                         'hint'       => $this->l('Disable the option to allow customers to reorder in one click from the order history page (required in some European countries).'),
                         'validation' => 'isBool',
                         'cast'       => 'intval',
                         'type'       => 'bool',
                     ],
-                    'PS_PURCHASE_MINIMUM'            => [
+                    'EPH_PURCHASE_MINIMUM'            => [
                         'title'      => $this->l('Minimum purchase total required in order to validate the order'),
                         'hint'       => $this->l('Set to 0 to disable this feature.'),
                         'validation' => 'isFloat',
                         'cast'       => 'floatval',
                         'type'       => 'price',
                     ],
-                    'PS_ALLOW_MULTISHIPPING'         => [
+                    'EPH_ALLOW_MULTISHIPPING'         => [
                         'title'      => $this->l('Allow multishipping'),
                         'hint'       => $this->l('Allow the customer to ship orders to multiple addresses. This option will convert the customer\'s cart into one or more orders.'),
                         'validation' => 'isBool',
                         'cast'       => 'intval',
                         'type'       => 'bool',
                     ],
-                    'PS_SHIP_WHEN_AVAILABLE'         => [
+                    'EPH_SHIP_WHEN_AVAILABLE'         => [
                         'title'      => $this->l('Delayed shipping'),
                         'hint'       => $this->l('Allows you to delay shipping at your customers\' request. '),
                         'validation' => 'isBool',
                         'cast'       => 'intval',
                         'type'       => 'bool',
                     ],
-                    'PS_CONDITIONS'                  => [
+                    'EPH_CONDITIONS'                  => [
                         'title'      => $this->l('Terms of service'),
                         'hint'       => $this->l('Require customers to accept or decline terms of service before processing an order.'),
                         'validation' => 'isBool',
@@ -117,7 +117,7 @@ class AdminOrderPreferencesControllerCore extends AdminController {
                             'off' => 'onchange="changeCMSActivationAuthorization()"',
                         ],
                     ],
-                    'PS_CONDITIONS_CMS_ID'           => [
+                    'EPH_CONDITIONS_CMS_ID'           => [
                         'title'      => $this->l('CMS page for the Conditions of use'),
                         'hint'       => $this->l('Choose the CMS page which contains your store\'s conditions of use.'),
                         'validation' => 'isInt',
@@ -154,21 +154,21 @@ class AdminOrderPreferencesControllerCore extends AdminController {
                 'title'  => $this->l('Gift options'),
                 'icon'   => 'icon-gift',
                 'fields' => [
-                    'PS_GIFT_WRAPPING'                 => [
+                    'EPH_GIFT_WRAPPING'                 => [
                         'title'      => $this->l('Offer gift wrapping'),
                         'hint'       => $this->l('Suggest gift-wrapping to customers.'),
                         'validation' => 'isBool',
                         'cast'       => 'intval',
                         'type'       => 'bool',
                     ],
-                    'PS_GIFT_WRAPPING_PRICE'           => [
+                    'EPH_GIFT_WRAPPING_PRICE'           => [
                         'title'      => $this->l('Gift-wrapping price'),
                         'hint'       => $this->l('Set a price for gift wrapping.'),
                         'validation' => 'isPrice',
                         'cast'       => 'floatval',
                         'type'       => 'price',
                     ],
-                    'PS_GIFT_WRAPPING_TAX_RULES_GROUP' => [
+                    'EPH_GIFT_WRAPPING_TAX_RULES_GROUP' => [
                         'title'      => $this->l('Gift-wrapping tax'),
                         'hint'       => $this->l('Set a tax for gift wrapping.'),
                         'validation' => 'isInt',
@@ -177,7 +177,7 @@ class AdminOrderPreferencesControllerCore extends AdminController {
                         'list'       => array_merge([['id_tax_rules_group' => 0, 'name' => $this->l('None')]], TaxRulesGroup::getTaxRulesGroups(true)),
                         'identifier' => 'id_tax_rules_group',
                     ],
-                    'PS_RECYCLABLE_PACK'               => [
+                    'EPH_RECYCLABLE_PACK'               => [
                         'title'      => $this->l('Offer recycled packaging'),
                         'hint'       => $this->l('Suggest recycled packaging to customer.'),
                         'validation' => 'isBool',

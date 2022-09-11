@@ -65,7 +65,7 @@ class AdminRangePriceControllerCore extends AdminController {
     public function renderForm() {
 
         $currency = $this->context->currency;
-        $carriers = Carrier::getCarriers((int) Configuration::get('PS_LANG_DEFAULT'), true, false, false, null, Carrier::PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE);
+        $carriers = Carrier::getCarriers((int) Configuration::get('EPH_LANG_DEFAULT'), true, false, false, null, Carrier::EPH_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE);
 
         foreach ($carriers as $key => $carrier) {
 

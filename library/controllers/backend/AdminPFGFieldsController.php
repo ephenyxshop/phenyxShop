@@ -63,7 +63,7 @@ class AdminPFGFieldsController extends AdminController {
 			'AjaxLink'       => $this->context->link->getAdminLink($this->controller_name),
 			'paragridScript' => $this->generateParaGridScript(),
 			'titleBar'       => $this->TitleBar,
-			'bo_imgdir'      => __PS_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+			'bo_imgdir'      => __EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
 			'idController'   => '',
 		]);
 
@@ -432,7 +432,7 @@ class AdminPFGFieldsController extends AdminController {
 			$initPosition = $object->position;
 
 			if ($initPosition > $stopIndex) {
-				$objects = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+				$objects = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 					(new DbQuery())
 						->select('id_pfg_field,  `position` ')
 						->from('pfg_fields')
@@ -472,7 +472,7 @@ class AdminPFGFieldsController extends AdminController {
 
 			if ($initPosition < $stopIndex) {
 
-				$objects = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+				$objects = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 					(new DbQuery())
 						->select('id_pfg_field,  `position` ')
 						->from('pfg_fields')
@@ -850,7 +850,7 @@ class AdminPFGFieldsController extends AdminController {
 
 		$this->tpl_form_vars = [
 			'required' => $this->object->required,
-			'PS_ALLOW_ACCENTED_CHARS_URL', (int) Configuration::get('PS_ALLOW_ACCENTED_CHARS_URL'),
+			'EPH_ALLOW_ACCENTED_CHARS_URL', (int) Configuration::get('EPH_ALLOW_ACCENTED_CHARS_URL'),
 		];
 		$this->fields_value['ajax'] = 1;
 

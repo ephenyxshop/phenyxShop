@@ -105,11 +105,11 @@ class ContextCore {
 
 			if ($this->checkMobileContext()) {
 
-				if (isset(Context::getContext()->cookie->no_mobile) && Context::getContext()->cookie->no_mobile == false && (int) Configuration::get('PS_ALLOW_MOBILE_DEVICE') != 0) {
+				if (isset(Context::getContext()->cookie->no_mobile) && Context::getContext()->cookie->no_mobile == false && (int) Configuration::get('EPH_ALLOW_MOBILE_DEVICE') != 0) {
 					$this->mobile_device = true;
 				} else {
 
-					switch ((int) Configuration::get('PS_ALLOW_MOBILE_DEVICE')) {
+					switch ((int) Configuration::get('EPH_ALLOW_MOBILE_DEVICE')) {
 					case 1: // Only for mobile device
 
 						if ($this->isMobile() && !$this->isTablet()) {
@@ -284,8 +284,8 @@ class ContextCore {
 
 		return isset($_SERVER['HTTP_USER_AGENT'])
 		&& isset(Context::getContext()->cookie)
-		&& (bool) Configuration::get('PS_ALLOW_MOBILE_DEVICE')
-		&& @filemtime(_PS_THEME_MOBILE_DIR_)
+		&& (bool) Configuration::get('EPH_ALLOW_MOBILE_DEVICE')
+		&& @filemtime(_EPH_THEME_MOBILE_DIR_)
 		&& !Context::getContext()->cookie->no_mobile;
 	}
 

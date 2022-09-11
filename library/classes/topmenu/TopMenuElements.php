@@ -64,7 +64,7 @@ class TopMenuElementsCore extends ObjectModel {
         ];
         $fields = [];
         $languages = Language::getLanguages(false);
-        $defaultLanguage = Configuration::get('PS_LANG_DEFAULT');
+        $defaultLanguage = Configuration::get('EPH_LANG_DEFAULT');
 
         foreach ($languages as $language) {
             $fields[$language['id_lang']]['id_lang'] = $language['id_lang'];
@@ -107,8 +107,8 @@ class TopMenuElementsCore extends ObjectModel {
 
         foreach ($languages as $language) {
 
-            if (file_exists(_PS_ROOT_DIR_ . '/plugins/topmenu/element_icons/' . (int) $this->id . '-' . $language['iso_code'] . '.' . (isset($this->image_type[$language['id_lang']]) && !preg_match('/^i-(fa|mi)$/', $this->image_type[$language['id_lang']]) ? $this->image_type[$language['id_lang']] : 'jpg'))) {
-                @unlink(_PS_ROOT_DIR_ . '/plugins/topmenu/element_icons/' . (int) $this->id . '-' . $language['iso_code'] . '.' . (isset($this->image_type[$language['id_lang']]) && !preg_match('/^i-(fa|mi)$/', $this->image_type[$language['id_lang']]) ? $this->image_type[$language['id_lang']] : 'jpg'));
+            if (file_exists(_EPH_ROOT_DIR_ . '/plugins/topmenu/element_icons/' . (int) $this->id . '-' . $language['iso_code'] . '.' . (isset($this->image_type[$language['id_lang']]) && !preg_match('/^i-(fa|mi)$/', $this->image_type[$language['id_lang']]) ? $this->image_type[$language['id_lang']] : 'jpg'))) {
+                @unlink(_EPH_ROOT_DIR_ . '/plugins/topmenu/element_icons/' . (int) $this->id . '-' . $language['iso_code'] . '.' . (isset($this->image_type[$language['id_lang']]) && !preg_match('/^i-(fa|mi)$/', $this->image_type[$language['id_lang']]) ? $this->image_type[$language['id_lang']] : 'jpg'));
             }
 
         }
@@ -120,8 +120,8 @@ class TopMenuElementsCore extends ObjectModel {
 
     public static function getMenuColumnElements($id_topmenu_column, $id_lang, $active = true, $groupRestrict = false) {
 
-        $sql_groups_join = '';
-        $sql_groups_where = '';
+        $sql_grouEPH_join = '';
+        $sql_grouEPH_where = '';
 		$file = fopen("testgetMenuColumnElements.txt","w");
         $sql = 'SELECT ate.*, atel.*,
         cl.link_rewrite, cl.meta_title
@@ -140,7 +140,7 @@ class TopMenuElementsCore extends ObjectModel {
                 GROUP BY ate.`id_topmenu_elements`
                 ORDER BY ate.`position`';
 		fwrite($file,$sql);
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
     }
 
     public static function getMenuColumnsElements($menus, $id_lang, $active = true, $groupRestrict = false) {
@@ -172,7 +172,7 @@ class TopMenuElementsCore extends ObjectModel {
             $ids_column = [(int) $ids_column];
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS('
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS('
         SELECT `id_topmenu_elements`
         FROM ' . _DB_PREFIX_ . 'topmenu_elements
         WHERE `id_topmenu_column` IN(' . implode(',', array_map('intval', $ids_column)) . ')');
@@ -192,7 +192,7 @@ class TopMenuElementsCore extends ObjectModel {
         WHERE atp.`active` = 1
         AND atp.`type` = 3
         AND atp.`id_category` = ' . (int) $idCategory;
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
     }
 
     public static function getElementsFromIdCms($idCms) {
@@ -202,7 +202,7 @@ class TopMenuElementsCore extends ObjectModel {
         WHERE atp.`active` = 1
         AND atp.`type` = 1
         AND atp.`id_cms` = ' . (int) $idCms;
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
     }
 
     public static function getElementsFromIdCmsCategory($idCmsCategory) {
@@ -212,7 +212,7 @@ class TopMenuElementsCore extends ObjectModel {
         WHERE atp.`active` = 1
         AND atp.`type` = 10
         AND atp.`id_cms_category` = ' . (int) $idCmsCategory;
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
     }
 
     public static function disableById($idElement) {
@@ -224,14 +224,14 @@ class TopMenuElementsCore extends ObjectModel {
 
     public static function getIdElementCategoryDepend($id_topmenu_column, $id_category) {
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('SELECT `id_topmenu_elements`
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue('SELECT `id_topmenu_elements`
                 FROM `' . _DB_PREFIX_ . 'topmenu_elements`
                 WHERE `id_column_depend` = ' . (int) $id_topmenu_column . ' AND `id_category` = ' . (int) $id_category);
     }
 
     public static function getIdElementCmsDepend($idColumn, $idCms) {
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('SELECT `id_topmenu_elements`
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue('SELECT `id_topmenu_elements`
                 FROM `' . _DB_PREFIX_ . 'topmenu_elements`
                 WHERE `id_column_depend` = ' . (int) $idColumn . ' AND `id_cms` = ' . (int) $idCms);
     }

@@ -56,13 +56,13 @@ class AdminStockConfigurationControllerCore extends AdminController {
         // loads labels (incremenation)
         $reasonsInc = StockMvtReason::getStockMvtReasonsWithFilter(
             $this->context->language->id,
-            [Configuration::get('PS_STOCK_MVT_TRANSFER_TO')],
+            [Configuration::get('EPH_STOCK_MVT_TRANSFER_TO')],
             1
         );
         // loads labaels (decremenation)
         $reasonsDec = StockMvtReason::getStockMvtReasonsWithFilter(
             $this->context->language->id,
-            [Configuration::get('PS_STOCK_MVT_TRANSFER_FROM')],
+            [Configuration::get('EPH_STOCK_MVT_TRANSFER_FROM')],
             -1
         );
 
@@ -71,7 +71,7 @@ class AdminStockConfigurationControllerCore extends AdminController {
             'general' => [
                 'title'  => $this->l('Options'),
                 'fields' => [
-                    'PS_STOCK_MVT_INC_REASON_DEFAULT' => [
+                    'EPH_STOCK_MVT_INC_REASON_DEFAULT' => [
                         'title'      => $this->l('Default label for increasing stock'),
                         'cast'       => 'intval',
                         'type'       => 'select',
@@ -79,7 +79,7 @@ class AdminStockConfigurationControllerCore extends AdminController {
                         'identifier' => 'id_stock_mvt_reason',
                         'visibility' => Shop::CONTEXT_ALL,
                     ],
-                    'PS_STOCK_MVT_DEC_REASON_DEFAULT' => [
+                    'EPH_STOCK_MVT_DEC_REASON_DEFAULT' => [
                         'title'      => $this->l('Default label for decreasing stock'),
                         'cast'       => 'intval',
                         'type'       => 'select',
@@ -87,7 +87,7 @@ class AdminStockConfigurationControllerCore extends AdminController {
                         'identifier' => 'id_stock_mvt_reason',
                         'visibility' => Shop::CONTEXT_ALL,
                     ],
-                    'PS_STOCK_CUSTOMER_ORDER_REASON'  => [
+                    'EPH_STOCK_CUSTOMER_ORDER_REASON'  => [
                         'title'      => $this->l('Default label for decreasing stock when a customer order is shipped'),
                         'cast'       => 'intval',
                         'type'       => 'select',
@@ -95,7 +95,7 @@ class AdminStockConfigurationControllerCore extends AdminController {
                         'identifier' => 'id_stock_mvt_reason',
                         'visibility' => Shop::CONTEXT_ALL,
                     ],
-                    'PS_STOCK_MVT_SUPPLY_ORDER'       => [
+                    'EPH_STOCK_MVT_SUPPLY_ORDER'       => [
                         'title'      => $this->l('Default label for increasing stock when a supply order is received'),
                         'cast'       => 'intval',
                         'type'       => 'select',
@@ -593,8 +593,8 @@ class AdminStockConfigurationControllerCore extends AdminController {
      */
     public function initContent() {
 
-        if (!Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT')) {
-            $this->warnings[md5('PS_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate the Advanced Stock Management feature before you can use this feature.');
+        if (!Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT')) {
+            $this->warnings[md5('EPH_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate the Advanced Stock Management feature before you can use this feature.');
 
             return;
         }
@@ -611,8 +611,8 @@ class AdminStockConfigurationControllerCore extends AdminController {
      */
     public function initProcess() {
 
-        if (!Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT')) {
-            $this->warnings[md5('PS_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate the Advanced Stock Management feature before you can use this feature.');
+        if (!Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT')) {
+            $this->warnings[md5('EPH_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate the Advanced Stock Management feature before you can use this feature.');
 
             false;
         }

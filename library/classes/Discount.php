@@ -116,7 +116,7 @@ class DiscountCore extends CartRule {
         }
 
         if ($key == 'code') {
-            $this->name[Configuration::get('PS_LANG_DEFAULT')] = $value;
+            $this->name[Configuration::get('EPH_LANG_DEFAULT')] = $value;
         }
 
         if ($key == 'value') {

@@ -82,7 +82,7 @@ class AdminThemesControllerCore extends AdminController {
         ];
 
         $this->extracss = $this->pushCSS([
-            _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/themes.css', _PS_JS_DIR_ . 'colorpicker/jquery.colorpicker.css', _PS_JS_DIR_ . 'ace/theme/twilight.css',
+            _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/themes.css', _EPH_JS_DIR_ . 'colorpicker/jquery.colorpicker.css', _EPH_JS_DIR_ . 'ace/theme/twilight.css',
             _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/css_back.css',
         ]);
 
@@ -2328,7 +2328,7 @@ class AdminThemesControllerCore extends AdminController {
             $this->fields_form = $fields_form;
 
             $rand_time = time();
-            $image_path = _PS_EPH_THEME_DIR_ . $rand_time . '_img.jpg';
+            $image_path = _EPH_EPH_THEME_DIR_ . $rand_time . '_img.jpg';
             $image_url = _EPH_THEME_DIR . $rand_time . '_img.jpg';
             $color_group_name = Configuration::get(self::$shortname . "color_group_name");
             $color_group_name_sel = Configuration::get(self::$shortname . "color_group_name_sel");
@@ -2379,7 +2379,7 @@ class AdminThemesControllerCore extends AdminController {
         $all_demo = [];
         $all_demo_link = [];
         $iterator = new AppendIterator();
-        $iterator->append(new DirectoryIterator(_PS_EPH_THEME_DIR_ . 'demo'));
+        $iterator->append(new DirectoryIterator(_EPH_EPH_THEME_DIR_ . 'demo'));
 
         foreach ($iterator as $file) {
             $ext = pathinfo($file->getFilename(), PATHINFO_EXTENSION);
@@ -2664,13 +2664,13 @@ class AdminThemesControllerCore extends AdminController {
                 [
                     'type'        => 'img_upload',
                     'label'       => $this->l('Le logo du site'),
-                    'name'        => 'PS_LOGO',
+                    'name'        => 'EPH_LOGO',
                     'default_val' => '',
                 ],
                 [
                     'type'        => 'img_upload',
                     'label'       => $this->l('Logo mobile du site'),
-                    'name'        => 'PS_LOGO_MOBILE',
+                    'name'        => 'EPH_LOGO_MOBILE',
                     'default_val' => '',
                 ],
 
@@ -2725,7 +2725,7 @@ class AdminThemesControllerCore extends AdminController {
                 [
                     'type'        => 'img_upload',
                     'label'       => $this->l('Le logo des Factures'),
-                    'name'        => 'PS_LOGO_INVOICE',
+                    'name'        => 'EPH_LOGO_INVOICE',
                     'default_val' => '',
                 ],
                 [
@@ -2743,7 +2743,7 @@ class AdminThemesControllerCore extends AdminController {
                 [
                     'type'        => 'favicon',
                     'label'       => $this->l('Le Favicon'),
-                    'name'        => 'PS_FAVICON',
+                    'name'        => 'EPH_FAVICON',
                     'default_val' => '',
                 ],
 
@@ -2770,7 +2770,7 @@ class AdminThemesControllerCore extends AdminController {
                 [
                     'type'        => 'img_upload',
                     'label'       => $this->l('Le logo des emails'),
-                    'name'        => 'PS_LOGO_MAIL',
+                    'name'        => 'EPH_LOGO_MAIL',
                     'default_val' => '',
                 ],
                 [
@@ -2792,7 +2792,7 @@ class AdminThemesControllerCore extends AdminController {
             $this->fields_form = $fields_form;
 
             $rand_time = time();
-            $image_path = _PS_EPH_THEME_DIR_ . $rand_time . '_img.jpg';
+            $image_path = _EPH_EPH_THEME_DIR_ . $rand_time . '_img.jpg';
             $image_url = _EPH_THEME_DIR . $rand_time . '_img.jpg';
             $color_group_name = Configuration::get(self::$shortname . "color_group_name");
             $color_group_name_sel = Configuration::get(self::$shortname . "color_group_name_sel");
@@ -2914,7 +2914,7 @@ class AdminThemesControllerCore extends AdminController {
             $this->fields_form = $fields_form;
 
             $rand_time = time();
-            $image_path = _PS_EPH_THEME_DIR_ . $rand_time . '_img.jpg';
+            $image_path = _EPH_EPH_THEME_DIR_ . $rand_time . '_img.jpg';
             $image_url = _EPH_THEME_DIR . $rand_time . '_img.jpg';
             $color_group_name = Configuration::get(self::$shortname . "color_group_name");
             $color_group_name_sel = Configuration::get(self::$shortname . "color_group_name_sel");
@@ -2989,19 +2989,19 @@ class AdminThemesControllerCore extends AdminController {
 
         $context = Context::getContext();
         $url_no_image = $context->link->getBaseFrontLink() . 'img/fr.jpg';
-        $this->fields_value['PS_LOGO'] = !empty(Configuration::get('PS_LOGO')) ? $context->link->getBaseFrontLink() . 'img/' . Configuration::get('PS_LOGO') : $url_no_image;
+        $this->fields_value['EPH_LOGO'] = !empty(Configuration::get('EPH_LOGO')) ? $context->link->getBaseFrontLink() . 'img/' . Configuration::get('EPH_LOGO') : $url_no_image;
 
-        $this->fields_value['PS_LOGO_MOBILE'] = !empty(Configuration::get('PS_LOGO_MOBILE')) ? $context->link->getBaseFrontLink() . 'img/' . Configuration::get('PS_LOGO_MOBILE') : $url_no_image;
+        $this->fields_value['EPH_LOGO_MOBILE'] = !empty(Configuration::get('EPH_LOGO_MOBILE')) ? $context->link->getBaseFrontLink() . 'img/' . Configuration::get('EPH_LOGO_MOBILE') : $url_no_image;
 
         $this->fields_value['EPH_OGGPIC'] = !empty(Configuration::get('EPH_OGGPIC')) ? $context->link->getBaseFrontLink() . 'oggpic/' . Configuration::get('EPH_OGGPIC') : $url_no_image;
 
-        $this->fields_value['PS_LOGO_MAIL'] = !empty(Configuration::get('PS_LOGO_MAIL')) ? $context->link->getBaseFrontLink() . 'img/' . Configuration::get('PS_LOGO_MAIL') : $url_no_image;
+        $this->fields_value['EPH_LOGO_MAIL'] = !empty(Configuration::get('EPH_LOGO_MAIL')) ? $context->link->getBaseFrontLink() . 'img/' . Configuration::get('EPH_LOGO_MAIL') : $url_no_image;
 
-        $this->fields_value['PS_LOGO_INVOICE'] = !empty(Configuration::get('PS_LOGO_INVOICE')) ? $context->link->getBaseFrontLink() . 'img/' . Configuration::get('PS_LOGO_INVOICE') : $url_no_image;
+        $this->fields_value['EPH_LOGO_INVOICE'] = !empty(Configuration::get('EPH_LOGO_INVOICE')) ? $context->link->getBaseFrontLink() . 'img/' . Configuration::get('EPH_LOGO_INVOICE') : $url_no_image;
 
         $this->fields_value['EPH_SOURCE_STAMP'] = !empty(Configuration::get('EPH_SOURCE_STAMP')) ? $context->link->getBaseFrontLink() . 'img/' . Configuration::get('EPH_SOURCE_STAMP') : $url_no_image;
 
-        $this->fields_value['PS_FAVICON'] = !empty(Configuration::get('PS_FAVICON')) ? $context->link->getBaseFrontLink() . 'img/' . Configuration::get('PS_FAVICON') : $url_no_image;
+        $this->fields_value['EPH_FAVICON'] = !empty(Configuration::get('EPH_FAVICON')) ? $context->link->getBaseFrontLink() . 'img/' . Configuration::get('EPH_FAVICON') : $url_no_image;
 
         $this->fields_value['EPH_FOOTER_EMAIL'] = !empty(Configuration::get('EPH_FOOTER_EMAIL')) ? Configuration::get('EPH_FOOTER_EMAIL') : '';
 
@@ -3068,7 +3068,7 @@ class AdminThemesControllerCore extends AdminController {
     public function GetAllBGImage() {
 
         $theme_dir = $this->context->shop->theme_directory;
-        $pattern_path = _PS_EPH_THEME_DIR_;
+        $pattern_path = _EPH_EPH_THEME_DIR_;
         $pattern_images_url = Context::getContext()->shop->getBaseURL() . 'img/theme/';
         $pattern_images = [];
 
@@ -3094,7 +3094,7 @@ class AdminThemesControllerCore extends AdminController {
     public function GetAllPattern() {
 
         $theme_dir = $this->context->shop->theme_directory;
-        $pattern_path = _PS_THEME_DIR_ . 'img/patterns/';
+        $pattern_path = _EPH_THEME_DIR_ . 'img/patterns/';
 
         $pattern_images_url = Context::getContext()->shop->getBaseURL() . 'themes/' . $theme_dir . '/img/patterns/';
         $pattern_images = [];
@@ -3126,7 +3126,7 @@ class AdminThemesControllerCore extends AdminController {
 
     public function setAjaxMedia() {
 
-        return $this->pushJS([_PS_JS_DIR_ . 'themes.js', _PS_JS_DIR_ . 'tinymce/tinymce.min.js', _PS_JS_DIR_ . 'tinymce.inc.js', _PS_JS_DIR_ . 'colorpicker/jquery.colorpicker.js', _PS_JS_DIR_ . 'colorpicker/i18n/jquery.ui.colorpicker-fr.js', _PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-pantone.js', _PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-crayola.js', _PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-ral-classic.js', _PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-x11.js', _PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-copic.js', _PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-prismacolor.js', _PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-isccnbs.js', _PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-din6164.js', _PS_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-rgbslider.js', _PS_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-memory.js', _PS_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-swatchesswitcher.js', _PS_JS_DIR_ . 'colorpicker/parsers/jquery.ui.colorpicker-cmyk-parser.js', _PS_JS_DIR_ . 'colorpicker/parsers/jquery.ui.colorpicker-cmyk-percentage-parser.js', _PS_JS_DIR_ . 'vendor/spin.js', _PS_JS_DIR_ . 'vendor/ladda.js', _PS_JS_DIR_ . 'pdfuploadify.min.js',
+        return $this->pushJS([_EPH_JS_DIR_ . 'themes.js', _EPH_JS_DIR_ . 'tinymce/tinymce.min.js', _EPH_JS_DIR_ . 'tinymce.inc.js', _EPH_JS_DIR_ . 'colorpicker/jquery.colorpicker.js', _EPH_JS_DIR_ . 'colorpicker/i18n/jquery.ui.colorpicker-fr.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-pantone.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-crayola.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-ral-classic.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-x11.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-copic.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-prismacolor.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-isccnbs.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-din6164.js', _EPH_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-rgbslider.js', _EPH_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-memory.js', _EPH_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-swatchesswitcher.js', _EPH_JS_DIR_ . 'colorpicker/parsers/jquery.ui.colorpicker-cmyk-parser.js', _EPH_JS_DIR_ . 'colorpicker/parsers/jquery.ui.colorpicker-cmyk-percentage-parser.js', _EPH_JS_DIR_ . 'vendor/spin.js', _EPH_JS_DIR_ . 'vendor/ladda.js', _EPH_JS_DIR_ . 'pdfuploadify.min.js',
             'https://cdn.ephenyxapi.com/ace/ace.js',
         ]);
     }
@@ -3140,7 +3140,7 @@ class AdminThemesControllerCore extends AdminController {
         if (is_array($files) && count($files)) {
 
             foreach ($files as $image) {
-                $destinationFile = _PS_IMG_DIR_ . 'reglement.pdf';
+                $destinationFile = _EPH_IMG_DIR_ . 'reglement.pdf';
                 copy($image['save_path'], $destinationFile);
             }
 
@@ -3153,7 +3153,7 @@ class AdminThemesControllerCore extends AdminController {
         if (is_array($files) && count($files)) {
 
             foreach ($files as $image) {
-                $destinationFile = _PS_IMG_DIR_ . 'deontologie.pdf';
+                $destinationFile = _EPH_IMG_DIR_ . 'deontologie.pdf';
                 copy($image['save_path'], $destinationFile);
             }
 
@@ -3166,7 +3166,7 @@ class AdminThemesControllerCore extends AdminController {
         if (is_array($files) && count($files)) {
 
             foreach ($files as $image) {
-                $destinationFile = _PS_CATALOGUE_DIR_ . 'catalogue.pdf';
+                $destinationFile = _EPH_CATALOGUE_DIR_ . 'catalogue.pdf';
                 copy($image['save_path'], $destinationFile);
             }
 
@@ -3359,7 +3359,7 @@ class AdminThemesControllerCore extends AdminController {
     public function ajaxProcessGenereteTheme() {
 
         if ($theme_name = Tools::getValue('theme_name')) {
-            $file = fopen(_PS_EPH_THEME_DIR_ . 'demo/' . $theme_name . ".xml", "w");
+            $file = fopen(_EPH_EPH_THEME_DIR_ . 'demo/' . $theme_name . ".xml", "w");
 
             $themeToExport = new Theme(1);
             $metas = $themeToExport->getMetas();
@@ -3374,14 +3374,14 @@ class AdminThemesControllerCore extends AdminController {
         $xmlDocument->recover = true;
         libxml_use_internal_errors(true);
         try {
-            $result = $xmlDocument->load(_PS_EPH_THEME_DIR_ . 'demo/' . $theme_name . ".xml");
+            $result = $xmlDocument->load(_EPH_EPH_THEME_DIR_ . 'demo/' . $theme_name . ".xml");
         } catch (Exception $e) {
 
         }
 
         if ($result) {
 
-            $xmlDocument->save(_PS_EPH_THEME_DIR_ . 'demo/' . $theme_name . '.xml');
+            $xmlDocument->save(_EPH_EPH_THEME_DIR_ . 'demo/' . $theme_name . '.xml');
         }
 
         $return = [
@@ -3491,7 +3491,7 @@ class AdminThemesControllerCore extends AdminController {
                 $name = Tools::htmlentitiesUTF8(Tools::getValue('documentationName'));
                 $this->user_doc = [$name . '¤doc/' . $filename];
 
-                $table = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+                $table = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                     (new DbQuery())
                         ->select('`name`, `width`, `products`, `categories`, `manufacturers`, `suppliers`, `scenes`')
                         ->from('image_type')
@@ -3508,7 +3508,7 @@ class AdminThemesControllerCore extends AdminController {
                         ($row['scenes'] == 1 ? 'true' : 'false');
                 }
 
-                $idShop = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                $idShop = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                     (new DbQuery())
                         ->select('`id_shop`')
                         ->from('shop')
@@ -3516,7 +3516,7 @@ class AdminThemesControllerCore extends AdminController {
                 );
 
                 // Select the list of module for this shop
-                $this->module_list = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+                $this->module_list = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                     (new DbQuery())
                         ->select('m.`id_module`, m.`name`, m.`active`, ms.`id_shop`')
                         ->from('module', 'm')
@@ -3525,7 +3525,7 @@ class AdminThemesControllerCore extends AdminController {
                 );
 
                 // Select the list of hook for this shop
-                $this->hook_list = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+                $this->hook_list = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                     (new DbQuery())
                         ->select('h.`id_hook`, h.`name` AS `name_hook`, hm.`position`, hm.`id_module`, m.`name` AS `name_module`, GROUP_CONCAT(hme.`file_name`, ",") AS `exceptions`')
                         ->from('hook', 'h')
@@ -3676,13 +3676,13 @@ class AdminThemesControllerCore extends AdminController {
     public function updateCurrentLogoTheme() {
 
         $arrayImage = [
-            'PS_LOGO'            => 'PS_LOGO',
-            'PS_LOGO_MOBILE'     => 'PS_LOGO_MOBILE',
-            'PS_LOGO_MAIL'       => 'PS_LOGO_MAIL',
-            'PS_LOGO_INVOICE'    => 'PS_LOGO_INVOICE',
+            'EPH_LOGO'            => 'EPH_LOGO',
+            'EPH_LOGO_MOBILE'     => 'EPH_LOGO_MOBILE',
+            'EPH_LOGO_MAIL'       => 'EPH_LOGO_MAIL',
+            'EPH_LOGO_INVOICE'    => 'EPH_LOGO_INVOICE',
             'EPH_SOURCE_STAMP'   => 'EPH_SOURCE_STAMP',
             'EPH_SOURCE_FAVICON' => 'EPH_SOURCE_FAVICON',
-            'PS_FAVICON'         => 'PS_FAVICON',
+            'EPH_FAVICON'         => 'EPH_FAVICON',
             'EPH_OGGPIC'         => 'EPH_OGGPIC',
         ];
         $file = fopen("testupdateCurrentLogoTheme.txt", "w");
@@ -3703,16 +3703,16 @@ class AdminThemesControllerCore extends AdminController {
 
                     fwrite($file, print_r($image, true));
 
-                    if ($key == 'PS_FAVICON') {
-                        $destinationFile = _PS_FRONT_DIR_ . '/img/favicon.ico';
+                    if ($key == 'EPH_FAVICON') {
+                        $destinationFile = _EPH_FRONT_DIR_ . '/img/favicon.ico';
                         $this->uploadIco($image, $destinationFile);
                         $ext = pathinfo($image['name'], PATHINFO_EXTENSION);
-                        $destinationFile = _PS_FRONT_DIR_ . '/img/favicon_src.' . $ext;
+                        $destinationFile = _EPH_FRONT_DIR_ . '/img/favicon_src.' . $ext;
                         $fileName = 'favicon_src.' . $ext;
 
                         if (copy($image['save_path'], $destinationFile)) {
                             Configuration::updateValue('EPH_SOURCE_FAVICON', $fileName);
-                            $adminFile = _PS_ROOT_DIR_ . '/themes/img/favicon.ico';
+                            $adminFile = _EPH_ROOT_DIR_ . '/themes/img/favicon.ico';
                             copy($destinationFile, $adminFile);
                         }
 
@@ -3722,28 +3722,28 @@ class AdminThemesControllerCore extends AdminController {
                     $ext = pathinfo($image['name'], PATHINFO_EXTENSION);
 
                     switch ($key) {
-                    case 'PS_LOGO':
-                        $destinationFile = _PS_FRONT_DIR_ . '/img/logoFrontOffice.' . $ext;
+                    case 'EPH_LOGO':
+                        $destinationFile = _EPH_FRONT_DIR_ . '/img/logoFrontOffice.' . $ext;
                         $fileName = 'logoFrontOffice.' . $ext;
                         break;
-                    case 'PS_LOGO_MOBILE':
-                        $destinationFile = _PS_FRONT_DIR_ . '/img/logoMobile.' . $ext;
+                    case 'EPH_LOGO_MOBILE':
+                        $destinationFile = _EPH_FRONT_DIR_ . '/img/logoMobile.' . $ext;
                         $fileName = 'logoMobile.' . $ext;
                         break;
-                    case 'PS_LOGO_MAIL':
-                        $destinationFile = _PS_FRONT_DIR_ . '/img/logoMail.' . $ext;
+                    case 'EPH_LOGO_MAIL':
+                        $destinationFile = _EPH_FRONT_DIR_ . '/img/logoMail.' . $ext;
                         $fileName = 'logoMail.' . $ext;
                         break;
-                    case 'PS_LOGO_INVOICE':
-                        $destinationFile = _PS_FRONT_DIR_ . '/img/logoInvoice.' . $ext;
+                    case 'EPH_LOGO_INVOICE':
+                        $destinationFile = _EPH_FRONT_DIR_ . '/img/logoInvoice.' . $ext;
                         $fileName = 'logoInvoice.' . $ext;
                         break;
                     case 'EPH_SOURCE_STAMP':
-                        $destinationFile = _PS_FRONT_DIR_ . '/img/companyStamp.' . $ext;
+                        $destinationFile = _EPH_FRONT_DIR_ . '/img/companyStamp.' . $ext;
                         $fileName = 'companyStamp.' . $ext;
                         break;
                     case 'EPH_OGGPIC':
-                        $destinationFile = _PS_FRONT_DIR_ . '/oggpic/oggpic.' . $ext;
+                        $destinationFile = _EPH_FRONT_DIR_ . '/oggpic/oggpic.' . $ext;
                         $fileName = 'oggpic.' . $ext;
                         break;
                     }
@@ -3783,23 +3783,23 @@ class AdminThemesControllerCore extends AdminController {
                     switch ($key) {
 
                     case 'serviceAccesUrl':
-                        $destinationFile = _PS_IMG_DIR_ . 'serviceAcces.' . $ext;
+                        $destinationFile = _EPH_IMG_DIR_ . 'serviceAcces.' . $ext;
                         $fileName = 'serviceAcces.' . $ext;
                         break;
                     case 'serviceCertificationUrl':
-                        $destinationFile = _PS_IMG_DIR_ . 'serviceCertification.' . $ext;
+                        $destinationFile = _EPH_IMG_DIR_ . 'serviceCertification.' . $ext;
                         $fileName = 'serviceCertification.' . $ext;
                         break;
                     case 'serviceCompetanceUrl':
-                        $destinationFile = _PS_IMG_DIR_ . 'serviceCompetance.' . $ext;
+                        $destinationFile = _EPH_IMG_DIR_ . 'serviceCompetance.' . $ext;
                         $fileName = 'serviceCompetance.' . $ext;
                         break;
                     case 'serviceOutilsUrl':
-                        $destinationFile = _PS_IMG_DIR_ . 'serviceOutils.' . $ext;
+                        $destinationFile = _EPH_IMG_DIR_ . 'serviceOutils.' . $ext;
                         $fileName = 'serviceOutils.' . $ext;
                         break;
                     case 'imageCertification':
-                        $destinationFile = _PS_IMG_DIR_ . 'imageCertif.' . $ext;
+                        $destinationFile = _EPH_IMG_DIR_ . 'imageCertif.' . $ext;
                         $fileName = 'imageCertif.' . $ext;
                         break;
                     }
@@ -3835,8 +3835,8 @@ class AdminThemesControllerCore extends AdminController {
 
         if ($bootsrap_index != $this->bootsrap_index) {
 
-            if (file_exists(_PS_ADMIN_DIR_ . '/template/front/index_' . $bootsrap_index . '.tpl')) {
-                copy(_PS_ADMIN_DIR_ . '/template/front/index_' . $bootsrap_index . '.tpl', _PS_THEME_DIR_ . 'index.tpl');
+            if (file_exists(_EPH_ADMIN_DIR_ . '/template/front/index_' . $bootsrap_index . '.tpl')) {
+                copy(_EPH_ADMIN_DIR_ . '/template/front/index_' . $bootsrap_index . '.tpl', _EPH_THEME_DIR_ . 'index.tpl');
             }
 
         }
@@ -3845,8 +3845,8 @@ class AdminThemesControllerCore extends AdminController {
 
         if ($bootsrap_education != $this->bootsrap_education) {
 
-            if (file_exists(_PS_ADMIN_DIR_ . '/template/front/education_' . $bootsrap_education . '.tpl')) {
-                copy(_PS_ADMIN_DIR_ . '/template/front/education_' . $bootsrap_education . '.tpl', _PS_THEME_DIR_ . 'education.tpl');
+            if (file_exists(_EPH_ADMIN_DIR_ . '/template/front/education_' . $bootsrap_education . '.tpl')) {
+                copy(_EPH_ADMIN_DIR_ . '/template/front/education_' . $bootsrap_education . '.tpl', _EPH_THEME_DIR_ . 'education.tpl');
             }
 
         }
@@ -4132,12 +4132,12 @@ class AdminThemesControllerCore extends AdminController {
         $context = Context::getContext();
         $url_no_image = $context->link->getBaseFrontLink() . 'img/fr.jpg';
         $xprt = $this->AsignGlobalSettingValue();
-        $tpl = $context->smarty->createTemplate(_PS_ALL_THEMES_DIR_ . "xprtroot_css_.tpl");
+        $tpl = $context->smarty->createTemplate(_EPH_ALL_THEMES_DIR_ . "xprtroot_css_.tpl");
 
         $tpl->assign([
-            'polygon'     => Configuration::get('PS_LOGO'),
-            'logo_shop'   => !empty(Configuration::get('PS_LOGO')) ? $this->context->link->getBaseFrontLink() . 'img/' . Configuration::get('PS_LOGO') : $url_no_image,
-            'logo_mobile' => !empty(Configuration::get('PS_LOGO_MOBILE')) ? $this->context->link->getBaseFrontLink() . 'img/' . Configuration::get('PS_LOGO_MOBILE') : $url_no_image,
+            'polygon'     => Configuration::get('EPH_LOGO'),
+            'logo_shop'   => !empty(Configuration::get('EPH_LOGO')) ? $this->context->link->getBaseFrontLink() . 'img/' . Configuration::get('EPH_LOGO') : $url_no_image,
+            'logo_mobile' => !empty(Configuration::get('EPH_LOGO_MOBILE')) ? $this->context->link->getBaseFrontLink() . 'img/' . Configuration::get('EPH_LOGO_MOBILE') : $url_no_image,
         ]);
 
         $imageCertif = !empty(Configuration::get('EPH_CERTIFICATION_IMAGE')) ? $context->link->getBaseFrontLink() . 'img/' . Configuration::get('EPH_CERTIFICATION_IMAGE') : $url_no_image;
@@ -4158,7 +4158,7 @@ class AdminThemesControllerCore extends AdminController {
         $css = fopen($this->agent_cssRootfile, 'w');
         fwrite($css, $custom_css);
 
-        $tpl = $context->smarty->createTemplate(_PS_ALL_THEMES_DIR_ . "xprtcustom_css.tpl");
+        $tpl = $context->smarty->createTemplate(_EPH_ALL_THEMES_DIR_ . "xprtcustom_css.tpl");
 
         foreach ($xprt as $key => $value) {
 
@@ -4184,7 +4184,7 @@ class AdminThemesControllerCore extends AdminController {
         $is_polygone = Configuration::get('EPH_POLYGON_ACTIVE');
 
         if ($is_polygone) {
-            $tpl = $context->smarty->createTemplate(_PS_ALL_THEMES_DIR_ . "xprtpolygon_css.tpl");
+            $tpl = $context->smarty->createTemplate(_EPH_ALL_THEMES_DIR_ . "xprtpolygon_css.tpl");
 
             foreach ($xprt as $key => $value) {
                 $tpl->assign([
@@ -4195,7 +4195,7 @@ class AdminThemesControllerCore extends AdminController {
             $custom_css = $tpl->fetch();
             $css = fopen($this->cssPolygonfile, 'w');
             fwrite($css, $custom_css);
-            $tpl = $context->smarty->createTemplate(_PS_ALL_THEMES_DIR_ . "xprtpolygon_agent_css.tpl");
+            $tpl = $context->smarty->createTemplate(_EPH_ALL_THEMES_DIR_ . "xprtpolygon_agent_css.tpl");
 
             foreach ($xprt as $key => $value) {
                 $tpl->assign([
@@ -4224,7 +4224,7 @@ class AdminThemesControllerCore extends AdminController {
 
         $context = Context::getContext();
         $xprt = $this->AsignGlobalSettingValue();
-        $tpl = $context->smarty->createTemplate(_PS_ALL_THEMES_DIR_ . "xprtcustom_js_.tpl");
+        $tpl = $context->smarty->createTemplate(_EPH_ALL_THEMES_DIR_ . "xprtcustom_js_.tpl");
 
         $tpl->assign([
             'polygon' => Configuration::get('EPH_POLYGON_ACTIVE'),
@@ -4292,8 +4292,8 @@ class AdminThemesControllerCore extends AdminController {
 
         $selected_demo = Tools::getValue('select_demo_ready');
 
-        if (file_exists(_PS_EPH_THEME_DIR_ . 'demo/' . $selected_demo)) {
-            unlink(_PS_EPH_THEME_DIR_ . 'demo/' . $selected_demo);
+        if (file_exists(_EPH_EPH_THEME_DIR_ . 'demo/' . $selected_demo)) {
+            unlink(_EPH_EPH_THEME_DIR_ . 'demo/' . $selected_demo);
         }
 
         $return = [
@@ -4335,8 +4335,8 @@ class AdminThemesControllerCore extends AdminController {
 
         $xml = false;
 
-        if (file_exists(_PS_EPH_THEME_DIR_ . 'demo/' . $selected_demo)) {
-            $xml = @simplexml_load_file(_PS_EPH_THEME_DIR_ . 'demo/' . $selected_demo);
+        if (file_exists(_EPH_EPH_THEME_DIR_ . 'demo/' . $selected_demo)) {
+            $xml = @simplexml_load_file(_EPH_EPH_THEME_DIR_ . 'demo/' . $selected_demo);
         } else {
             return false;
         }
@@ -4660,7 +4660,7 @@ class AdminThemesControllerCore extends AdminController {
         $zip = new ZipArchive();
         $zipFileName = md5(time()) . '.zip';
 
-        if ($zip->open(_PS_CACHE_DIR_ . $zipFileName, ZipArchive::OVERWRITE | ZipArchive::CREATE) === true) {
+        if ($zip->open(_EPH_CACHE_DIR_ . $zipFileName, ZipArchive::OVERWRITE | ZipArchive::CREATE) === true) {
 
             if (!$zip->addFromString('Config.xml', $this->xml_file)) {
                 $this->errors[] = $this->l('Cannot create config file.');
@@ -4677,21 +4677,21 @@ class AdminThemesControllerCore extends AdminController {
 
             }
 
-            $givenPath = realpath(_PS_ALL_THEMES_DIR_ . Tools::getValue('theme_directory'));
+            $givenPath = realpath(_EPH_ALL_THEMES_DIR_ . Tools::getValue('theme_directory'));
 
             if ($givenPath !== false) {
-                $psAllThemeDirLenght = strlen(realpath(_PS_ALL_THEMES_DIR_));
+                $psAllThemeDirLenght = strlen(realpath(_EPH_ALL_THEMES_DIR_));
                 $toComparePath = substr($givenPath, 0, $psAllThemeDirLenght);
 
-                if ($toComparePath != realpath(_PS_ALL_THEMES_DIR_)) {
+                if ($toComparePath != realpath(_EPH_ALL_THEMES_DIR_)) {
                     $this->errors[] = $this->l('Wrong theme directory path');
                 } else {
-                    $this->archiveThisFile($zip, Tools::getValue('theme_directory'), _PS_ALL_THEMES_DIR_, 'themes/');
+                    $this->archiveThisFile($zip, Tools::getValue('theme_directory'), _EPH_ALL_THEMES_DIR_, 'themes/');
 
                     foreach ($this->to_export as $row) {
 
                         if (!in_array($row, $this->native_modules)) {
-                            $this->archiveThisFile($zip, $row, _PS_FRONT_DIR_ . '/modules/', 'modules/');
+                            $this->archiveThisFile($zip, $row, _EPH_FRONT_DIR_ . '/modules/', 'modules/');
                         }
 
                     }
@@ -4704,8 +4704,8 @@ class AdminThemesControllerCore extends AdminController {
 
             $zip->close();
 
-            if (!is_file(_PS_CACHE_DIR_ . $zipFileName)) {
-                $this->errors[] = $this->l(sprintf('Could not create %1s', _PS_CACHE_DIR_ . $zipFileName));
+            if (!is_file(_EPH_CACHE_DIR_ . $zipFileName)) {
+                $this->errors[] = $this->l(sprintf('Could not create %1s', _EPH_CACHE_DIR_ . $zipFileName));
             }
 
             if (!$this->errors) {
@@ -4724,8 +4724,8 @@ class AdminThemesControllerCore extends AdminController {
                 header('Content-Disposition: attachment; filename="' . $zipFileName . '"');
                 header('Content-Transfer-Encoding: binary');
                 ob_end_flush();
-                readfile(_PS_CACHE_DIR_ . $zipFileName);
-                @unlink(_PS_CACHE_DIR_ . $zipFileName);
+                readfile(_EPH_CACHE_DIR_ . $zipFileName);
+                @unlink(_EPH_CACHE_DIR_ . $zipFileName);
                 exit;
             }
 
@@ -5001,8 +5001,8 @@ class AdminThemesControllerCore extends AdminController {
         $fieldsValue['theme_name'] = $theme->name;
         $fieldsValue['theme_directory'] = $theme->directory;
         $fieldsValue['theme_version'] = '1.0';
-        $fieldsValue['compa_from'] = _PS_VERSION_;
-        $fieldsValue['compa_to'] = _PS_VERSION_;
+        $fieldsValue['compa_from'] = _EPH_VERSION_;
+        $fieldsValue['compa_to'] = _EPH_VERSION_;
         $fieldsValue['id_theme_export'] = Tools::getValue('id_theme_export');
         $fieldsValue['documentationName'] = $this->l('documentation');
 
@@ -5023,7 +5023,7 @@ class AdminThemesControllerCore extends AdminController {
 
     public function processImportTheme() {
 
-        if (!($this->tabAccess['add'] && $this->tabAccess['delete']) || _PS_MODE_DEMO_) {
+        if (!($this->tabAccess['add'] && $this->tabAccess['delete']) || _EPH_MODE_DEMO_) {
             $this->errors[] = Tools::displayError('You do not have permission to add here.');
 
             return false;
@@ -5036,7 +5036,7 @@ class AdminThemesControllerCore extends AdminController {
 
             if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['themearchive']) && isset($_POST['filename']) && Tools::isSubmit('theme_archive_server')) {
                 $uniqid = uniqid();
-                $sandbox = _PS_CACHE_DIR_ . 'sandbox' . DIRECTORY_SEPARATOR . $uniqid . DIRECTORY_SEPARATOR;
+                $sandbox = _EPH_CACHE_DIR_ . 'sandbox' . DIRECTORY_SEPARATOR . $uniqid . DIRECTORY_SEPARATOR;
                 mkdir($sandbox, 0777, true);
                 $archiveUploaded = false;
 
@@ -5080,7 +5080,7 @@ class AdminThemesControllerCore extends AdminController {
                 } else
 
                 if (Tools::getValue('theme_archive_server') != '') {
-                    $filename = _PS_ALL_THEMES_DIR_ . Tools::getValue('theme_archive_server');
+                    $filename = _EPH_ALL_THEMES_DIR_ . Tools::getValue('theme_archive_server');
 
                     if (substr($filename, -4) != '.zip') {
                         $this->errors[] = $this->l('Only zip files are allowed');
@@ -5130,7 +5130,7 @@ class AdminThemesControllerCore extends AdminController {
 
     protected function extractTheme($themeZipFile, $sandbox) {
 
-        if (!($this->tabAccess['add'] && $this->tabAccess['edit'] && $this->tabAccess['delete']) || _PS_MODE_DEMO_) {
+        if (!($this->tabAccess['add'] && $this->tabAccess['edit'] && $this->tabAccess['delete']) || _EPH_MODE_DEMO_) {
             $this->errors[] = $this->l('You do not have permission to extract here.');
 
             return false;
@@ -5147,13 +5147,13 @@ class AdminThemesControllerCore extends AdminController {
 
     protected function installTheme($themeDir, $sandbox = false, $redirect = true) {
 
-        if ($this->tabAccess['add'] && $this->tabAccess['delete'] && !_PS_MODE_DEMO_) {
+        if ($this->tabAccess['add'] && $this->tabAccess['delete'] && !_EPH_MODE_DEMO_) {
 
             if (!$sandbox) {
                 $uniqid = uniqid();
-                $sandbox = _PS_CACHE_DIR_ . 'sandbox' . DIRECTORY_SEPARATOR . $uniqid . DIRECTORY_SEPARATOR;
+                $sandbox = _EPH_CACHE_DIR_ . 'sandbox' . DIRECTORY_SEPARATOR . $uniqid . DIRECTORY_SEPARATOR;
                 mkdir($sandbox);
-                Tools::recurseCopy(_PS_ALL_THEMES_DIR_ . $themeDir, $sandbox . $themeDir);
+                Tools::recurseCopy(_EPH_ALL_THEMES_DIR_ . $themeDir, $sandbox . $themeDir);
             }
 
             $configFile = '/Config.xml';
@@ -5176,11 +5176,11 @@ class AdminThemesControllerCore extends AdminController {
 
                     if (Validate::isLoadedObject($theme)) {
 
-                        if (!copy($sandbox . $themeDir . $configFile, _PS_FRONT_DIR_ . '/app/xml/themes/' . $theme->directory . '.xml')) {
+                        if (!copy($sandbox . $themeDir . $configFile, _EPH_FRONT_DIR_ . '/app/xml/themes/' . $theme->directory . '.xml')) {
                             $this->errors[] = $this->l('Can\'t copy configuration file');
                         }
 
-                        $targetDir = _PS_ALL_THEMES_DIR_ . $theme->directory;
+                        $targetDir = _EPH_ALL_THEMES_DIR_ . $theme->directory;
 
                         if (file_exists($targetDir)) {
                             Tools::deleteDirectory($targetDir);
@@ -5196,7 +5196,7 @@ class AdminThemesControllerCore extends AdminController {
                         mkdir($themeDocDir);
                         Tools::recurseCopy($sandbox . $themeDir . '/themes/' . $theme->directory . '/', $targetDir . '/');
                         Tools::recurseCopy($sandbox . $themeDir . '/doc/', $themeDocDir);
-                        Tools::recurseCopy($sandbox . $themeDir . '/modules/', _PS_MODULE_DIR_);
+                        Tools::recurseCopy($sandbox . $themeDir . '/modules/', _EPH_MODULE_DIR_);
                     } else {
                         $this->errors[] = $theme;
                     }
@@ -5261,7 +5261,7 @@ class AdminThemesControllerCore extends AdminController {
                 continue;
             }
 
-            $newTheme->product_per_page = Configuration::get('PS_PRODUCTS_PER_PAGE');
+            $newTheme->product_per_page = Configuration::get('EPH_PRODUCTS_PER_PAGE');
 
             if (isset($variation['product_per_page'])) {
                 $newTheme->product_per_page = intval($variation['product_per_page']);
@@ -5290,7 +5290,7 @@ class AdminThemesControllerCore extends AdminController {
             if ($xml->metas->meta) {
 
                 foreach ($xml->metas->meta as $meta) {
-                    $metaId = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                    $metaId = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                         (new DbQuery())
                             ->select('`id_meta`')
                             ->from('meta')
@@ -5309,7 +5309,7 @@ class AdminThemesControllerCore extends AdminController {
 
                 $fillDefaultMeta = false;
 
-                if (count($xml->metas->meta) < (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                if (count($xml->metas->meta) < (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                     (new DbQuery())
                     ->select('COUNT(*)')
                     ->from('meta')
@@ -5320,7 +5320,7 @@ class AdminThemesControllerCore extends AdminController {
             }
 
             if ($fillDefaultMeta == true) {
-                $metas = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+                $metas = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                     (new DbQuery())
                         ->select('`id_meta`')
                         ->from('meta')
@@ -5339,10 +5339,10 @@ class AdminThemesControllerCore extends AdminController {
 
             }
 
-            if (!is_dir(_PS_ALL_THEMES_DIR_ . $newTheme->directory)) {
+            if (!is_dir(_EPH_ALL_THEMES_DIR_ . $newTheme->directory)) {
 
-                if (!mkdir(_PS_ALL_THEMES_DIR_ . $newTheme->directory)) {
-                    return sprintf($this->l('Error while creating %s directory'), _PS_ALL_THEMES_DIR_ . $newTheme->directory);
+                if (!mkdir(_EPH_ALL_THEMES_DIR_ . $newTheme->directory)) {
+                    return sprintf($this->l('Error while creating %s directory'), _EPH_ALL_THEMES_DIR_ . $newTheme->directory);
                 }
 
             }
@@ -5431,15 +5431,15 @@ class AdminThemesControllerCore extends AdminController {
             ];
 
             $themeArchiveServer = [];
-            $files = scandir(_PS_ALL_THEMES_DIR_);
+            $files = scandir(_EPH_ALL_THEMES_DIR_);
             $themeArchiveServer[] = '-';
 
             foreach ($files as $file) {
 
-                if (is_file(_PS_ALL_THEMES_DIR_ . $file) && substr(_PS_ALL_THEMES_DIR_ . $file, -4) == '.zip') {
+                if (is_file(_EPH_ALL_THEMES_DIR_ . $file) && substr(_EPH_ALL_THEMES_DIR_ . $file, -4) == '.zip') {
                     $themeArchiveServer[] = [
-                        'id'   => basename(_PS_ALL_THEMES_DIR_ . $file),
-                        'name' => basename(_PS_ALL_THEMES_DIR_ . $file),
+                        'id'   => basename(_EPH_ALL_THEMES_DIR_ . $file),
+                        'name' => basename(_EPH_ALL_THEMES_DIR_ . $file),
                     ];
                 }
 
@@ -5532,10 +5532,10 @@ class AdminThemesControllerCore extends AdminController {
         } else {
             $content = '';
 
-            if (Configuration::hasKey('PS_LOGO') && trim(Configuration::get('PS_LOGO')) != ''
-                && file_exists(_PS_IMG_DIR_ . Configuration::get('PS_LOGO')) && filesize(_PS_IMG_DIR_ . Configuration::get('PS_LOGO'))
+            if (Configuration::hasKey('EPH_LOGO') && trim(Configuration::get('EPH_LOGO')) != ''
+                && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO')) && filesize(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO'))
             ) {
-                list($width, $height, $type, $attr) = getimagesize(_PS_IMG_DIR_ . Configuration::get('PS_LOGO'));
+                list($width, $height, $type, $attr) = getimagesize(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO'));
                 Configuration::updateValue('SHOP_LOGO_HEIGHT', (int) round($height));
                 Configuration::updateValue('SHOP_LOGO_WIDTH', (int) round($width));
             }
@@ -5672,7 +5672,7 @@ class AdminThemesControllerCore extends AdminController {
             }
 
             $shops = [];
-            $shop = new Shop(Configuration::get('PS_SHOP_DEFAULT'));
+            $shop = new Shop(Configuration::get('EPH_SHOP_DEFAULT'));
             $tmp['id_shop'] = $shop->id;
             $tmp['id_theme'] = $shop->id_theme;
             $shops[] = $tmp;
@@ -5813,7 +5813,7 @@ class AdminThemesControllerCore extends AdminController {
         if (count($shopsAsso) == 1) {
             $shops = $shopsAsso;
         } else {
-            $shops = [Configuration::get('PS_SHOP_DEFAULT')];
+            $shops = [Configuration::get('EPH_SHOP_DEFAULT')];
 
             if (Tools::isSubmit('checkBoxShopAsso_theme')) {
                 $shops = Tools::getValue('checkBoxShopAsso_theme');
@@ -5934,9 +5934,9 @@ class AdminThemesControllerCore extends AdminController {
                 $shop->save();
 
                 if (Shop::isFeatureActive()) {
-                    Configuration::updateValue('PS_PRODUCTS_PER_PAGE', (int) $theme->product_per_page, false, null, (int) $idShop);
+                    Configuration::updateValue('EPH_PRODUCTS_PER_PAGE', (int) $theme->product_per_page, false, null, (int) $idShop);
                 } else {
-                    Configuration::updateValue('PS_PRODUCTS_PER_PAGE', (int) $theme->product_per_page);
+                    Configuration::updateValue('EPH_PRODUCTS_PER_PAGE', (int) $theme->product_per_page);
                 }
 
             }
@@ -5944,7 +5944,7 @@ class AdminThemesControllerCore extends AdminController {
             $this->doc = [];
 
             foreach ($xml->docs->doc as $row) {
-                $this->doc[strval($row['name'])] = __PS_BASE_URI__ . 'themes/' . $theme->directory . '/docs/' . basename(strval($row['path']));
+                $this->doc[strval($row['name'])] = __EPH_BASE_URI__ . 'themes/' . $theme->directory . '/docs/' . basename(strval($row['path']));
             }
 
         }
@@ -6087,13 +6087,13 @@ class AdminThemesControllerCore extends AdminController {
     }
 
     /**
-     * Update PS_LOGO
+     * Update EPH_LOGO
      *
      * @since 1.9.1.0
      */
     public function updateOptionPsLogo() {
 
-        $this->updateLogo('PS_LOGO', 'logo');
+        $this->updateLogo('EPH_LOGO', 'logo');
     }
 
     /**
@@ -6119,30 +6119,30 @@ class AdminThemesControllerCore extends AdminController {
                 return false;
             }
 
-            $tmpName = tempnam(_PS_TMP_IMG_DIR_, 'PS');
+            $tmpName = tempnam(_EPH_TMP_IMG_DIR_, 'PS');
 
             if (!$tmpName || !move_uploaded_file($_FILES[$fieldName]['tmp_name'], $tmpName)) {
                 return false;
             }
 
-            $ext = ($fieldName == 'PS_STORES_ICON') ? '.gif' : '.jpg';
-            $logoName = str_replace('%', '', urlencode(Tools::link_rewrite($this->context->shop->name))) . '-' . $logoPrefix . '-' . (int) Configuration::get('PS_IMG_UPDATE_TIME') . (int) $idShop . $ext;
+            $ext = ($fieldName == 'EPH_STORES_ICON') ? '.gif' : '.jpg';
+            $logoName = str_replace('%', '', urlencode(Tools::link_rewrite($this->context->shop->name))) . '-' . $logoPrefix . '-' . (int) Configuration::get('EPH_IMG_UPDATE_TIME') . (int) $idShop . $ext;
 
             if ($this->context->shop->getContext() == Shop::CONTEXT_ALL || $idShop == 0
                 || Shop::isFeatureActive() == false
             ) {
-                $logoName = str_replace('%', '', urlencode(Tools::link_rewrite($this->context->shop->name))) . '-' . $logoPrefix . '-' . (int) Configuration::get('PS_IMG_UPDATE_TIME') . $ext;
+                $logoName = str_replace('%', '', urlencode(Tools::link_rewrite($this->context->shop->name))) . '-' . $logoPrefix . '-' . (int) Configuration::get('EPH_IMG_UPDATE_TIME') . $ext;
             }
 
-            if ($fieldName == 'PS_STORES_ICON') {
+            if ($fieldName == 'EPH_STORES_ICON') {
 
-                if (!@ImageManager::resize($tmpName, _PS_IMG_DIR_ . $logoName, null, null, 'gif', true)) {
+                if (!@ImageManager::resize($tmpName, _EPH_IMG_DIR_ . $logoName, null, null, 'gif', true)) {
                     $this->errors[] = Tools::displayError('An error occurred while attempting to copy your logo.');
                 }
 
             } else {
 
-                if (!@ImageManager::resize($tmpName, _PS_IMG_DIR_ . $logoName)) {
+                if (!@ImageManager::resize($tmpName, _EPH_IMG_DIR_ . $logoName)) {
                     $this->errors[] = Tools::displayError('An error occurred while attempting to copy your logo.');
                 }
 
@@ -6151,7 +6151,7 @@ class AdminThemesControllerCore extends AdminController {
             $idShop = null;
             $idShopGroup = null;
 
-            if (!count($this->errors) && @filemtime(_PS_IMG_DIR_ . Configuration::get($fieldName))) {
+            if (!count($this->errors) && @filemtime(_EPH_IMG_DIR_ . Configuration::get($fieldName))) {
 
                 if (Shop::isFeatureActive()) {
 
@@ -6166,7 +6166,7 @@ class AdminThemesControllerCore extends AdminController {
                         $logoShop = Configuration::get($fieldName);
 
                         if ($logoAll != $logoShop && $logoGroup != $logoShop && $logoShop != false) {
-                            @unlink(_PS_IMG_DIR_ . Configuration::get($fieldName));
+                            @unlink(_EPH_IMG_DIR_ . Configuration::get($fieldName));
                         }
 
                     } else
@@ -6178,13 +6178,13 @@ class AdminThemesControllerCore extends AdminController {
                         Shop::setContext(Shop::CONTEXT_GROUP);
 
                         if ($logoAll != Configuration::get($fieldName)) {
-                            @unlink(_PS_IMG_DIR_ . Configuration::get($fieldName));
+                            @unlink(_EPH_IMG_DIR_ . Configuration::get($fieldName));
                         }
 
                     }
 
                 } else {
-                    @unlink(_PS_IMG_DIR_ . Configuration::get($fieldName));
+                    @unlink(_EPH_IMG_DIR_ . Configuration::get($fieldName));
                 }
 
             }
@@ -6197,7 +6197,7 @@ class AdminThemesControllerCore extends AdminController {
     }
 
     /**
-     * Update PS_LOGO_MAIL
+     * Update EPH_LOGO_MAIL
      *
      * @return void
      *
@@ -6206,11 +6206,11 @@ class AdminThemesControllerCore extends AdminController {
      */
     public function updateOptionPsLogoMail() {
 
-        $this->updateLogo('PS_LOGO_MAIL', 'logo_mail');
+        $this->updateLogo('EPH_LOGO_MAIL', 'logo_mail');
     }
 
     /**
-     * Update PS_LOGO_INVOICE
+     * Update EPH_LOGO_INVOICE
      *
      * @return void
      *
@@ -6219,11 +6219,11 @@ class AdminThemesControllerCore extends AdminController {
      */
     public function updateOptionPsLogoInvoice() {
 
-        $this->updateLogo('PS_LOGO_INVOICE', 'logo_invoice');
+        $this->updateLogo('EPH_LOGO_INVOICE', 'logo_invoice');
     }
 
     /**
-     * Update PS_STORES_ICON
+     * Update EPH_STORES_ICON
      *
      * @return void
      *
@@ -6232,11 +6232,11 @@ class AdminThemesControllerCore extends AdminController {
      */
     public function updateOptionPsStoresIcon() {
 
-        $this->updateLogo('PS_STORES_ICON', 'logo_stores');
+        $this->updateLogo('EPH_STORES_ICON', 'logo_stores');
     }
 
     /**
-     * Update PS_FAVICON
+     * Update EPH_FAVICON
      *
      * @return void
      *
@@ -6247,15 +6247,15 @@ class AdminThemesControllerCore extends AdminController {
 
         $idShop = $this->context->shop->id;
 
-        if ($idShop == Configuration::get('PS_SHOP_DEFAULT')) {
-            $this->uploadIco('PS_FAVICON', _PS_IMG_DIR_ . 'favicon.ico');
+        if ($idShop == Configuration::get('EPH_SHOP_DEFAULT')) {
+            $this->uploadIco('EPH_FAVICON', _EPH_IMG_DIR_ . 'favicon.ico');
         }
 
-        if ($this->uploadIco('PS_FAVICON', _PS_IMG_DIR_ . 'favicon_' . (int) $idShop . '.ico')) {
-            Configuration::updateValue('PS_FAVICON', 'favicon_' . (int) $idShop . '.ico');
+        if ($this->uploadIco('EPH_FAVICON', _EPH_IMG_DIR_ . 'favicon_' . (int) $idShop . '.ico')) {
+            Configuration::updateValue('EPH_FAVICON', 'favicon_' . (int) $idShop . '.ico');
         }
 
-        Configuration::updateGlobalValue('PS_FAVICON', 'favicon.ico');
+        Configuration::updateGlobalValue('EPH_FAVICON', 'favicon.ico');
 
         if (!$this->errors) {
             $this->redirect_after = static::$currentIndex . '&token=' . $this->token;
@@ -6271,15 +6271,15 @@ class AdminThemesControllerCore extends AdminController {
      */
     public function updateOptionTbSourceFaviconCode() {
 
-        if (!file_exists(_PS_IMG_DIR_ . 'favicon')) {
+        if (!file_exists(_EPH_IMG_DIR_ . 'favicon')) {
             $definedUmask = defined('_EPH_UMASK_') ? _EPH_UMASK_ : 0000;
             $previousUmask = @umask($definedUmask);
-            mkdir(_PS_IMG_DIR_ . 'favicon', 0777);
+            mkdir(_EPH_IMG_DIR_ . 'favicon', 0777);
             @umask($previousUmask);
         }
 
         $idShop = (int) $this->context->shop->id;
-        $this->uploadIco('EPH_SOURCE_FAVICON', _PS_IMG_DIR_ . "favicon/favicon_{$idShop}_source.png");
+        $this->uploadIco('EPH_SOURCE_FAVICON', _EPH_IMG_DIR_ . "favicon/favicon_{$idShop}_source.png");
 
         $newTemplate = Tools::getValue('EPH_SOURCE_FAVICON_CODE');
 
@@ -6298,7 +6298,7 @@ class AdminThemesControllerCore extends AdminController {
 
         // Generate a new manifest.json
         $manifest = [
-            'name'             => Configuration::get('PS_SHOP_NAME'),
+            'name'             => Configuration::get('EPH_SHOP_NAME'),
             'icons'            => [],
             'theme_color'      => '#fad629',
             'background_color' => '#fad629',
@@ -6325,8 +6325,8 @@ class AdminThemesControllerCore extends AdminController {
 
                 if ($favicon = Tools::parseFaviconSizeTag(urldecode($attribute->value))) {
                     ImageManager::resize(
-                        _PS_IMG_DIR_ . "favicon/favicon_{$idShop}_source.png",
-                        _PS_IMG_DIR_ . "favicon/favicon_{$idShop}_{$favicon['width']}_{$favicon['height']}.png",
+                        _EPH_IMG_DIR_ . "favicon/favicon_{$idShop}_source.png",
+                        _EPH_IMG_DIR_ . "favicon/favicon_{$idShop}_{$favicon['width']}_{$favicon['height']}.png",
                         (int) $favicon['width'],
                         (int) $favicon['height'],
                         'png'
@@ -6338,7 +6338,7 @@ class AdminThemesControllerCore extends AdminController {
                         '310x310',
                         '310x150',
                     ])) {
-                        $path = Media::getMediaPath(_PS_IMG_DIR_ . "favicon/favicon_{$idShop}_{$favicon['width']}_{$favicon['height']}.png");
+                        $path = Media::getMediaPath(_EPH_IMG_DIR_ . "favicon/favicon_{$idShop}_{$favicon['width']}_{$favicon['height']}.png");
                         $logo = $favicon['width'] == $favicon['height']
                         ? $browserConfig->createElement("square{$favicon['width']}x{$favicon['height']}logo", $path)
                         : $browserConfig->createElement("wide{$favicon['width']}x{$favicon['height']}logo", $path);
@@ -6346,7 +6346,7 @@ class AdminThemesControllerCore extends AdminController {
                     }
 
                     $manifest['icons'][] = [
-                        'src'   => Media::getMediaPath(_PS_IMG_DIR_ . "favicon/favicon_{$idShop}_{$favicon['width']}_{$favicon['height']}.png"),
+                        'src'   => Media::getMediaPath(_EPH_IMG_DIR_ . "favicon/favicon_{$idShop}_{$favicon['width']}_{$favicon['height']}.png"),
                         'sizes' => "{$favicon['width']}x{$favicon['height']}",
                         'type'  => "image/{$favicon['type']}",
                     ];
@@ -6365,8 +6365,8 @@ class AdminThemesControllerCore extends AdminController {
             $filteredHtml .= $dom->saveHTML($link);
         }
 
-        file_put_contents(_PS_IMG_DIR_ . "favicon/browserconfig_{$idShop}.xml", $browserConfig->saveXML());
-        file_put_contents(_PS_IMG_DIR_ . "favicon/manifest_{$idShop}.json", json_encode($manifest, JSON_UNESCAPED_SLASHES + JSON_PRETTY_PRINT));
+        file_put_contents(_EPH_IMG_DIR_ . "favicon/browserconfig_{$idShop}.xml", $browserConfig->saveXML());
+        file_put_contents(_EPH_IMG_DIR_ . "favicon/manifest_{$idShop}.json", json_encode($manifest, JSON_UNESCAPED_SLASHES + JSON_PRETTY_PRINT));
         Configuration::updateValue('EPH_SOURCE_FAVICON_CODE', nl2br(urldecode($filteredHtml)), true);
 
         if (!$this->errors) {
@@ -6408,7 +6408,7 @@ class AdminThemesControllerCore extends AdminController {
     }
 
     /**
-     * Update PS_FAVICON_57
+     * Update EPH_FAVICON_57
      *
      * @return void
      *
@@ -6420,15 +6420,15 @@ class AdminThemesControllerCore extends AdminController {
 
         $idShop = $this->context->shop->id;
 
-        if ($idShop == Configuration::get('PS_SHOP_DEFAULT')) {
-            $this->uploadIco('PS_FAVICON_57', _PS_IMG_DIR_ . 'favicon_57.png');
+        if ($idShop == Configuration::get('EPH_SHOP_DEFAULT')) {
+            $this->uploadIco('EPH_FAVICON_57', _EPH_IMG_DIR_ . 'favicon_57.png');
         }
 
-        if ($this->uploadIco('PS_FAVICON_57', _PS_IMG_DIR_ . 'favicon_57-' . (int) $idShop . '.png')) {
-            Configuration::updateValue('PS_FAVICON_57', 'favicon_57-' . (int) $idShop . '.png');
+        if ($this->uploadIco('EPH_FAVICON_57', _EPH_IMG_DIR_ . 'favicon_57-' . (int) $idShop . '.png')) {
+            Configuration::updateValue('EPH_FAVICON_57', 'favicon_57-' . (int) $idShop . '.png');
         }
 
-        Configuration::updateGlobalValue('PS_FAVICON_57', 'favicon_57.png');
+        Configuration::updateGlobalValue('EPH_FAVICON_57', 'favicon_57.png');
 
         if (!$this->errors) {
             $this->redirect_after = static::$currentIndex . '&token=' . $this->token;
@@ -6439,7 +6439,7 @@ class AdminThemesControllerCore extends AdminController {
     }
 
     /**
-     * Update PS_FAVICON_72
+     * Update EPH_FAVICON_72
      *
      * @since 1.9.1.0
      * @deprecated 1.0.4
@@ -6449,15 +6449,15 @@ class AdminThemesControllerCore extends AdminController {
 
         $idShop = $this->context->shop->id;
 
-        if ($idShop == Configuration::get('PS_SHOP_DEFAULT')) {
-            $this->uploadIco('PS_FAVICON_72', _PS_IMG_DIR_ . 'favicon_72.png');
+        if ($idShop == Configuration::get('EPH_SHOP_DEFAULT')) {
+            $this->uploadIco('EPH_FAVICON_72', _EPH_IMG_DIR_ . 'favicon_72.png');
         }
 
-        if ($this->uploadIco('PS_FAVICON_72', _PS_IMG_DIR_ . 'favicon_72-' . (int) $idShop . '.png')) {
-            Configuration::updateValue('PS_FAVICON_72', 'favicon_72-' . (int) $idShop . '.png');
+        if ($this->uploadIco('EPH_FAVICON_72', _EPH_IMG_DIR_ . 'favicon_72-' . (int) $idShop . '.png')) {
+            Configuration::updateValue('EPH_FAVICON_72', 'favicon_72-' . (int) $idShop . '.png');
         }
 
-        Configuration::updateGlobalValue('PS_FAVICON_72', 'favicon_72.png');
+        Configuration::updateGlobalValue('EPH_FAVICON_72', 'favicon_72.png');
 
         if (!$this->errors) {
             $this->redirect_after = static::$currentIndex . '&token=' . $this->token;
@@ -6468,7 +6468,7 @@ class AdminThemesControllerCore extends AdminController {
     }
 
     /**
-     * Update PS_FAVICON_114
+     * Update EPH_FAVICON_114
      *
      * @since 1.9.1.0
      * @deprecated 1.0.4
@@ -6478,15 +6478,15 @@ class AdminThemesControllerCore extends AdminController {
 
         $idShop = $this->context->shop->id;
 
-        if ($idShop == Configuration::get('PS_SHOP_DEFAULT')) {
-            $this->uploadIco('PS_FAVICON_114', _PS_IMG_DIR_ . 'favicon_114.png');
+        if ($idShop == Configuration::get('EPH_SHOP_DEFAULT')) {
+            $this->uploadIco('EPH_FAVICON_114', _EPH_IMG_DIR_ . 'favicon_114.png');
         }
 
-        if ($this->uploadIco('PS_FAVICON_114', _PS_IMG_DIR_ . 'favicon_114-' . (int) $idShop . '.png')) {
-            Configuration::updateValue('PS_FAVICON_114', 'favicon_114-' . (int) $idShop . '.png');
+        if ($this->uploadIco('EPH_FAVICON_114', _EPH_IMG_DIR_ . 'favicon_114-' . (int) $idShop . '.png')) {
+            Configuration::updateValue('EPH_FAVICON_114', 'favicon_114-' . (int) $idShop . '.png');
         }
 
-        Configuration::updateGlobalValue('PS_FAVICON_114', 'favicon_114.png');
+        Configuration::updateGlobalValue('EPH_FAVICON_114', 'favicon_114.png');
 
         if (!$this->errors) {
             $this->redirect_after = static::$currentIndex . '&token=' . $this->token;
@@ -6497,7 +6497,7 @@ class AdminThemesControllerCore extends AdminController {
     }
 
     /**
-     * Update PS_FAVICON_144
+     * Update EPH_FAVICON_144
      *
      * @since 1.9.1.0
      * @deprecated 1.0.4
@@ -6507,15 +6507,15 @@ class AdminThemesControllerCore extends AdminController {
 
         $idShop = $this->context->shop->id;
 
-        if ($idShop == Configuration::get('PS_SHOP_DEFAULT')) {
-            $this->uploadIco('PS_FAVICON_144', _PS_IMG_DIR_ . 'favicon_144.png');
+        if ($idShop == Configuration::get('EPH_SHOP_DEFAULT')) {
+            $this->uploadIco('EPH_FAVICON_144', _EPH_IMG_DIR_ . 'favicon_144.png');
         }
 
-        if ($this->uploadIco('PS_FAVICON_144', _PS_IMG_DIR_ . 'favicon_144-' . (int) $idShop . '.png')) {
-            Configuration::updateValue('PS_FAVICON_144', 'favicon_144-' . (int) $idShop . '.png');
+        if ($this->uploadIco('EPH_FAVICON_144', _EPH_IMG_DIR_ . 'favicon_144-' . (int) $idShop . '.png')) {
+            Configuration::updateValue('EPH_FAVICON_144', 'favicon_144-' . (int) $idShop . '.png');
         }
 
-        Configuration::updateGlobalValue('PS_FAVICON_144', 'favicon_144.png');
+        Configuration::updateGlobalValue('EPH_FAVICON_144', 'favicon_144.png');
 
         if (!$this->errors) {
             $this->redirect_after = static::$currentIndex . '&token=' . $this->token;
@@ -6526,7 +6526,7 @@ class AdminThemesControllerCore extends AdminController {
     }
 
     /**
-     * Update PS_FAVICON_192
+     * Update EPH_FAVICON_192
      *
      * @since 1.9.1.0
      * @deprecated 1.0.4
@@ -6536,15 +6536,15 @@ class AdminThemesControllerCore extends AdminController {
 
         $idShop = $this->context->shop->id;
 
-        if ($idShop == Configuration::get('PS_SHOP_DEFAULT')) {
-            $this->uploadIco('PS_FAVICON_192', _PS_IMG_DIR_ . 'favicon_192.png');
+        if ($idShop == Configuration::get('EPH_SHOP_DEFAULT')) {
+            $this->uploadIco('EPH_FAVICON_192', _EPH_IMG_DIR_ . 'favicon_192.png');
         }
 
-        if ($this->uploadIco('PS_FAVICON_192', _PS_IMG_DIR_ . 'favicon_192-' . (int) $idShop . '.png')) {
-            Configuration::updateValue('PS_FAVICON_192', 'favicon_192-' . (int) $idShop . '.png');
+        if ($this->uploadIco('EPH_FAVICON_192', _EPH_IMG_DIR_ . 'favicon_192-' . (int) $idShop . '.png')) {
+            Configuration::updateValue('EPH_FAVICON_192', 'favicon_192-' . (int) $idShop . '.png');
         }
 
-        Configuration::updateGlobalValue('PS_FAVICON_192', 'favicon_192.png');
+        Configuration::updateGlobalValue('EPH_FAVICON_192', 'favicon_192.png');
 
         if (!$this->errors) {
             $this->redirect_after = static::$currentIndex . '&token=' . $this->token;
@@ -6563,7 +6563,7 @@ class AdminThemesControllerCore extends AdminController {
 
         try {
             $template = (string) (new \GuzzleHttp\Client([
-                'verify'  => _PS_TOOL_DIR_ . 'cacert.pem',
+                'verify'  => _EPH_TOOL_DIR_ . 'cacert.pem',
                 'timeout' => 20,
             ]))->get('https://raw.githubusercontent.com/ephenyx/favicons/master/template.html')->getBody();
         } catch (Exception $e) {
@@ -6825,7 +6825,7 @@ class AdminThemesControllerCore extends AdminController {
         );
 
         if ($result) {
-            $idTheme = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $idTheme = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`id_theme`')
                     ->from('theme_meta')
@@ -6888,7 +6888,7 @@ class AdminThemesControllerCore extends AdminController {
         );
 
         if ($result) {
-            $idTheme = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $idTheme = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`id_theme`')
                     ->from('theme_meta')
@@ -6967,7 +6967,7 @@ class AdminThemesControllerCore extends AdminController {
      */
     protected function processUpdateOptions() {
 
-        if (!($this->tabAccess['add'] && $this->tabAccess['edit'] && $this->tabAccess['delete']) || _PS_MODE_DEMO_) {
+        if (!($this->tabAccess['add'] && $this->tabAccess['edit'] && $this->tabAccess['delete']) || _EPH_MODE_DEMO_) {
             $this->errors[] = Tools::displayError('You do not have permission to edit here.');
         } else {
             parent::processUpdateOptions();
@@ -7038,11 +7038,11 @@ class AdminThemesControllerCore extends AdminController {
             return '';
         }
 
-        if (file_exists(_PS_TMP_IMG_DIR_ . $cacheImage) && $regenerate) {
-            @unlink(_PS_TMP_IMG_DIR_ . $cacheImage);
+        if (file_exists(_EPH_TMP_IMG_DIR_ . $cacheImage) && $regenerate) {
+            @unlink(_EPH_TMP_IMG_DIR_ . $cacheImage);
         }
 
-        if ($regenerate || !file_exists(_PS_TMP_IMG_DIR_ . $cacheImage)) {
+        if ($regenerate || !file_exists(_EPH_TMP_IMG_DIR_ . $cacheImage)) {
             $infos = getimagesize($image);
 
             // Evaluate the memory required to resize the image: if it's too much, you can't resize it.
@@ -7058,7 +7058,7 @@ class AdminThemesControllerCore extends AdminController {
             // Size is already ok
 
             if ($y < $size && $x <= $maxX) {
-                copy($image, _PS_TMP_IMG_DIR_ . $cacheImage);
+                copy($image, _EPH_TMP_IMG_DIR_ . $cacheImage);
             }
 
             // We need to resize */
@@ -7070,7 +7070,7 @@ class AdminThemesControllerCore extends AdminController {
                     $size = $y / ($x / $maxX);
                 }
 
-                ImageManager::resize($image, _PS_TMP_IMG_DIR_ . $cacheImage, $ratio_x, $size, $imageType);
+                ImageManager::resize($image, _EPH_TMP_IMG_DIR_ . $cacheImage, $ratio_x, $size, $imageType);
             }
 
         }
@@ -7080,7 +7080,7 @@ class AdminThemesControllerCore extends AdminController {
         if (Context::getContext()->controller->controller_type == 'admin') {
             return '../img/tmp/' . $cacheImage . ($disableCache ? '?time=' . time() : '');
         } else {
-            return _PS_TMP_IMG_ . $cacheImage . ($disableCache ? '?time=' . time() : '');
+            return _EPH_TMP_IMG_ . $cacheImage . ($disableCache ? '?time=' . time() : '');
         }
 
     }

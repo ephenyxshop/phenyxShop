@@ -79,11 +79,11 @@ class ThemeCore extends ObjectModel {
         $availableTheme = [];
 
         if (empty($dirlist)) {
-            $themes = scandir(_PS_ALL_THEMES_DIR_);
+            $themes = scandir(_EPH_ALL_THEMES_DIR_);
 
             foreach ($themes as $theme) {
 
-                if (is_dir(_PS_ALL_THEMES_DIR_ . DIRECTORY_SEPARATOR . $theme) && $theme[0] != '.') {
+                if (is_dir(_EPH_ALL_THEMES_DIR_ . DIRECTORY_SEPARATOR . $theme) && $theme[0] != '.') {
                     $dirlist[] = $theme;
                 }
 
@@ -144,8 +144,8 @@ class ThemeCore extends ObjectModel {
      */
     public static function getByDirectory($directory) {
 
-        if (is_string($directory) && strlen($directory) > 0 && file_exists(_PS_ALL_THEMES_DIR_ . $directory) && is_dir(_PS_ALL_THEMES_DIR_ . $directory)) {
-            $idTheme = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        if (is_string($directory) && strlen($directory) > 0 && file_exists(_EPH_ALL_THEMES_DIR_ . $directory) && is_dir(_EPH_ALL_THEMES_DIR_ . $directory)) {
+            $idTheme = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`id_theme`')
                     ->from('theme')
@@ -212,14 +212,14 @@ class ThemeCore extends ObjectModel {
         $installedThemeDirectories = Theme::getInstalledThemeDirectories();
         $notInstalledTheme = [];
 
-        foreach (glob(_PS_ALL_THEMES_DIR_ . '*', GLOB_ONLYDIR) as $themeDir) {
+        foreach (glob(_EPH_ALL_THEMES_DIR_ . '*', GLOB_ONLYDIR) as $themeDir) {
             $dir = basename($themeDir);
 
             if (!in_array($dir, $installedThemeDirectories)) {
-                $xmlTheme = static::loadConfigFromFile(_PS_ALL_THEMES_DIR_ . $dir . '/Config.xml', true);
+                $xmlTheme = static::loadConfigFromFile(_EPH_ALL_THEMES_DIR_ . $dir . '/Config.xml', true);
 
                 if (!$xmlTheme) {
-                    $xmlTheme = static::loadConfigFromFile(_PS_ALL_THEMES_DIR_ . $dir . '/config.xml', true);
+                    $xmlTheme = static::loadConfigFromFile(_EPH_ALL_THEMES_DIR_ . $dir . '/config.xml', true);
                 }
 
                 if ($xmlTheme) {
@@ -253,7 +253,7 @@ class ThemeCore extends ObjectModel {
     public static function getInstalledThemeDirectories() {
 
         $list = [];
-        $tmp = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $tmp = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`directory`')
                 ->from('theme')
@@ -277,7 +277,7 @@ class ThemeCore extends ObjectModel {
      */
     public function isUsed() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(*)')
                 ->from('shop')
@@ -298,7 +298,7 @@ class ThemeCore extends ObjectModel {
      */
     public function add($autoDate = true, $nullValues = false) {
 
-        if (!is_dir(_PS_ALL_THEMES_DIR_ . $this->directory)) {
+        if (!is_dir(_EPH_ALL_THEMES_DIR_ . $this->directory)) {
             return false;
         }
 
@@ -358,7 +358,7 @@ class ThemeCore extends ObjectModel {
      */
     public function hasColumns($page) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('IFNULL(`left_column`, `default_left_column`) AS `left_column`, IFNULL(`right_column`, `default_right_column`) AS `right_column`')
                 ->from('theme', 't')
@@ -380,7 +380,7 @@ class ThemeCore extends ObjectModel {
      */
     public function hasColumnsSettings($page) {
 
-        return (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('m.`id_meta`')
                 ->from('theme', 't')
@@ -402,7 +402,7 @@ class ThemeCore extends ObjectModel {
      */
     public function hasLeftColumn($page = null) {
 
-        return (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('IFNULL(`left_column`, `default_left_column`)')
                 ->from('theme', 't')
@@ -424,7 +424,7 @@ class ThemeCore extends ObjectModel {
      */
     public function hasRightColumn($page = null) {
 
-        return (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('IFNULL(`right_column`, `default_right_column`)')
                 ->from('theme', 't')
@@ -449,7 +449,7 @@ class ThemeCore extends ObjectModel {
             return false;
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('theme_meta')
@@ -568,10 +568,10 @@ class ThemeCore extends ObjectModel {
      */
     public function loadConfigFile($validate = false) {
 
-        $path = _PS_ROOT_DIR_ . '/app/xml/themes/' . $this->name . '.xml';
+        $path = _EPH_ROOT_DIR_ . '/app/xml/themes/' . $this->name . '.xml';
 
         if (!file_exists($path)) {
-            $path = _PS_ROOT_DIR_ . '/app/xml/themes/default.xml';
+            $path = _EPH_ROOT_DIR_ . '/app/xml/themes/default.xml';
         }
 
         if (!file_exists($path)) {

@@ -61,7 +61,7 @@ abstract class StockManagerModuleCore extends Module
      */
     public function hookStockManager()
     {
-        $classFile = _PS_MODULE_DIR_.'/'.$this->name.'/'.$this->stock_manager_class.'.php';
+        $classFile = _EPH_MODULE_DIR_.'/'.$this->name.'/'.$this->stock_manager_class.'.php';
 
         if (!isset($this->stock_manager_class) || !file_exists($classFile)) {
             die(sprintf(Tools::displayError('Incorrect Stock Manager class [%s]'), $this->stock_manager_class));

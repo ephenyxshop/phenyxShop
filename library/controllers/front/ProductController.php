@@ -87,14 +87,14 @@ class ProductControllerCore extends FrontController
         }
 		
 
-        if (Configuration::get('PS_DISPLAY_JQZOOM') == 1) {
+        if (Configuration::get('EPH_DISPLAY_JQZOOM') == 1) {
             $this->addJqueryPlugin('jqzoom');
         }
     }
 	
 	protected function isEnableBlockCartAjax()
     {
-        if (Configuration::get('PS_BLOCK_CART_AJAX')) {
+        if (Configuration::get('EPH_BLOCK_CART_AJAX')) {
         	return true;
         }
         return false;
@@ -326,7 +326,7 @@ class ProductControllerCore extends FrontController
 
             $this->context->smarty->assign(
                 [
-                    'stock_management'         => Configuration::get('PS_STOCK_MANAGEMENT'),
+                    'stock_management'         => Configuration::get('EPH_STOCK_MANAGEMENT'),
                     'customizationFields'      => $customizationFields,
                     'id_customization'         => empty($customizationDatas) ? null : $customizationDatas[0]['id_customization'],
                     'accessories'              => $accessories,
@@ -337,7 +337,7 @@ class ProductControllerCore extends FrontController
                     'features'                 => $this->product->getFrontFeatures($this->context->language->id),
                     'attachments'              => (($this->product->cache_has_attachments) ? $this->product->getAttachments($this->context->language->id) : []),
                     'allow_oosp'               => $this->product->isAvailableWhenOutOfStock((int) $this->product->out_of_stock),
-                    'last_qties'               => (int) Configuration::get('PS_LAST_QTIES'),
+                    'last_qties'               => (int) Configuration::get('EPH_LAST_QTIES'),
                     'HOOK_EXTRA_LEFT'          => Hook::exec('displayLeftColumnProduct'),
                     'HOOK_EXTRA_RIGHT'         => Hook::exec('displayRightColumnProduct'),
                     'HOOK_PRODUCT_OOS'         => Hook::exec('actionProductOutOfStock', ['product' => $this->product]),
@@ -345,11 +345,11 @@ class ProductControllerCore extends FrontController
                     'HOOK_PRODUCT_TAB'         => Hook::exec('displayProductTab', ['product' => $this->product]),
                     'HOOK_PRODUCT_TAB_CONTENT' => Hook::exec('displayProductTabContent', ['product' => $this->product]),
                     'HOOK_PRODUCT_CONTENT'     => Hook::exec('displayProductContent', ['product' => $this->product]),
-                    'display_qties'            => (int) Configuration::get('PS_DISPLAY_QTIES'),
+                    'display_qties'            => (int) Configuration::get('EPH_DISPLAY_QTIES'),
                     'display_ht'               => !Tax::excludeTaxeOption(),
-                    'jqZoomEnabled'            => Configuration::get('PS_DISPLAY_JQZOOM'),
+                    'jqZoomEnabled'            => Configuration::get('EPH_DISPLAY_JQZOOM'),
                     'ENT_NOQUOTES'             => ENT_NOQUOTES,
-                    'outOfStockAllowed'        => (int) Configuration::get('PS_ORDER_OUT_OF_STOCK'),
+                    'outOfStockAllowed'        => (int) Configuration::get('EPH_ORDER_OUT_OF_STOCK'),
                     'errors'                   => $this->errors,
                     'body_classes'             => [
                         $this->php_self.'-'.$this->product->id,
@@ -357,12 +357,12 @@ class ProductControllerCore extends FrontController
                         'category-'.(isset($this->category) ? $this->category->id : ''),
                         'category-'.(isset($this->category) ? $this->category->getFieldByLang('link_rewrite') : ''),
                     ],
-                    'display_discount_price'   => Configuration::get('PS_DISPLAY_DISCOUNT_PRICE'),
-                    'show_condition'           => Configuration::get('PS_SHOW_CONDITION'),
+                    'display_discount_price'   => Configuration::get('EPH_DISPLAY_DISCOUNT_PRICE'),
+                    'show_condition'           => Configuration::get('EPH_SHOW_CONDITION'),
                 ]
             );
         }
-        $this->setTemplate(_PS_THEME_DIR_.'product.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_.'product.tpl');
     }
 
     /**
@@ -409,23 +409,23 @@ class ProductControllerCore extends FrontController
         foreach ($_FILES as $fieldName => $file) {
             if (in_array($fieldName, $authorizedFileFields) && isset($file['tmp_name']) && !empty($file['tmp_name'])) {
                 $fileName = md5(uniqid(rand(), true));
-                if ($error = ImageManager::validateUpload($file, (int) Configuration::get('PS_PRODUCT_PICTURE_MAX_SIZE'))) {
+                if ($error = ImageManager::validateUpload($file, (int) Configuration::get('EPH_PRODUCT_PICTURE_MAX_SIZE'))) {
                     $this->errors[] = $error;
                 }
 
-                $productPictureWidth = (int) Configuration::get('PS_PRODUCT_PICTURE_WIDTH');
-                $productPictureHeight = (int) Configuration::get('PS_PRODUCT_PICTURE_HEIGHT');
-                $tmpName = tempnam(_PS_TMP_IMG_DIR_, 'PS');
+                $productPictureWidth = (int) Configuration::get('EPH_PRODUCT_PICTURE_WIDTH');
+                $productPictureHeight = (int) Configuration::get('EPH_PRODUCT_PICTURE_HEIGHT');
+                $tmpName = tempnam(_EPH_TMP_IMG_DIR_, 'PS');
                 if ($error || (!$tmpName || !move_uploaded_file($file['tmp_name'], $tmpName))) {
                     return false;
                 }
                 /* Original file */
-                if (!ImageManager::resize($tmpName, _PS_UPLOAD_DIR_.$fileName)) {
+                if (!ImageManager::resize($tmpName, _EPH_UPLOAD_DIR_.$fileName)) {
                     $this->errors[] = Tools::displayError('An error occurred during the image upload process.');
                 } /* A smaller one */
-                elseif (!ImageManager::resize($tmpName, _PS_UPLOAD_DIR_.$fileName.'_small', $productPictureWidth, $productPictureHeight)) {
+                elseif (!ImageManager::resize($tmpName, _EPH_UPLOAD_DIR_.$fileName.'_small', $productPictureWidth, $productPictureHeight)) {
                     $this->errors[] = Tools::displayError('An error occurred during the image upload process.');
-                } elseif (!chmod(_PS_UPLOAD_DIR_.$fileName, 0777) || !chmod(_PS_UPLOAD_DIR_.$fileName.'_small', 0777)) {
+                } elseif (!chmod(_EPH_UPLOAD_DIR_.$fileName, 0777) || !chmod(_EPH_UPLOAD_DIR_.$fileName.'_small', 0777)) {
                     $this->errors[] = Tools::displayError('An error occurred during the image upload process.');
                 } else {
                     $this->context->cart->addPictureToProduct($this->product->id, $indexes[$fieldName], Product::CUSTOMIZE_FILE, $fileName);
@@ -512,7 +512,7 @@ class ProductControllerCore extends FrontController
         $accessories_groups = AccessoriesGroupAbstract::getAccessoriesByGroups($id_groups, array($this->product->id), true, $this->context->language->id, $include_out_of_stock, true);
 
         $accessories_table_price = array();
-        $currency_decimals = $this->context->currency->decimals * _PS_PRICE_DISPLAY_PRECISION_;
+        $currency_decimals = $this->context->currency->decimals * _EPH_PRICE_DISPLAY_PRECISION_;
         $use_tax = Product::getTaxCalculationMethod($this->context->customer->id) ? false : true;
         $random_main_product_id = Tools::passwdGen(8, 'NO_NUMERIC');
        
@@ -618,7 +618,7 @@ class ProductControllerCore extends FrontController
                 'image_fancybox' => MaLink::getProductImageLink($accessory['link_rewrite'], $combination['id_image'], Configuration::get('HSMA_IMAGE_SIZE_IN_FANCYBOX')),
                 'image_default' => $combination['image'],
                 'name' => $combination['name'],
-                'specific_prices' => MaSpecificPrice::getSpecificPrices($accessory['id_accessory'], $id_customer, ($id_customer ? Customer::getDefaultGroupId((int) $id_customer) : (int) Group::getCurrent()->id), ($id_customer ? Customer::getCurrentCountry($id_customer) : Configuration::get('PS_COUNTRY_DEFAULT')), (int) $this->context->currency->id, (int) $this->context->shop->id, false, $combination['id_product_attribute']),
+                'specific_prices' => MaSpecificPrice::getSpecificPrices($accessory['id_accessory'], $id_customer, ($id_customer ? Customer::getDefaultGroupId((int) $id_customer) : (int) Group::getCurrent()->id), ($id_customer ? Customer::getCurrentCountry($id_customer) : Configuration::get('EPH_COUNTRY_DEFAULT')), (int) $this->context->currency->id, (int) $this->context->shop->id, false, $combination['id_product_attribute']),
                 'avaiable_quantity' => (int) $combination['stock_available'],
                 'out_of_stock' => MaProduct::isAvailableWhenOutOfStock($combination['out_of_stock']),
                 'is_stock_available' => (int) $this->isStockAvailable($accessory['id_accessory'], (int) $combination['id_product_attribute'], (int) $accessory['default_quantity']),
@@ -706,11 +706,11 @@ class ProductControllerCore extends FrontController
         $id_customer = ($this->context->customer->isLogged()) ? (int) $this->context->customer->id : 0;
         $formated_combinations = array();
         foreach ($product['combinations'] as $id_product_attribute => $combination) {
-            $price = MaProduct::getPriceStatic($product['id_product'], Product::getTaxCalculationMethod($this->context->customer->id) ? false : true, $combination['id_product_attribute'], (int) $this->context->currency->decimals * _PS_PRICE_DISPLAY_PRECISION_);
+            $price = MaProduct::getPriceStatic($product['id_product'], Product::getTaxCalculationMethod($this->context->customer->id) ? false : true, $combination['id_product_attribute'], (int) $this->context->currency->decimals * _EPH_PRICE_DISPLAY_PRECISION_);
             $formated_combinations[$id_product_attribute] = array(
                 'price' => $price,
                 'name' => $combination['name'],
-                'specific_prices' => MaSpecificPrice::getSpecificPrices($product['id_product'], $id_customer, ($id_customer ? Customer::getDefaultGroupId((int) $id_customer) : (int) Group::getCurrent()->id), ($id_customer ? Customer::getCurrentCountry($id_customer) : Configuration::get('PS_COUNTRY_DEFAULT')), (int) $this->context->currency->id, (int) $this->context->shop->id, false, $combination['id_product_attribute']),
+                'specific_prices' => MaSpecificPrice::getSpecificPrices($product['id_product'], $id_customer, ($id_customer ? Customer::getDefaultGroupId((int) $id_customer) : (int) Group::getCurrent()->id), ($id_customer ? Customer::getCurrentCountry($id_customer) : Configuration::get('EPH_COUNTRY_DEFAULT')), (int) $this->context->currency->id, (int) $this->context->shop->id, false, $combination['id_product_attribute']),
                 //'avaiable_quantity' => (int) $combination['stock_available'],
                 'out_of_stock' => MaProduct::isAvailableWhenOutOfStock($combination['out_of_stock']),
             );
@@ -778,20 +778,20 @@ class ProductControllerCore extends FrontController
         }
 
         // Tax
-        $tax = (float) $this->product->getTaxesRate(new Address((int) $this->context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')}));
+        $tax = (float) $this->product->getTaxesRate(new Address((int) $this->context->cart->{Configuration::get('EPH_TAX_ADDRESS_TYPE')}));
         $this->context->smarty->assign('tax_rate', $tax);
 
         $productPriceWithTax = Product::getPriceStatic($this->product->id, true, null, 6);
-        if (Product::$_taxCalculationMethod == PS_TAX_INC) {
-            $productPriceWithTax = Tools::ps_round($productPriceWithTax, 2);
+        if (Product::$_taxCalculationMethod == EPH_TAX_INC) {
+            $productPriceWithTax = Tools::EPH_round($productPriceWithTax, 2);
         }
         $productPriceWithoutEcoTax = (float) $productPriceWithTax - $this->product->ecotax;
 
-        $ecotaxRate = (float) Tax::getProductEcotaxRate($this->context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
-        if (Product::$_taxCalculationMethod == PS_TAX_INC && (int) Configuration::get('PS_TAX')) {
-            $ecotaxTaxAmount = Tools::ps_round($this->product->ecotax * (1 + $ecotaxRate / 100), 2);
+        $ecotaxRate = (float) Tax::getProductEcotaxRate($this->context->cart->{Configuration::get('EPH_TAX_ADDRESS_TYPE')});
+        if (Product::$_taxCalculationMethod == EPH_TAX_INC && (int) Configuration::get('EPH_TAX')) {
+            $ecotaxTaxAmount = Tools::EPH_round($this->product->ecotax * (1 + $ecotaxRate / 100), 2);
         } else {
-            $ecotaxTaxAmount = Tools::ps_round($this->product->ecotax, 2);
+            $ecotaxTaxAmount = Tools::EPH_round($this->product->ecotax, 2);
         }
 
         $idCurrency = (int) $this->context->cookie->id_currency;
@@ -804,7 +804,7 @@ class ProductControllerCore extends FrontController
                 $quantityDiscount['base_price'] = 0;
             }
             if ($quantityDiscount['id_product_attribute']) {
-                $quantityDiscount['base_price'] = $this->product->getPrice(Product::$_taxCalculationMethod === PS_TAX_INC, $quantityDiscount['id_product_attribute']);
+                $quantityDiscount['base_price'] = $this->product->getPrice(Product::$_taxCalculationMethod === EPH_TAX_INC, $quantityDiscount['id_product_attribute']);
                 $combination = new Combination((int) $quantityDiscount['id_product_attribute']);
                 $attributes = $combination->getAttributesName((int) $this->context->language->id);
                 $quantityDiscount['attributes'] = '';
@@ -813,25 +813,25 @@ class ProductControllerCore extends FrontController
                 }
                 $quantityDiscount['attributes'] = rtrim($quantityDiscount['attributes'], ' - ');
             } else {
-                $quantityDiscount['base_price'] = $this->product->getPrice(Product::$_taxCalculationMethod == PS_TAX_INC);
+                $quantityDiscount['base_price'] = $this->product->getPrice(Product::$_taxCalculationMethod == EPH_TAX_INC);
             }
             if ((int) $quantityDiscount['id_currency'] == 0 && $quantityDiscount['reduction_type'] == 'amount') {
                 $quantityDiscount['reduction'] = Tools::convertPriceFull($quantityDiscount['reduction'], null, $this->context->currency);
             }
         }
 
-        $address = new Address($this->context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
+        $address = new Address($this->context->cart->{Configuration::get('EPH_TAX_ADDRESS_TYPE')});
         $this->context->smarty->assign(
             [
                 'quantity_discounts'         => $this->formatQuantityDiscounts($quantityDiscounts, null, (float) $tax, $ecotaxTaxAmount),
                 'ecotax_tax_inc'             => $ecotaxTaxAmount,
-                'ecotax_tax_exc'             => Tools::ps_round($this->product->ecotax, 2),
+                'ecotax_tax_exc'             => Tools::EPH_round($this->product->ecotax, 2),
                 'ecotaxTax_rate'             => $ecotaxRate,
                 'productPriceWithoutEcoTax'  => (float) $productPriceWithoutEcoTax,
                 'group_reduction'            => $groupReduction,
                 'no_tax'                     => Tax::excludeTaxeOption() || !$this->product->getTaxesRate($address),
                 'ecotax'                     => (!count($this->errors) && $this->product->ecotax > 0 ? Tools::convertPrice((float) $this->product->ecotax) : 0),
-                'tax_enabled'                => Configuration::get('PS_TAX') && !Configuration::get('AEUC_LABEL_TAX_INC_EXC'),
+                'tax_enabled'                => Configuration::get('EPH_TAX') && !Configuration::get('AEUC_LABEL_TAX_INC_EXC'),
                 'customer_group_without_tax' => Group::getPriceDisplayMethod($this->context->customer->id_default_group),
             ]
         );
@@ -868,7 +868,7 @@ class ProductControllerCore extends FrontController
                 $row['real_value'] = $row['base_price'] > 0 ? $row['base_price'] - $currentPrice : $currentPrice;
             } else {
                 if ($row['reduction_type'] == 'amount') {
-                    if (Product::$_taxCalculationMethod == PS_TAX_INC) {
+                    if (Product::$_taxCalculationMethod == EPH_TAX_INC) {
                         $row['real_value'] = $row['reduction_tax'] == 1 ? $row['reduction'] : $row['reduction'] * (1 + $taxRate / 100);
                     } else {
                         $row['real_value'] = $row['reduction_tax'] == 0 ? $row['reduction'] : $row['reduction'] / (1 + $taxRate / 100);
@@ -903,7 +903,7 @@ class ProductControllerCore extends FrontController
             if ($image['cover']) {
                 $this->context->smarty->assign('mainImage', $image);
                 $cover = $image;
-                $cover['id_image'] = (Configuration::get('PS_LEGACY_IMAGES') ? ($this->product->id.'-'.$image['id_image']) : $image['id_image']);
+                $cover['id_image'] = (Configuration::get('EPH_LEGACY_IMAGES') ? ($this->product->id.'-'.$image['id_image']) : $image['id_image']);
                 $cover['id_image_only'] = (int) $image['id_image'];
             }
             $productImages[(int) $image['id_image']] = $image;
@@ -912,7 +912,7 @@ class ProductControllerCore extends FrontController
         if (!isset($cover)) {
             if (isset($images[0])) {
                 $cover = $images[0];
-                $cover['id_image'] = (Configuration::get('PS_LEGACY_IMAGES') ? ($this->product->id.'-'.$images[0]['id_image']) : $images[0]['id_image']);
+                $cover['id_image'] = (Configuration::get('EPH_LEGACY_IMAGES') ? ($this->product->id.'-'.$images[0]['id_image']) : $images[0]['id_image']);
                 $cover['id_image_only'] = (int) $images[0]['id_image'];
             } else {
                 $cover = [
@@ -932,7 +932,7 @@ class ProductControllerCore extends FrontController
                 'largeSize'   => Image::getSize(ImageType::getFormatedName('large')),
                 'homeSize'    => Image::getSize(ImageType::getFormatedName('home')),
                 'cartSize'    => Image::getSize(ImageType::getFormatedName('cart')),
-                'col_img_dir' => _PS_COL_IMG_DIR_,
+                'col_img_dir' => _EPH_COL_IMG_DIR_,
             ]
         );
         if (count($productImages)) {
@@ -959,7 +959,7 @@ class ProductControllerCore extends FrontController
             $combinationPricesSet = [];
             foreach ($attributesGroups as $k => $row) {
                 // Color management
-                if (isset($row['is_color_group']) && $row['is_color_group'] && (isset($row['attribute_color']) && $row['attribute_color']) || (file_exists(_PS_COL_IMG_DIR_.$row['id_attribute'].'.jpg'))) {
+                if (isset($row['is_color_group']) && $row['is_color_group'] && (isset($row['attribute_color']) && $row['attribute_color']) || (file_exists(_EPH_COL_IMG_DIR_.$row['id_attribute'].'.jpg'))) {
                     $colors[$row['id_attribute']]['value'] = $row['attribute_color'];
                     $colors[$row['id_attribute']]['name'] = $row['attribute_name'];
                     if (!isset($colors[$row['id_attribute']]['attributes_quantity'])) {
@@ -1048,7 +1048,7 @@ class ProductControllerCore extends FrontController
                                 if (isset($productImages[$idImage])) {
                                     $cover = $productImages[$idImage];
                                 }
-                                $cover['id_image'] = (Configuration::get('PS_LEGACY_IMAGES') ? ($this->product->id.'-'.$idImage) : (int) $idImage);
+                                $cover['id_image'] = (Configuration::get('EPH_LEGACY_IMAGES') ? ($this->product->id.'-'.$idImage) : (int) $idImage);
                                 $cover['id_image_only'] = (int) $idImage;
                                 $this->context->smarty->assign('cover', $cover);
                             }
@@ -1058,7 +1058,7 @@ class ProductControllerCore extends FrontController
             }
 
             // wash attributes list (if some attributes are unavailables and if allowed to wash it)
-            if (!Product::isAvailableWhenOutOfStock($this->product->out_of_stock) && Configuration::get('PS_DISP_UNAVAILABLE_ATTR') == 0) {
+            if (!Product::isAvailableWhenOutOfStock($this->product->out_of_stock) && Configuration::get('EPH_DISP_UNAVAILABLE_ATTR') == 0) {
                 foreach ($groups as &$group) {
                     foreach ($group['attributes_quantity'] as $key => &$quantity) {
                         if ($quantity <= 0) {
@@ -1108,7 +1108,7 @@ class ProductControllerCore extends FrontController
         if (is_array($attributesCombinations) && count($attributesCombinations)) {
             foreach ($attributesCombinations as &$ac) {
                 foreach ($ac as &$val) {
-                    $val = str_replace(Configuration::get('PS_ATTRIBUTE_ANCHOR_SEPARATOR'), '_', Tools::link_rewrite(str_replace([',', '.'], '-', $val)));
+                    $val = str_replace(Configuration::get('EPH_ATTRIBUTE_ANCHOR_SEPARATOR'), '_', Tools::link_rewrite(str_replace([',', '.'], '-', $val)));
                 }
             }
         } else {
@@ -1117,7 +1117,7 @@ class ProductControllerCore extends FrontController
         $this->context->smarty->assign(
             [
                 'attributesCombinations'     => $attributesCombinations,
-                'attribute_anchor_separator' => Configuration::get('PS_ATTRIBUTE_ANCHOR_SEPARATOR'),
+                'attribute_anchor_separator' => Configuration::get('EPH_ATTRIBUTE_ANCHOR_SEPARATOR'),
             ]
         );
     }
@@ -1130,7 +1130,7 @@ class ProductControllerCore extends FrontController
         }
 		
         $use_tax = Product::getTaxCalculationMethod($this->context->customer->id) ? false : true;
-        $decimals = (int) $this->context->currency->decimals * _PS_PRICE_DISPLAY_PRECISION_;
+        $decimals = (int) $this->context->currency->decimals * _EPH_PRICE_DISPLAY_PRECISION_;
         $list_accessories = array(
             'success' => true,
             'show_total_price' => (int) Configuration::get('HSMA_SHOW_TOTAL_PRICE'),

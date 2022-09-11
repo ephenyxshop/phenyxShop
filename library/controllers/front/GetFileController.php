@@ -33,7 +33,7 @@ class GetFileControllerCore extends FrontController {
                 die(Tools::displayError());
             }
 
-            $file = _PS_DOWNLOAD_DIR_ . strval(preg_replace('/\.{2,}/', '.', $filename));
+            $file = _EPH_DOWNLOAD_DIR_ . strval(preg_replace('/\.{2,}/', '.', $filename));
             $filename = ProductDownload::getFilenameFromFilename(Tools::getValue('file'));
 
             if (empty($filename)) {
@@ -93,7 +93,7 @@ class GetFileControllerCore extends FrontController {
                 $this->displayCustomError('This product has been deleted.');
             }
 
-            if (!Validate::isFileName($info['filename']) || !file_exists(_PS_DOWNLOAD_DIR_ . $info['filename'])) {
+            if (!Validate::isFileName($info['filename']) || !file_exists(_EPH_DOWNLOAD_DIR_ . $info['filename'])) {
                 $this->displayCustomError('This file no longer exists.');
             }
 
@@ -124,7 +124,7 @@ class GetFileControllerCore extends FrontController {
             /* Access is authorized -> increment download value for the customer */
             OrderDetail::incrementDownload($info['id_order_detail']);
 
-            $file = _PS_DOWNLOAD_DIR_ . $info['filename'];
+            $file = _EPH_DOWNLOAD_DIR_ . $info['filename'];
             $filename = $info['display_filename'];
         }
 
@@ -344,7 +344,7 @@ class GetFileControllerCore extends FrontController {
         <script type="text/javascript">
           //<![CDATA[
           alert("' . $customMessage . '");
-          window.location.href = "' . __PS_BASE_URI__ . '";
+          window.location.href = "' . __EPH_BASE_URI__ . '";
           //]]>
         </script>';
 

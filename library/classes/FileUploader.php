@@ -185,7 +185,7 @@ class QqUploadedFileForm {
             return ['error' => Tools::displayError('An error occurred during new folder creation')];
         }
 
-        if (!($tmpName = tempnam(_PS_TMP_IMG_DIR_, 'PS')) || !move_uploaded_file($_FILES['qqfile']['tmp_name'], $tmpName)) {
+        if (!($tmpName = tempnam(_EPH_TMP_IMG_DIR_, 'PS')) || !move_uploaded_file($_FILES['qqfile']['tmp_name'], $tmpName)) {
             return ['error' => Tools::displayError('An error occurred during the image upload')];
         } else if (!ImageManager::resize($tmpName, $newPath . '.' . $image->image_format)) {
             return ['error' => Tools::displayError('An error occurred while copying image.')];
@@ -342,7 +342,7 @@ class QqUploadedFileXhr {
             return ['error' => Tools::displayError('An error occurred during new folder creation')];
         }
 
-        if (!($tmpName = tempnam(_PS_TMP_IMG_DIR_, 'PS')) || !$this->upload($tmpName)) {
+        if (!($tmpName = tempnam(_EPH_TMP_IMG_DIR_, 'PS')) || !$this->upload($tmpName)) {
             return ['error' => Tools::displayError('An error occurred during the image upload')];
         } else if (!ImageManager::resize($tmpName, $newPath . '.' . $image->image_format)) {
             return ['error' => Tools::displayError('An error occurred while copying image.')];

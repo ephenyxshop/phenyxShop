@@ -324,8 +324,8 @@ class AddressFormatCore extends ObjectModel
         if ($address && ($address instanceof Address)) {
             if (Module::isInstalled('vatnumber')
                 && Module::isEnabled('vatnumber')
-                && file_exists(_PS_MODULE_DIR_.'vatnumber/vatnumber.php')) {
-                include_once _PS_MODULE_DIR_.'vatnumber/vatnumber.php';
+                && file_exists(_EPH_MODULE_DIR_.'vatnumber/vatnumber.php')) {
+                include_once _EPH_MODULE_DIR_.'vatnumber/vatnumber.php';
 
                 if (method_exists('VatNumber', 'adjustAddressForLayout')) {
                     VatNumber::adjustAddressForLayout($address);
@@ -511,7 +511,7 @@ class AddressFormatCore extends ObjectModel
     /**
      * Returns address format fields in array by country
      *
-     * @param int  $idCountry If null using PS_COUNTRY_DEFAULT
+     * @param int  $idCountry If null using EPH_COUNTRY_DEFAULT
      * @param bool $splitAll
      * @param bool $cleaned
      *
@@ -560,8 +560,8 @@ class AddressFormatCore extends ObjectModel
         if ($address && $address instanceof Address) {
             if (Module::isInstalled('vatnumber')
                 && Module::isEnabled('vatnumber')
-                && file_exists(_PS_MODULE_DIR_.'vatnumber/vatnumber.php')) {
-                include_once _PS_MODULE_DIR_.'vatnumber/vatnumber.php';
+                && file_exists(_EPH_MODULE_DIR_.'vatnumber/vatnumber.php')) {
+                include_once _EPH_MODULE_DIR_.'vatnumber/vatnumber.php';
 
                 if (method_exists('VatNumber', 'adjustAddressForLayout')) {
                     VatNumber::adjustAddressForLayout($address);
@@ -620,7 +620,7 @@ class AddressFormatCore extends ObjectModel
     {
         $out = $this->_getFormatDB($idCountry);
         if (empty($out)) {
-            $out = $this->_getFormatDB(Configuration::get('PS_COUNTRY_DEFAULT'));
+            $out = $this->_getFormatDB(Configuration::get('EPH_COUNTRY_DEFAULT'));
         }
 
         return $out;
@@ -638,7 +638,7 @@ class AddressFormatCore extends ObjectModel
     protected function _getFormatDB($idCountry)
     {
         if (!Cache::isStored('AddressFormat::_getFormatDB'.$idCountry)) {
-            $format = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $format = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                 ->select('`format`')
                 ->from(bqSQL(static::$definition['table']))

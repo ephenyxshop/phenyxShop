@@ -32,7 +32,7 @@ class AdminEmployeeMenusControllerCore extends AdminController {
 
 		$this->cleanTabPositions();
 
-		//$this->extracss = $this->pushCSS([_PS_THEMES_ . $this->bo_theme . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/employee_menus.css']);
+		//$this->extracss = $this->pushCSS([_EPH_THEMES_ . $this->bo_theme . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/employee_menus.css']);
 
 	}
 
@@ -233,7 +233,7 @@ class AdminEmployeeMenusControllerCore extends AdminController {
 
 	public function getEmployeeMenuRequest($idParent = 0) {
 
-		$employee_menus = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$employee_menus = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('b.name, a.id_employee_menu, a.class_name, a.module, a.id_parent, a.id_employee_menu as id,  a.function, a.active, a.position')
 				->from('employee_menu', 'a')
@@ -682,7 +682,7 @@ class AdminEmployeeMenusControllerCore extends AdminController {
 
 	public function cleanTabPositions() {
 
-		$employee_menus = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$employee_menus = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('`id_employee_menu`')
 				->from('employee_menu')
@@ -698,7 +698,7 @@ class AdminEmployeeMenusControllerCore extends AdminController {
 
 		foreach ($employee_menus as $employee_menu) {
 
-			$childs = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+			$childs = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 				(new DbQuery())
 					->select('`id_employee_menu`, `position`')
 					->from('employee_menu')
@@ -739,7 +739,7 @@ class AdminEmployeeMenusControllerCore extends AdminController {
 
 			if ($initPosition > $stopIndex) {
 
-				$objects = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+				$objects = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 					(new DbQuery())
 						->select($this->identifier . ',  `position` ')
 						->from($this->table)
@@ -783,7 +783,7 @@ class AdminEmployeeMenusControllerCore extends AdminController {
 
 			if ($initPosition < $stopIndex) {
 
-				$objects = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+				$objects = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 					(new DbQuery())
 						->select($this->identifier . ',  `position` ')
 						->from($this->table)

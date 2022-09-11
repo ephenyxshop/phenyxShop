@@ -43,15 +43,15 @@ class AdminStdAccountsControllerCore extends AdminController {
         Media::addJsDef([
             'AjaxLink' . $this->controller_name => $this->context->link->getAdminLink($this->controller_name),
         ]);
-        $this->addCSS(__PS_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/account.css', 'all');
-        $this->addJS(__PS_BASE_URI__ . _PS_JS_DIR_ . 'stdaccount.js');
+        $this->addCSS(__EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/account.css', 'all');
+        $this->addJS(__EPH_BASE_URI__ . _EPH_JS_DIR_ . 'stdaccount.js');
 
     }
 
     public function setAjaxMedia() {
 
         return $this->pushJS([
-            _PS_JS_DIR_ . 'stdaccount.js',
+            _EPH_JS_DIR_ . 'stdaccount.js',
         ]);
     }
 
@@ -114,7 +114,7 @@ class AdminStdAccountsControllerCore extends AdminController {
             'AjaxLink'       => $this->context->link->getAdminLink($this->controller_name),
             'paragridScript' => $this->generateParaGridScript(),
             'titleBar'       => $this->TitleBar,
-            'bo_imgdir'      => __PS_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+            'bo_imgdir'      => __EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
             'idController'   => '',
         ]);
 

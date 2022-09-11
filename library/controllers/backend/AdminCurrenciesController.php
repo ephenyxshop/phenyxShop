@@ -55,7 +55,7 @@ class AdminCurrenciesControllerCore extends AdminController {
                 'title' => $this->l('Automatically update currency rates'),
                 'image' => '../img/admin/tab-tools.gif',
                 'info'  => '<div class="alert alert-block"><p>' . $this->l('Use the exchange rate modules to update the rates.') . '<br/>' . $this->l('You can place the following URL in your crontab file, or you can click it yourself regularly:') . '</p>
-                    <p><strong><a href="' . Tools::getShopDomain(true, true) . __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_) . '/cron_currency_rates.php?secure_key=' . md5(_COOKIE_KEY_ . Configuration::get('PS_SHOP_NAME')) . '" onclick="return !window.open($(this).attr(\'href\'));">' . Tools::getShopDomain(true, true) . __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_) . '/cron_currency_rates.php?secure_key=' . md5(_COOKIE_KEY_ . Configuration::get('PS_SHOP_NAME')) . '</a></strong></p></div>',
+                    <p><strong><a href="' . Tools::getShopDomain(true, true) . __EPH_BASE_URI__ . basename(_EPH_ADMIN_DIR_) . '/cron_currency_rates.php?secure_key=' . md5(_COOKIE_KEY_ . Configuration::get('EPH_SHOP_NAME')) . '" onclick="return !window.open($(this).attr(\'href\'));">' . Tools::getShopDomain(true, true) . __EPH_BASE_URI__ . basename(_EPH_ADMIN_DIR_) . '/cron_currency_rates.php?secure_key=' . md5(_COOKIE_KEY_ . Configuration::get('EPH_SHOP_NAME')) . '</a></strong></p></div>',
             ],
         ];
 
@@ -371,7 +371,7 @@ class AdminCurrenciesControllerCore extends AdminController {
 
         if (Validate::isLoadedObject($object)) {
 
-            if ($object->id == Configuration::get('PS_CURRENCY_DEFAULT')) {
+            if ($object->id == Configuration::get('EPH_CURRENCY_DEFAULT')) {
                 $this->errors[] = $this->l('You cannot delete the default currency');
             } else {
                 return true;
@@ -414,7 +414,7 @@ class AdminCurrenciesControllerCore extends AdminController {
 
         if (Validate::isLoadedObject($object)) {
 
-            if ($object->active && $object->id == Configuration::get('PS_CURRENCY_DEFAULT')) {
+            if ($object->active && $object->id == Configuration::get('EPH_CURRENCY_DEFAULT')) {
                 $this->errors[] = $this->l('You cannot disable the default currency');
             } else {
                 return true;

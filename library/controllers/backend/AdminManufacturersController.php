@@ -54,7 +54,7 @@ class AdminManufacturersControllerCore extends AdminController {
         parent::setMedia($isNewTheme);
         $this->addJqueryUi('ui.widget');
         $this->addJqueryPlugin('tagify');
-        $this->addJS(__PS_BASE_URI__ . _PS_JS_DIR_ . 'manufacturer.js');
+        $this->addJS(__EPH_BASE_URI__ . _EPH_JS_DIR_ . 'manufacturer.js');
     }
 
     public function initContent() {
@@ -76,7 +76,7 @@ class AdminManufacturersControllerCore extends AdminController {
             'AjaxLink'        => $this->context->link->getAdminLink($this->controller_name),
             'paragridScript'  => $this->generateParaGridScript(),
             'titleBar'        => $this->TitleBar,
-            'bo_imgdir'       => __PS_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+            'bo_imgdir'       => __EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
             'current_id_lang' => $this->context->language->id,
             'idController'    => '',
         ]);
@@ -314,7 +314,7 @@ class AdminManufacturersControllerCore extends AdminController {
 
         $context = Context::getContext();
 
-        $image = _PS_MANU_IMG_DIR_ . $this->object->id . '.jpg';
+        $image = _EPH_MANU_IMG_DIR_ . $this->object->id . '.jpg';
 
         if (file_exists($image)) {
             $image_url = _THEME_MANU_DIR_ . $this->object->id . '.jpg';
@@ -338,9 +338,9 @@ class AdminManufacturersControllerCore extends AdminController {
             'countries'    => Country::getCountries($this->context->language->id, false),
             'devises'      => Currency::getCurrencies(false, false),
             'address'      => $address,
-            'iso'          => file_exists(__PS_BASE_URI__ . _PS_JS_DIR_ . 'tiny_mce/langs/' . $iso . '.js') ? $iso : 'en',
+            'iso'          => file_exists(__EPH_BASE_URI__ . _EPH_JS_DIR_ . 'tiny_mce/langs/' . $iso . '.js') ? $iso : 'en',
             'path_css'     => _THEME_CSS_DIR_,
-            'ad'           => __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_),
+            'ad'           => __EPH_BASE_URI__ . basename(_EPH_ADMIN_DIR_),
             'image'        => $image_url,
             'image_size'   => $image_size,
             'link'         => $this->context->link,
@@ -376,12 +376,12 @@ class AdminManufacturersControllerCore extends AdminController {
             'taxModes'        => TaxMode::getTaxModes(),
             'currency'        => $context->currency,
             'countries'       => Country::getCountries($this->context->language->id, false),
-            'default_country' => Configuration::get('PS_COUNTRY_DEFAULT'),
+            'default_country' => Configuration::get('EPH_COUNTRY_DEFAULT'),
             'address'         => $address,
-            'iso'             => file_exists(__PS_BASE_URI__ . _PS_JS_DIR_ . 'tiny_mce/langs/' . $iso . '.js') ? $iso : 'en',
+            'iso'             => file_exists(__EPH_BASE_URI__ . _EPH_JS_DIR_ . 'tiny_mce/langs/' . $iso . '.js') ? $iso : 'en',
             'image'           => $image_url,
             'path_css'        => _THEME_CSS_DIR_,
-            'ad'              => __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_),
+            'ad'              => __EPH_BASE_URI__ . basename(_EPH_ADMIN_DIR_),
             'link'            => $this->context->link,
             'formId'          => 'form-' . $this->table,
         ]);
@@ -435,7 +435,7 @@ class AdminManufacturersControllerCore extends AdminController {
             if (is_array($files) && count($files)) {
 
                 foreach ($files as $image) {
-                    $destinationFile = _PS_MANU_IMG_DIR_ . $this->object->id . '.jpg.';
+                    $destinationFile = _EPH_MANU_IMG_DIR_ . $this->object->id . '.jpg.';
                     $fileName = $this->object->id . '.jpg.';
 
                     if (copy($image['save_path'], $destinationFile)) {
@@ -444,16 +444,16 @@ class AdminManufacturersControllerCore extends AdminController {
 
                         foreach ($imagesTypes as $k => $imageType) {
                             ImageManager::resize(
-                                _PS_MANU_IMG_DIR_ . $fileName,
-                                _PS_MANU_IMG_DIR_ . $this->object->id . '-' . stripslashes($imageType['name']) . '.jpg',
+                                _EPH_MANU_IMG_DIR_ . $fileName,
+                                _EPH_MANU_IMG_DIR_ . $this->object->id . '-' . stripslashes($imageType['name']) . '.jpg',
                                 (int) $imageType['width'],
                                 (int) $imageType['height']
                             );
 
                             if (ImageManager::webpSupport()) {
                                 ImageManager::resize(
-                                    _PS_MANU_IMG_DIR_ . $fileName,
-                                    _PS_MANU_IMG_DIR_ . $this->object->id . '-' . stripslashes($imageType['name']) . '.webp',
+                                    _EPH_MANU_IMG_DIR_ . $fileName,
+                                    _EPH_MANU_IMG_DIR_ . $this->object->id . '-' . stripslashes($imageType['name']) . '.webp',
                                     (int) $imageType['width'],
                                     (int) $imageType['height'],
                                     'webp'
@@ -462,16 +462,16 @@ class AdminManufacturersControllerCore extends AdminController {
 
                             if (ImageManager::retinaSupport()) {
                                 ImageManager::resize(
-                                    _PS_MANU_IMG_DIR_ . $fileName,
-                                    _PS_MANU_IMG_DIR_ . $this->object->id . '-' . stripslashes($imageType['name']) . '2x.jpg',
+                                    _EPH_MANU_IMG_DIR_ . $fileName,
+                                    _EPH_MANU_IMG_DIR_ . $this->object->id . '-' . stripslashes($imageType['name']) . '2x.jpg',
                                     (int) $imageType['width'] * 2,
                                     (int) $imageType['height'] * 2
                                 );
 
                                 if (ImageManager::webpSupport()) {
                                     ImageManager::resize(
-                                        _PS_MANU_IMG_DIR_ . $fileName,
-                                        _PS_MANU_IMG_DIR_ . $this->object->id . '-' . stripslashes($imageType['name']) . '2x.webp',
+                                        _EPH_MANU_IMG_DIR_ . $fileName,
+                                        _EPH_MANU_IMG_DIR_ . $this->object->id . '-' . stripslashes($imageType['name']) . '2x.webp',
                                         (int) $imageType['width'] * 2,
                                         (int) $imageType['height'] * 2,
                                         'webp'
@@ -482,7 +482,7 @@ class AdminManufacturersControllerCore extends AdminController {
 
                         }
 
-                        $currentLogoFile = _PS_TMP_IMG_DIR_ . 'manufacturer_mini_' . $this->object->id . '_' . $this->context->shop->id . '.jpg';
+                        $currentLogoFile = _EPH_TMP_IMG_DIR_ . 'manufacturer_mini_' . $this->object->id . '_' . $this->context->shop->id . '.jpg';
                     }
 
                 }
@@ -576,7 +576,7 @@ class AdminManufacturersControllerCore extends AdminController {
         if (is_array($files) && count($files)) {
 
             foreach ($files as $image) {
-                $destinationFile = _PS_MANU_IMG_DIR_ . $this->object->id . '.jpg.';
+                $destinationFile = _EPH_MANU_IMG_DIR_ . $this->object->id . '.jpg.';
                 $fileName = $this->object->id . '.jpg.';
 
                 if (copy($image['save_path'], $destinationFile)) {
@@ -585,16 +585,16 @@ class AdminManufacturersControllerCore extends AdminController {
 
                     foreach ($imagesTypes as $k => $imageType) {
                         ImageManager::resize(
-                            _PS_MANU_IMG_DIR_ . $fileName,
-                            _PS_MANU_IMG_DIR_ . $this->object->id . '-' . stripslashes($imageType['name']) . '.jpg',
+                            _EPH_MANU_IMG_DIR_ . $fileName,
+                            _EPH_MANU_IMG_DIR_ . $this->object->id . '-' . stripslashes($imageType['name']) . '.jpg',
                             (int) $imageType['width'],
                             (int) $imageType['height']
                         );
 
                         if (ImageManager::webpSupport()) {
                             ImageManager::resize(
-                                _PS_MANU_IMG_DIR_ . $fileName,
-                                _PS_MANU_IMG_DIR_ . $this->object->id . '-' . stripslashes($imageType['name']) . '.webp',
+                                _EPH_MANU_IMG_DIR_ . $fileName,
+                                _EPH_MANU_IMG_DIR_ . $this->object->id . '-' . stripslashes($imageType['name']) . '.webp',
                                 (int) $imageType['width'],
                                 (int) $imageType['height'],
                                 'webp'
@@ -603,16 +603,16 @@ class AdminManufacturersControllerCore extends AdminController {
 
                         if (ImageManager::retinaSupport()) {
                             ImageManager::resize(
-                                _PS_MANU_IMG_DIR_ . $fileName,
-                                _PS_MANU_IMG_DIR_ . $this->object->id . '-' . stripslashes($imageType['name']) . '2x.jpg',
+                                _EPH_MANU_IMG_DIR_ . $fileName,
+                                _EPH_MANU_IMG_DIR_ . $this->object->id . '-' . stripslashes($imageType['name']) . '2x.jpg',
                                 (int) $imageType['width'] * 2,
                                 (int) $imageType['height'] * 2
                             );
 
                             if (ImageManager::webpSupport()) {
                                 ImageManager::resize(
-                                    _PS_MANU_IMG_DIR_ . $fileName,
-                                    _PS_MANU_IMG_DIR_ . $this->object->id . '-' . stripslashes($imageType['name']) . '2x.webp',
+                                    _EPH_MANU_IMG_DIR_ . $fileName,
+                                    _EPH_MANU_IMG_DIR_ . $this->object->id . '-' . stripslashes($imageType['name']) . '2x.webp',
                                     (int) $imageType['width'] * 2,
                                     (int) $imageType['height'] * 2,
                                     'webp'
@@ -623,7 +623,7 @@ class AdminManufacturersControllerCore extends AdminController {
 
                     }
 
-                    $currentLogoFile = _PS_TMP_IMG_DIR_ . 'manufacturer_mini_' . $this->object->id . '_' . $this->context->shop->id . '.jpg';
+                    $currentLogoFile = _EPH_TMP_IMG_DIR_ . 'manufacturer_mini_' . $this->object->id . '_' . $this->context->shop->id . '.jpg';
                 }
 
             }
@@ -697,22 +697,22 @@ class AdminManufacturersControllerCore extends AdminController {
         if (($idManufacturer = (int) Tools::getValue('id_manufacturer')) &&
             isset($_FILES) &&
             count($_FILES) &&
-            file_exists(_PS_MANU_IMG_DIR_ . $idManufacturer . '.jpg')
+            file_exists(_EPH_MANU_IMG_DIR_ . $idManufacturer . '.jpg')
         ) {
             $imagesTypes = ImageType::getImagesTypes('manufacturers');
 
             foreach ($imagesTypes as $k => $imageType) {
                 $res &= ImageManager::resize(
-                    _PS_MANU_IMG_DIR_ . $idManufacturer . '.jpg',
-                    _PS_MANU_IMG_DIR_ . $idManufacturer . '-' . stripslashes($imageType['name']) . '.jpg',
+                    _EPH_MANU_IMG_DIR_ . $idManufacturer . '.jpg',
+                    _EPH_MANU_IMG_DIR_ . $idManufacturer . '-' . stripslashes($imageType['name']) . '.jpg',
                     (int) $imageType['width'],
                     (int) $imageType['height']
                 );
 
                 if (ImageManager::webpSupport()) {
                     $res &= ImageManager::resize(
-                        _PS_MANU_IMG_DIR_ . $idManufacturer . '.jpg',
-                        _PS_MANU_IMG_DIR_ . $idManufacturer . '-' . stripslashes($imageType['name']) . '.webp',
+                        _EPH_MANU_IMG_DIR_ . $idManufacturer . '.jpg',
+                        _EPH_MANU_IMG_DIR_ . $idManufacturer . '-' . stripslashes($imageType['name']) . '.webp',
                         (int) $imageType['width'],
                         (int) $imageType['height'],
                         'webp'
@@ -721,16 +721,16 @@ class AdminManufacturersControllerCore extends AdminController {
 
                 if (ImageManager::retinaSupport()) {
                     $res &= ImageManager::resize(
-                        _PS_MANU_IMG_DIR_ . $idManufacturer . '.jpg',
-                        _PS_MANU_IMG_DIR_ . $idManufacturer . '-' . stripslashes($imageType['name']) . '2x.jpg',
+                        _EPH_MANU_IMG_DIR_ . $idManufacturer . '.jpg',
+                        _EPH_MANU_IMG_DIR_ . $idManufacturer . '-' . stripslashes($imageType['name']) . '2x.jpg',
                         (int) $imageType['width'] * 2,
                         (int) $imageType['height'] * 2
                     );
 
                     if (ImageManager::webpSupport()) {
                         $res &= ImageManager::resize(
-                            _PS_MANU_IMG_DIR_ . $idManufacturer . '.jpg',
-                            _PS_MANU_IMG_DIR_ . $idManufacturer . '-' . stripslashes($imageType['name']) . '2x.webp',
+                            _EPH_MANU_IMG_DIR_ . $idManufacturer . '.jpg',
+                            _EPH_MANU_IMG_DIR_ . $idManufacturer . '-' . stripslashes($imageType['name']) . '2x.webp',
                             (int) $imageType['width'] * 2,
                             (int) $imageType['height'] * 2,
                             'webp'
@@ -741,7 +741,7 @@ class AdminManufacturersControllerCore extends AdminController {
 
             }
 
-            $currentLogoFile = _PS_TMP_IMG_DIR_ . 'manufacturer_mini_' . $idManufacturer . '_' . $this->context->shop->id . '.jpg';
+            $currentLogoFile = _EPH_TMP_IMG_DIR_ . 'manufacturer_mini_' . $idManufacturer . '_' . $this->context->shop->id . '.jpg';
 
             if ($res && file_exists($currentLogoFile)) {
                 unlink($currentLogoFile);

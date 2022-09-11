@@ -34,8 +34,8 @@ class CmsControllerCore extends FrontController {
             $this->cms_category = new CMSCategory($idCmsCategory, $this->context->language->id, $this->context->shop->id);
         }
 
-        if (Configuration::get('PS_SSL_ENABLED') && Tools::getValue('content_only') && $idCms && Validate::isLoadedObject($this->cms)
-            && in_array($idCms, [(int) Configuration::get('PS_CONDITIONS_CMS_ID'), (int) Configuration::get('LEGAL_CMS_ID_REVOCATION')])
+        if (Configuration::get('EPH_SSL_ENABLED') && Tools::getValue('content_only') && $idCms && Validate::isLoadedObject($this->cms)
+            && in_array($idCms, [(int) Configuration::get('EPH_CONDITIONS_CMS_ID'), (int) Configuration::get('LEGAL_CMS_ID_REVOCATION')])
         ) {
             $this->ssl = true;
         }
@@ -109,7 +109,7 @@ class CmsControllerCore extends FrontController {
         $parentCat = new CMSCategory(1, $this->context->language->id);
         $this->context->smarty->assign('id_current_lang', $this->context->language->id);
         $this->context->smarty->assign('home_title', $parentCat->name);
-        $this->context->smarty->assign('cgv_id', Configuration::get('PS_CONDITIONS_CMS_ID'));
+        $this->context->smarty->assign('cgv_id', Configuration::get('EPH_CONDITIONS_CMS_ID'));
 
         if ($this->assignCase == 1) {
 
@@ -145,7 +145,7 @@ class CmsControllerCore extends FrontController {
             );
         }
 
-        $this->setTemplate(_PS_THEME_DIR_ . 'cms.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'cms.tpl');
     }
 
 }

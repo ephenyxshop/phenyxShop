@@ -121,7 +121,7 @@ class FrontControllerCore extends Controller {
 
         parent::__construct();
 
-        if (Configuration::get('PS_SSL_ENABLED') && Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
+        if (Configuration::get('EPH_SSL_ENABLED') && Configuration::get('EPH_SSL_ENABLED_EVERYWHERE')) {
             $this->ssl = true;
         }
 
@@ -177,7 +177,7 @@ class FrontControllerCore extends Controller {
 
         if (!is_array(static::$currentCustomerGroups)) {
             static::$currentCustomerGroups = [];
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('`id_group`')
                     ->from('customer_group')
@@ -320,7 +320,7 @@ class FrontControllerCore extends Controller {
 
         }
 
-        if (Configuration::get('PS_TOKEN_ENABLE')) {
+        if (Configuration::get('EPH_TOKEN_ENABLE')) {
             $newToken = Tools::getToken(false);
 
             if (preg_match("/static_token[ ]?=[ ]?'([a-f0-9]{32})'/", $content, $matches)) {
@@ -348,7 +348,7 @@ class FrontControllerCore extends Controller {
         $idLang = Tools::getValue('id_lang');
         $link = Tools::getValue('link');
         $cookieIdLang = $context->cookie->id_lang;
-        $configurationIdLang = Configuration::get('PS_LANG_DEFAULT');
+        $configurationIdLang = Configuration::get('EPH_LANG_DEFAULT');
 
         if ((($idLang = (int) Tools::getValue('id_lang')) && Validate::isUnsignedId($idLang))
             || (($idLang == $configurationIdLang) && Validate::isUnsignedId($idLang) && $idLang != $cookieIdLang)
@@ -363,7 +363,7 @@ class FrontControllerCore extends Controller {
 
             $params = $_GET;
 
-            if (Configuration::get('PS_REWRITING_SETTINGS') || !Language::isMultiLanguageActivated()) {
+            if (Configuration::get('EPH_REWRITING_SETTINGS') || !Language::isMultiLanguageActivated()) {
                 unset($params['id_lang']);
             }
 
@@ -436,7 +436,7 @@ class FrontControllerCore extends Controller {
                         /** @var DOMElement $link */
 
                         if ($favicon = Tools::parseFaviconSizeTag(urldecode($attribute->value))) {
-                            $attribute->value = Media::getMediaPath(_PS_IMG_DIR_ . "favicon/favicon_{$this->context->shop->id}_{$favicon['width']}_{$favicon['height']}.{$favicon['type']}");
+                            $attribute->value = Media::getMediaPath(_EPH_IMG_DIR_ . "favicon/favicon_{$this->context->shop->id}_{$favicon['width']}_{$favicon['height']}.{$favicon['type']}");
                         }
 
                     }
@@ -448,8 +448,8 @@ class FrontControllerCore extends Controller {
                     $hookHeader .= $faviconHtml;
                 }
 
-                $hookHeader .= '<meta name="msapplication-config" content="' . Media::getMediaPath(_PS_IMG_DIR_ . "favicon/browserconfig_{$this->context->shop->id}.xml") . '">';
-                $hookHeader .= '<link rel="manifest" href="' . Media::getMediaPath(_PS_IMG_DIR_ . "favicon/manifest_{$this->context->shop->id}.json") . '">';
+                $hookHeader .= '<meta name="msapplication-config" content="' . Media::getMediaPath(_EPH_IMG_DIR_ . "favicon/browserconfig_{$this->context->shop->id}.xml") . '">';
+                $hookHeader .= '<link rel="manifest" href="' . Media::getMediaPath(_EPH_IMG_DIR_ . "favicon/manifest_{$this->context->shop->id}.json") . '">';
             }
 
             if (isset($this->php_self)) {
@@ -538,7 +538,7 @@ class FrontControllerCore extends Controller {
         // The mobile theme must have a layout to be used
 
         if ($useMobileTemplate === null) {
-            $useMobileTemplate = ($this->context->getMobileDevice() && file_exists(_PS_THEME_MOBILE_DIR_ . 'layout.tpl'));
+            $useMobileTemplate = ($this->context->getMobileDevice() && file_exists(_EPH_THEME_MOBILE_DIR_ . 'layout.tpl'));
         }
 
         return $useMobileTemplate;
@@ -563,7 +563,7 @@ class FrontControllerCore extends Controller {
 
         $content = '';
         $languages = Language::getLanguages();
-        $defaultLang = Configuration::get('PS_LANG_DEFAULT');
+        $defaultLang = Configuration::get('EPH_LANG_DEFAULT');
 
         switch ($this->php_self) {
         case 'product': // product page
@@ -746,7 +746,7 @@ class FrontControllerCore extends Controller {
         }
 
         $p = Tools::getValue('p');
-        $n = (int) Configuration::get('PS_PRODUCTS_PER_PAGE');
+        $n = (int) Configuration::get('EPH_PRODUCTS_PER_PAGE');
 
         $totalPages = ceil($nbProducts / $n);
 
@@ -794,16 +794,16 @@ class FrontControllerCore extends Controller {
         $this->initHeader();
         $hookHeader = Hook::exec('displayHeader');
 
-        if ((Configuration::get('PS_CSS_THEME_CACHE') || Configuration::get('PS_JS_THEME_CACHE')) && is_writable(_PS_THEME_DIR_ . 'cache')) {
+        if ((Configuration::get('EPH_CSS_THEME_CACHE') || Configuration::get('EPH_JS_THEME_CACHE')) && is_writable(_EPH_THEME_DIR_ . 'cache')) {
             // CSS compressor management
 
-            if (Configuration::get('PS_CSS_THEME_CACHE')) {
+            if (Configuration::get('EPH_CSS_THEME_CACHE')) {
                 $this->css_files = Media::cccCss($this->css_files);
             }
 
             //JS compressor management
 
-            if (Configuration::get('PS_JS_THEME_CACHE')) {
+            if (Configuration::get('EPH_JS_THEME_CACHE')) {
                 $this->js_files = Media::cccJs($this->js_files);
             }
 
@@ -823,12 +823,12 @@ class FrontControllerCore extends Controller {
         $this->context->smarty->assign(
             [
                 'css_files' => $this->css_files,
-                'js_files'  => ($this->getLayout() && (bool) Configuration::get('PS_JS_DEFER')) ? [] : $this->js_files,
+                'js_files'  => ($this->getLayout() && (bool) Configuration::get('EPH_JS_DEFER')) ? [] : $this->js_files,
             ]
         );
 
         $this->display_header = $display;
-        $this->smartyOutputContent(_PS_THEME_DIR_ . 'header.tpl');
+        $this->smartyOutputContent(_EPH_THEME_DIR_ . 'header.tpl');
     }
 
     /**
@@ -857,10 +857,10 @@ class FrontControllerCore extends Controller {
         $this->context->smarty->assign(
             [
                 'time'                  => time(),
-                'img_update_time'       => Configuration::get('PS_IMG_UPDATE_TIME'),
+                'img_update_time'       => Configuration::get('EPH_IMG_UPDATE_TIME'),
                 'static_token'          => Tools::getToken(false),
                 'token'                 => Tools::getToken(),
-                'priceDisplayPrecision' => _PS_PRICE_DISPLAY_PRECISION_,
+                'priceDisplayPrecision' => _EPH_PRICE_DISPLAY_PRECISION_,
                 'content_only'          => (int) Tools::getValue('content_only'),
                 'customer_is_admin'         => $this->customer_is_admin,
 
@@ -884,14 +884,14 @@ class FrontControllerCore extends Controller {
 
         $mobileDevice = $this->context->getMobileDevice();
 
-        if ($mobileDevice && Configuration::get('PS_LOGO_MOBILE')) {
-            $logo = $this->context->link->getMediaLink(_PS_IMG_ . Configuration::get('PS_LOGO_MOBILE') . '?' . Configuration::get('PS_IMG_UPDATE_TIME'));
+        if ($mobileDevice && Configuration::get('EPH_LOGO_MOBILE')) {
+            $logo = $this->context->link->getMediaLink(_EPH_IMG_ . Configuration::get('EPH_LOGO_MOBILE') . '?' . Configuration::get('EPH_IMG_UPDATE_TIME'));
         } else {
-            $logo = $this->context->link->getMediaLink(_PS_IMG_ . Configuration::get('PS_LOGO'));
+            $logo = $this->context->link->getMediaLink(_EPH_IMG_ . Configuration::get('EPH_LOGO'));
         }
 
         return [
-            'favicon_url'       => _PS_IMG_ . Configuration::get('PS_FAVICON'),
+            'favicon_url'       => _EPH_IMG_ . Configuration::get('EPH_FAVICON'),
             'logo_image_width'  => ($mobileDevice == false ? Configuration::get('SHOP_LOGO_WIDTH') : Configuration::get('SHOP_LOGO_MOBILE_WIDTH')),
             'logo_image_height' => ($mobileDevice == false ? Configuration::get('SHOP_LOGO_HEIGHT') : Configuration::get('SHOP_LOGO_MOBILE_HEIGHT')),
             'logo_url'          => $logo,
@@ -952,7 +952,7 @@ class FrontControllerCore extends Controller {
      */
     protected function getThemeDir() {
 
-        return $this->useMobileTheme() ? _PS_THEME_MOBILE_DIR_ : _PS_THEME_DIR_;
+        return $this->useMobileTheme() ? _EPH_THEME_MOBILE_DIR_ : _EPH_THEME_DIR_;
     }
 
     /**
@@ -966,7 +966,7 @@ class FrontControllerCore extends Controller {
      */
     protected function getOverrideThemeDir() {
 
-        return $this->useMobileTheme() ? _PS_THEME_MOBILE_OVERRIDE_DIR_ : _PS_THEME_OVERRIDE_DIR_;
+        return $this->useMobileTheme() ? _EPH_THEME_MOBILE_OVERRIDE_DIR_ : _EPH_THEME_OVERRIDE_DIR_;
     }
 
     /**
@@ -1009,7 +1009,7 @@ class FrontControllerCore extends Controller {
             $liveEditContent = '';
 
             $domAvailable = extension_loaded('dom') ? true : false;
-            $defer = (bool) Configuration::get('PS_JS_DEFER');
+            $defer = (bool) Configuration::get('EPH_JS_DEFER');
 
             if ($defer && $domAvailable) {
                 $html = Media::deferInlineScripts($html);
@@ -1019,7 +1019,7 @@ class FrontControllerCore extends Controller {
 
             $this->context->smarty->assign([$jsTag => Media::getJsDef(), 'js_files' => $defer ? array_unique($this->js_files) : [], 'js_inline' => ($defer && $domAvailable) ? Media::getInlineScript() : []]);
 
-            $javascript = $this->context->smarty->fetch(_PS_ALL_THEMES_DIR_ . 'javascript.tpl');
+            $javascript = $this->context->smarty->fetch(_EPH_ALL_THEMES_DIR_ . 'javascript.tpl');
             // $template = ($defer ? $html.$javascript : preg_replace('/(?<!\$)'.$js_tag.'/', $javascript, $html)).$live_edit_content.((!Tools::getIsset($this->ajax) || ! $this->ajax) ? '</body></html>' : '');
 
             if ($defer && (!Tools::getIsset($this->ajax) || !$this->ajax)) {
@@ -1051,7 +1051,7 @@ class FrontControllerCore extends Controller {
     public function displayFooter($display = true) {
 
         Tools::displayAsDeprecated();
-        $this->smartyOutputContent(_PS_THEME_DIR_ . 'footer.tpl');
+        $this->smartyOutputContent(_EPH_THEME_DIR_ . 'footer.tpl');
     }
 
     /**
@@ -1075,11 +1075,11 @@ class FrontControllerCore extends Controller {
      */
     protected function displayMaintenancePage() {
 
-        if ($this->maintenance == true || !(int) Configuration::get('PS_SHOP_ENABLE')) {
+        if ($this->maintenance == true || !(int) Configuration::get('EPH_SHOP_ENABLE')) {
             $this->maintenance = true;
 			$allowed = false;
-			if(!empty(Configuration::get('PS_MAINTENANCE_IP'))) {
-				$allowed = in_array(Tools::getRemoteAddr(), explode(',', Configuration::get('PS_MAINTENANCE_IP')));
+			if(!empty(Configuration::get('EPH_MAINTENANCE_IP'))) {
+				$allowed = in_array(Tools::getRemoteAddr(), explode(',', Configuration::get('EPH_MAINTENANCE_IP')));
 			}
            
 
@@ -1091,7 +1091,7 @@ class FrontControllerCore extends Controller {
                     [
                         'HOOK_HEADER'      => Hook::exec('displayHeader'),
                         'HOOK_MAINTENANCE' => Hook::exec('displayMaintenance', []),
-                        'maintenance_text' => Configuration::get('PS_MAINTENANCE_TEXT', (int) $this->context->language->id),
+                        'maintenance_text' => Configuration::get('EPH_MAINTENANCE_TEXT', (int) $this->context->language->id),
                         'css_files'      => $this->css_files,
                         'is_admin'              => $this->context->cookie->is_admin ? $this->context->cookie->is_admin : 0,
                         'link'                  => $this->context->link,
@@ -1129,17 +1129,17 @@ class FrontControllerCore extends Controller {
         $tplFile = basename($template);
         $dirname = dirname($template) . (substr(dirname($template), -1, 1) == '/' ? '' : '/');
 
-        if ($dirname == _PS_THEME_DIR_) {
+        if ($dirname == _EPH_THEME_DIR_) {
 
-            if (file_exists(_PS_THEME_MOBILE_DIR_ . $tplFile)) {
-                $template = _PS_THEME_MOBILE_DIR_ . $tplFile;
+            if (file_exists(_EPH_THEME_MOBILE_DIR_ . $tplFile)) {
+                $template = _EPH_THEME_MOBILE_DIR_ . $tplFile;
             }
 
         } else
-        if ($dirname == _PS_THEME_MOBILE_DIR_) {
+        if ($dirname == _EPH_THEME_MOBILE_DIR_) {
 
-            if (!file_exists(_PS_THEME_MOBILE_DIR_ . $tplFile) && file_exists(_PS_THEME_DIR_ . $tplFile)) {
-                $template = _PS_THEME_DIR_ . $tplFile;
+            if (!file_exists(_EPH_THEME_MOBILE_DIR_ . $tplFile) && file_exists(_EPH_THEME_DIR_ . $tplFile)) {
+                $template = _EPH_THEME_DIR_ . $tplFile;
             }
 
         }
@@ -1165,16 +1165,16 @@ class FrontControllerCore extends Controller {
 
         // assign css_files and js_files at the very last time
 
-        if ((Configuration::get('PS_CSS_THEME_CACHE') || Configuration::get('PS_JS_THEME_CACHE')) && is_writable(_PS_THEME_DIR_ . 'cache')) {
+        if ((Configuration::get('EPH_CSS_THEME_CACHE') || Configuration::get('EPH_JS_THEME_CACHE')) && is_writable(_EPH_THEME_DIR_ . 'cache')) {
             // CSS compressor management
 
-            if (Configuration::get('PS_CSS_THEME_CACHE')) {
+            if (Configuration::get('EPH_CSS_THEME_CACHE')) {
                 $this->css_files = Media::cccCss($this->css_files);
             }
 
             //JS compressor management
 
-            if (Configuration::get('PS_JS_THEME_CACHE') && !$this->useMobileTheme()) {
+            if (Configuration::get('EPH_JS_THEME_CACHE') && !$this->useMobileTheme()) {
                 $this->js_files = Media::cccJs($this->js_files);
             }
 
@@ -1183,8 +1183,8 @@ class FrontControllerCore extends Controller {
         $this->context->smarty->assign(
             [
                 'css_files'      => $this->css_files,
-                'js_files'       => ($this->getLayout() && (bool) Configuration::get('PS_JS_DEFER')) ? [] : $this->js_files,
-                'js_defer'       => (bool) Configuration::get('PS_JS_DEFER'),
+                'js_files'       => ($this->getLayout() && (bool) Configuration::get('EPH_JS_DEFER')) ? [] : $this->js_files,
+                'js_defer'       => (bool) Configuration::get('EPH_JS_DEFER'),
                 'js_shows'       => $this->js_shows,
                 'js_footers'     => $this->js_footers,
                 'errors'         => $this->errors,
@@ -1216,7 +1216,7 @@ class FrontControllerCore extends Controller {
             Tools::displayAsDeprecated('layout.tpl is missing in your theme directory');
 
             if ($this->display_header) {
-                $this->smartyOutputContent(_PS_THEME_DIR_ . 'header.tpl');
+                $this->smartyOutputContent(_EPH_THEME_DIR_ . 'header.tpl');
             }
 
             if ($this->template) {
@@ -1227,7 +1227,7 @@ class FrontControllerCore extends Controller {
             }
 
             if ($this->display_footer) {
-                $this->smartyOutputContent(_PS_THEME_DIR_ . 'footer.tpl');
+                $this->smartyOutputContent(_EPH_THEME_DIR_ . 'footer.tpl');
             }
 
         }
@@ -1265,14 +1265,14 @@ class FrontControllerCore extends Controller {
 
         $this->addCSS(_THEME_CSS_DIR_ . 'grid_ephenyxshop.css', 'all'); // retro compat themes 1.5.0.1
         $this->addCSS(_THEME_CSS_DIR_ . 'global.css', 'all');
-		$this->addCSS(_PS_JS_DIR_. 'confirm-box.css', 'all');
+		$this->addCSS(_EPH_JS_DIR_. 'confirm-box.css', 'all');
         $this->addJquery();
-        $this->addJS(_PS_JS_DIR_ . 'jquery-ui/jquery-ui.js');
+        $this->addJS(_EPH_JS_DIR_ . 'jquery-ui/jquery-ui.js');
 		$this->addjQueryPlugin('growl', null);
         $this->addJqueryPlugin('easing');
-        $this->addJS(_PS_JS_DIR_ . 'tools.js');
-		$this->addJS(_PS_JS_DIR_ . 'imageuploadify.min.js');
-		$this->addJS(_PS_JS_DIR_ . 'pdfuploadify.min.js');
+        $this->addJS(_EPH_JS_DIR_ . 'tools.js');
+		$this->addJS(_EPH_JS_DIR_ . 'imageuploadify.min.js');
+		$this->addJS(_EPH_JS_DIR_ . 'pdfuploadify.min.js');
         $this->addJS(_THEME_JS_DIR_ . 'global.js');
 		$this->addJS('https://cdn.ephenyxapi.com/fontawesome/js/all.js');
 
@@ -1320,11 +1320,11 @@ class FrontControllerCore extends Controller {
 
         }       
 
-        if (Configuration::get('PS_QUICK_VIEW')) {
+        if (Configuration::get('EPH_QUICK_VIEW')) {
             $this->addjqueryPlugin('fancybox');
         }
 
-        if (Configuration::get('PS_COMPARATOR_MAX_ITEM') > 0) {
+        if (Configuration::get('EPH_COMPARATOR_MAX_ITEM') > 0) {
             $this->addJS(_THEME_JS_DIR_ . 'products-comparison.js');
         }
 
@@ -1353,7 +1353,7 @@ class FrontControllerCore extends Controller {
         if (!file_exists($this->getThemeDir() . 'js/autoload/')) {
             $this->addJS(_THEME_MOBILE_JS_DIR_ . 'jquery.mobile-1.3.0.min.js');
             $this->addJS(_THEME_MOBILE_JS_DIR_ . 'jqm-docs.js');
-            $this->addJS(_PS_JS_DIR_ . 'tools.js');
+            $this->addJS(_EPH_JS_DIR_ . 'tools.js');
             $this->addJS(_THEME_MOBILE_JS_DIR_ . 'global.js');
             $this->addJqueryPlugin('fancybox');
         }
@@ -1373,12 +1373,12 @@ class FrontControllerCore extends Controller {
 
         $advtmIsSticky = (Configuration::get('EPHTM_MENU_CONT_POSITION') == 'sticky');
        
-        $this->addCSS(__PS_BASE_URI__ . 'css/ephtopmenu_product.css', 'all');
+        $this->addCSS(__EPH_BASE_URI__ . 'css/ephtopmenu_product.css', 'all');
 
         
 
         if ($advtmIsSticky) {
-            $this->addJS(__PS_BASE_URI__ . 'js/jquery.sticky.js');
+            $this->addJS(__EPH_BASE_URI__ . 'js/jquery.sticky.js');
         }
 
         
@@ -1457,9 +1457,9 @@ class FrontControllerCore extends Controller {
                     $file = $media;
                 }
                
-                if (str_contains($file, __PS_BASE_URI__ . 'plugins/')) {
+                if (str_contains($file, __EPH_BASE_URI__ . 'plugins/')) {
                    
-                    $overridePath = str_replace(__PS_BASE_URI__ . 'includes/plugins/', _PS_ROOT_DIR_ . '/content/themes/' . _THEME_NAME_ . '/' . $type . '/plugins/', $file, $different);
+                    $overridePath = str_replace(__EPH_BASE_URI__ . 'includes/plugins/', _EPH_ROOT_DIR_ . '/content/themes/' . _THEME_NAME_ . '/' . $type . '/plugins/', $file, $different);
                      
                     if (str_contains($overridePath, $type . '/' . basename($file))) {
                          
@@ -1467,7 +1467,7 @@ class FrontControllerCore extends Controller {
                         
                     }
                     if ($different && @filemtime($overridePath)) {
-                        $file = str_replace(__PS_BASE_URI__ . 'includes/plugins/', __PS_BASE_URI__ . 'content/themes/' . _THEME_NAME_ . '/' . $type . '/plugins/', $file, $different);
+                        $file = str_replace(__EPH_BASE_URI__ . 'includes/plugins/', __EPH_BASE_URI__ . 'content/themes/' . _THEME_NAME_ . '/' . $type . '/plugins/', $file, $different);
                     } else
                     if ($differentCss && isset($overridePathCss) && @filemtime($overridePathCss)) {
                         $file = $overridePathCss;
@@ -1554,8 +1554,8 @@ class FrontControllerCore extends Controller {
                 'HOOK_FOOTER'            => $hookFooter,
                 'conditions'             => Configuration::get(Configuration::CONDITIONS),
                 'id_cgv'                 => Configuration::get(Configuration::CONDITIONS_CMS_ID),
-                'PS_SHOP_NAME'           => Configuration::get(Configuration::SHOP_NAME),
-                'PS_ALLOW_MOBILE_DEVICE' => isset($_SERVER['HTTP_USER_AGENT']) && (bool) Configuration::get('PS_ALLOW_MOBILE_DEVICE') && @filemtime(_PS_THEME_MOBILE_DIR_),
+                'EPH_SHOP_NAME'           => Configuration::get(Configuration::SHOP_NAME),
+                'EPH_ALLOW_MOBILE_DEVICE' => isset($_SERVER['HTTP_USER_AGENT']) && (bool) Configuration::get('EPH_ALLOW_MOBILE_DEVICE') && @filemtime(_EPH_THEME_MOBILE_DIR_),
             ]
         );
 
@@ -1588,12 +1588,12 @@ class FrontControllerCore extends Controller {
         // 'orderwayposition' => Tools::getProductsOrder('way'), // Deprecated: orderwayposition
         // 'orderwaydefault' => Tools::getProductsOrder('way'),
 
-        $stockManagement = Configuration::get('PS_STOCK_MANAGEMENT') ? true : false; // no display quantity order if stock management disabled
+        $stockManagement = Configuration::get('EPH_STOCK_MANAGEMENT') ? true : false; // no display quantity order if stock management disabled
         $orderByValues = [0 => 'name', 1 => 'price', 2 => 'date_add', 3 => 'date_upd', 4 => 'position', 5 => 'manufacturer_name', 6 => 'quantity', 7 => 'reference'];
         $orderWayValues = [0 => 'asc', 1 => 'desc'];
 
-        $this->orderBy = mb_strtolower(Tools::getValue('orderby', $orderByValues[(int) Configuration::get('PS_PRODUCTS_ORDER_BY')]));
-        $this->orderWay = mb_strtolower(Tools::getValue('orderway', $orderWayValues[(int) Configuration::get('PS_PRODUCTS_ORDER_WAY')]));
+        $this->orderBy = mb_strtolower(Tools::getValue('orderby', $orderByValues[(int) Configuration::get('EPH_PRODUCTS_ORDER_BY')]));
+        $this->orderWay = mb_strtolower(Tools::getValue('orderway', $orderWayValues[(int) Configuration::get('EPH_PRODUCTS_ORDER_WAY')]));
 
         if (!in_array($this->orderBy, $orderByValues)) {
             $this->orderBy = $orderByValues[0];
@@ -1607,9 +1607,9 @@ class FrontControllerCore extends Controller {
             [
                 'orderby'          => $this->orderBy,
                 'orderway'         => $this->orderWay,
-                'orderbydefault'   => $orderByValues[(int) Configuration::get('PS_PRODUCTS_ORDER_BY')],
-                'orderwayposition' => $orderWayValues[(int) Configuration::get('PS_PRODUCTS_ORDER_WAY')], // Deprecated: orderwayposition
-                'orderwaydefault'  => $orderWayValues[(int) Configuration::get('PS_PRODUCTS_ORDER_WAY')],
+                'orderbydefault'   => $orderByValues[(int) Configuration::get('EPH_PRODUCTS_ORDER_BY')],
+                'orderwayposition' => $orderWayValues[(int) Configuration::get('EPH_PRODUCTS_ORDER_WAY')], // Deprecated: orderwayposition
+                'orderwaydefault'  => $orderWayValues[(int) Configuration::get('EPH_PRODUCTS_ORDER_WAY')],
                 'stock_management' => (int) $stockManagement,
             ]
         );
@@ -1633,7 +1633,7 @@ class FrontControllerCore extends Controller {
         }
 
         // Retrieve the default number of products per page and the other available selections
-        $defaultProductsPerPage = max(1, (int) Configuration::get('PS_PRODUCTS_PER_PAGE'));
+        $defaultProductsPerPage = max(1, (int) Configuration::get('EPH_PRODUCTS_PER_PAGE'));
         $nArray = [$defaultProductsPerPage, $defaultProductsPerPage * 2, $defaultProductsPerPage * 5];
 
         if ((int) Tools::getValue('n') && (int) $totalProducts > 0) {
@@ -1771,8 +1771,8 @@ class FrontControllerCore extends Controller {
         // @TODO This method must be moved into switchLanguage
         Tools::setCookieLanguage($this->context->cookie);
 
-        $protocolLink = (Configuration::get('PS_SSL_ENABLED') || Tools::usingSecureMode()) ? 'https://' : 'http://';
-        $useSSL = ((isset($this->ssl) && $this->ssl && Configuration::get('PS_SSL_ENABLED')) || Tools::usingSecureMode()) ? true : false;
+        $protocolLink = (Configuration::get('EPH_SSL_ENABLED') || Tools::usingSecureMode()) ? 'https://' : 'http://';
+        $useSSL = ((isset($this->ssl) && $this->ssl && Configuration::get('EPH_SSL_ENABLED')) || Tools::usingSecureMode()) ? true : false;
         $protocolContent = ($useSSL) ? 'https://' : 'http://';
         $link = new Link($protocolLink, $protocolContent);
         $this->context->link = $link;
@@ -1787,24 +1787,24 @@ class FrontControllerCore extends Controller {
 
         /* Theme is missing */
 
-        if (!is_dir(_PS_THEME_DIR_)) {
-            throw new PhenyxShopException((sprintf(Tools::displayError('Current theme unavailable "%s". Please check your theme directory name and permissions.'), basename(rtrim(_PS_THEME_DIR_, '/\\')))));
+        if (!is_dir(_EPH_THEME_DIR_)) {
+            throw new PhenyxShopException((sprintf(Tools::displayError('Current theme unavailable "%s". Please check your theme directory name and permissions.'), basename(rtrim(_EPH_THEME_DIR_, '/\\')))));
         }
 
-        if (Configuration::get('PS_GEOLOCATION_ENABLED')) {
+        if (Configuration::get('EPH_GEOLOCATION_ENABLED')) {
 
             if (($newDefault = $this->geolocationManagement($this->context->country)) && Validate::isLoadedObject($newDefault)) {
                 $this->context->country = $newDefault;
             }
 
         } else
-        if (Configuration::get('PS_DETECT_COUNTRY')) {
+        if (Configuration::get('EPH_DETECT_COUNTRY')) {
             $hasCurrency = isset($this->context->cookie->id_currency) && (int) $this->context->cookie->id_currency;
             $hasCountry = isset($this->context->cookie->iso_code_country) && $this->context->cookie->iso_code_country;
             $hasAddressType = false;
 
             if ((int) $this->context->cookie->id_cart && ($cart = new Cart($this->context->cookie->id_cart)) && Validate::isLoadedObject($cart)) {
-                $hasAddressType = isset($cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')}) && $cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')};
+                $hasAddressType = isset($cart->{Configuration::get('EPH_TAX_ADDRESS_TYPE')}) && $cart->{Configuration::get('EPH_TAX_ADDRESS_TYPE')};
             }
 
             if ((!$hasCurrency || $hasCountry) && !$hasAddressType) {
@@ -1815,7 +1815,7 @@ class FrontControllerCore extends Controller {
 
                 if (!$hasCurrency && validate::isLoadedObject($country) && $this->context->country->id !== $country->id) {
                     $this->context->country = $country;
-                    $this->context->cookie->id_currency = (int) Currency::getCurrencyInstance($country->id_currency ? (int) $country->id_currency : (int) Configuration::get('PS_CURRENCY_DEFAULT'))->id;
+                    $this->context->cookie->id_currency = (int) Currency::getCurrencyInstance($country->id_currency ? (int) $country->id_currency : (int) Configuration::get('EPH_CURRENCY_DEFAULT'))->id;
                     $this->context->cookie->iso_code_country = strtoupper($country->iso_code);
                 }
 
@@ -1852,9 +1852,9 @@ class FrontControllerCore extends Controller {
 
             /* Delete product of cart, if user can't make an order from his country */
             else
-            if (intval(Configuration::get('PS_GEOLOCATION_ENABLED')) &&
-                !in_array(strtoupper($this->context->cookie->iso_code_country), explode(';', Configuration::get('PS_ALLOWED_COUNTRIES'))) &&
-                $cart->nbProducts() && intval(Configuration::get('PS_GEOLOCATION_NA_BEHAVIOR')) != -1 &&
+            if (intval(Configuration::get('EPH_GEOLOCATION_ENABLED')) &&
+                !in_array(strtoupper($this->context->cookie->iso_code_country), explode(';', Configuration::get('EPH_ALLOWED_COUNTRIES'))) &&
+                $cart->nbProducts() && intval(Configuration::get('EPH_GEOLOCATION_NA_BEHAVIOR')) != -1 &&
                 !FrontController::isInWhitelistForGeolocation() &&
                 !in_array($_SERVER['SERVER_NAME'], ['localhost', '127.0.0.1'])
             ) {
@@ -1957,7 +1957,7 @@ class FrontControllerCore extends Controller {
         $this->context->smarty->assign('request_uri', Tools::safeOutput(urldecode($_SERVER['REQUEST_URI'])));
 
         /* Breadcrumb */
-        $navigationPipe = (Configuration::get('PS_NAVIGATION_PIPE') ? Configuration::get('PS_NAVIGATION_PIPE') : '>');
+        $navigationPipe = (Configuration::get('EPH_NAVIGATION_PIPE') ? Configuration::get('EPH_NAVIGATION_PIPE') : '>');
         $this->context->smarty->assign('navigationPipe', $navigationPipe);
 
         // Automatically redirect to the canonical URL if needed
@@ -1970,8 +1970,8 @@ class FrontControllerCore extends Controller {
 
         $displayTaxLabel = $this->context->country->display_tax_label;
 
-        if (isset($cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')}) && $cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')}) {
-            $infos = Address::getCountryAndState((int) $cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
+        if (isset($cart->{Configuration::get('EPH_TAX_ADDRESS_TYPE')}) && $cart->{Configuration::get('EPH_TAX_ADDRESS_TYPE')}) {
+            $infos = Address::getCountryAndState((int) $cart->{Configuration::get('EPH_TAX_ADDRESS_TYPE')});
             $country = new Country((int) $infos['id_country']);
             $this->context->country = $country;
 
@@ -1990,7 +1990,7 @@ class FrontControllerCore extends Controller {
 
         $comparedProducts = [];
 
-        if (Configuration::get('PS_COMPARATOR_MAX_ITEM') && isset($this->context->cookie->id_compare)) {
+        if (Configuration::get('EPH_COMPARATOR_MAX_ITEM') && isset($this->context->cookie->id_compare)) {
             $comparedProducts = CompareProduct::getCompareProducts($this->context->cookie->id_compare);
         }
 		
@@ -2007,12 +2007,12 @@ class FrontControllerCore extends Controller {
                 'page_name'           => $pageName,
                 'hide_left_column'    => !$this->display_column_left,
                 'hide_right_column'   => !$this->display_column_right,
-                'base_dir'            => _PS_BASE_URL_ . __PS_BASE_URI__,
-                'base_dir_ssl'        => $protocolLink . Tools::getShopDomainSsl() . __PS_BASE_URI__,
-                'force_ssl'           => Configuration::get('PS_SSL_ENABLED') && Configuration::get('PS_SSL_ENABLED_EVERYWHERE'),
-                'content_dir'         => $protocolContent . Tools::getHttpHost() . __PS_BASE_URI__,
-                'base_uri'            => $protocolContent . Tools::getHttpHost() . __PS_BASE_URI__ . (!Configuration::get('PS_REWRITING_SETTINGS') ? 'index.php' : ''),
-                'tpl_dir'             => _PS_THEME_DIR_,
+                'base_dir'            => _EPH_BASE_URL_ . __EPH_BASE_URI__,
+                'base_dir_ssl'        => $protocolLink . Tools::getShopDomainSsl() . __EPH_BASE_URI__,
+                'force_ssl'           => Configuration::get('EPH_SSL_ENABLED') && Configuration::get('EPH_SSL_ENABLED_EVERYWHERE'),
+                'content_dir'         => $protocolContent . Tools::getHttpHost() . __EPH_BASE_URI__,
+                'base_uri'            => $protocolContent . Tools::getHttpHost() . __EPH_BASE_URI__ . (!Configuration::get('EPH_REWRITING_SETTINGS') ? 'index.php' : ''),
+                'tpl_dir'             => _EPH_THEME_DIR_,
                 'tpl_uri'             => _THEME_DIR_,
                 'modules_dir'         => _MODULE_DIR_,
                 'mail_dir'            => _MAIL_DIR_,
@@ -2028,26 +2028,26 @@ class FrontControllerCore extends Controller {
                 'priceDisplay'        => Product::getTaxCalculationMethod((int) $this->context->cookie->id_customer),
                 'is_logged'           => (bool) $this->context->customer->isLogged(),
                 'is_guest'            => (bool) $this->context->customer->isGuest(),
-                'add_prod_display'    => (int) Configuration::get('PS_ATTRIBUTE_CATEGORY_DISPLAY'),
-                'shop_name'           => Configuration::get('PS_SHOP_NAME'),
-                'roundMode'           => (int) Configuration::get('PS_PRICE_ROUND_MODE'),
-                'use_taxes'           => (int) Configuration::get('PS_TAX'),
-                'show_taxes'          => (int) (Configuration::get('PS_TAX_DISPLAY') == 1 && (int) Configuration::get('PS_TAX')),
+                'add_prod_display'    => (int) Configuration::get('EPH_ATTRIBUTE_CATEGORY_DISPLAY'),
+                'shop_name'           => Configuration::get('EPH_SHOP_NAME'),
+                'roundMode'           => (int) Configuration::get('EPH_PRICE_ROUND_MODE'),
+                'use_taxes'           => (int) Configuration::get('EPH_TAX'),
+                'show_taxes'          => (int) (Configuration::get('EPH_TAX_DISPLAY') == 1 && (int) Configuration::get('EPH_TAX')),
                 'display_tax_label'   => (bool) $displayTaxLabel,
                 'vat_management'      => (int) Configuration::get('VATNUMBER_MANAGEMENT'),
-                'opc'                 => (bool) Configuration::get('PS_ORDER_PROCESS_TYPE'),
-                'PS_CATALOG_MODE'     => (bool) Configuration::get('PS_CATALOG_MODE') || (Group::isFeatureActive() && !(bool) Group::getCurrent()->show_prices),
-                'b2b_enable'          => (bool) Configuration::get('PS_B2B_ENABLE'),
+                'opc'                 => (bool) Configuration::get('EPH_ORDER_PROCESS_TYPE'),
+                'EPH_CATALOG_MODE'     => (bool) Configuration::get('EPH_CATALOG_MODE') || (Group::isFeatureActive() && !(bool) Group::getCurrent()->show_prices),
+                'b2b_enable'          => (bool) Configuration::get('EPH_B2B_ENABLE'),
                 'request'             => $link->getPaginationLink(false, false, false, true),
-                'PS_STOCK_MANAGEMENT' => Configuration::get('PS_STOCK_MANAGEMENT'),
-                'quick_view'          => (bool) Configuration::get('PS_QUICK_VIEW'),
-                'shop_phone'          => Configuration::get('PS_SHOP_PHONE'),
+                'EPH_STOCK_MANAGEMENT' => Configuration::get('EPH_STOCK_MANAGEMENT'),
+                'quick_view'          => (bool) Configuration::get('EPH_QUICK_VIEW'),
+                'shop_phone'          => Configuration::get('EPH_SHOP_PHONE'),
                 'compared_products'   => is_array($comparedProducts) ? $comparedProducts : [],
-                'comparator_max_item' => (int) Configuration::get('PS_COMPARATOR_MAX_ITEM'),
+                'comparator_max_item' => (int) Configuration::get('EPH_COMPARATOR_MAX_ITEM'),
                 'currencySign'        => $currency->sign, // backward compat, see global.tpl
                 'currencyFormat'      => $currency->format, // backward compat
                 'currencyBlank'       => $currency->blank, // backward compat
-                'high_dpi'            => (bool) Configuration::get('PS_HIGHT_DPI'),
+                'high_dpi'            => (bool) Configuration::get('EPH_HIGHT_DPI'),
                 'lazy_load'           => (bool) Configuration::get('EPH_LAZY_LOAD'),
                 'webp'                => (bool) Configuration::get('EPH_USE_WEBP') && function_exists('imagewebp'),
             ]
@@ -2058,7 +2058,7 @@ class FrontControllerCore extends Controller {
         if ($this->useMobileTheme()) {
             $this->context->smarty->assign(
                 [
-                    'tpl_mobile_uri' => _PS_THEME_MOBILE_DIR_,
+                    'tpl_mobile_uri' => _EPH_THEME_MOBILE_DIR_,
                 ]
             );
         }
@@ -2073,7 +2073,7 @@ class FrontControllerCore extends Controller {
         );
 
         $assignArray = [
-            'img_ps_dir'    => _PS_IMG_,
+            'img_EPH_dir'    => _EPH_IMG_,
             'img_cat_dir'   => _THEME_CAT_DIR_,
             'img_lang_dir'  => _THEME_LANG_DIR_,
             'img_prod_dir'  => _THEME_PROD_DIR_,
@@ -3075,7 +3075,7 @@ class FrontControllerCore extends Controller {
 
         // If we call a SSL controller without SSL or a non SSL controller with SSL, we redirect with the right protocol
 
-        if (Configuration::get('PS_SSL_ENABLED') && (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] != 'POST') && $this->ssl != Tools::usingSecureMode()) {
+        if (Configuration::get('EPH_SSL_ENABLED') && (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] != 'POST') && $this->ssl != Tools::usingSecureMode()) {
             $this->context->cookie->disallowWriting();
             header('HTTP/1.1 301 Moved Permanently');
             header('Cache-Control: no-cache');
@@ -3148,20 +3148,20 @@ class FrontControllerCore extends Controller {
         if (!in_array($_SERVER['SERVER_NAME'], ['localhost', '127.0.0.1'])) {
             /* Check if Maxmind Database exists */
 
-            if (@filemtime(_PS_GEOIP_DIR_ . _PS_GEOIP_CITY_FILE_)) {
+            if (@filemtime(_EPH_GEOIP_DIR_ . _EPH_GEOIP_CITY_FILE_)) {
 
-                if (!isset($this->context->cookie->iso_code_country) || (isset($this->context->cookie->iso_code_country) && !in_array(strtoupper($this->context->cookie->iso_code_country), explode(';', Configuration::get('PS_ALLOWED_COUNTRIES'))))) {
-                    $gi = geoip_open(realpath(_PS_GEOIP_DIR_ . _PS_GEOIP_CITY_FILE_), GEOIP_STANDARD);
+                if (!isset($this->context->cookie->iso_code_country) || (isset($this->context->cookie->iso_code_country) && !in_array(strtoupper($this->context->cookie->iso_code_country), explode(';', Configuration::get('EPH_ALLOWED_COUNTRIES'))))) {
+                    $gi = geoip_open(realpath(_EPH_GEOIP_DIR_ . _EPH_GEOIP_CITY_FILE_), GEOIP_STANDARD);
                     $record = geoip_record_by_addr($gi, Tools::getRemoteAddr());
 
                     if (is_object($record)) {
 
-                        if (!in_array(strtoupper($record->country_code), explode(';', Configuration::get('PS_ALLOWED_COUNTRIES'))) && !FrontController::isInWhitelistForGeolocation()) {
+                        if (!in_array(strtoupper($record->country_code), explode(';', Configuration::get('EPH_ALLOWED_COUNTRIES'))) && !FrontController::isInWhitelistForGeolocation()) {
 
-                            if (Configuration::get('PS_GEOLOCATION_BEHAVIOR') == _PS_GEOLOCATION_NO_CATALOG_) {
+                            if (Configuration::get('EPH_GEOLOCATION_BEHAVIOR') == _EPH_GEOLOCATION_NO_CATALOG_) {
                                 $this->restrictedCountry = true;
                             } else
-                            if (Configuration::get('PS_GEOLOCATION_BEHAVIOR') == _PS_GEOLOCATION_NO_ORDER_) {
+                            if (Configuration::get('EPH_GEOLOCATION_BEHAVIOR') == _EPH_GEOLOCATION_NO_ORDER_) {
                                 $this->context->smarty->assign(
                                     [
                                         'restricted_country_mode' => true,
@@ -3180,7 +3180,7 @@ class FrontControllerCore extends Controller {
                 }
 
                 if (isset($this->context->cookie->iso_code_country) && $this->context->cookie->iso_code_country && !Validate::isLanguageIsoCode($this->context->cookie->iso_code_country)) {
-                    $this->context->cookie->iso_code_country = Country::getIsoById(Configuration::get('PS_COUNTRY_DEFAULT'));
+                    $this->context->cookie->iso_code_country = Country::getIsoById(Configuration::get('EPH_COUNTRY_DEFAULT'));
                 }
 
                 if (isset($this->context->cookie->iso_code_country) && ($idCountry = (int) Country::getByIso(strtoupper($this->context->cookie->iso_code_country)))) {
@@ -3191,15 +3191,15 @@ class FrontControllerCore extends Controller {
                     }
 
                     if (isset($hasBeenSet) && $hasBeenSet) {
-                        $this->context->cookie->id_currency = (int) ($defaultCountry->id_currency ? (int) $defaultCountry->id_currency : (int) Configuration::get('PS_CURRENCY_DEFAULT'));
+                        $this->context->cookie->id_currency = (int) ($defaultCountry->id_currency ? (int) $defaultCountry->id_currency : (int) Configuration::get('EPH_CURRENCY_DEFAULT'));
                     }
 
                     return $defaultCountry;
                 } else
-                if (Configuration::get('PS_GEOLOCATION_NA_BEHAVIOR') == _PS_GEOLOCATION_NO_CATALOG_ && !FrontController::isInWhitelistForGeolocation()) {
+                if (Configuration::get('EPH_GEOLOCATION_NA_BEHAVIOR') == _EPH_GEOLOCATION_NO_CATALOG_ && !FrontController::isInWhitelistForGeolocation()) {
                     $this->restrictedCountry = true;
                 } else
-                if (Configuration::get('PS_GEOLOCATION_NA_BEHAVIOR') == _PS_GEOLOCATION_NO_ORDER_ && !FrontController::isInWhitelistForGeolocation()) {
+                if (Configuration::get('EPH_GEOLOCATION_NA_BEHAVIOR') == _EPH_GEOLOCATION_NO_ORDER_ && !FrontController::isInWhitelistForGeolocation()) {
                     $this->context->smarty->assign(
                         [
                             'restricted_country_mode' => true,
@@ -3239,7 +3239,7 @@ class FrontControllerCore extends Controller {
         $ips = [];
 
         // retrocompatibility
-        $ipsOld = explode(';', Configuration::get('PS_GEOLOCATION_WHITELIST'));
+        $ipsOld = explode(';', Configuration::get('EPH_GEOLOCATION_WHITELIST'));
 
         if (is_array($ipsOld) && count($ipsOld)) {
 
@@ -3277,7 +3277,7 @@ class FrontControllerCore extends Controller {
      */
     protected function canonicalRedirection($canonicalUrl = '') {
 
-        if (!$canonicalUrl || !Configuration::get('PS_CANONICAL_REDIRECT') || strtoupper($_SERVER['REQUEST_METHOD']) != 'GET' || Tools::getValue('live_edit')) {
+        if (!$canonicalUrl || !Configuration::get('EPH_CANONICAL_REDIRECT') || strtoupper($_SERVER['REQUEST_METHOD']) != 'GET' || Tools::getValue('live_edit')) {
             return;
         }
 
@@ -3326,11 +3326,11 @@ class FrontControllerCore extends Controller {
             // Don't send any cookie
             $this->context->cookie->disallowWriting();
 
-            if (defined('_PS_MODE_DEV_') && _PS_MODE_DEV_ && $_SERVER['REQUEST_URI'] != __PS_BASE_URI__) {
+            if (defined('_EPH_MODE_DEV_') && _EPH_MODE_DEV_ && $_SERVER['REQUEST_URI'] != __EPH_BASE_URI__) {
                 die('[Debug] This page has moved<br />Please use the following URL instead: <a href="' . $finalUrl . '">' . $finalUrl . '</a>');
             }
 
-            $redirectType = Configuration::get('PS_CANONICAL_REDIRECT') == 2 ? '301' : '302';
+            $redirectType = Configuration::get('EPH_CANONICAL_REDIRECT') == 2 ? '301' : '302';
             header('HTTP/1.0 ' . $redirectType . ' Moved');
             header('Cache-Control: no-cache');
             Tools::redirectLink($finalUrl);
@@ -3351,8 +3351,8 @@ class FrontControllerCore extends Controller {
         $this->context->smarty->assign(
             [
                 'shop_name'   => $this->context->shop->name,
-                'favicon_url' => _PS_IMG_ . Configuration::get('PS_FAVICON'),
-                'logo_url'    => $this->context->link->getMediaLink(_PS_IMG_ . Configuration::get('PS_LOGO')),
+                'favicon_url' => _EPH_IMG_ . Configuration::get('EPH_FAVICON'),
+                'logo_url'    => $this->context->link->getMediaLink(_EPH_IMG_ . Configuration::get('EPH_LOGO')),
             ]
         );
         $this->smartyOutputContent($this->getTemplatePath($this->getThemeDir() . 'restricted-country.tpl'));
@@ -3370,7 +3370,7 @@ class FrontControllerCore extends Controller {
      */
     public function isTokenValid() {
 
-        if (!Configuration::get('PS_TOKEN_ENABLE')) {
+        if (!Configuration::get('EPH_TOKEN_ENABLE')) {
             return true;
         }
 
@@ -3473,12 +3473,12 @@ class FrontControllerCore extends Controller {
                 'voucherAllowed'            => (int) CartRule::isFeatureActive(),
                 'display_manufacturer_link' => (bool) $blockmanufacturer->active,
                 'display_supplier_link'     => (bool) $blocksupplier->active,
-                'PS_DISPLAY_SUPPLIERS'      => Configuration::get('PS_DISPLAY_SUPPLIERS'),
-                'PS_DISPLAY_BEST_SELLERS'   => Configuration::get('PS_DISPLAY_BEST_SELLERS'),
-                'display_store'             => Configuration::get('PS_STORES_DISPLAY_SITEMAP'),
-                'conditions'                => Configuration::get('PS_CONDITIONS'),
-                'id_cgv'                    => Configuration::get('PS_CONDITIONS_CMS_ID'),
-                'PS_SHOP_NAME'              => Configuration::get('PS_SHOP_NAME'),
+                'EPH_DISPLAY_SUPPLIERS'      => Configuration::get('EPH_DISPLAY_SUPPLIERS'),
+                'EPH_DISPLAY_BEST_SELLERS'   => Configuration::get('EPH_DISPLAY_BEST_SELLERS'),
+                'display_store'             => Configuration::get('EPH_STORES_DISPLAY_SITEMAP'),
+                'conditions'                => Configuration::get('EPH_CONDITIONS'),
+                'id_cgv'                    => Configuration::get('EPH_CONDITIONS_CMS_ID'),
+                'EPH_SHOP_NAME'              => Configuration::get('EPH_SHOP_NAME'),
             ]
         );
 
@@ -3522,7 +3522,7 @@ class FrontControllerCore extends Controller {
      */
     public function addColorsToProductList(&$products) {
 
-        if (!is_array($products) || !count($products) || !file_exists(_PS_THEME_DIR_ . 'product-list-colors.tpl')) {
+        if (!is_array($products) || !count($products) || !file_exists(_EPH_THEME_DIR_ . 'product-list-colors.tpl')) {
             return;
         }
 
@@ -3530,7 +3530,7 @@ class FrontControllerCore extends Controller {
 
         foreach ($products as &$product) {
 
-            if (!$this->isCached(_PS_THEME_DIR_ . 'product-list-colors.tpl', $this->getColorsListCacheId($product['id_product']))) {
+            if (!$this->isCached(_EPH_THEME_DIR_ . 'product-list-colors.tpl', $this->getColorsListCacheId($product['id_product']))) {
                 $productsNeedCache[] = (int) $product['id_product'];
             }
 
@@ -3547,7 +3547,7 @@ class FrontControllerCore extends Controller {
         Tools::enableCache();
 
         foreach ($products as &$product) {
-            $tpl = $this->context->smarty->createTemplate(_PS_THEME_DIR_ . 'product-list-colors.tpl', $this->getColorsListCacheId($product['id_product']));
+            $tpl = $this->context->smarty->createTemplate(_EPH_THEME_DIR_ . 'product-list-colors.tpl', $this->getColorsListCacheId($product['id_product']));
 
             if (isset($colors[$product['id_product']])) {
                 $tpl->assign(
@@ -3556,13 +3556,13 @@ class FrontControllerCore extends Controller {
                         'colors_list' => $colors[$product['id_product']],
                         'link'        => $this->context->link,
                         'img_col_dir' => _THEME_COL_DIR_,
-                        'col_img_dir' => _PS_COL_IMG_DIR_,
+                        'col_img_dir' => _EPH_COL_IMG_DIR_,
                     ]
                 );
             }
 
             if (!in_array($product['id_product'], $productsNeedCache) || isset($colors[$product['id_product']])) {
-                $product['color_list'] = $tpl->fetch(_PS_THEME_DIR_ . 'product-list-colors.tpl', $this->getColorsListCacheId($product['id_product']));
+                $product['color_list'] = $tpl->fetch(_EPH_THEME_DIR_ . 'product-list-colors.tpl', $this->getColorsListCacheId($product['id_product']));
             } else {
                 $product['color_list'] = '';
             }
@@ -3578,12 +3578,12 @@ class FrontControllerCore extends Controller {
 		$context = Context::getContext();
 		$idShop = (int) $context->shop->id;
 
-		if (Configuration::get('PS_LOGO_INVOICE', null, null, $idShop) != false && file_exists(_PS_IMG_DIR_ . Configuration::get('PS_LOGO_INVOICE', null, null, $idShop))) {
-			$logo = _PS_IMG_DIR_ . Configuration::get('PS_LOGO_INVOICE', null, null, $idShop);
+		if (Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop))) {
+			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop);
 		} else
 
-		if (Configuration::get('PS_LOGO', null, null, $idShop) != false && file_exists(_PS_IMG_DIR_ . Configuration::get('PS_LOGO', null, null, $idShop))) {
-			$logo = _PS_IMG_DIR_ . Configuration::get('PS_LOGO', null, null, $idShop);
+		if (Configuration::get('EPH_LOGO', null, null, $idShop) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop))) {
+			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop);
 		}
 
 		return $logo;

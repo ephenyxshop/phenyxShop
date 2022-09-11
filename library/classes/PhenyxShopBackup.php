@@ -37,8 +37,8 @@ class PhenyxShopBackupCore {
             $this->id = $this->getRealBackupPath($filename);
         }
 
-        $psBackupAll = Configuration::get('PS_BACKUP_ALL');
-        $psBackupDropTable = Configuration::get('PS_BACKUP_DROP_TABLE');
+        $psBackupAll = Configuration::get('EPH_BACKUP_ALL');
+        $psBackupDropTable = Configuration::get('EPH_BACKUP_DROP_TABLE');
         $this->psBackupAll = $psBackupAll !== false ? $psBackupAll : true;
         $this->psBackupDropTable = $psBackupDropTable !== false ? $psBackupDropTable : true;
     }
@@ -59,8 +59,8 @@ class PhenyxShopBackupCore {
 
         if (!empty($this->customBackupDir)) {
             $backupDir = str_replace(
-                _PS_ROOT_DIR_ . static::$backupDir,
-                _PS_ROOT_DIR_ . $this->customBackupDir,
+                _EPH_ROOT_DIR_ . static::$backupDir,
+                _EPH_ROOT_DIR_ . $this->customBackupDir,
                 $backupDir
             );
 
@@ -85,7 +85,7 @@ class PhenyxShopBackupCore {
      */
     public static function getBackupPath($filename = '') {
 
-        $backupdir = realpath(_PS_ROOT_DIR_ . static::$backupDir);
+        $backupdir = realpath(_EPH_ROOT_DIR_ . static::$backupDir);
 
         if ($backupdir === false) {
             die(Tools::displayError('"Backup" directory does not exist.'));
@@ -118,7 +118,7 @@ class PhenyxShopBackupCore {
      */
     public static function backupExist($filename) {
 
-        $backupdir = realpath(_PS_ROOT_DIR_ . static::$backupDir);
+        $backupdir = realpath(_EPH_ROOT_DIR_ . static::$backupDir);
 
         if ($backupdir === false) {
             die(Tools::displayError('"Backup" directory does not exist.'));
@@ -143,7 +143,7 @@ class PhenyxShopBackupCore {
 
         $customDir = DIRECTORY_SEPARATOR . trim($dir, '/') . DIRECTORY_SEPARATOR;
 
-        if (is_dir(_PS_ROOT_DIR_ . $customDir)) {
+        if (is_dir(_EPH_ROOT_DIR_ . $customDir)) {
             $this->customBackupDir = $customDir;
         } else {
             return false;
@@ -162,7 +162,7 @@ class PhenyxShopBackupCore {
      */
     public function getBackupURL() {
 
-        return __PS_BASE_URI__ . basename(_PS_ROOT_DIR_) . '/backup.php?filename=' . basename($this->id);
+        return __EPH_BASE_URI__ . basename(_EPH_ROOT_DIR_) . '/backup.php?filename=' . basename($this->id);
     }
 
     /**
@@ -239,7 +239,7 @@ class PhenyxShopBackupCore {
 
         $this->id = realpath($backupfile);
 
-        fwrite($fp, '/* Backup for ' . Tools::getHttpHost(false, false) . __PS_BASE_URI__ . "\n *  at " . date($date) . "\n */\n");
+        fwrite($fp, '/* Backup for ' . Tools::getHttpHost(false, false) . __EPH_BASE_URI__ . "\n *  at " . date($date) . "\n */\n");
         fwrite($fp, "\n" . 'SET NAMES \'utf8\';' . "\n\n");
 
         // Find all tables

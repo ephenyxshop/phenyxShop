@@ -35,16 +35,16 @@ class PageNotFoundControllerCore extends FrontController {
 
             // First preg_match() matches friendly URLs, second one plain URLs.
 
-            if (preg_match('@^' . __PS_BASE_URI__
+            if (preg_match('@^' . __EPH_BASE_URI__
                 . '([0-9]+)\-([_a-zA-Z-]+)(/[_a-zA-Z-]+)?\.(png|jpe?g|gif)$@',
                 $_SERVER['REQUEST_URI'], $matches)
-                || preg_match('@^' . _PS_PROD_IMG_
+                || preg_match('@^' . _EPH_PROD_IMG_
                     . '[0-9/]+/([0-9]+)\-([_a-zA-Z]+)(\.)(png|jpe?g|gif)$@',
                     $_SERVER['REQUEST_URI'], $matches)) {
                 $imageType = ImageType::getByNameNType($matches[2], 'products');
 
                 if ($imageType && count($imageType)) {
-                    $root = _PS_PROD_IMG_DIR_;
+                    $root = _EPH_PROD_IMG_DIR_;
                     $folder = Image::getImgFolderStatic($matches[1]);
                     $file = $matches[1];
                     $ext = '.' . $matches[4];
@@ -63,7 +63,7 @@ class PageNotFoundControllerCore extends FrontController {
 
                 }
 
-            } else if (preg_match('@^' . __PS_BASE_URI__
+            } else if (preg_match('@^' . __EPH_BASE_URI__
                 . 'c/([0-9]+)\-([_a-zA-Z-]+)(/[_a-zA-Z0-9-]+)?\.(png|jpe?g|gif)$@',
                 $_SERVER['REQUEST_URI'], $matches)
                 || preg_match('@^' . _THEME_CAT_DIR_
@@ -72,7 +72,7 @@ class PageNotFoundControllerCore extends FrontController {
                 $imageType = ImageType::getByNameNType($matches[2], 'categories');
 
                 if ($imageType && count($imageType)) {
-                    $root = _PS_CAT_IMG_DIR_;
+                    $root = _EPH_CAT_IMG_DIR_;
                     $file = $matches[1];
                     $ext = '.' . $matches[4];
 
@@ -93,7 +93,7 @@ class PageNotFoundControllerCore extends FrontController {
             }
 
             header('Content-Type: image/gif');
-            readfile(_PS_IMG_DIR_ . '404.gif');
+            readfile(_EPH_IMG_DIR_ . '404.gif');
             exit;
         } else if (in_array(mb_strtolower(substr($_SERVER['REQUEST_URI'], -3)), ['.js', 'css'])) {
             $this->context->cookie->disallowWriting();
@@ -102,7 +102,7 @@ class PageNotFoundControllerCore extends FrontController {
 
         parent::initContent();
 
-        $this->setTemplate(_PS_THEME_DIR_ . '404.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . '404.tpl');
     }
 
     /**

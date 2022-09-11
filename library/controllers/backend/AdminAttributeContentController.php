@@ -63,7 +63,7 @@ class AdminAttributeContentControllerCore extends AdminController {
 	public function setAjaxMedia() {
 
 		return $this->pushJS([
-			_PS_JS_DIR_ . 'attributeGroup.js',
+			_EPH_JS_DIR_ . 'attributeGroup.js',
 		]);
 	}
 
@@ -71,7 +71,7 @@ class AdminAttributeContentControllerCore extends AdminController {
 
 		$data = $this->createTemplate($this->table . '.tpl');
 		$attributeGridId = [];
-		$attributeCategories = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$attributeCategories = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('a.`id_attribute_group`,  b.`name`, a.`position`')
 				->from('attribute_group', 'a')
@@ -114,7 +114,7 @@ class AdminAttributeContentControllerCore extends AdminController {
 
 	public function generateParaGridScript($regenerate = false) {
 
-		$attributeCategories = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$attributeCategories = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('a.`id_attribute_group`,  b.`name`, a.`position`')
 				->from('attribute_group', 'a')
@@ -324,7 +324,7 @@ class AdminAttributeContentControllerCore extends AdminController {
 
 	public function getAttributesRequest($id_attribute_group) {
 
-		$attributePages = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$attributePages = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('b.*, a.*, cml.`name` as group_name')
 				->from('attribute', 'a')
@@ -698,7 +698,7 @@ class AdminAttributeContentControllerCore extends AdminController {
 
 			if ($initPosition > $stopIndex) {
 
-				$objects = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+				$objects = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 					(new DbQuery())
 						->select('id_attribute,  `position` ')
 						->from('attribute')
@@ -738,7 +738,7 @@ class AdminAttributeContentControllerCore extends AdminController {
 
 			if ($initPosition < $stopIndex) {
 
-				$objects = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+				$objects = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 					(new DbQuery())
 						->select('id_attribute,  `position` ')
 						->from('attribute')

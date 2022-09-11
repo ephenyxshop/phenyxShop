@@ -62,7 +62,7 @@ class ControllersCore extends ObjectModel {
 	
 	public function isRegistered() {
 		
-		$request =  Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		$request =  Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('id_controller')
                 ->from('controllers')
@@ -77,7 +77,7 @@ class ControllersCore extends ObjectModel {
 	
 	public static function getIdController($controller_name) {
 		
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('id_controller')
                 ->from('controllers')

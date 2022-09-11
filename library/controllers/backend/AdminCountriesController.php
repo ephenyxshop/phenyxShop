@@ -29,7 +29,7 @@ class AdminCountriesControllerCore extends AdminController {
             'general' => [
                 'title'  => $this->l('Country options'),
                 'fields' => [
-                    'PS_RESTRICT_DELIVERED_COUNTRIES' => [
+                    'EPH_RESTRICT_DELIVERED_COUNTRIES' => [
                         'title'   => $this->l('Restrict country selections in front office to those covered by active carriers'),
                         'cast'    => 'intval',
                         'type'    => 'bool',
@@ -689,7 +689,7 @@ class AdminCountriesControllerCore extends AdminController {
             $sql->select('id_state');
             $sql->from('state');
             $sql->where('`id_country` = ' . (int) $country->id . ' AND `id_zone` = ' . (int) $oldIdZone);
-            $results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+            $results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
 
             if ($results && count($results)) {
                 $ids = [];

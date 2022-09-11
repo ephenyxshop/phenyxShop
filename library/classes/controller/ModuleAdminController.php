@@ -48,8 +48,8 @@ abstract class ModuleAdminControllerCore extends AdminController {
      */
     public function createTemplate($tplName) {
 
-        if (file_exists(_PS_THEME_DIR_ . 'modules/' . $this->module->name . '/views/templates/admin/' . $tplName) && $this->viewAccess()) {
-            return $this->context->smarty->createTemplate(_PS_THEME_DIR_ . 'modules/' . $this->module->name . '/views/templates/admin/' . $tplName, $this->context->smarty);
+        if (file_exists(_EPH_THEME_DIR_ . 'modules/' . $this->module->name . '/views/templates/admin/' . $tplName) && $this->viewAccess()) {
+            return $this->context->smarty->createTemplate(_EPH_THEME_DIR_ . 'modules/' . $this->module->name . '/views/templates/admin/' . $tplName, $this->context->smarty);
         } else if (file_exists($this->getTemplatePath() . $this->override_folder . $tplName) && $this->viewAccess()) {
             return $this->context->smarty->createTemplate($this->getTemplatePath() . $this->override_folder . $tplName, $this->context->smarty);
         }
@@ -67,7 +67,7 @@ abstract class ModuleAdminControllerCore extends AdminController {
      */
     public function getTemplatePath() {
 
-        return _PS_MODULE_DIR_ . $this->module->name . '/views/templates/admin/';
+        return _EPH_MODULE_DIR_ . $this->module->name . '/views/templates/admin/';
     }
 
 }

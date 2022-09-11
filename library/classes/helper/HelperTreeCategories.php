@@ -424,7 +424,7 @@ class HelperTreeCategoriesCore extends TreeCore {
                 $this->setShop(new Shop($this->getContext()->shop->id));
             } else
             if (!Shop::isFeatureActive()) {
-                $this->setShop(new Shop(Configuration::get('PS_SHOP_DEFAULT')));
+                $this->setShop(new Shop(Configuration::get('EPH_SHOP_DEFAULT')));
             } else {
                 $this->setShop(new Shop(0));
             }
@@ -607,7 +607,7 @@ class HelperTreeCategoriesCore extends TreeCore {
         }
 
         $this->setAttribute('selected_categories', $this->getSelectedCategories());
-        $this->getContext()->smarty->assign('root_category', Configuration::get('PS_ROOT_CATEGORY'));
+        $this->getContext()->smarty->assign('root_category', Configuration::get('EPH_ROOT_CATEGORY'));
         $this->getContext()->smarty->assign('token', Tools::getAdminTokenLite('AdminProducts'));
 
         return parent::render($data);

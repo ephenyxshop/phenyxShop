@@ -26,27 +26,27 @@ class AdminPreferencesControllerCore extends AdminController {
         if (get_class($this) == 'AdminPreferencesController') {
             $roundMode = [
                 [
-                    'value' => PS_ROUND_HALF_UP,
+                    'value' => EPH_ROUND_HALF_UP,
                     'name'  => $this->l('Round up away from zero, when it is half way there (recommended)'),
                 ],
                 [
-                    'value' => PS_ROUND_HALF_DOWN,
+                    'value' => EPH_ROUND_HALF_DOWN,
                     'name'  => $this->l('Round down towards zero, when it is half way there'),
                 ],
                 [
-                    'value' => PS_ROUND_HALF_EVEN,
+                    'value' => EPH_ROUND_HALF_EVEN,
                     'name'  => $this->l('Round towards the next even value'),
                 ],
                 [
-                    'value' => PS_ROUND_HALF_ODD,
+                    'value' => EPH_ROUND_HALF_ODD,
                     'name'  => $this->l('Round towards the next odd value'),
                 ],
                 [
-                    'value' => PS_ROUND_UP,
+                    'value' => EPH_ROUND_UP,
                     'name'  => $this->l('Round up to the nearest value'),
                 ],
                 [
-                    'value' => PS_ROUND_DOWN,
+                    'value' => EPH_ROUND_DOWN,
                     'name'  => $this->l('Round down to the nearest value'),
                 ],
             ];
@@ -92,7 +92,7 @@ class AdminPreferencesControllerCore extends AdminController {
                 ],
             ];
 
-            $fields['PS_SSL_ENABLED'] = [
+            $fields['EPH_SSL_ENABLED'] = [
                 'title'      => $this->l('Enable SSL'),
                 'desc'       => $this->l('If you own an SSL certificate for your shop\'s domain name, you can activate SSL encryption (https://) for customer account identification and order processing.'),
                 'hint'       => $this->l('If you want to enable SSL on all the pages of your shop, activate the "Enable on all the pages" option below.'),
@@ -102,14 +102,14 @@ class AdminPreferencesControllerCore extends AdminController {
                 'default'    => '0',
             ];
 
-            $fields['PS_SSL_ENABLED_EVERYWHERE'] = [
+            $fields['EPH_SSL_ENABLED_EVERYWHERE'] = [
                 'title'      => $this->l('Enable SSL on all pages'),
                 'desc'       => $this->l('When enabled, all the pages of your shop will be SSL-secured.'),
                 'validation' => 'isBool',
                 'cast'       => 'intval',
                 'type'       => 'bool',
                 'default'    => '0',
-                'disabled'   => (Tools::getValue('PS_SSL_ENABLED', Configuration::get('PS_SSL_ENABLED'))) ? false : true,
+                'disabled'   => (Tools::getValue('EPH_SSL_ENABLED', Configuration::get('EPH_SSL_ENABLED'))) ? false : true,
             ];
 
             $fields['EPH_FULL_THEME_MANAGEMENT_MODE'] = [
@@ -123,7 +123,7 @@ class AdminPreferencesControllerCore extends AdminController {
             $fields = array_merge(
                 $fields,
                 [
-                    'PS_TOKEN_ENABLE'               => [
+                    'EPH_TOKEN_ENABLE'               => [
                         'title'      => $this->l('Increase front office security'),
                         'desc'       => $this->l('Enable or disable token in the Front Office to improve ephenyx\' security.'),
                         'validation' => 'isBool',
@@ -132,7 +132,7 @@ class AdminPreferencesControllerCore extends AdminController {
                         'default'    => '0',
                         'visibility' => Shop::CONTEXT_ALL,
                     ],
-                    'PS_ALLOW_HTML_IFRAME'          => [
+                    'EPH_ALLOW_HTML_IFRAME'          => [
                         'title'      => $this->l('Allow iframes on HTML fields'),
                         'desc'       => $this->l('Allow iframes on text fields like product description. We recommend that you leave this option disabled.'),
                         'validation' => 'isBool',
@@ -140,7 +140,7 @@ class AdminPreferencesControllerCore extends AdminController {
                         'type'       => 'bool',
                         'default'    => '0',
                     ],
-                    'PS_USE_HTMLPURIFIER'           => [
+                    'EPH_USE_HTMLPURIFIER'           => [
                         'title'      => $this->l('Use HTMLPurifier Library'),
                         'desc'       => $this->l('Clean the HTML content on text fields. We recommend that you leave this option enabled.'),
                         'validation' => 'isBool',
@@ -148,7 +148,7 @@ class AdminPreferencesControllerCore extends AdminController {
                         'type'       => 'bool',
                         'default'    => '0',
                     ],
-                    'PS_PRICE_ROUND_MODE'           => [
+                    'EPH_PRICE_ROUND_MODE'           => [
                         'title'      => $this->l('Round mode'),
                         'desc'       => $this->l('You can choose among 6 different ways of rounding prices. "Round up away from zero ..." is the recommended behavior.'),
                         'validation' => 'isInt',
@@ -157,7 +157,7 @@ class AdminPreferencesControllerCore extends AdminController {
                         'list'       => $roundMode,
                         'identifier' => 'value',
                     ],
-                    'PS_ROUND_TYPE'                 => [
+                    'EPH_ROUND_TYPE'                 => [
                         'title'      => $this->l('Round type'),
                         'desc'       => $this->l('You can choose when to round prices: either on each item, each line or the total (of an invoice, for example).'),
                         'cast'       => 'intval',
@@ -178,7 +178,7 @@ class AdminPreferencesControllerCore extends AdminController {
                         ],
                         'identifier' => 'id',
                     ],
-                    'PS_PRICE_DISPLAY_PRECISION'    => [
+                    'EPH_PRICE_DISPLAY_PRECISION'    => [
                         'title'      => $this->l('Number of decimals'),
                         'desc'       => $this->l('Choose how many decimals you want to display'),
                         'validation' => 'isUnsignedInt',
@@ -247,7 +247,7 @@ class AdminPreferencesControllerCore extends AdminController {
                         'cast'  => 'strval',
                         'type'  => 'text',
                     ],
-                    'EPH_GOOGLE_MAPS_API_KEY'       => [
+                    'EPH_GOOGLE_MAEPH_API_KEY'       => [
                         'title' => $this->l('Google Maps API Key'),
                         'desc'  => $this->l('Add an API key to display Google Maps properly'),
                         'cast'  => 'strval',
@@ -278,7 +278,7 @@ class AdminPreferencesControllerCore extends AdminController {
                         'type'  => 'text',
                     ],
 
-                    'PS_SHOP_ACTIVITY'              => [
+                    'EPH_SHOP_ACTIVITY'              => [
                         'title'      => $this->l('Main Shop Activity'),
                         'validation' => 'isInt',
                         'cast'       => 'intval',
@@ -291,9 +291,9 @@ class AdminPreferencesControllerCore extends AdminController {
 
             // No HTTPS activation if you haven't already.
 
-            if (!Tools::usingSecureMode() && !Configuration::get('PS_SSL_ENABLED')) {
-                $fields['PS_SSL_ENABLED']['type'] = 'disabled';
-                $fields['PS_SSL_ENABLED']['disabled'] = '<a class="btn btn-link" href="https://' . Tools::getShopDomainSsl() . Tools::safeOutput($_SERVER['REQUEST_URI']) . '">' . $this->l('Please click here to check if your shop supports HTTPS.') . '</a>';
+            if (!Tools::usingSecureMode() && !Configuration::get('EPH_SSL_ENABLED')) {
+                $fields['EPH_SSL_ENABLED']['type'] = 'disabled';
+                $fields['EPH_SSL_ENABLED']['disabled'] = '<a class="btn btn-link" href="https://' . Tools::getShopDomainSsl() . Tools::safeOutput($_SERVER['REQUEST_URI']) . '">' . $this->l('Please click here to check if your shop supports HTTPS.') . '</a>';
             }
 
             $this->fields_options = [
@@ -381,10 +381,10 @@ class AdminPreferencesControllerCore extends AdminController {
      */
     public function updateOptionPsMultishopFeatureActive($value) {
 
-        Configuration::updateValue('PS_MULTISHOP_FEATURE_ACTIVE', $value);
+        Configuration::updateValue('EPH_MULTISHOP_FEATURE_ACTIVE', $value);
 
         $tab = EmployeeMenu::getInstanceFromClassName('AdminShopGroup');
-        $tab->active = (bool) Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE');
+        $tab->active = (bool) Configuration::get('EPH_MULTISHOP_FEATURE_ACTIVE');
         $tab->update();
     }
 

@@ -82,7 +82,7 @@ class AdminShopUrlControllerCore extends AdminController {
      */
     public function viewAccess($disable = false) {
 
-        return Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE');
+        return Configuration::get('EPH_MULTISHOP_FEATURE_ACTIVE');
     }
 
     /**
@@ -239,7 +239,7 @@ class AdminShopUrlControllerCore extends AdminController {
             ],
         ];
 
-        if (!defined('_PS_HOST_MODE_')) {
+        if (!defined('_EPH_HOST_MODE_')) {
             $this->fields_form[1]['form']['input'] = array_merge(
                 $this->fields_form[1]['form']['input'],
                 [
@@ -435,7 +435,7 @@ class AdminShopUrlControllerCore extends AdminController {
                 'toolbar_scroll' => 1,
                 'toolbar_btn'    => $this->toolbar_btn,
                 'title'          => $this->toolbar_title,
-                'shops_tree'     => $shopsTree,
+                'shoEPH_tree'     => $shopsTree,
             ]
         );
     }
@@ -653,7 +653,7 @@ class AdminShopUrlControllerCore extends AdminController {
         }
 
         if ($this->redirect_shop_url) {
-            $this->redirect_after = $object->getBaseURI() . basename(_PS_ADMIN_DIR_) . '/' . $this->context->link->getAdminLink('AdminShopUrl');
+            $this->redirect_after = $object->getBaseURI() . basename(_EPH_ADMIN_DIR_) . '/' . $this->context->link->getAdminLink('AdminShopUrl');
         }
 
     }

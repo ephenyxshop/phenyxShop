@@ -28,17 +28,17 @@ class FaviconControllerCore extends FrontController {
                 $height = Tools::getValue('height');
 
                 header('Content-Type: image/png');
-                readfile(_PS_IMG_DIR_ . "favicon/favicon_{$this->context->shop->id}_{$width}_{$height}.png");
+                readfile(_EPH_IMG_DIR_ . "favicon/favicon_{$this->context->shop->id}_{$width}_{$height}.png");
                 exit;
             }
 
             header('Content-Type: image/png');
-            readfile(_PS_IMG_DIR_ . "favicon/favicon_{$this->context->shop->id}_180_180.png");
+            readfile(_EPH_IMG_DIR_ . "favicon/favicon_{$this->context->shop->id}_180_180.png");
             exit;
         }
 
         header('Content-Type: image/x-icon');
-        readfile(_PS_IMG_DIR_ . "favicon.ico");
+        readfile(_EPH_IMG_DIR_ . "favicon.ico");
         exit;
     }
 

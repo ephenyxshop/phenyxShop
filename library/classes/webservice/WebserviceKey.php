@@ -86,7 +86,7 @@ class WebserviceKeyCore extends ObjectModel
      */
     public static function keyExists($key)
     {
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
 		SELECT `key`
 		FROM '._DB_PREFIX_.'webservice_account
@@ -126,7 +126,7 @@ class WebserviceKeyCore extends ObjectModel
      */
     public static function getPermissionForAccount($authKey)
     {
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
 			SELECT p.*
 			FROM `'._DB_PREFIX_.'webservice_permission` p
@@ -154,7 +154,7 @@ class WebserviceKeyCore extends ObjectModel
      */
     public static function isKeyActive($authKey)
     {
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
 		SELECT active
 		FROM `'._DB_PREFIX_.'webservice_account`
@@ -172,7 +172,7 @@ class WebserviceKeyCore extends ObjectModel
      */
     public static function getClassFromKey($authKey)
     {
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
 		SELECT class_name
 		FROM `'._DB_PREFIX_.'webservice_account`

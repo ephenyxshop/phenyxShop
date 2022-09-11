@@ -35,7 +35,7 @@ class NotificationsControllerCore extends FrontController {
 		$post = new MemberNotification($id_notification);
 		$post->content_read = 1;
 		$post->update();
-		$this->setTemplate(_PS_THEME_DIR_ . 'post_ajax.tpl');
+		$this->setTemplate(_EPH_THEME_DIR_ . 'post_ajax.tpl');
 		$this->context->smarty->assign([
 			'postContent' => Memberpost::getContentPost($id_post, $this->context->customer->id),
 		]);

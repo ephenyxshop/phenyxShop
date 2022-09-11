@@ -46,7 +46,7 @@ class ZoneCore extends ObjectModel {
         $cacheId = 'Zone::getZones_' . (bool) $active;
 
         if (!Cache::isStored($cacheId)) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('*')
                     ->from('zone')
@@ -74,7 +74,7 @@ class ZoneCore extends ObjectModel {
      */
     public static function getIdByName($name) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_zone`')
                 ->from('zone')

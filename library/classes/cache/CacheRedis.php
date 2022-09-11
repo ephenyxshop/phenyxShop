@@ -176,7 +176,7 @@ class CacheRedisCore extends CacheCore {
         $sql->select('`name`, `value`');
         $sql->from('configuration');
         $sql->where('`name` = \'EPH_REDIS_SERVER\' OR `name` = \'EPH_REDIS_PORT\' OR name = \'EPH_REDIS_AUTH\' OR name = \'EPH_REDIS_DB\'');
-        $params = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql, true, false);
+        $params = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql, true, false);
 
         foreach ($params as $key => $val) {
             $server[$val['name']] = $val['value'];
@@ -193,7 +193,7 @@ class CacheRedisCore extends CacheCore {
         $sql->select('`id_redis_serveur`');
         $sql->from('redis_servers');
 		$sql->orderBy('`id_redis_serveur` DESC');
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($sql);
 
         
     }
@@ -220,7 +220,7 @@ class CacheRedisCore extends CacheCore {
         $sql->where('`auth` = \'' . pSQL($auth) . '\'');
         $sql->where('`db` = ' . (int) $db);
 
-        if (Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql, false)) {
+        if (Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($sql, false)) {
             $context = Context::getContext();
             $context->controller->errors[] =
             Tools::displayError('Redis server has already been added');
@@ -254,7 +254,7 @@ class CacheRedisCore extends CacheCore {
         $sql->select('*');
         $sql->from('redis_servers');
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql, true, false);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql, true, false);
     }
 
     /**

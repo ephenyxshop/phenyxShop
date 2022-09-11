@@ -30,10 +30,10 @@ class AttachmentControllerCore extends FrontController {
 
         header('Content-Transfer-Encoding: binary');
         header('Content-Type: ' . $a->mime);
-        header('Content-Length: ' . filesize(_PS_DOWNLOAD_DIR_ . $a->file));
+        header('Content-Length: ' . filesize(_EPH_DOWNLOAD_DIR_ . $a->file));
         header('Content-Disposition: attachment; filename="' . utf8_decode($a->file_name) . '"');
         @set_time_limit(0);
-        readfile(_PS_DOWNLOAD_DIR_ . $a->file);
+        readfile(_EPH_DOWNLOAD_DIR_ . $a->file);
         exit;
     }
 

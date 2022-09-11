@@ -191,10 +191,10 @@ class StockMvtCore extends ObjectModel
         $query->orderBy('date_add DESC');
 
         // gets the result
-        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->query($query);
+        $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->query($query);
 
         // fills the movements array
-        while ($row = Db::getInstance(_PS_USE_SQL_SLAVE_)->nextRow($res)) {
+        while ($row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->nextRow($res)) {
             if ($quantityTotal >= $quantity) {
                 break;
             }
@@ -233,7 +233,7 @@ class StockMvtCore extends ObjectModel
         }
         $query->orderBy('date_add DESC');
 
-        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
 
         if ($res != false) {
             return $res['0'];

@@ -70,12 +70,12 @@ class ModuleFrontControllerCore extends FrontController {
      */
     public function getTemplatePath($template) {
 
-        if (file_exists(_PS_THEME_DIR_ . 'modules/' . $this->module->name . '/' . $template)) {
-            return _PS_THEME_DIR_ . 'modules/' . $this->module->name . '/' . $template;
-        } else if (file_exists(_PS_THEME_DIR_ . 'modules/' . $this->module->name . '/views/templates/front/' . $template)) {
-            return _PS_THEME_DIR_ . 'modules/' . $this->module->name . '/views/templates/front/' . $template;
-        } else if (file_exists(_PS_MODULE_DIR_ . $this->module->name . '/views/templates/front/' . $template)) {
-            return _PS_MODULE_DIR_ . $this->module->name . '/views/templates/front/' . $template;
+        if (file_exists(_EPH_THEME_DIR_ . 'modules/' . $this->module->name . '/' . $template)) {
+            return _EPH_THEME_DIR_ . 'modules/' . $this->module->name . '/' . $template;
+        } else if (file_exists(_EPH_THEME_DIR_ . 'modules/' . $this->module->name . '/views/templates/front/' . $template)) {
+            return _EPH_THEME_DIR_ . 'modules/' . $this->module->name . '/views/templates/front/' . $template;
+        } else if (file_exists(_EPH_MODULE_DIR_ . $this->module->name . '/views/templates/front/' . $template)) {
+            return _EPH_MODULE_DIR_ . $this->module->name . '/views/templates/front/' . $template;
         }
 
         return false;
@@ -89,7 +89,7 @@ class ModuleFrontControllerCore extends FrontController {
 
         if (Tools::isSubmit('module') && Tools::getValue('controller') == 'payment') {
             $currency = Currency::getCurrency((int) $this->context->cart->id_currency);
-            $minimalPurchase = Tools::convertPrice((float) Configuration::get('PS_PURCHASE_MINIMUM'), $currency);
+            $minimalPurchase = Tools::convertPrice((float) Configuration::get('EPH_PURCHASE_MINIMUM'), $currency);
 
             if ($this->context->cart->getOrderTotal(false, Cart::ONLY_PRODUCTS) < $minimalPurchase) {
                 Tools::redirect('index.php?controller=order&step=1');

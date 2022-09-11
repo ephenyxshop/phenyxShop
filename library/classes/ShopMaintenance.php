@@ -45,14 +45,14 @@ class ShopMaintenanceCore {
      */
     public static function adjustThemeHeaders() {
 
-        foreach (scandir(_PS_ALL_THEMES_DIR_) as $themeDir) {
+        foreach (scandir(_EPH_ALL_THEMES_DIR_) as $themeDir) {
 
-            if (!is_dir(_PS_ALL_THEMES_DIR_ . $themeDir)
+            if (!is_dir(_EPH_ALL_THEMES_DIR_ . $themeDir)
                 || in_array($themeDir, ['.', '..'])) {
                 continue;
             }
 
-            $headerPath = _PS_ALL_THEMES_DIR_ . $themeDir . '/header.tpl';
+            $headerPath = _EPH_ALL_THEMES_DIR_ . $themeDir . '/header.tpl';
 
             if (is_writable($headerPath)) {
                 $header = file_get_contents($headerPath);
@@ -80,7 +80,7 @@ class ShopMaintenanceCore {
         $name = Configuration::STORE_REGISTERED;
 
         if (!Configuration::get($name)) {
-            $employees = Employee::getEmployeesByProfile(_PS_ADMIN_PROFILE_);
+            $employees = Employee::getEmployeesByProfile(_EPH_ADMIN_PROFILE_);
             // Usually there's only one employee when we run this code.
 
             foreach ($employees as $employee) {
@@ -107,10 +107,10 @@ class ShopMaintenanceCore {
         $name = AdminController::MESSAGE_CACHE_PATH;
         $nameLength = strlen($name);
 
-        foreach (scandir(_PS_CACHE_DIR_) as $candidate) {
+        foreach (scandir(_EPH_CACHE_DIR_) as $candidate) {
 
             if (substr($candidate, 0, $nameLength) === $name) {
-                $path = _PS_CACHE_DIR_ . '/' . $candidate;
+                $path = _EPH_CACHE_DIR_ . '/' . $candidate;
 
                 if (time() - filemtime($path) > 3600) {
                     unlink($path);

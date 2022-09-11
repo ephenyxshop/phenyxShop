@@ -154,7 +154,7 @@ class StockCore extends ObjectModel
             return false;
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_stock`')
                 ->from('stock')
@@ -178,7 +178,7 @@ class StockCore extends ObjectModel
     {
         // if combinations
         if ((int) $this->id_product_attribute > 0) {
-            $rows = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $rows = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('reference, ean13, upc')
                     ->from('product_attribute')

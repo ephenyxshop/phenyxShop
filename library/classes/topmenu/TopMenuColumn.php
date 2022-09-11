@@ -94,7 +94,7 @@ class TopMenuColumnCore extends ObjectModel {
         ];
         $fields = [];
         $languages = Language::getLanguages(false);
-        $defaultLanguage = Configuration::get('PS_LANG_DEFAULT');
+        $defaultLanguage = Configuration::get('EPH_LANG_DEFAULT');
 
         foreach ($languages as $language) {
             $fields[$language['id_lang']]['id_lang'] = $language['id_lang'];
@@ -151,28 +151,28 @@ class TopMenuColumnCore extends ObjectModel {
 
     public static function getIdColumnCategoryDepend($id_menu, $id_category) {
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('SELECT `id_topmenu_column`
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue('SELECT `id_topmenu_column`
                 FROM `' . _DB_PREFIX_ . 'topmenu_columns`
                 WHERE `id_topmenu_depend` = ' . (int) $id_menu . ' AND `id_category` = ' . (int) $id_category);
     }
 
     public static function getIdColumnCmsCategoryDepend($id_menu, $id_cms_category) {
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('SELECT `id_topmenu_column`
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue('SELECT `id_topmenu_column`
                 FROM `' . _DB_PREFIX_ . 'topmenu_columns`
                 WHERE `id_topmenu_depend` = ' . (int) $id_menu . ' AND `id_cms_category` = ' . (int) $id_cms_category);
     }
 
     public static function getIdColumnCategoryDependEmptyColumn($id_menu, $id_category) {
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('SELECT atmc.`id_topmenu_column`
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue('SELECT atmc.`id_topmenu_column`
                 FROM `' . _DB_PREFIX_ . 'topmenu_columns` as atmc
                 WHERE atmc.`id_topmenu_depend` = ' . (int) $id_menu . ' AND atmc.`id_category` = ' . (int) $id_category . '');
     }
 
     public static function getIdColumnManufacturerDependEmptyColumn($id_menu, $id_manufacturer) {
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('SELECT atmc.`id_topmenu_column`
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue('SELECT atmc.`id_topmenu_column`
                 FROM `' . _DB_PREFIX_ . 'topmenu_columns` as atmc
                 LEFT JOIN `' . _DB_PREFIX_ . 'topmenu_elements` atme ON (atmc.`id_topmenu_column` = atme.`id_topmenu_column_depend`)
                 WHERE atmc.`id_topmenu_depend` = ' . (int) $id_menu . ' AND atme.`id_manufacturer` = ' . (int) $id_manufacturer . '');
@@ -180,7 +180,7 @@ class TopMenuColumnCore extends ObjectModel {
 
     public static function getIdColumnSupplierDependEmptyColumn($id_menu, $id_supplier) {
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('SELECT atmc.`id_topmenu_column`
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue('SELECT atmc.`id_topmenu_column`
                 FROM `' . _DB_PREFIX_ . 'topmenu_columns` as atmc
                 LEFT JOIN `' . _DB_PREFIX_ . 'topmenu_elements` atme ON (atmc.`id_topmenu_column` = atme.`id_topmenu_column_depend`)
                 WHERE atmc.`id_topmenu_depend` = ' . (int) $id_menu . ' AND atme.`id_supplier` = ' . (int) $id_supplier . '');
@@ -188,7 +188,7 @@ class TopMenuColumnCore extends ObjectModel {
 
     public static function getIdMenuByIdColumn($id_topmenu_column) {
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('SELECT `id_topmenu`
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue('SELECT `id_topmenu`
                 FROM `' . _DB_PREFIX_ . 'topmenu_columns`
                 WHERE `id_topmenu_column` = ' . (int) $id_topmenu_column . '');
     }
@@ -198,20 +198,20 @@ class TopMenuColumnCore extends ObjectModel {
         $sql = 'SELECT `id_topmenu_column`
                 FROM `' . _DB_PREFIX_ . 'topmenu_elements`
                 WHERE `id_column_depend` = ' . (int) $id_topmenu_column;
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
     }
 
     public static function getMenuColums($id_topmenu_columns_wrap, $id_lang, $active = true, $groupRestrict = false) {
 
-        $sql_groups_join = '';
-        $sql_groups_where = '';
+        $sql_grouEPH_join = '';
+        $sql_grouEPH_where = '';
 
         if ($groupRestrict && Group::isFeatureActive()) {
             $groups = TopMenu::getCustomerGroups();
 
             if (count($groups)) {
-                $sql_groups_join = 'LEFT JOIN `' . _DB_PREFIX_ . 'category_group` cg ON (cg.`id_category` = ca.`id_category`)';
-                $sql_groups_where = 'AND IF (atmc.`id_category` IS NULL OR atmc.`id_category` = 0, 1, cg.`id_group` IN (' . implode(',', array_map('intval', $groups)) . '))';
+                $sql_grouEPH_join = 'LEFT JOIN `' . _DB_PREFIX_ . 'category_group` cg ON (cg.`id_category` = ca.`id_category`)';
+                $sql_grouEPH_where = 'AND IF (atmc.`id_category` IS NULL OR atmc.`id_category` = 0, 1, cg.`id_group` IN (' . implode(',', array_map('intval', $groups)) . '))';
             }
 
         }
@@ -227,7 +227,7 @@ class TopMenuColumnCore extends ObjectModel {
                 ' . Shop::addSqlAssociation('cms', 'c', false) . '
                 LEFT JOIN ' . _DB_PREFIX_ . 'cms_lang cl ON (c.id_cms = cl.id_cms AND cl.id_lang = ' . (int) $id_lang . ')
                 LEFT JOIN ' . _DB_PREFIX_ . 'category ca ON (ca.id_category = atmc.`id_category`)
-                ' . $sql_groups_join . '
+                ' . $sql_grouEPH_join . '
                 LEFT JOIN ' . _DB_PREFIX_ . 'category_lang cal ON (ca.id_category = cal.id_category AND cal.id_lang = ' . (int) $id_lang . ')
                 LEFT JOIN `' . _DB_PREFIX_ . 'manufacturer` m ON (atmc.`id_manufacturer` = m.`id_manufacturer`)
                 LEFT JOIN `' . _DB_PREFIX_ . 'supplier` s ON (atmc.`id_supplier` = s.`id_supplier`)
@@ -235,11 +235,11 @@ class TopMenuColumnCore extends ObjectModel {
                 WHERE ' . ($active ? ' atmc.`active` = 1 AND (atmc.`active_desktop` = 1 || atmc.`active_mobile` = 1) AND ' : '') . ' atmc.`id_topmenu_columns_wrap` = ' . (int) $id_topmenu_columns_wrap . '
                 ' . ($active ? 'AND ((atmc.`id_manufacturer` = 0 AND atmc.`id_supplier` = 0 AND atmc.`id_category` = 0 AND atmc.`id_cms` = 0)
                 OR c.id_cms IS NOT NULL OR m.id_manufacturer IS NOT NULL OR ca.id_category IS NOT NULL OR s.`id_supplier` IS NOT NULL)' : '')
-            . $sql_groups_where . '
+            . $sql_grouEPH_where . '
                 GROUP BY atmc.`id_topmenu_column`
                 ORDER BY atmc.`position`';
 
-        $columns = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        $columns = Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
 
         foreach ($columns as &$column) {
             $column['outPutName'] = TopMenu::getAdminOutputNameValue($column, true, 'column');
@@ -250,15 +250,15 @@ class TopMenuColumnCore extends ObjectModel {
 
     public static function getMenuColumsByIdMenu($id_menu, $id_lang, $active = true, $groupRestrict = false) {
 
-        $sql_groups_join = '';
-        $sql_groups_where = '';
+        $sql_grouEPH_join = '';
+        $sql_grouEPH_where = '';
 
         if ($groupRestrict && Group::isFeatureActive()) {
             $groups = TopMenu::getCustomerGroups();
 
             if (count($groups)) {
-                $sql_groups_join = 'LEFT JOIN `' . _DB_PREFIX_ . 'category_group` cg ON (cg.`id_category` = ca.`id_category`)';
-                $sql_groups_where = 'AND IF (atmc.`id_category` IS NULL OR atmc.`id_category` = 0, 1, cg.`id_group` IN (' . implode(',', array_map('intval', $groups)) . '))';
+                $sql_grouEPH_join = 'LEFT JOIN `' . _DB_PREFIX_ . 'category_group` cg ON (cg.`id_category` = ca.`id_category`)';
+                $sql_grouEPH_where = 'AND IF (atmc.`id_category` IS NULL OR atmc.`id_category` = 0, 1, cg.`id_group` IN (' . implode(',', array_map('intval', $groups)) . '))';
             }
 
         }
@@ -274,7 +274,7 @@ class TopMenuColumnCore extends ObjectModel {
                 ' . Shop::addSqlAssociation('cms', 'c', false) . '
                 LEFT JOIN ' . _DB_PREFIX_ . 'cms_lang cl ON (c.id_cms = cl.id_cms AND cl.id_lang = ' . (int) $id_lang . ')
                 LEFT JOIN ' . _DB_PREFIX_ . 'category ca ON (ca.id_category = atmc.`id_category`)
-                ' . $sql_groups_join . '
+                ' . $sql_grouEPH_join . '
                 LEFT JOIN ' . _DB_PREFIX_ . 'category_lang cal ON (ca.id_category = cal.id_category AND cal.id_lang = ' . (int) $id_lang .  ')
                 LEFT JOIN `' . _DB_PREFIX_ . 'manufacturer` m ON (atmc.`id_manufacturer` = m.`id_manufacturer`)
                 ' . Shop::addSqlAssociation('manufacturer', 'm', false) . '
@@ -283,12 +283,12 @@ class TopMenuColumnCore extends ObjectModel {
                 WHERE ' . ($active ? ' atmc.`active` = 1 AND (atmc.`active_desktop` = 1 || atmc.`active_mobile` = 1) AND' : '') . ' atmc.`id_topmenu` = ' . (int) $id_menu . '
                 ' . ($active ? 'AND ((atmc.`id_manufacturer` = 0 AND atmc.`id_supplier` = 0 AND atmc.`id_category` = 0 AND atmc.`id_cms` = 0)
                 OR c.id_cms IS NOT NULL OR m.id_manufacturer IS NOT NULL OR ca.id_category IS NOT NULL OR s.`id_supplier` IS NOT NULL)' : '')
-            . $sql_groups_where . '
+            . $sql_grouEPH_where . '
                 AND atmc.`type` != 8
                 GROUP BY atmc.`id_topmenu_column`
                 ORDER BY atmc.`position`';
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
     }
 
     public static function getMenusColums($menus, $id_lang, $groupRestrict = false) {
@@ -315,7 +315,7 @@ class TopMenuColumnCore extends ObjectModel {
             $ids_wrap = [(int) $ids_wrap];
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS('
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS('
         SELECT `id_topmenu_column`
         FROM ' . _DB_PREFIX_ . 'topmenu_columns
         WHERE `id_topmenu_columns_wrap` IN(' . implode(',', array_map('intval', $ids_wrap)) . ')');
@@ -330,7 +330,7 @@ class TopMenuColumnCore extends ObjectModel {
 
     public static function getnbColumninWrap($idColumnWrap) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('SELECT COUNT(id_topmenu_column)  FROM `eph_topmenu_columns` WHERE `id_topmenu_columns_wrap` = ' . $idColumnWrap);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue('SELECT COUNT(id_topmenu_column)  FROM `eph_topmenu_columns` WHERE `id_topmenu_columns_wrap` = ' . $idColumnWrap);
     }
 
     public static function getColumnsFromIdCategory($idCategory) {
@@ -340,7 +340,7 @@ class TopMenuColumnCore extends ObjectModel {
         WHERE atp.`active` = 1
         AND atp.`type` = 3
         AND atp.`id_category` = ' . (int) $idCategory;
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
     }
 
     public static function getColumnsFromIdManufacturer($idManufacturer) {
@@ -350,7 +350,7 @@ class TopMenuColumnCore extends ObjectModel {
         WHERE atp.`active` = 1
         AND atp.`type` = 4
         AND atp.`id_manufacturer` = ' . (int) $idManufacturer;
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
     }
 
     public static function getColumnsFromIdCms($idCms) {
@@ -360,7 +360,7 @@ class TopMenuColumnCore extends ObjectModel {
         WHERE atp.`active` = 1
         AND atp.`type` = 1
         AND atp.`id_cms` = ' . (int) $idCms;
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
     }
 
     public static function getColumnsFromIdSupplier($idSupplier) {
@@ -370,7 +370,7 @@ class TopMenuColumnCore extends ObjectModel {
         WHERE atp.`active` = 1
         AND atp.`type` = 5
         AND atp.`id_supplier` = ' . (int) $idSupplier;
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
     }
 
     public static function getColumnsFromIdCmsCategory($idCmsCategory) {
@@ -380,7 +380,7 @@ class TopMenuColumnCore extends ObjectModel {
         WHERE atp.`active` = 1
         AND atp.`type` = 10
         AND atp.`id_cms_category` = ' . (int) $idCmsCategory;
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
     }
 
     public static function getColumnsFromIdProduct($idProduct) {
@@ -392,7 +392,7 @@ class TopMenuColumnCore extends ObjectModel {
         WHERE atc.`active` = 1
         AND atc.`type` = 8
         AND atp.`id_product` = ' . (int) $idProduct;
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
     }
 
     public static function disableById($idColumn) {

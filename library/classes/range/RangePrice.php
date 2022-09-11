@@ -50,7 +50,7 @@ class RangePriceCore extends ObjectModel
      */
     public static function getRanges($idCarrier)
     {
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('range_price')
@@ -73,7 +73,7 @@ class RangePriceCore extends ObjectModel
      */
     public static function rangeExist($idCarrier, $delimiter1, $delimiter2, $idReference = null)
     {
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(*)')
                 ->from('range_price', 'rp')
@@ -99,7 +99,7 @@ class RangePriceCore extends ObjectModel
      */
     public static function isOverlapping($idCarrier, $delimiter1, $delimiter2, $idRang = null)
     {
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(*)')
                 ->from('range_price')

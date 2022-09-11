@@ -41,11 +41,11 @@ class ParentOrderControllerCore extends FrontController {
 
         // Redirect to the good order process
 
-        if (Configuration::get('PS_ORDER_PROCESS_TYPE') == 0 && Performer::getInstance()->getController() != 'order') {
+        if (Configuration::get('EPH_ORDER_PROCESS_TYPE') == 0 && Performer::getInstance()->getController() != 'order') {
             Tools::redirect('index.php?controller=order');
         }
 
-        if (Configuration::get('PS_ORDER_PROCESS_TYPE') == 1 && Performer::getInstance()->getController() != 'orderopc') {
+        if (Configuration::get('EPH_ORDER_PROCESS_TYPE') == 1 && Performer::getInstance()->getController() != 'orderopc') {
 
             if (Tools::getIsset('step') && Tools::getValue('step') == 3) {
                 Tools::redirect('index.php?controller=order-opc&isPaymentStep=true');
@@ -54,7 +54,7 @@ class ParentOrderControllerCore extends FrontController {
             Tools::redirect('index.php?controller=order-opc');
         }
 
-        if (Configuration::get('PS_CATALOG_MODE')) {
+        if (Configuration::get('EPH_CATALOG_MODE')) {
             $this->errors[] = Tools::displayError('This store has not accepted your new order.');
         }
 
@@ -73,7 +73,7 @@ class ParentOrderControllerCore extends FrontController {
                 CartRule::autoAddToCart($context);
                 $this->context->cookie->write();
 
-                if (Configuration::get('PS_ORDER_PROCESS_TYPE') == 1) {
+                if (Configuration::get('EPH_ORDER_PROCESS_TYPE') == 1) {
                     Tools::redirect('index.php?controller=order-opc');
                 }
 
@@ -102,7 +102,7 @@ class ParentOrderControllerCore extends FrontController {
                                 $this->context->cart->addCartRule($cartRule->id);
                                 CartRule::autoAddToCart($this->context);
 
-                                if (Configuration::get('PS_ORDER_PROCESS_TYPE') == 1) {
+                                if (Configuration::get('EPH_ORDER_PROCESS_TYPE') == 1) {
                                     Tools::redirect('index.php?controller=order-opc&addingCartRule=1');
                                 }
 
@@ -168,13 +168,13 @@ class ParentOrderControllerCore extends FrontController {
         // Adding JS files
         $this->addJS(_THEME_JS_DIR_ . 'tools.js'); // retro compat themes 1.5
 
-        if ((Configuration::get('PS_ORDER_PROCESS_TYPE') == 0 && Tools::getValue('step') == 1) || Configuration::get('PS_ORDER_PROCESS_TYPE') == 1) {
+        if ((Configuration::get('EPH_ORDER_PROCESS_TYPE') == 0 && Tools::getValue('step') == 1) || Configuration::get('EPH_ORDER_PROCESS_TYPE') == 1) {
             $this->addJS(_THEME_JS_DIR_ . 'order-address.js');
         }
 
         $this->addJqueryPlugin('fancybox');
 
-        if (in_array((int) Tools::getValue('step'), [0, 2, 3]) || Configuration::get('PS_ORDER_PROCESS_TYPE')) {
+        if (in_array((int) Tools::getValue('step'), [0, 2, 3]) || Configuration::get('EPH_ORDER_PROCESS_TYPE')) {
             $this->addJqueryPlugin('typewatch');
             $this->addJS(_THEME_JS_DIR_ . 'cart-summary.js');
         }
@@ -193,7 +193,7 @@ class ParentOrderControllerCore extends FrontController {
         if ($this->context->cart->getOrderTotal() <= 0) {
             $order = new FreeOrder();
             $order->free_order_class = true;
-            $order->validateOrder($this->context->cart->id, Configuration::get('PS_OS_PAYMENT'), 0, Tools::displayError('Free order', false), null, [], null, false, $this->context->cart->secure_key);
+            $order->validateOrder($this->context->cart->id, Configuration::get('EPH_OS_PAYMENT'), 0, Tools::displayError('Free order', false), null, [], null, false, $this->context->cart->secure_key);
 
             return (int) CustomerPieces::getOrderByCartId($this->context->cart->id);
         }
@@ -367,7 +367,7 @@ class ParentOrderControllerCore extends FrontController {
                 $productAttributeId = (int) isset($productUpdate['id_product_attribute']) ? $productUpdate['id_product_attribute'] : $productUpdate['product_attribute_id'];
 
                 if (isset($customizedDatas[$productId][$productAttributeId])) {
-                    $productUpdate['tax_rate'] = Tax::getProductTaxRate($productId, $this->context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
+                    $productUpdate['tax_rate'] = Tax::getProductTaxRate($productId, $this->context->cart->{Configuration::get('EPH_TAX_ADDRESS_TYPE')});
                 }
 
             }
@@ -404,9 +404,9 @@ class ParentOrderControllerCore extends FrontController {
             );
 
             if (Product::getTaxCalculationMethod()) {
-                $product['is_discounted'] = Tools::ps_round($product['price_without_specific_price'], _PS_PRICE_COMPUTE_PRECISION_) != Tools::ps_round($product['price'], _PS_PRICE_COMPUTE_PRECISION_);
+                $product['is_discounted'] = Tools::EPH_round($product['price_without_specific_price'], _EPH_PRICE_COMPUTE_PRECISION_) != Tools::EPH_round($product['price'], _EPH_PRICE_COMPUTE_PRECISION_);
             } else {
-                $product['is_discounted'] = Tools::ps_round($product['price_without_specific_price'], _PS_PRICE_COMPUTE_PRECISION_) != Tools::ps_round($product['price_wt'], _PS_PRICE_COMPUTE_PRECISION_);
+                $product['is_discounted'] = Tools::EPH_round($product['price_without_specific_price'], _EPH_PRICE_COMPUTE_PRECISION_) != Tools::EPH_round($product['price_wt'], _EPH_PRICE_COMPUTE_PRECISION_);
             }
 
         }
@@ -428,8 +428,8 @@ class ParentOrderControllerCore extends FrontController {
 
         }
 
-        $showOptionAllowSeparatePackage = (!$this->context->cart->isAllProductsInStock(true) && Configuration::get('PS_SHIP_WHEN_AVAILABLE'));
-        $advancedPaymentApi = (bool) Configuration::get('PS_ADVANCED_PAYMENT_API');
+        $showOptionAllowSeparatePackage = (!$this->context->cart->isAllProductsInStock(true) && Configuration::get('EPH_SHIP_WHEN_AVAILABLE'));
+        $advancedPaymentApi = (bool) Configuration::get('EPH_ADVANCED_PAYMENT_API');
 
         $this->context->smarty->assign($summary);
         $this->context->smarty->assign(
@@ -472,7 +472,7 @@ class ParentOrderControllerCore extends FrontController {
 
         //if guest checkout disabled and flag is_guest  in cookies is actived
 
-        if (Configuration::get('PS_GUEST_CHECKOUT_ENABLED') == 0 && ((int) $this->context->customer->is_guest != Configuration::get('PS_GUEST_CHECKOUT_ENABLED'))) {
+        if (Configuration::get('EPH_GUEST_CHECKOUT_ENABLED') == 0 && ((int) $this->context->customer->is_guest != Configuration::get('EPH_GUEST_CHECKOUT_ENABLED'))) {
             $this->context->customer->logout();
             Tools::redirect('');
         } else if (!Customer::getAddressesTotalById($this->context->customer->id)) {
@@ -633,7 +633,7 @@ class ParentOrderControllerCore extends FrontController {
             ]
         );
 
-        $advancedPaymentApi = (bool) Configuration::get('PS_ADVANCED_PAYMENT_API');
+        $advancedPaymentApi = (bool) Configuration::get('EPH_ADVANCED_PAYMENT_API');
 
         $vars = [
             'HOOK_BEFORECARRIER'   => Hook::exec(
@@ -686,8 +686,8 @@ class ParentOrderControllerCore extends FrontController {
         $wrappingFeesTaxInc = $this->context->cart->getGiftWrappingPrice();
 
         // TOS
-        $cms = new CMS(Configuration::get('PS_CONDITIONS_CMS_ID'), $this->context->language->id);
-        $this->link_conditions = $this->context->link->getCMSLink($cms, $cms->link_rewrite, (bool) Configuration::get('PS_SSL_ENABLED'));
+        $cms = new CMS(Configuration::get('EPH_CONDITIONS_CMS_ID'), $this->context->language->id);
+        $this->link_conditions = $this->context->link->getCMSLink($cms, $cms->link_rewrite, (bool) Configuration::get('EPH_SSL_ENABLED'));
 
         if (!strpos($this->link_conditions, '?')) {
             $this->link_conditions .= '?content_only=1';
@@ -710,10 +710,10 @@ class ParentOrderControllerCore extends FrontController {
             [
                 'free_shipping'               => $freeShipping,
                 'checkedTOS'                  => (int) $this->context->cookie->checkedTOS,
-                'recyclablePackAllowed'       => (int) Configuration::get('PS_RECYCLABLE_PACK'),
-                'giftAllowed'                 => (int) Configuration::get('PS_GIFT_WRAPPING'),
-                'cms_id'                      => (int) Configuration::get('PS_CONDITIONS_CMS_ID'),
-                'conditions'                  => (int) Configuration::get('PS_CONDITIONS'),
+                'recyclablePackAllowed'       => (int) Configuration::get('EPH_RECYCLABLE_PACK'),
+                'giftAllowed'                 => (int) Configuration::get('EPH_GIFT_WRAPPING'),
+                'cms_id'                      => (int) Configuration::get('EPH_CONDITIONS_CMS_ID'),
+                'conditions'                  => (int) Configuration::get('EPH_CONDITIONS'),
                 'link_conditions'             => $this->link_conditions,
                 'recyclable'                  => (int) $this->context->cart->recyclable,
                 'delivery_option_list'        => $this->context->cart->getDeliveryOptionList(),
@@ -738,12 +738,12 @@ class ParentOrderControllerCore extends FrontController {
      */
     protected function _assignPayment() {
 
-        if ((bool) Configuration::get('PS_ADVANCED_PAYMENT_API')) {
+        if ((bool) Configuration::get('EPH_ADVANCED_PAYMENT_API')) {
             $this->addJS(_THEME_JS_DIR_ . 'advanced-payment-api.js');
 
             // TOS
-            $cms = new CMS(Configuration::get('PS_CONDITIONS_CMS_ID'), $this->context->language->id);
-            $this->link_conditions = $this->context->link->getCMSLink($cms, $cms->link_rewrite, (bool) Configuration::get('PS_SSL_ENABLED'));
+            $cms = new CMS(Configuration::get('EPH_CONDITIONS_CMS_ID'), $this->context->language->id);
+            $this->link_conditions = $this->context->link->getCMSLink($cms, $cms->link_rewrite, (bool) Configuration::get('EPH_SSL_ENABLED'));
 
             if (!strpos($this->link_conditions, '?')) {
                 $this->link_conditions .= '?content_only=1';

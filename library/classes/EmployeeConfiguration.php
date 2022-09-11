@@ -48,7 +48,7 @@ class EmployeeConfigurationCore extends ObjectModel {
 			$idLang = $context->employee->id_lang;
 		}
 		
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 			(new DbQuery())
 				->select('ecl.`value`')
 				->from('employee_configuration', 'ec')
@@ -67,7 +67,7 @@ class EmployeeConfigurationCore extends ObjectModel {
 		
 		$idLang = $context->employee->id_lang;
 
-		$hasKey = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		$hasKey = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 			(new DbQuery())
 				->select('`id_employee_configuration`')
 				->from('employee_configuration')

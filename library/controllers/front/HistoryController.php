@@ -77,14 +77,14 @@ class HistoryControllerCore extends FrontController {
         $this->context->smarty->assign(
             [
                 'orders'            => $orders,
-                'invoiceAllowed'    => (int) Configuration::get('PS_INVOICE'),
-                'reorderingAllowed' => !(bool) Configuration::get('PS_DISALLOW_HISTORY_REORDERING'),
+                'invoiceAllowed'    => (int) Configuration::get('EPH_INVOICE'),
+                'reorderingAllowed' => !(bool) Configuration::get('EPH_DISALLOW_HISTORY_REORDERING'),
                 'slowValidation'    => Tools::isSubmit('slowvalidation'),
                 'link'              => $this->context->link,
             ]
         );
 
-        $this->setTemplate(_PS_THEME_DIR_ . 'history.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'history.tpl');
     }
 
 }

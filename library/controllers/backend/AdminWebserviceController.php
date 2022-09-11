@@ -27,7 +27,7 @@ class AdminWebserviceControllerCore extends AdminController {
         $this->lang = false;
         $this->edit = true;
         $this->delete = true;
-        $this->id_lang_default = Configuration::get('PS_LANG_DEFAULT');
+        $this->id_lang_default = Configuration::get('EPH_LANG_DEFAULT');
 
         $this->bulk_actions = [
             'delete' => [
@@ -61,7 +61,7 @@ class AdminWebserviceControllerCore extends AdminController {
             'general' => [
                 'title'  => $this->l('Configuration'),
                 'fields' => [
-                    'PS_WEBSERVICE' => [
+                    'EPH_WEBSERVICE' => [
                         'title' => $this->l('Enable ephenyx\' webservice'),
                         'desc'  => $this->l('Before activating the webservice, you must be sure to: ') .
                         '<ol>
@@ -76,8 +76,8 @@ class AdminWebserviceControllerCore extends AdminController {
             ],
         ];
 
-        if (!defined('_PS_HOST_MODE_')) {
-            $this->fields_options['general']['fields']['PS_WEBSERVICE_CGI_HOST'] = [
+        if (!defined('_EPH_HOST_MODE_')) {
+            $this->fields_options['general']['fields']['EPH_WEBSERVICE_CGI_HOST'] = [
                 'title' => $this->l('Enable CGI mode for PHP'),
                 'desc'  => $this->l('Before choosing "Yes", check that PHP is not configured as an Apache module on your server.'),
                 'cast'  => 'intval',
@@ -91,9 +91,9 @@ class AdminWebserviceControllerCore extends AdminController {
     public function setMedia($isNewTheme = false) {
 
         parent::setMedia($isNewTheme);
-        $this->addCSS(__PS_BASE_URI__ . _PS_JS_DIR_ . 'default/css/jquery-ui.css');
+        $this->addCSS(__EPH_BASE_URI__ . _EPH_JS_DIR_ . 'default/css/jquery-ui.css');
         $this->addJquery('3.4.1');
-        $this->addJS(__PS_BASE_URI__ . _PS_JS_DIR_ . 'jquery-ui/jquery-ui.js');
+        $this->addJS(__EPH_BASE_URI__ . _EPH_JS_DIR_ . 'jquery-ui/jquery-ui.js');
 
     }
 
@@ -253,7 +253,7 @@ class AdminWebserviceControllerCore extends AdminController {
             $this->warnings[] = $this->l('Please activate the \'SimpleXML\' PHP extension to allow testing of ephenyx\' webservice.');
         }
 
-        if (!configuration::get('PS_SSL_ENABLED')) {
+        if (!configuration::get('EPH_SSL_ENABLED')) {
             $this->warnings[] = $this->l('It is preferable to use SSL (https:) for webservice calls, as it avoids the "man in the middle" type security issues.');
         }
 

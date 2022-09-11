@@ -71,7 +71,7 @@ class ProductAccountCore extends ObjectModel {
 	
 	public function getAccount($idAccount) {
 		
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('account')
                 ->from('stdaccount')
@@ -82,7 +82,7 @@ class ProductAccountCore extends ObjectModel {
 	
 	public static function getProductAccount($idproduct, $field) {
 		
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select($field)
                 ->from('product_account')
@@ -99,7 +99,7 @@ class ProductAccountCore extends ObjectModel {
 	
 	public static function getIdProductAccount($idproduct) {
 		
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('id_product_account')
                 ->from('product_account')

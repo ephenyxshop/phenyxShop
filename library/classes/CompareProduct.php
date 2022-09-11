@@ -43,7 +43,7 @@ class CompareProductCore extends ObjectModel {
      */
     public static function getCompareProducts($idCompare) {
 
-        $results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('DISTINCT `id_product`')
                 ->from('compare', 'c')
@@ -80,7 +80,7 @@ class CompareProductCore extends ObjectModel {
     public static function addCompareProduct($idCompare, $idProduct) {
 
         // Check if compare row exists
-        $idCompare = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $idCompare = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_compare`')
                 ->from('compare')
@@ -104,7 +104,7 @@ class CompareProductCore extends ObjectModel {
             );
 
             if ($sql) {
-                $idCompare = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                $idCompare = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                     (new DbQuery())
                         ->select('MAX(`id_compare`)')
                         ->from('compare')
@@ -159,7 +159,7 @@ class CompareProductCore extends ObjectModel {
      */
     public static function getNumberProducts($idCompare) {
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(`id_compare`)')
                 ->from('compare_product')
@@ -204,7 +204,7 @@ class CompareProductCore extends ObjectModel {
      */
     public static function getIdCompareByIdCustomer($idCustomer) {
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_compare`')
                 ->from('compare')

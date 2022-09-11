@@ -198,7 +198,7 @@ class AdminCmsControllerCore extends AdminController {
 
         $this->tpl_form_vars = [
             'active' => $this->object->active,
-            'PS_ALLOW_ACCENTED_CHARS_URL', (int) Configuration::get('PS_ALLOW_ACCENTED_CHARS_URL'),
+            'EPH_ALLOW_ACCENTED_CHARS_URL', (int) Configuration::get('EPH_ALLOW_ACCENTED_CHARS_URL'),
         ];
 
         return parent::renderForm();

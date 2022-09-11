@@ -63,7 +63,7 @@ abstract class TaxManagerModuleCore extends Module
      */
     public function hookTaxManager($args)
     {
-        $classFile = _PS_MODULE_DIR_.'/'.$this->name.'/'.$this->tax_manager_class.'.php';
+        $classFile = _EPH_MODULE_DIR_.'/'.$this->name.'/'.$this->tax_manager_class.'.php';
 
         if (!isset($this->tax_manager_class) || !file_exists($classFile)) {
             die(sprintf(Tools::displayError('Incorrect Tax Manager class [%s]'), $this->tax_manager_class));

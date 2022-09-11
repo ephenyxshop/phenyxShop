@@ -659,12 +659,12 @@ class TreeCore
     public function render($data = null)
     {
         //Adding tree.js
-        $adminWebpath = str_ireplace(_SHOP_CORE_DIR_, '', _PS_ROOT_DIR_);
+        $adminWebpath = str_ireplace(_SHOP_CORE_DIR_, '', _EPH_ROOT_DIR_);
         $adminWebpath = preg_replace('/^'.preg_quote(DIRECTORY_SEPARATOR, '/').'/', '', $adminWebpath);
         $boTheme = ((Validate::isLoadedObject($this->getContext()->employee)
             && $this->getContext()->employee->bo_theme) ? $this->getContext()->employee->bo_theme : 'default');
 
-        if (!file_exists(_PS_BO_ALL_THEMES_DIR_.$boTheme.DIRECTORY_SEPARATOR.'template')) {
+        if (!file_exists(_EPH_BO_ALL_THEMES_DIR_.$boTheme.DIRECTORY_SEPARATOR.'template')) {
             $boTheme = 'default';
         }
 

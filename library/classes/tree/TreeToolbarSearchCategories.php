@@ -39,20 +39,20 @@ class TreeToolbarSearchCategoriesCore extends TreeToolbarButtonCore implements
             $this->setAttribute('typeahead_source', $this->_renderData($this->getAttribute('data')));
         }
 
-        $adminWebpath = str_ireplace(_SHOP_CORE_DIR_, '', _PS_ROOT_DIR_);
+        $adminWebpath = str_ireplace(_SHOP_CORE_DIR_, '', _EPH_ROOT_DIR_);
         $adminWebpath = preg_replace('/^'.preg_quote(DIRECTORY_SEPARATOR, '/').'/', '', $adminWebpath);
         $boTheme = ((Validate::isLoadedObject($this->getContext()->employee)
             && $this->getContext()->employee->bo_theme) ? $this->getContext()->employee->bo_theme : 'default');
 
-        if (!file_exists(_PS_BO_ALL_THEMES_DIR_.$boTheme.DIRECTORY_SEPARATOR.'template')) {
+        if (!file_exists(_EPH_BO_ALL_THEMES_DIR_.$boTheme.DIRECTORY_SEPARATOR.'template')) {
             $boTheme = 'default';
         }
 
         if ($this->getContext()->controller->ajax) {
-            $path = __PS_BASE_URI__.$adminWebpath.'/themes/'.$boTheme.'/js/vendor/typeahead.min.js?v='._EPH_VERSION_;
+            $path = __EPH_BASE_URI__.$adminWebpath.'/themes/'.$boTheme.'/js/vendor/typeahead.min.js?v='._EPH_VERSION_;
             $html = '<script type="text/javascript">$(function(){ $.ajax({url: "'.$path.'",cache:true,dataType: "script"})});</script>';
         } else {
-            $this->getContext()->controller->addJs(__PS_BASE_URI__.$adminWebpath.'/themes/'.$boTheme.'/js/vendor/typeahead.min.js');
+            $this->getContext()->controller->addJs(__EPH_BASE_URI__.$adminWebpath.'/themes/'.$boTheme.'/js/vendor/typeahead.min.js');
         }
 
         return (isset($html) ? $html : '').parent::render();

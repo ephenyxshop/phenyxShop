@@ -35,24 +35,24 @@ class LinkCore {
      */
     public function __construct($protocolLink = null, $protocolContent = null) {
 
-        $this->allow = (int) Configuration::get('PS_REWRITING_SETTINGS');
+        $this->allow = (int) Configuration::get('EPH_REWRITING_SETTINGS');
         $this->url = $_SERVER['SCRIPT_NAME'];
         $this->protocol_link = $protocolLink;
         $this->protocol_content = $protocolContent;
 
-        if (!defined('_PS_BASE_URL_')) {
-            define('_PS_BASE_URL_', Tools::getShopDomain(true));
+        if (!defined('_EPH_BASE_URL_')) {
+            define('_EPH_BASE_URL_', Tools::getShopDomain(true));
         }
 
-        if (!defined('_PS_BASE_URL_SSL_')) {
-            define('_PS_BASE_URL_SSL_', Tools::getShopDomainSsl(true));
+        if (!defined('_EPH_BASE_URL_SSL_')) {
+            define('_EPH_BASE_URL_SSL_', Tools::getShopDomainSsl(true));
         }
 
         if (static::$categoryDisableRewrite === null) {
-            static::$categoryDisableRewrite = [Configuration::get('PS_HOME_CATEGORY'), Configuration::get('PS_ROOT_CATEGORY')];
+            static::$categoryDisableRewrite = [Configuration::get('EPH_HOME_CATEGORY'), Configuration::get('EPH_ROOT_CATEGORY')];
         }
 
-        $this->ssl_enable = Configuration::get('PS_SSL_ENABLED');
+        $this->ssl_enable = Configuration::get('EPH_SSL_ENABLED');
         $this->webpSupported = $this->isWebPSupported();
     }
 
@@ -102,10 +102,10 @@ class LinkCore {
 	public function getAdminImageLink($name, $ids, $type = null)  {
         
 		
-        $theme = ((Shop::isFeatureActive() && file_exists(_PS_PROD_IMG_DIR_.$ids.($type ? '-'.$type : '').'-'.(int)Context::getContext()->shop->id_theme.'.jpg')) ? '-'.Context::getContext()->shop->id_theme : '');
+        $theme = ((Shop::isFeatureActive() && file_exists(_EPH_PROD_IMG_DIR_.$ids.($type ? '-'.$type : '').'-'.(int)Context::getContext()->shop->id_theme.'.jpg')) ? '-'.Context::getContext()->shop->id_theme : '');
         $split_ids = explode('-', $ids);
         $id_image = (isset($split_ids[1]) ? $split_ids[1] : $split_ids[0]);
-        $theme = ((Shop::isFeatureActive() && file_exists(_PS_PROD_IMG_DIR_.Image::getImgFolderStatic($id_image).$id_image.($type ? '-'.$type : '').'-'.(int)Context::getContext()->shop->id_theme.'.jpg')) ? '-'.Context::getContext()->shop->id_theme : '');
+        $theme = ((Shop::isFeatureActive() && file_exists(_EPH_PROD_IMG_DIR_.Image::getImgFolderStatic($id_image).$id_image.($type ? '-'.$type : '').'-'.(int)Context::getContext()->shop->id_theme.'.jpg')) ? '-'.Context::getContext()->shop->id_theme : '');
         
 		$uri_path = $id_image.($type ? '-'.$type : '').$theme.'/'.$name.'.webp';
 
@@ -232,19 +232,19 @@ class LinkCore {
         if ($ssl === null) {
 
             if ($forceSsl === null) {
-                $forceSsl = (Configuration::get('PS_SSL_ENABLED') && Configuration::get('PS_SSL_ENABLED_EVERYWHERE'));
+                $forceSsl = (Configuration::get('EPH_SSL_ENABLED') && Configuration::get('EPH_SSL_ENABLED_EVERYWHERE'));
             }
 
             $ssl = $forceSsl;
         }
 
-        if (Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') && $idShop !== null) {
+        if (Configuration::get('EPH_MULTISHOP_FEATURE_ACTIVE') && $idShop !== null) {
             $shop = new Shop($idShop);
         } else {
             $shop = Context::getContext()->shop;
         }
 
-         if (defined('PS_ADMIN_DIR')) {
+         if (defined('EPH_ADMIN_DIR')) {
 			
             $base = 'https://' . $shop->admin_ssl;
 			 
@@ -268,13 +268,13 @@ class LinkCore {
         if ($ssl === null) {
 
             if ($forceSsl === null) {
-                $forceSsl = (Configuration::get('PS_SSL_ENABLED') && Configuration::get('PS_SSL_ENABLED_EVERYWHERE'));
+                $forceSsl = (Configuration::get('EPH_SSL_ENABLED') && Configuration::get('EPH_SSL_ENABLED_EVERYWHERE'));
             }
 
             $ssl = $forceSsl;
         }
 
-        if (Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') && $idShop !== null) {
+        if (Configuration::get('EPH_MULTISHOP_FEATURE_ACTIVE') && $idShop !== null) {
             $shop = new Shop($idShop);
         } else {
             $shop = Context::getContext()->shop;
@@ -292,13 +292,13 @@ class LinkCore {
         if ($ssl === null) {
 
             if ($forceSsl === null) {
-                $forceSsl = (Configuration::get('PS_SSL_ENABLED') && Configuration::get('PS_SSL_ENABLED_EVERYWHERE'));
+                $forceSsl = (Configuration::get('EPH_SSL_ENABLED') && Configuration::get('EPH_SSL_ENABLED_EVERYWHERE'));
             }
 
             $ssl = $forceSsl;
         }
 
-        if (Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') && $idShop !== null) {
+        if (Configuration::get('EPH_MULTISHOP_FEATURE_ACTIVE') && $idShop !== null) {
             $shop = new Shop($idShop);
         } else {
             $shop = Context::getContext()->shop;
@@ -332,11 +332,11 @@ class LinkCore {
             $context = Context::getContext();
         }
 
-        if ($idLang == Configuration::get('PS_LANG_DEFAULT')) {
+        if ($idLang == Configuration::get('EPH_LANG_DEFAULT')) {
             return '';
         }
 
-        if ((!$this->allow && in_array($idShop, [$context->shop->id, null])) || !Language::isMultiLanguageActivated($idShop) || !(int) Configuration::get('PS_REWRITING_SETTINGS', null, null, $idShop)) {
+        if ((!$this->allow && in_array($idShop, [$context->shop->id, null])) || !Language::isMultiLanguageActivated($idShop) || !(int) Configuration::get('EPH_REWRITING_SETTINGS', null, null, $idShop)) {
             return '';
         }
 
@@ -364,7 +364,7 @@ class LinkCore {
 
         $idLang = Context::getContext()->language->id;
 		$controller = Tools::strReplaceFirst('.php', '', $controller);
-        if((bool) Configuration::get('PS_REWRITING_SETTINGS')) {
+        if((bool) Configuration::get('EPH_REWRITING_SETTINGS')) {
             $controller = strtolower($controller);
         }
         $params =  [];
@@ -458,15 +458,15 @@ class LinkCore {
         }
 
         // legacy mode or default image
-        $theme = ((Shop::isFeatureActive() && file_exists(_PS_PROD_IMG_DIR_ . $ids . ($type ? '-' . $type : '') . '-' . (int) Context::getContext()->shop->id_theme . ($highDpi ? '2x.' : '.') . $format)) ? '-' . Context::getContext()->shop->id_theme : '');
+        $theme = ((Shop::isFeatureActive() && file_exists(_EPH_PROD_IMG_DIR_ . $ids . ($type ? '-' . $type : '') . '-' . (int) Context::getContext()->shop->id_theme . ($highDpi ? '2x.' : '.') . $format)) ? '-' . Context::getContext()->shop->id_theme : '');
 
-        if ((Configuration::get('PS_LEGACY_IMAGES')
-            && (file_exists(_PS_PROD_IMG_DIR_ . $ids . ($type ? '-' . $type : '') . $theme . ($highDpi ? '2x.' : '.') . $format)))
+        if ((Configuration::get('EPH_LEGACY_IMAGES')
+            && (file_exists(_EPH_PROD_IMG_DIR_ . $ids . ($type ? '-' . $type : '') . $theme . ($highDpi ? '2x.' : '.') . $format)))
             || ($notDefault = strpos($ids, 'default') !== false)
         ) {
 
             if ($this->allow == 1 && !$notDefault) {
-                $uriPath = __PS_BASE_URI__ . $ids . ($type ? '-' . $type : '') . $theme . '/' . $name . ($highDpi ? '2x.' : '.') . $format;
+                $uriPath = __EPH_BASE_URI__ . $ids . ($type ? '-' . $type : '') . $theme . '/' . $name . ($highDpi ? '2x.' : '.') . $format;
             } else {
                 $uriPath = _THEME_PROD_DIR_ . $ids . ($type ? '-' . $type : '') . $theme . ($highDpi ? '2x.' : '.') . $format;
             }
@@ -475,10 +475,10 @@ class LinkCore {
             // if ids if of the form id_product-id_image, we want to extract the id_image part
             $splitIds = explode('-', $ids);
             $idImage = (isset($splitIds[1]) ? $splitIds[1] : $splitIds[0]);
-            $theme = ((Shop::isFeatureActive() && file_exists(_PS_PROD_IMG_DIR_ . Image::getImgFolderStatic($idImage) . $idImage . ($type ? '-' . $type : '') . '-' . (int) Context::getContext()->shop->id_theme . ($highDpi ? '2x.' : '.') . $format)) ? '-' . Context::getContext()->shop->id_theme : '');
+            $theme = ((Shop::isFeatureActive() && file_exists(_EPH_PROD_IMG_DIR_ . Image::getImgFolderStatic($idImage) . $idImage . ($type ? '-' . $type : '') . '-' . (int) Context::getContext()->shop->id_theme . ($highDpi ? '2x.' : '.') . $format)) ? '-' . Context::getContext()->shop->id_theme : '');
 
             if ($this->allow == 1) {
-                $uriPath = __PS_BASE_URI__ . $idImage . ($type ? '-' . $type : '') . $theme . '/' . $name . ($highDpi ? '2x.' : '.') . $format;
+                $uriPath = __EPH_BASE_URI__ . $idImage . ($type ? '-' . $type : '') . $theme . '/' . $name . ($highDpi ? '2x.' : '.') . $format;
             } else {
                 $uriPath = _THEME_PROD_DIR_ . Image::getImgFolderStatic($idImage) . $idImage . ($type ? '-' . $type : '') . $theme . ($highDpi ? '2x.' : '.') . $format;
             }
@@ -526,7 +526,7 @@ class LinkCore {
         }
 
         if ($this->allow == 1 && $type) {
-            $uriPath = __PS_BASE_URI__ . 'c/' . $idCategory . '-' . $type . '/' . $name . ($highDpi ? '2x.' : '.') . $format;
+            $uriPath = __EPH_BASE_URI__ . 'c/' . $idCategory . '-' . $type . '/' . $name . ($highDpi ? '2x.' : '.') . $format;
         } else {
             $uriPath = _THEME_CAT_DIR_ . $idCategory . ($type ? '-' . $type : '') . ($highDpi ? '2x.' : '.') . $format;
         }
@@ -872,7 +872,7 @@ class LinkCore {
         $sql->select('`' . bqSQL(CMSCategory::$definition['primary']) . '`');
         $sql->from(bqSQL(CMS::$definition['table']));
         $sql->where('`' . bqSQL(CMS::$definition['primary']) . '` = ' . (int) $idCms);
-        $idCmsCategory = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+        $idCmsCategory = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($sql);
 
         if (empty($idCmsCategory)) {
             return '';
@@ -974,7 +974,7 @@ class LinkCore {
         $sql->select('`id_parent`');
         $sql->from(bqSQL(CMSCategory::$definition['table']));
         $sql->where('`' . bqSQL(CMSCategory::$definition['primary']) . '` = ' . (int) $idCmsCategory);
-        $idParent = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+        $idParent = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($sql);
 
         if (empty($idParent)) {
             return 0;
@@ -1145,7 +1145,7 @@ class LinkCore {
 
             if ($k != 'id_' . $type && $k != 'controller') {
 
-                if (Configuration::get('PS_REWRITING_SETTINGS') && ($k == 'isolang' || $k == 'id_lang')) {
+                if (Configuration::get('EPH_REWRITING_SETTINGS') && ($k == 'isolang' || $k == 'id_lang')) {
                     continue;
                 }
 
@@ -1285,12 +1285,12 @@ class LinkCore {
             $id_employee = Context::getContext()->employee->id;
         }
 
-        $ssl = (Configuration::get('PS_SSL_ENABLED') && Configuration::get('PS_SSL_ENABLED_EVERYWHERE'));
-        $ssl_enable = Configuration::get('PS_SSL_ENABLED');
+        $ssl = (Configuration::get('EPH_SSL_ENABLED') && Configuration::get('EPH_SSL_ENABLED_EVERYWHERE'));
+        $ssl_enable = Configuration::get('EPH_SSL_ENABLED');
         $shop = Context::getContext()->shop;
         $base = (($ssl && $ssl_enable) ? 'https://' . $shop->domain_ssl : 'http://' . $shop->domain);
 
-        if (file_exists(_PS_EMPLOYEE_IMG_DIR_ . $id_employee . '.jpg')) {
+        if (file_exists(_EPH_EMPLOYEE_IMG_DIR_ . $id_employee . '.jpg')) {
             $link = 'img/e/' . $id_employee . '.jpg';
         } else {
 
@@ -1310,9 +1310,9 @@ class LinkCore {
 
     public static function getStaticBaseLink($id_shop = null, $ssl = null, $relative_protocol = false) {
 
-        $ssl = (Configuration::get('PS_SSL_ENABLED') && Configuration::get('PS_SSL_ENABLED_EVERYWHERE'));
+        $ssl = (Configuration::get('EPH_SSL_ENABLED') && Configuration::get('EPH_SSL_ENABLED_EVERYWHERE'));
         $shop = Context::getContext()->shop;
-        $ssl_enable = Configuration::get('PS_SSL_ENABLED');
+        $ssl_enable = Configuration::get('EPH_SSL_ENABLED');
         $base = (($ssl && $ssl_enable) ? 'https://' . $shop->domain_ssl : 'http://' . $shop->domain);
         return $base . $shop->getBaseURI();
     }
@@ -1323,9 +1323,9 @@ class LinkCore {
             $context = Context::getContext();
         }
 
-        $allow = (int) Configuration::get('PS_REWRITING_SETTINGS');
+        $allow = (int) Configuration::get('EPH_REWRITING_SETTINGS');
 
-        if ((!$allow && in_array($id_shop, [$context->shop->id, null])) || !Language::isMultiLanguageActivated($id_shop) || !(int) Configuration::get('PS_REWRITING_SETTINGS', null, null, $id_shop)) {
+        if ((!$allow && in_array($id_shop, [$context->shop->id, null])) || !Language::isMultiLanguageActivated($id_shop) || !(int) Configuration::get('EPH_REWRITING_SETTINGS', null, null, $id_shop)) {
             return '';
         }
 

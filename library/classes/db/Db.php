@@ -1,7 +1,7 @@
 <?php
 
-if (file_exists(_PS_ROOT_DIR_ . '/app/settings.inc.php') && !defined('_DB_SERVER_')) {
-    include_once _PS_ROOT_DIR_ . '/app/settings.inc.php';
+if (file_exists(_EPH_ROOT_DIR_ . '/app/settings.inc.php') && !defined('_DB_SERVER_')) {
+    include_once _EPH_ROOT_DIR_ . '/app/settings.inc.php';
 }
 
 /**
@@ -335,8 +335,8 @@ abstract class DbCore {
 
         // Add here your slave(s) server(s) in this file
 
-        if (file_exists(_PS_ROOT_DIR_ . '/app/db_slave_server.inc.php')) {
-            static::$_servers = array_merge(static::$_servers, require (_PS_ROOT_DIR_ . '/app/db_slave_server.inc.php'));
+        if (file_exists(_EPH_ROOT_DIR_ . '/app/db_slave_server.inc.php')) {
+            static::$_servers = array_merge(static::$_servers, require (_EPH_ROOT_DIR_ . '/app/db_slave_server.inc.php'));
         }
 
         static::$_slave_servers_loaded = true;
@@ -374,8 +374,8 @@ abstract class DbCore {
         $this->password = $password;
         $this->database = $database;
 
-        if (!defined('_PS_DEBUG_SQL_')) {
-            define('_PS_DEBUG_SQL_', false);
+        if (!defined('_EPH_DEBUG_SQL_')) {
+            define('_EPH_DEBUG_SQL_', false);
         }
 
         if ($connect) {
@@ -513,7 +513,7 @@ abstract class DbCore {
 
         }
 
-        if (_PS_DEBUG_SQL_) {
+        if (_EPH_DEBUG_SQL_) {
             $this->displayError($sql);
         }
 
@@ -752,7 +752,7 @@ abstract class DbCore {
 
         if (!preg_match('#^\s*\(?\s*(select|show|explain|describe|desc)\s#i', $sql)) {
 
-            if (defined('_PS_MODE_DEV_') && _PS_MODE_DEV_) {
+            if (defined('_EPH_MODE_DEV_') && _EPH_MODE_DEV_) {
                 throw new PhenyxShopDatabaseException('Db->executeS() must be used only with select, show, explain or describe queries');
             }
 
@@ -874,7 +874,7 @@ abstract class DbCore {
         $this->result = false;
         $result = $this->query($sql);
 
-        if (_PS_DEBUG_SQL_) {
+        if (_EPH_DEBUG_SQL_) {
             $this->displayError($sql);
         }
 
@@ -896,7 +896,7 @@ abstract class DbCore {
         if ($webserviceCall && $errno) {
             $dbg = debug_backtrace();
             WebserviceRequest::getInstance()->setError(500, '[SQL Error] ' . $this->getMsgError() . '. From ' . (isset($dbg[3]['class']) ? $dbg[3]['class'] : '') . '->' . $dbg[3]['function'] . '() Query was : ' . $sql, 97);
-        } else if (_PS_DEBUG_SQL_ && $errno && !defined('EPH_INSTALLATION_IN_PROGRESS')) {
+        } else if (_EPH_DEBUG_SQL_ && $errno && !defined('EPH_INSTALLATION_IN_PROGRESS')) {
 
             if ($sql) {
                 throw new PhenyxShopDatabaseException($this->getMsgError() . '<br /><br /><pre>' . $sql . '</pre>');

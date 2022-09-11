@@ -11,7 +11,7 @@ class EphMapper {
 
 	public function init() {
 
-		require_once _PS_CLASS_DIR_ . 'composer/params/load.php';
+		require_once _EPH_CLASS_DIR_ . 'composer/params/load.php';
 		EphMap::setInit();
 		$seetings_maps = $this->composerobj->seetings_maps;
 		foreach ($seetings_maps as $key => $map) {

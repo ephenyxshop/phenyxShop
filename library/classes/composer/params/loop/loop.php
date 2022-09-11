@@ -374,7 +374,7 @@ class VcLoopSettings {
             $titlefield = 'name';
         }
                 
-		$list = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('SELECT * FROM `'._DB_PREFIX_.'smart_blog_category` sbc INNER JOIN `'._DB_PREFIX_.'smart_blog_category_lang` sbcl ON(sbc.`id_smart_blog_category` = sbcl.`id_smart_blog_category` AND sbcl.`id_lang` = '.(int)($id_lang).')
+		$list = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS('SELECT * FROM `'._DB_PREFIX_.'smart_blog_category` sbc INNER JOIN `'._DB_PREFIX_.'smart_blog_category_lang` sbcl ON(sbc.`id_smart_blog_category` = sbcl.`id_smart_blog_category` AND sbcl.`id_lang` = '.(int)($id_lang).')
 		INNER JOIN `'._DB_PREFIX_.'smart_blog_category_shop` sbs ON sbs.id_smart_blog_category = sbc.id_smart_blog_category WHERE sbc.id_smart_blog_category IN('.$value.') AND sbc.`active`= 1 AND sbs.id_shop = '.(int) Context::getContext()->shop->id);
 
 //                $list = get_categories( array( 'include' => array_map( 'abs', $list ) ) );
@@ -405,7 +405,7 @@ class VcLoopSettings {
         $smartblog = Module::getInstanceByName('smartblog');
         if(Tools::version_compare($smartblog->version, '2.1', '>=')){
             $sql = 'SELECT * FROM `'._DB_PREFIX_.'smart_blog_tag` WHERE id_lang='.$id_lang.' AND id_tag IN('.$value.')';
-			$list = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+			$list = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
 			foreach ( $list as $obj ) {
 				$options[] = array(
 					'value' => (string)$obj['id_tag'],
@@ -571,7 +571,7 @@ class VcLoopSuggestions {
             $titlefield = 'name';
         }
 
-        $categories = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
+        $categories = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS('
         SELECT * FROM `'._DB_PREFIX_.'smart_blog_category` sbc INNER JOIN `'._DB_PREFIX_.'smart_blog_category_lang` sbcl ON(sbc.`id_smart_blog_category` = sbcl.`id_smart_blog_category` AND sbcl.`id_lang` = '.(int)($id_lang).')
 INNER JOIN `'._DB_PREFIX_.'smart_blog_category_shop` sbs ON sbs.id_smart_blog_category = sbc.id_smart_blog_category WHERE '.$exclude.'sbc.`active`= 1 AND sbs.id_shop = '.(int) Context::getContext()->shop->id.' AND sbcl.'.$titlefield.' LIKE "%'.$query.'%" LIMIT '.$limit);
 
@@ -605,7 +605,7 @@ INNER JOIN `'._DB_PREFIX_.'smart_blog_category_shop` sbs ON sbs.id_smart_blog_ca
 				}
 			}
 			$sql = 'SELECT * FROM `'._DB_PREFIX_.'smart_blog_tag` WHERE '.$exclude.' id_lang='.$id_lang.' AND name LIKE "%'.$query.'%" LIMIT '.$limit;
-			$categories = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+			$categories = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
 			
 			if(empty($categories)){ $this->content = ''; return;}
 
@@ -673,7 +673,7 @@ function vc_loop_include_templates() {
 	require_once vc_path_dir( 'TEMPLATES_DIR', 'params/loop/templates.html' );
 }
 
-JsComposer::$sds_action_hooks['ps_admin_footer'] = 'vc_loop_include_templates';
+JsComposer::$sds_action_hooks['EPH_admin_footer'] = 'vc_loop_include_templates';
 
 
 //add_action('admin_footer', 'vc_loop_include_templates');

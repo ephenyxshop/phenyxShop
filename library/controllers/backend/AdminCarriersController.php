@@ -578,7 +578,7 @@ class AdminCarriersControllerCore extends AdminController {
             Db::getInstance()->delete('carrier_group', '`id_carrier` = ' . (int) $idCarrier);
         }
 
-        $groups = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $groups = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_group`')
                 ->from('group')

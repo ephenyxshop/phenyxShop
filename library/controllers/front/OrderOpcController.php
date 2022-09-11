@@ -154,8 +154,8 @@ class OrderOpcControllerCore extends ParentOrderController {
                                 $this->ajaxDie(json_encode(['no_address' => 1]));
                             }
 
-                            if (file_exists(_PS_MODULE_DIR_ . 'blockuserinfo/blockuserinfo.php')) {
-                                include_once _PS_MODULE_DIR_ . 'blockuserinfo/blockuserinfo.php';
+                            if (file_exists(_EPH_MODULE_DIR_ . 'blockuserinfo/blockuserinfo.php')) {
+                                include_once _EPH_MODULE_DIR_ . 'blockuserinfo/blockuserinfo.php';
                                 $blockUserInfo = new BlockUserInfo();
                             }
 
@@ -183,7 +183,7 @@ class OrderOpcControllerCore extends ParentOrderController {
 
                             $return = array_merge(
                                 [
-                                    'order_opc_adress'                => $this->context->smarty->fetch(_PS_THEME_DIR_ . $tpl),
+                                    'order_opc_adress'                => $this->context->smarty->fetch(_EPH_THEME_DIR_ . $tpl),
                                     'block_user_info'                 => (isset($blockUserInfo) ? $blockUserInfo->hookDisplayTop([]) : ''),
                                     'block_user_info_nav'             => (isset($blockUserInfo) ? $blockUserInfo->hookDisplayNav([]) : ''),
                                     'formatedAddressFieldsValuesList' => $formatedAddressFieldsValuesList,
@@ -334,7 +334,7 @@ class OrderOpcControllerCore extends ParentOrderController {
                             $this->context->smarty->assign('address_list', []);
                         }
 
-                        $this->setTemplate(_PS_THEME_DIR_ . 'order-address-multishipping-products.tpl');
+                        $this->setTemplate(_EPH_THEME_DIR_ . 'order-address-multishipping-products.tpl');
                         $this->display();
                         $this->ajaxDie();
                         break;
@@ -349,7 +349,7 @@ class OrderOpcControllerCore extends ParentOrderController {
                         }
 
                         $this->context->smarty->assign('opc', true);
-                        $this->setTemplate(_PS_THEME_DIR_ . 'shopping-cart.tpl');
+                        $this->setTemplate(_EPH_THEME_DIR_ . 'shopping-cart.tpl');
                         $this->display();
                         $this->ajaxDie();
                         break;
@@ -422,7 +422,7 @@ class OrderOpcControllerCore extends ParentOrderController {
             return '<p class="warning">' . Tools::displayError('Error: No currency has been selected.') . '</p>';
         }
 
-        if (!$this->context->cookie->checkedTOS && Configuration::get('PS_CONDITIONS')) {
+        if (!$this->context->cookie->checkedTOS && Configuration::get('EPH_CONDITIONS')) {
             return '<p class="warning">' . Tools::displayError('Please accept the Terms of Service.') . '</p>';
         }
 
@@ -439,7 +439,7 @@ class OrderOpcControllerCore extends ParentOrderController {
         /* Check minimal amount */
         $currency = Currency::getCurrency((int) $this->context->cart->id_currency);
 
-        $minimalPurchase = Tools::convertPrice((float) Configuration::get('PS_PURCHASE_MINIMUM'), $currency);
+        $minimalPurchase = Tools::convertPrice((float) Configuration::get('EPH_PURCHASE_MINIMUM'), $currency);
 
         if ($this->context->cart->getOrderTotal(false, Cart::ONLY_PRODUCTS) < $minimalPurchase) {
             return '<p class="warning">' . sprintf(
@@ -474,8 +474,8 @@ class OrderOpcControllerCore extends ParentOrderController {
 
         $addressDelivery = new Address($this->context->cart->id_address_delivery);
 
-        $cms = new CMS(Configuration::get('PS_CONDITIONS_CMS_ID'), $this->context->language->id);
-        $linkConditions = $this->context->link->getCMSLink($cms, $cms->link_rewrite, Configuration::get('PS_SSL_ENABLED'));
+        $cms = new CMS(Configuration::get('EPH_CONDITIONS_CMS_ID'), $this->context->language->id);
+        $linkConditions = $this->context->link->getCMSLink($cms, $cms->link_rewrite, Configuration::get('EPH_SSL_ENABLED'));
 
         if (!strpos($linkConditions, '?')) {
             $linkConditions .= '?content_only=1';
@@ -504,13 +504,13 @@ class OrderOpcControllerCore extends ParentOrderController {
         $this->context->smarty->assign('isVirtualCart', $this->context->cart->isVirtualCart());
 
         $vars = [
-            'advanced_payment_api'        => (bool) Configuration::get('PS_ADVANCED_PAYMENT_API'),
+            'advanced_payment_api'        => (bool) Configuration::get('EPH_ADVANCED_PAYMENT_API'),
             'free_shipping'               => $freeShipping,
             'checkedTOS'                  => (int) $this->context->cookie->checkedTOS,
-            'recyclablePackAllowed'       => (int) Configuration::get('PS_RECYCLABLE_PACK'),
-            'giftAllowed'                 => (int) Configuration::get('PS_GIFT_WRAPPING'),
-            'cms_id'                      => (int) Configuration::get('PS_CONDITIONS_CMS_ID'),
-            'conditions'                  => (int) Configuration::get('PS_CONDITIONS'),
+            'recyclablePackAllowed'       => (int) Configuration::get('EPH_RECYCLABLE_PACK'),
+            'giftAllowed'                 => (int) Configuration::get('EPH_GIFT_WRAPPING'),
+            'cms_id'                      => (int) Configuration::get('EPH_CONDITIONS_CMS_ID'),
+            'conditions'                  => (int) Configuration::get('EPH_CONDITIONS'),
             'link_conditions'             => $linkConditions,
             'recyclable'                  => (int) $this->context->cart->recyclable,
             'gift_wrapping_price'         => (float) $wrappingFees,
@@ -551,7 +551,7 @@ class OrderOpcControllerCore extends ParentOrderController {
                         'delivery_option'      => $this->context->cart->getDeliveryOption(null, true),
                     ]
                 ),
-                'carrier_block'      => $this->context->smarty->fetch(_PS_THEME_DIR_ . 'order-carrier.tpl'),
+                'carrier_block'      => $this->context->smarty->fetch(_EPH_THEME_DIR_ . 'order-carrier.tpl'),
             ];
 
             Cart::addExtraCarriers($result);
@@ -563,7 +563,7 @@ class OrderOpcControllerCore extends ParentOrderController {
             return [
                 'hasError'      => true,
                 'errors'        => $this->errors,
-                'carrier_block' => $this->context->smarty->fetch(_PS_THEME_DIR_ . 'order-carrier.tpl'),
+                'carrier_block' => $this->context->smarty->fetch(_EPH_THEME_DIR_ . 'order-carrier.tpl'),
             ];
         }
 
@@ -701,7 +701,7 @@ class OrderOpcControllerCore extends ParentOrderController {
                 _THEME_JS_DIR_ . 'tools/vatManagement.js',
                 _THEME_JS_DIR_ . 'tools/statesManagement.js',
                 _THEME_JS_DIR_ . 'order-carrier.js',
-                _PS_JS_DIR_ . 'validate.js',
+                _EPH_JS_DIR_ . 'validate.js',
             ]
         );
     }
@@ -737,7 +737,7 @@ class OrderOpcControllerCore extends ParentOrderController {
         // WRAPPING AND TOS
         $this->_assignWrappingAndTOS();
 
-        if (Configuration::get('PS_RESTRICT_DELIVERED_COUNTRIES')) {
+        if (Configuration::get('EPH_RESTRICT_DELIVERED_COUNTRIES')) {
             $countries = Carrier::getDeliveredCountries($this->context->language->id, true, true);
         } else {
             $countries = Country::getCountries($this->context->language->id, true);
@@ -757,8 +757,8 @@ class OrderOpcControllerCore extends ParentOrderController {
 
         if (Module::isInstalled('vatnumber')
             && Module::isEnabled('vatnumber')
-            && file_exists(_PS_MODULE_DIR_ . 'vatnumber/vatnumber.php')) {
-            include_once _PS_MODULE_DIR_ . 'vatnumber/vatnumber.php';
+            && file_exists(_EPH_MODULE_DIR_ . 'vatnumber/vatnumber.php')) {
+            include_once _EPH_MODULE_DIR_ . 'vatnumber/vatnumber.php';
 
             if (method_exists('VatNumber', 'assignTemplateVars')) {
                 VatNumber::assignTemplateVars($this->context);
@@ -772,12 +772,12 @@ class OrderOpcControllerCore extends ParentOrderController {
                 'isGuest'                   => isset($this->context->cookie->is_guest) ? $this->context->cookie->is_guest : 0,
                 'countries'                 => $countries,
                 'sl_country'                => (int) Tools::getCountry(),
-                'PS_GUEST_CHECKOUT_ENABLED' => Configuration::get('PS_GUEST_CHECKOUT_ENABLED'),
+                'EPH_GUEST_CHECKOUT_ENABLED' => Configuration::get('EPH_GUEST_CHECKOUT_ENABLED'),
                 'errorCarrier'              => Tools::displayError('You must choose a carrier.', false),
                 'errorTOS'                  => Tools::displayError('You must accept the Terms of Service.', false),
                 'isPaymentStep'             => isset($_GET['isPaymentStep']) && $_GET['isPaymentStep'],
                 'genders'                   => Gender::getGenders(),
-                'one_phone_at_least'        => (int) Configuration::get('PS_ONE_PHONE_AT_LEAST'),
+                'one_phone_at_least'        => (int) Configuration::get('EPH_ONE_PHONE_AT_LEAST'),
                 'HOOK_CREATE_ACCOUNT_FORM'  => Hook::exec('displayCustomerAccountForm'),
                 'HOOK_CREATE_ACCOUNT_TOP'   => Hook::exec('displayCustomerAccountFormTop'),
             ]
@@ -811,18 +811,18 @@ class OrderOpcControllerCore extends ParentOrderController {
         $this->_assignPayment();
         Tools::safePostVars();
 
-        $newsletter = Configuration::get('PS_CUSTOMER_NWSL') || (Module::isInstalled('blocknewsletter') && Module::getInstanceByName('blocknewsletter')->active);
+        $newsletter = Configuration::get('EPH_CUSTOMER_NWSL') || (Module::isInstalled('blocknewsletter') && Module::getInstanceByName('blocknewsletter')->active);
         $this->context->smarty->assign('newsletter', $newsletter);
-        $this->context->smarty->assign('optin', (bool) Configuration::get('PS_CUSTOMER_OPTIN'));
+        $this->context->smarty->assign('optin', (bool) Configuration::get('EPH_CUSTOMER_OPTIN'));
         $this->context->smarty->assign('field_required', $this->context->customer->validateFieldsRequiredDatabase());
 
         $this->_processAddressFormat();
 
-        if ((bool) Configuration::get('PS_ADVANCED_PAYMENT_API')) {
+        if ((bool) Configuration::get('EPH_ADVANCED_PAYMENT_API')) {
             $this->addJS(_THEME_JS_DIR_ . 'advanced-payment-api.js');
-            $this->setTemplate(_PS_THEME_DIR_ . 'order-opc-advanced.tpl');
+            $this->setTemplate(_EPH_THEME_DIR_ . 'order-opc-advanced.tpl');
         } else {
-            $this->setTemplate(_PS_THEME_DIR_ . 'order-opc.tpl');
+            $this->setTemplate(_EPH_THEME_DIR_ . 'order-opc.tpl');
         }
 
     }
@@ -945,7 +945,7 @@ class OrderOpcControllerCore extends ParentOrderController {
      */
     protected function _assignPayment() {
 
-        if ((bool) Configuration::get('PS_ADVANCED_PAYMENT_API')) {
+        if ((bool) Configuration::get('EPH_ADVANCED_PAYMENT_API')) {
             $this->context->smarty->assign(
                 [
                     'HOOK_TOP_PAYMENT'      => ($this->isLogged ? Hook::exec('displayPaymentTop') : ''),

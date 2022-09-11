@@ -53,7 +53,7 @@ class AliasCore extends ObjectModel {
                 $this->alias = trim($alias);
                 $this->search = trim($search);
             } else {
-                $row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+                $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                     (new DbQuery())
                         ->select('a.`id_alias`, a.`search`, a.`alias`')
                         ->from('alias', 'a')
@@ -92,7 +92,7 @@ class AliasCore extends ObjectModel {
 
         if (parent::add($autoDate, $nullValues)) {
             // Set cache of feature detachable to true
-            Configuration::updateGlobalValue('PS_ALIAS_FEATURE_ACTIVE', '1');
+            Configuration::updateGlobalValue('EPH_ALIAS_FEATURE_ACTIVE', '1');
 
             return true;
         }
@@ -111,7 +111,7 @@ class AliasCore extends ObjectModel {
 
         if (parent::delete()) {
             // Refresh cache of feature detachable
-            Configuration::updateGlobalValue('PS_ALIAS_FEATURE_ACTIVE', Alias::isCurrentlyUsed($this->def['table'], true));
+            Configuration::updateGlobalValue('EPH_ALIAS_FEATURE_ACTIVE', Alias::isCurrentlyUsed($this->def['table'], true));
 
             return true;
         }
@@ -133,7 +133,7 @@ class AliasCore extends ObjectModel {
             return '';
         }
 
-        $aliases = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $aliases = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('a.`alias`')
                 ->from('alias', 'a')
@@ -156,7 +156,7 @@ class AliasCore extends ObjectModel {
      */
     public static function isFeatureActive() {
 
-        return Configuration::get('PS_ALIAS_FEATURE_ACTIVE');
+        return Configuration::get('EPH_ALIAS_FEATURE_ACTIVE');
     }
 
     /**
@@ -176,7 +176,7 @@ class AliasCore extends ObjectModel {
             return false;
         }
 
-        $row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('`id_alias`')
                 ->from('alias', 'a')

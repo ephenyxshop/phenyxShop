@@ -38,7 +38,7 @@ class AttributesCore extends ObjectModel {
         ],
     ];
 
-    protected $image_dir = _PS_COL_IMG_DIR_;
+    protected $image_dir = _EPH_COL_IMG_DIR_;
 
     protected $webserviceParameters = [
         'objectsNodeName' => 'product_option_values',
@@ -60,7 +60,7 @@ class AttributesCore extends ObjectModel {
      */
     public function __construct($id = null, $idLang = null, $idShop = null) {
 
-        $this->image_dir = _PS_COL_IMG_DIR_;
+        $this->image_dir = _EPH_COL_IMG_DIR_;
 
         parent::__construct($id, $idLang, $idShop);
     }
@@ -80,7 +80,7 @@ class AttributesCore extends ObjectModel {
      */
     public static function getAttributes($idLang, $notNull = false) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('DISTINCT ag.*, agl.*, a.`id_attribute`, al.`name`, agl.`name` AS `attribute_group`')
                 ->from('attribute_group', 'ag')
@@ -104,7 +104,7 @@ class AttributesCore extends ObjectModel {
     public function delete() {
 
         if (!$this->hasMultishopEntries() || Shop::getContext() == Shop::CONTEXT_ALL) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('`id_product_attribute`')
                     ->from('product_attribute_combination')
@@ -114,7 +114,7 @@ class AttributesCore extends ObjectModel {
 
             foreach ($result as $row) {
                 $combination = new Combination($row['id_product_attribute']);
-                $newRequest = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+                $newRequest = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                     (new DbQuery())
                         ->select('`id_product`, `default_on`')
                         ->from('product_attribute')
@@ -133,7 +133,7 @@ class AttributesCore extends ObjectModel {
             }
 
             foreach ($products as $product) {
-                $idProductAttribute = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                $idProductAttribute = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                     (new DbQuery())
                         ->select('`id_product_attribute`')
                         ->from('product_attribute')
@@ -220,7 +220,7 @@ class AttributesCore extends ObjectModel {
      */
     public static function isAttribute($idAttributeGroup, $name, $idLang) {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(*)')
                 ->from('attribute_group', 'ag')
@@ -309,7 +309,7 @@ class AttributesCore extends ObjectModel {
      */
     public function isColorAttribute() {
 
-        return (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('ag.`group_type`')
                 ->from('attribute_group', 'ag')
@@ -333,7 +333,7 @@ class AttributesCore extends ObjectModel {
      */
     public static function getAttributeMinimalQty($idProductAttribute) {
 
-        $minimalQuantity = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $minimalQuantity = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`minimal_quantity`')
                 ->from('product_attribute_shop', 'pas')
@@ -369,7 +369,7 @@ class AttributesCore extends ObjectModel {
             $idAttributeGroup = (int) $this->id_attribute_group;
         }
 
-        if (!$res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        if (!$res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
             ->select('a.`id_attribute`, a.`position`, a.`id_attribute_group`')
             ->from('attribute', 'a')
@@ -456,7 +456,7 @@ class AttributesCore extends ObjectModel {
      */
     public static function getHigherPosition($idAttributeGroup) {
 
-        $position = DB::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $position = DB::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('MAX(`position`)')
                 ->from('attribute')

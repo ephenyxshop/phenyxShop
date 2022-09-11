@@ -719,8 +719,8 @@ class AdminStockManagementControllerCore extends AdminController {
      */
     public function initContent() {
 
-        if (!Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT')) {
-            $this->warnings[md5('PS_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate the Advanced Stock Management feature prior to using this feature.');
+        if (!Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT')) {
+            $this->warnings[md5('EPH_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate the Advanced Stock Management feature prior to using this feature.');
 
             return;
         }
@@ -1102,7 +1102,7 @@ class AdminStockManagementControllerCore extends AdminController {
                     'options'  => [
                         'query' => StockMvtReason::getStockMvtReasonsWithFilter(
                             $this->context->language->id,
-                            [Configuration::get('PS_STOCK_MVT_TRANSFER_TO')],
+                            [Configuration::get('EPH_STOCK_MVT_TRANSFER_TO')],
                             1
                         ),
                         'id'    => 'id_stock_mvt_reason',
@@ -1226,7 +1226,7 @@ class AdminStockManagementControllerCore extends AdminController {
                     'options'  => [
                         'query' => StockMvtReason::getStockMvtReasonsWithFilter(
                             $this->context->language->id,
-                            [Configuration::get('PS_STOCK_MVT_TRANSFER_FROM')],
+                            [Configuration::get('EPH_STOCK_MVT_TRANSFER_FROM')],
                             -1
                         ),
                         'id'    => 'id_stock_mvt_reason',
@@ -1587,8 +1587,8 @@ class AdminStockManagementControllerCore extends AdminController {
      */
     public function initProcess() {
 
-        if (!Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT')) {
-            $this->warnings[md5('PS_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management prior to using this feature.');
+        if (!Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT')) {
+            $this->warnings[md5('EPH_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management prior to using this feature.');
 
             return;
         }

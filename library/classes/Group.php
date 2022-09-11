@@ -86,7 +86,7 @@ class GroupCore extends ObjectModel {
             $shopCriteria = Shop::addSqlAssociation('group', 'g');
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('DISTINCT g.`id_group`, g.`reduction`, g.`price_display_method`, gl.`name`')
                 ->from('group', 'g')
@@ -134,11 +134,11 @@ class GroupCore extends ObjectModel {
         static $psCustomerGroup = null;
 
         if ($psUnidentifiedGroup === null) {
-            $psUnidentifiedGroup = Configuration::get('PS_UNIDENTIFIED_GROUP');
+            $psUnidentifiedGroup = Configuration::get('EPH_UNIDENTIFIED_GROUP');
         }
 
         if ($psCustomerGroup === null) {
-            $psCustomerGroup = Configuration::get('PS_CUSTOMER_GROUP');
+            $psCustomerGroup = Configuration::get('EPH_CUSTOMER_GROUP');
         }
 
         $customer = Context::getContext()->customer;
@@ -179,7 +179,7 @@ class GroupCore extends ObjectModel {
         // @codingStandardsIgnoreStart
 
         if (!isset(static::$cache_reduction['group'][$idGroup])) {
-            static::$cache_reduction['group'][$idGroup] = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            static::$cache_reduction['group'][$idGroup] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`reduction`')
                     ->from('group')
@@ -200,7 +200,7 @@ class GroupCore extends ObjectModel {
      */
     public static function getDefaultPriceDisplayMethod() {
 
-        return Group::getPriceDisplayMethod((int) Configuration::get('PS_CUSTOMER_GROUP'));
+        return Group::getPriceDisplayMethod((int) Configuration::get('EPH_CUSTOMER_GROUP'));
     }
 
     /**
@@ -217,7 +217,7 @@ class GroupCore extends ObjectModel {
         // @codingStandardsIgnoreStart
 
         if (!isset(Group::$group_price_display_method[$idGroup])) {
-            static::$group_price_display_method[$idGroup] = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            static::$group_price_display_method[$idGroup] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`price_display_method`')
                     ->from('group')
@@ -244,7 +244,7 @@ class GroupCore extends ObjectModel {
         static $psGroupFeatureActive = null;
 
         if ($psGroupFeatureActive === null) {
-            $psGroupFeatureActive = Configuration::get('PS_GROUP_FEATURE_ACTIVE');
+            $psGroupFeatureActive = Configuration::get('EPH_GROUP_FEATURE_ACTIVE');
         }
 
         return $psGroupFeatureActive;
@@ -264,7 +264,7 @@ class GroupCore extends ObjectModel {
      */
     public static function isCurrentlyUsed($table = null, $hasActiveColumn = false) {
 
-        return (bool) (Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue((new DbQuery())->select('COUNT(*)')->from('group')) > 3);
+        return (bool) (Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue((new DbQuery())->select('COUNT(*)')->from('group')) > 3);
     }
 
     /**
@@ -370,7 +370,7 @@ class GroupCore extends ObjectModel {
      */
     public static function searchByName($query) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('g.*, gl.*')
                 ->from('group', 'g')
@@ -394,7 +394,7 @@ class GroupCore extends ObjectModel {
     public function getCustomers($count = false, $start = 0, $limit = 0, $shopFiltering = false) {
 
         if ($count) {
-            return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('COUNT(*)')
                     ->from('customer', 'c')
@@ -404,7 +404,7 @@ class GroupCore extends ObjectModel {
             );
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('cg.`id_customer`, c.*')
                 ->from('customer_group', 'cg')
@@ -429,7 +429,7 @@ class GroupCore extends ObjectModel {
      */
     public function add($autoDate = true, $nullValues = false) {
 
-        Configuration::updateGlobalValue('PS_GROUP_FEATURE_ACTIVE', '1');
+        Configuration::updateGlobalValue('EPH_GROUP_FEATURE_ACTIVE', '1');
 
         if (parent::add($autoDate, $nullValues)) {
             Category::setNewGroupForHome((int) $this->id);
@@ -453,8 +453,8 @@ class GroupCore extends ObjectModel {
      */
     public function update($autodate = true, $nullValues = false) {
 
-        if (!Configuration::getGlobalValue('PS_GROUP_FEATURE_ACTIVE') && $this->reduction > 0) {
-            Configuration::updateGlobalValue('PS_GROUP_FEATURE_ACTIVE', 1);
+        if (!Configuration::getGlobalValue('EPH_GROUP_FEATURE_ACTIVE') && $this->reduction > 0) {
+            Configuration::updateGlobalValue('EPH_GROUP_FEATURE_ACTIVE', 1);
         }
 
         return parent::update($autodate, $nullValues);
@@ -470,7 +470,7 @@ class GroupCore extends ObjectModel {
      */
     public function delete() {
 
-        if ($this->id == (int) Configuration::get('PS_CUSTOMER_GROUP')) {
+        if ($this->id == (int) Configuration::get('EPH_CUSTOMER_GROUP')) {
             return false;
         }
 
@@ -485,7 +485,7 @@ class GroupCore extends ObjectModel {
             // Add default group (id 3) to customers without groups
             Db::getInstance()->execute(
                 'INSERT INTO `' . _DB_PREFIX_ . 'customer_group` (
-                SELECT c.id_customer, ' . (int) Configuration::get('PS_CUSTOMER_GROUP') . ' FROM `' . _DB_PREFIX_ . 'customer` c
+                SELECT c.id_customer, ' . (int) Configuration::get('EPH_CUSTOMER_GROUP') . ' FROM `' . _DB_PREFIX_ . 'customer` c
                 LEFT JOIN `' . _DB_PREFIX_ . 'customer_group` cg
                 ON cg.id_customer = c.id_customer
                 WHERE cg.id_customer IS NULL)'
@@ -499,7 +499,7 @@ class GroupCore extends ObjectModel {
                     IFNULL((
                         SELECT min(id_group) FROM `' . _DB_PREFIX_ . 'customer_group`
                         WHERE id_customer = cg.id_customer),
-                        ' . (int) Configuration::get('PS_CUSTOMER_GROUP') . ')
+                        ' . (int) Configuration::get('EPH_CUSTOMER_GROUP') . ')
                 WHERE `id_default_group` = ' . (int) $this->id
             );
 

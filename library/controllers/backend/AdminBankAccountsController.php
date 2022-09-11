@@ -39,7 +39,7 @@ class AdminBankAccountsControllerCore extends AdminController {
     public function setAjaxMedia() {
 
         return $this->pushJS([
-            _PS_JS_DIR_ . 'bank.js',
+            _EPH_JS_DIR_ . 'bank.js',
         ]);
     }
 

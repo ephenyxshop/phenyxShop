@@ -21,7 +21,7 @@ class AdminTranslationsControllerCore extends AdminController {
 
 	public $php_self = 'admintranslations';
 	/** Name of theme by default */
-	const DEFAULT_THEME_NAME = _PS_DEFAULT_THEME_NAME_;
+	const DEFAULT_THEME_NAME = _EPH_DEFAULT_THEME_NAME_;
 	const TEXTAREA_SIZED = 70;
 
 	// @codingStandardsIgnoreStart
@@ -169,7 +169,7 @@ class AdminTranslationsControllerCore extends AdminController {
 
 	public function setAjaxMedia() {
 
-		return $this->pushJS([_PS_JS_DIR_ . 'translations.js',
+		return $this->pushJS([_EPH_JS_DIR_ . 'translations.js',
 		]);
 	}
 
@@ -209,63 +209,63 @@ class AdminTranslationsControllerCore extends AdminController {
 			'frontcontroller' => [
 				'name' => $this->l('Front Controller translations'),
 				'var'  => '_LANGFRONT',
-				'dir'  => _PS_TRANSLATIONS_DIR_ . $this->lang_selected->iso_code . '/',
+				'dir'  => _EPH_TRANSLATIONS_DIR_ . $this->lang_selected->iso_code . '/',
 				'file' => 'front.php',
 			],
 			'front'           => [
 				'name' => $this->l('Front office translations'),
 				'var'  => '_LANG',
-				'dir'  => defined('_PS_THEME_SELECTED_DIR_') ? _PS_THEME_SELECTED_DIR_ . 'lang/' : '',
+				'dir'  => defined('_EPH_THEME_SELECTED_DIR_') ? _EPH_THEME_SELECTED_DIR_ . 'lang/' : '',
 				'file' => $this->lang_selected->iso_code . '.php',
 			],
 			'class'           => [
 				'name' => $this->l('Class translations'),
 				'var'  => '_LANGCLASS',
-				'dir'  => _PS_TRANSLATIONS_DIR_ . $this->lang_selected->iso_code . '/',
+				'dir'  => _EPH_TRANSLATIONS_DIR_ . $this->lang_selected->iso_code . '/',
 				'file' => 'class.php',
 			],
 			'back'            => [
 				'name' => $this->l('Back office translations'),
 				'var'  => '_LANGADM',
-				'dir'  => _PS_TRANSLATIONS_DIR_ . $this->lang_selected->iso_code . '/',
+				'dir'  => _EPH_TRANSLATIONS_DIR_ . $this->lang_selected->iso_code . '/',
 				'file' => 'admin.php',
 			],
 			'errors'          => [
 				'name' => $this->l('Error message translations'),
 				'var'  => '_ERRORS',
-				'dir'  => _PS_TRANSLATIONS_DIR_ . $this->lang_selected->iso_code . '/',
+				'dir'  => _EPH_TRANSLATIONS_DIR_ . $this->lang_selected->iso_code . '/',
 				'file' => 'errors.php',
 			],
 			'fields'          => [
 				'name' => $this->l('Field name translations'),
 				'var'  => '_FIELDS',
-				'dir'  => _PS_TRANSLATIONS_DIR_ . $this->lang_selected->iso_code . '/',
+				'dir'  => _EPH_TRANSLATIONS_DIR_ . $this->lang_selected->iso_code . '/',
 				'file' => 'fields.php',
 			],
 			'modules'         => [
 				'name' => $this->l('Installed modules translations'),
 				'var'  => '_MODULES',
-				'dir'  => _PS_MODULE_DIR_,
+				'dir'  => _EPH_MODULE_DIR_,
 				'file' => '',
 			],
 			'pdf'             => [
 				'name' => $this->l('PDF translations'),
 				'var'  => '_LANGPDF',
-				'dir'  => _PS_TRANSLATIONS_DIR_ . $this->lang_selected->iso_code . '/',
+				'dir'  => _EPH_TRANSLATIONS_DIR_ . $this->lang_selected->iso_code . '/',
 				'file' => 'pdf.php',
 			],
 			'mails'           => [
 				'name' => $this->l('Email templates translations'),
 				'var'  => '_LANGMAIL',
-				'dir'  => _PS_TRANSLATIONS_DIR_ . $this->lang_selected->iso_code . '/',
+				'dir'  => _EPH_TRANSLATIONS_DIR_ . $this->lang_selected->iso_code . '/',
 				'file' => 'mail.php',
 			],
 
 		];
 
-		if (defined('_PS_THEME_SELECTED_DIR_')) {
-			$this->translations_informations['modules']['override'] = ['dir' => _PS_THEME_SELECTED_DIR_ . 'plugins/', 'file' => ''];
-			$this->translations_informations['pdf']['override'] = ['dir' => _PS_THEME_SELECTED_DIR_ . 'pdf/lang/', 'file' => $this->lang_selected->iso_code . '.php'];
+		if (defined('_EPH_THEME_SELECTED_DIR_')) {
+			$this->translations_informations['modules']['override'] = ['dir' => _EPH_THEME_SELECTED_DIR_ . 'plugins/', 'file' => ''];
+			$this->translations_informations['pdf']['override'] = ['dir' => _EPH_THEME_SELECTED_DIR_ . 'pdf/lang/', 'file' => $this->lang_selected->iso_code . '.php'];
 
 		}
 
@@ -283,7 +283,7 @@ class AdminTranslationsControllerCore extends AdminController {
 			$Upload['content'] = Tools::file_get_contents($_FILES['excelTranslation']['tmp_name']);
 			$Upload['name'] = $_FILES['excelTranslation']['name'];
 			$Upload['mime'] = $_FILES['excelTranslation']['type'];
-			$dir = _PS_ROOT_ADMIN_DIR_ . DIRECTORY_SEPARATOR . 'translations' . DIRECTORY_SEPARATOR;
+			$dir = _EPH_ROOT_ADMIN_DIR_ . DIRECTORY_SEPARATOR . 'translations' . DIRECTORY_SEPARATOR;
 			$fileName = $_FILES['excelTranslation']['name'];
 			$uploadfile = $dir . basename($fileName);
 			$sourcePath = $_FILES['excelTranslation']['tmp_name'];
@@ -857,7 +857,7 @@ class AdminTranslationsControllerCore extends AdminController {
 
 		$drawing = new Drawing();
 		$drawing->setName('Logo Ephenyx Shop');
-		$drawing->setPath(_PS_ROOT_ADMIN_DIR_ . '/themes/img/logoFrontOffice.png');
+		$drawing->setPath(_EPH_ROOT_ADMIN_DIR_ . '/themes/img/logoFrontOffice.png');
 		$drawing->setHeight(80);
 		$drawing->setCoordinates('A1');
 		$drawing->setWorksheet($spreadsheet->getActiveSheet());
@@ -949,7 +949,7 @@ class AdminTranslationsControllerCore extends AdminController {
 		$spreadsheet->getActiveSheet()->getProtection()->setInsertRows(true);
 		$spreadsheet->getActiveSheet()->getProtection()->setFormatCells(true);
 
-		$filePath = _PS_ADMIN_DIR_ . DIRECTORY_SEPARATOR . 'translations' . DIRECTORY_SEPARATOR . $this->lang_selected->iso_code . DIRECTORY_SEPARATOR;
+		$filePath = _EPH_ADMIN_DIR_ . DIRECTORY_SEPARATOR . 'translations' . DIRECTORY_SEPARATOR . $this->lang_selected->iso_code . DIRECTORY_SEPARATOR;
 		$fileSave = new Xlsx($spreadsheet);
 		$fileSave->save($filePath . $name);
 		$fileToUpload = 'translations' . DIRECTORY_SEPARATOR . $this->lang_selected->iso_code . DIRECTORY_SEPARATOR . $name;
@@ -1265,7 +1265,7 @@ class AdminTranslationsControllerCore extends AdminController {
 
 		/* PhenyxShop demo mode */
 
-		if (_PS_MODE_DEMO_) {
+		if (_EPH_MODE_DEMO_) {
 			$this->errors[] = Tools::displayError('This functionality has been disabled.');
 
 			return;
@@ -1319,7 +1319,7 @@ class AdminTranslationsControllerCore extends AdminController {
 			if (Tools::isSubmit('submitTranslationsPdf')) {
 
 				if ($this->tabAccess['edit'] === '1') {
-					// Only the PhenyxShop team should write the translations into the _PS_TRANSLATIONS_DIR_
+					// Only the PhenyxShop team should write the translations into the _EPH_TRANSLATIONS_DIR_
 
 					if (!$this->theme_selected) {
 						$this->writeTranslationFile();
@@ -1422,9 +1422,9 @@ class AdminTranslationsControllerCore extends AdminController {
 		// Set the path of selected theme
 
 		if ($this->theme_selected) {
-			define('_PS_THEME_SELECTED_DIR_', _SHOP_ROOT_DIR_ . '/themes/' . $this->theme_selected . '/');
+			define('_EPH_THEME_SELECTED_DIR_', _SHOP_ROOT_DIR_ . '/themes/' . $this->theme_selected . '/');
 		} else {
-			define('_PS_THEME_SELECTED_DIR_', '');
+			define('_EPH_THEME_SELECTED_DIR_', '');
 		}
 
 		// Get type of translation
@@ -1599,10 +1599,10 @@ class AdminTranslationsControllerCore extends AdminController {
 		if ($this->lang_selected->iso_code && $this->theme_selected) {
 			$this->exportTabs();
 			$items = array_flip(Language::getFilesList($this->lang_selected->iso_code, $this->theme_selected, false, false, false, false, true));
-			$fileName = _PS_TRANSLATIONS_DIR_ . '/export/' . $this->lang_selected->iso_code . '.gzip';
+			$fileName = _EPH_TRANSLATIONS_DIR_ . '/export/' . $this->lang_selected->iso_code . '.gzip';
 			$gz = new Archive_Tar($fileName, true);
 
-			if ($gz->createModify($items, null, _PS_ROOT_DIR_)) {
+			if ($gz->createModify($items, null, _EPH_ROOT_DIR_)) {
 				ob_start();
 				header('Pragma: public');
 				header('Expires: 0');
@@ -1671,7 +1671,7 @@ class AdminTranslationsControllerCore extends AdminController {
 
 		$content .= "\n\nreturn \$_TABS;";
 
-		$dir = _PS_TRANSLATIONS_DIR_ . $this->lang_selected->iso_code . DIRECTORY_SEPARATOR;
+		$dir = _EPH_TRANSLATIONS_DIR_ . $this->lang_selected->iso_code . DIRECTORY_SEPARATOR;
 		$path = $dir . 'tabs.php';
 
 		// Check if tabs.php exists for the selected Iso Code
@@ -1709,7 +1709,7 @@ class AdminTranslationsControllerCore extends AdminController {
 				$filesPaths = AdminTranslationsController::filesListToPaths($filesList);
 
 				$uniqid = uniqid();
-				$sandbox = _PS_CACHE_DIR_ . 'sandbox' . DIRECTORY_SEPARATOR . $uniqid . DIRECTORY_SEPARATOR;
+				$sandbox = _EPH_CACHE_DIR_ . 'sandbox' . DIRECTORY_SEPARATOR . $uniqid . DIRECTORY_SEPARATOR;
 
 				if ($gz->extractList($filesPaths, $sandbox)) {
 
@@ -1740,7 +1740,7 @@ class AdminTranslationsControllerCore extends AdminController {
 				foreach ($filesPaths as $filesPath) {
 					$path = dirname($filesPath);
 
-					if (is_dir(_PS_TRANSLATIONS_DIR_ . '../' . $path) && !is_writable(_PS_TRANSLATIONS_DIR_ . '../' . $path) && !in_array($path, $tmpArray)) {
+					if (is_dir(_EPH_TRANSLATIONS_DIR_ . '../' . $path) && !is_writable(_EPH_TRANSLATIONS_DIR_ . '../' . $path) && !in_array($path, $tmpArray)) {
 						$this->errors[] = (!$i++ ? Tools::displayError('The archive cannot be extracted.') . ' ' : '') . Tools::displayError('The server does not have permissions for writing.') . ' ' . sprintf(Tools::displayError('Please check rights for %s'), $path);
 						$tmpArray[] = $path;
 					}
@@ -1751,7 +1751,7 @@ class AdminTranslationsControllerCore extends AdminController {
 					return;
 				}
 
-				if ($error = $gz->extractList($filesPaths, _PS_TRANSLATIONS_DIR_ . '../')) {
+				if ($error = $gz->extractList($filesPaths, _EPH_TRANSLATIONS_DIR_ . '../')) {
 
 					if (is_object($error) && !empty($error->message)) {
 						$this->errors[] = Tools::displayError('The archive cannot be extracted.') . ' ' . $error->message;
@@ -1759,7 +1759,7 @@ class AdminTranslationsControllerCore extends AdminController {
 
 						foreach ($filesList as $file2check) {
 
-							if (pathinfo($file2check['filename'], PATHINFO_BASENAME) == 'index.php' && file_put_contents(_PS_TRANSLATIONS_DIR_ . '../' . $file2check['filename'], Tools::getDefaultIndexContent())) {
+							if (pathinfo($file2check['filename'], PATHINFO_BASENAME) == 'index.php' && file_put_contents(_EPH_TRANSLATIONS_DIR_ . '../' . $file2check['filename'], Tools::getDefaultIndexContent())) {
 								continue;
 							}
 
@@ -1815,7 +1815,7 @@ class AdminTranslationsControllerCore extends AdminController {
 
 			if (preg_match('#^plugins/([^/]+)/#', $file['filename'], $m)) {
 
-				if (is_dir(_PS_MODULE_DIR_ . $m[1])) {
+				if (is_dir(_EPH_MODULE_DIR_ . $m[1])) {
 					$kept[] = $file;
 				}
 
@@ -1879,7 +1879,7 @@ class AdminTranslationsControllerCore extends AdminController {
 
 			// Assignation
 
-			if (preg_match('/^\$' . preg_quote($global, '/') . '\[\'' . _PS_TRANS_PATTERN_ . '\'\]\s*=\s*\'' . _PS_TRANS_PATTERN_ . '\'\s*;$/i', $line)) {
+			if (preg_match('/^\$' . preg_quote($global, '/') . '\[\'' . _EPH_TRANS_PATTERN_ . '\'\]\s*=\s*\'' . _EPH_TRANS_PATTERN_ . '\'\s*;$/i', $line)) {
 				continue;
 			}
 
@@ -1908,11 +1908,11 @@ class AdminTranslationsControllerCore extends AdminController {
 
 				// Get the old file theme
 
-				if (file_exists(_PS_THEME_DIR_ . 'lang/' . $nameFile)) {
-					$themeFileOld = _PS_THEME_DIR_ . 'lang/' . $nameFile;
+				if (file_exists(_EPH_THEME_DIR_ . 'lang/' . $nameFile)) {
+					$themeFileOld = _EPH_THEME_DIR_ . 'lang/' . $nameFile;
 				} else {
 					$deletedOldTheme = true;
-					$themeFileOld = str_replace(static::DEFAULT_THEME_NAME, $nameDefaultTheme, _PS_THEME_DIR_ . 'lang/' . $nameFile);
+					$themeFileOld = str_replace(static::DEFAULT_THEME_NAME, $nameDefaultTheme, _EPH_THEME_DIR_ . 'lang/' . $nameFile);
 				}
 
 				// Move the old file theme in the new folder
@@ -1947,8 +1947,8 @@ class AdminTranslationsControllerCore extends AdminController {
 				$_TABS = [];
 				clearstatcache();
 
-				if (file_exists(_PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . $file['filename'])) {
-					include_once _PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . $file['filename'];
+				if (file_exists(_EPH_ROOT_DIR_ . DIRECTORY_SEPARATOR . $file['filename'])) {
+					include_once _EPH_ROOT_DIR_ . DIRECTORY_SEPARATOR . $file['filename'];
 				}
 
 				if (is_array($_TABS) && count($_TABS)) {
@@ -1964,8 +1964,8 @@ class AdminTranslationsControllerCore extends AdminController {
 
 							// Do not crash at intall
 
-							if (!isset($tab->name[Configuration::get('PS_LANG_DEFAULT')])) {
-								$tab->name[(int) Configuration::get('PS_LANG_DEFAULT')] = $translations;
+							if (!isset($tab->name[Configuration::get('EPH_LANG_DEFAULT')])) {
+								$tab->name[(int) Configuration::get('EPH_LANG_DEFAULT')] = $translations;
 							}
 
 							if (!Validate::isGenericName($tab->name[(int) $idLang])) {
@@ -1997,7 +1997,7 @@ class AdminTranslationsControllerCore extends AdminController {
 			]);
 
 			$version = _EPH_VERSION_;
-			$file = _PS_TRANSLATIONS_DIR_ . $arrImportLang[0] . '.gzip';
+			$file = _EPH_TRANSLATIONS_DIR_ . $arrImportLang[0] . '.gzip';
 
 			$arrImportLang[1] = _EPH_VERSION_;
 			try {
@@ -2010,7 +2010,7 @@ class AdminTranslationsControllerCore extends AdminController {
 				$gz = new Archive_Tar($file, true);
 				$filesList = AdminTranslationsController::filterTranslationFiles($gz->listContent());
 
-				if ($error = $gz->extractList(AdminTranslationsController::filesListToPaths($filesList), _PS_TRANSLATIONS_DIR_ . '../')) {
+				if ($error = $gz->extractList(AdminTranslationsController::filesListToPaths($filesList), _EPH_TRANSLATIONS_DIR_ . '../')) {
 
 					if (is_object($error) && !empty($error->message)) {
 						$this->errors[] = Tools::displayError('The archive cannot be extracted.') . ' ' . $error->message;
@@ -2044,11 +2044,11 @@ class AdminTranslationsControllerCore extends AdminController {
 
 						if (isset($f['filename'])) {
 
-							if (is_file(_PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . $f['filename']) && !is_writable(_PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . $f['filename'])) {
+							if (is_file(_EPH_ROOT_DIR_ . DIRECTORY_SEPARATOR . $f['filename']) && !is_writable(_EPH_ROOT_DIR_ . DIRECTORY_SEPARATOR . $f['filename'])) {
 								$checks[] = dirname($f['filename']);
 							} else
 
-							if (is_dir(_PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . $f['filename']) && !is_writable(_PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . dirname($f['filename']))) {
+							if (is_dir(_EPH_ROOT_DIR_ . DIRECTORY_SEPARATOR . $f['filename']) && !is_writable(_EPH_ROOT_DIR_ . DIRECTORY_SEPARATOR . dirname($f['filename']))) {
 								$checks[] = dirname($f['filename']);
 							}
 
@@ -2192,7 +2192,7 @@ class AdminTranslationsControllerCore extends AdminController {
 			foreach ($sub as $key => $value) {
 				// Magic Quotes shall... not.. PASS!
 
-				if (_PS_MAGIC_QUOTES_GPC_) {
+				if (_EPH_MAGIC_QUOTES_GPC_) {
 					$value = stripslashes($value);
 				}
 
@@ -2527,20 +2527,20 @@ class AdminTranslationsControllerCore extends AdminController {
 		switch ($typeTranslation) {
 		case 'front':
 			// Parsing file in Front office
-			$regex = '/\{l\s*s=([\'\"])' . _PS_TRANS_PATTERN_ . '\1(\s*sprintf=.*)?(\s*js=1)?\s*\}/U';
+			$regex = '/\{l\s*s=([\'\"])' . _EPH_TRANS_PATTERN_ . '\1(\s*sprintf=.*)?(\s*js=1)?\s*\}/U';
 			break;
 
 		case 'back':
 			// Parsing file in Back office
 
 			if ($typeFile == 'php') {
-				$regex = '/this->l\((\')' . _PS_TRANS_PATTERN_ . '\'[\)|\,]/U';
+				$regex = '/this->l\((\')' . _EPH_TRANS_PATTERN_ . '\'[\)|\,]/U';
 			} else
 
 			if ($typeFile == 'specific') {
-				$regex = '/Translate::getAdminTranslation\((\')' . _PS_TRANS_PATTERN_ . '\'(?:,.*)*\)/U';
+				$regex = '/Translate::getAdminTranslation\((\')' . _EPH_TRANS_PATTERN_ . '\'(?:,.*)*\)/U';
 			} else {
-				$regex = '/\{l\s*s\s*=([\'\"])' . _PS_TRANS_PATTERN_ . '\1(\s*sprintf=.*)?(\s*js=1)?(\s*slashes=1)?.*\}/U';
+				$regex = '/\{l\s*s\s*=([\'\"])' . _EPH_TRANS_PATTERN_ . '\1(\s*sprintf=.*)?(\s*js=1)?(\s*slashes=1)?.*\}/U';
 			}
 
 			break;
@@ -2549,35 +2549,35 @@ class AdminTranslationsControllerCore extends AdminController {
 			// Parsing file in Back office
 
 			if ($typeFile == 'php') {
-				$regex = '/this->l\((\')' . _PS_TRANS_PATTERN_ . '\'[\)|\,]/U';
+				$regex = '/this->l\((\')' . _EPH_TRANS_PATTERN_ . '\'[\)|\,]/U';
 			} else
 
 			if ($typeFile == 'specific') {
-				$regex = '/Translate::getFrontTranslation\((\')' . _PS_TRANS_PATTERN_ . '\'(?:,.*)*\)/U';
+				$regex = '/Translate::getFrontTranslation\((\')' . _EPH_TRANS_PATTERN_ . '\'(?:,.*)*\)/U';
 			} else {
-				$regex = '/\{l\s*s\s*=([\'\"])' . _PS_TRANS_PATTERN_ . '\1(\s*sprintf=.*)?(\s*js=1)?(\s*slashes=1)?.*\}/U';
+				$regex = '/\{l\s*s\s*=([\'\"])' . _EPH_TRANS_PATTERN_ . '\1(\s*sprintf=.*)?(\s*js=1)?(\s*slashes=1)?.*\}/U';
 			}
 
 			break;
 		case 'class':
 
-			$regex = '/this->l\((\')' . _PS_TRANS_PATTERN_ . '\'[\)|\,]/U';
+			$regex = '/this->l\((\')' . _EPH_TRANS_PATTERN_ . '\'[\)|\,]/U';
 
 			break;
 
 		case 'errors':
 			// Parsing file for all errors syntax
-			$regex = '/Tools::displayError\((\')' . _PS_TRANS_PATTERN_ . '\'(,\s*(.+))?\)/U';
+			$regex = '/Tools::displayError\((\')' . _EPH_TRANS_PATTERN_ . '\'(,\s*(.+))?\)/U';
 			break;
 
 		case 'modules':
 			// Parsing modules file
 
 			if ($typeFile == 'php') {
-				$regex = '/->l\((\')' . _PS_TRANS_PATTERN_ . '\'(, ?\'(.+)\')?(, ?(.+))?\)/U';
+				$regex = '/->l\((\')' . _EPH_TRANS_PATTERN_ . '\'(, ?\'(.+)\')?(, ?(.+))?\)/U';
 			} else {
 				// In tpl file look for something that should contain mod='module_name' according to the documentation
-				$regex = '/\{l\s*s=([\'\"])' . _PS_TRANS_PATTERN_ . '\1.*\s+mod=\'' . $moduleName . '\'.*\}/U';
+				$regex = '/\{l\s*s=([\'\"])' . _EPH_TRANS_PATTERN_ . '\1.*\s+mod=\'' . $moduleName . '\'.*\}/U';
 			}
 
 			break;
@@ -2587,11 +2587,11 @@ class AdminTranslationsControllerCore extends AdminController {
 
 			if ($typeFile == 'php') {
 				$regex = [
-					'/HTMLTemplate.*::l\((\')' . _PS_TRANS_PATTERN_ . '\'[\)|\,]/U',
-					'/->l\((\')' . _PS_TRANS_PATTERN_ . '\'(, ?\'(.+)\')?(, ?(.+))?\)/U',
+					'/HTMLTemplate.*::l\((\')' . _EPH_TRANS_PATTERN_ . '\'[\)|\,]/U',
+					'/->l\((\')' . _EPH_TRANS_PATTERN_ . '\'(, ?\'(.+)\')?(, ?(.+))?\)/U',
 				];
 			} else {
-				$regex = '/\{l\s*s=([\'\"])' . _PS_TRANS_PATTERN_ . '\1(\s*sprintf=.*)?(\s*js=1)?(\s*pdf=\'true\')?\s*\}/U';
+				$regex = '/\{l\s*s=([\'\"])' . _EPH_TRANS_PATTERN_ . '\1(\s*sprintf=.*)?(\s*js=1)?(\s*pdf=\'true\')?\s*\}/U';
 			}
 
 			break;
@@ -2599,7 +2599,7 @@ class AdminTranslationsControllerCore extends AdminController {
 		case 'mails':
 			// Parsing Mail file
 
-			$regex = '/\{l\s*s=([\'\"])' . _PS_TRANS_PATTERN_ . '\1(\s*sprintf=.*)?(\s*js=1)?(\s*mail=\'true\')?\s*\}/U';
+			$regex = '/\{l\s*s=([\'\"])' . _EPH_TRANS_PATTERN_ . '\1(\s*sprintf=.*)?(\s*js=1)?(\s*mail=\'true\')?\s*\}/U';
 
 			break;
 		}
@@ -2647,7 +2647,7 @@ class AdminTranslationsControllerCore extends AdminController {
 		foreach ($filesByDirectory['tpl'] as $dir => $files) {
 			$prefix = '';
 
-			if ($dir == _PS_THEME_OVERRIDE_DIR_) {
+			if ($dir == _EPH_THEME_OVERRIDE_DIR_) {
 				$prefix = 'override_';
 			}
 
@@ -2781,16 +2781,16 @@ class AdminTranslationsControllerCore extends AdminController {
 
 		switch ($this->type_selected) {
 		case 'front':
-			$directories['tpl'] = [_PS_ALL_THEMES_DIR_ => scandir(_PS_ALL_THEMES_DIR_)];
+			$directories['tpl'] = [_EPH_ALL_THEMES_DIR_ => scandir(_EPH_ALL_THEMES_DIR_)];
 			static::$ignore_folder[] = 'plugins';
-			$directories['tpl'] = array_merge($directories['tpl'], $this->listFiles(_PS_THEME_SELECTED_DIR_));
+			$directories['tpl'] = array_merge($directories['tpl'], $this->listFiles(_EPH_THEME_SELECTED_DIR_));
 
-			if (isset($directories['tpl'][_PS_THEME_SELECTED_DIR_ . 'pdf/'])) {
-				unset($directories['tpl'][_PS_THEME_SELECTED_DIR_ . 'pdf/']);
+			if (isset($directories['tpl'][_EPH_THEME_SELECTED_DIR_ . 'pdf/'])) {
+				unset($directories['tpl'][_EPH_THEME_SELECTED_DIR_ . 'pdf/']);
 			}
 
-			if (file_exists(_PS_THEME_OVERRIDE_DIR_)) {
-				$directories['tpl'] = array_merge($directories['tpl'], $this->listFiles(_PS_THEME_OVERRIDE_DIR_));
+			if (file_exists(_EPH_THEME_OVERRIDE_DIR_)) {
+				$directories['tpl'] = array_merge($directories['tpl'], $this->listFiles(_EPH_THEME_OVERRIDE_DIR_));
 			}
 
 			break;
@@ -2798,15 +2798,15 @@ class AdminTranslationsControllerCore extends AdminController {
 		case 'back':
 			$directories = [
 				'php'      => [
-					_PS_ADMIN_CONTROLLER_DIR_                => scandir(_PS_ADMIN_CONTROLLER_DIR_),
-					_PS_OVERRIDE_DIR_ . 'controllers/admin/' => scandir(_PS_OVERRIDE_DIR_ . 'controllers/admin/'),
-					_PS_CLASS_DIR_ . 'helper/'               => scandir(_PS_CLASS_DIR_ . 'helper/'),
-					_PS_CLASS_DIR_ . 'controller/'           => ['AdminController.php'],
-					_PS_CLASS_DIR_                           => ['PaymentModule.php'],
+					_EPH_ADMIN_CONTROLLER_DIR_                => scandir(_EPH_ADMIN_CONTROLLER_DIR_),
+					_EPH_OVERRIDE_DIR_ . 'controllers/admin/' => scandir(_EPH_OVERRIDE_DIR_ . 'controllers/admin/'),
+					_EPH_CLASS_DIR_ . 'helper/'               => scandir(_EPH_CLASS_DIR_ . 'helper/'),
+					_EPH_CLASS_DIR_ . 'controller/'           => ['AdminController.php'],
+					_EPH_CLASS_DIR_                           => ['PaymentModule.php'],
 				],
-				'tpl'      => $this->listFiles(_PS_ADMIN_DIR_ . DIRECTORY_SEPARATOR . 'template/'),
+				'tpl'      => $this->listFiles(_EPH_ADMIN_DIR_ . DIRECTORY_SEPARATOR . 'template/'),
 				'specific' => [
-					_PS_ADMIN_DIR_ . DIRECTORY_SEPARATOR => [
+					_EPH_ADMIN_DIR_ . DIRECTORY_SEPARATOR => [
 						'index.php',
 					],
 				],
@@ -2814,8 +2814,8 @@ class AdminTranslationsControllerCore extends AdminController {
 
 			// For translate the template which are overridden
 
-			if (file_exists(_PS_OVERRIDE_DIR_ . 'controllers' . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'templates')) {
-				$directories['tpl'] = array_merge($directories['tpl'], $this->listFiles(_PS_OVERRIDE_DIR_ . 'controllers' . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'templates'));
+			if (file_exists(_EPH_OVERRIDE_DIR_ . 'controllers' . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'templates')) {
+				$directories['tpl'] = array_merge($directories['tpl'], $this->listFiles(_EPH_OVERRIDE_DIR_ . 'controllers' . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'templates'));
 			}
 
 			break;
@@ -2823,9 +2823,9 @@ class AdminTranslationsControllerCore extends AdminController {
 		case 'frontcontroller':
 			$directories = [
 				'php' => [
-					_PS_FRONT_CONTROLLER_DIR_                => scandir(_PS_FRONT_CONTROLLER_DIR_),
-					_PS_OVERRIDE_DIR_ . 'controllers/front/' => scandir(_PS_OVERRIDE_DIR_ . 'controllers/front/'),
-					_PS_COMMON_CLASS_DIR_ . 'controller/'    => ['FrontController.php'],
+					_EPH_FRONT_CONTROLLER_DIR_                => scandir(_EPH_FRONT_CONTROLLER_DIR_),
+					_EPH_OVERRIDE_DIR_ . 'controllers/front/' => scandir(_EPH_OVERRIDE_DIR_ . 'controllers/front/'),
+					_EPH_COMMON_CLASS_DIR_ . 'controller/'    => ['FrontController.php'],
 
 				],
 			];
@@ -2834,42 +2834,42 @@ class AdminTranslationsControllerCore extends AdminController {
 		case 'class':
 			$directories = [
 				'php' => [
-					_PS_CLASS_DIR_                           => scandir(_PS_CLASS_DIR_),
-					_PS_COMMON_CLASS_DIR_                    => scandir(_PS_COMMON_CLASS_DIR_),
-					_PS_OVERRIDE_DIR_ . 'controllers/class/' => scandir(_PS_OVERRIDE_DIR_ . 'controllers/class/'),
+					_EPH_CLASS_DIR_                           => scandir(_EPH_CLASS_DIR_),
+					_EPH_COMMON_CLASS_DIR_                    => scandir(_EPH_COMMON_CLASS_DIR_),
+					_EPH_OVERRIDE_DIR_ . 'controllers/class/' => scandir(_EPH_OVERRIDE_DIR_ . 'controllers/class/'),
 				],
 			];
 			break;
 
 		case 'errors':
 			$directories['php'] = [
-				_PS_ROOT_DIR_                            => scandir(_PS_ROOT_DIR_),
-				_PS_ADMIN_DIR_ . DIRECTORY_SEPARATOR     => scandir(_PS_ADMIN_DIR_ . DIRECTORY_SEPARATOR),
-				_PS_FRONT_CONTROLLER_DIR_                => scandir(_PS_FRONT_CONTROLLER_DIR_),
-				_PS_ADMIN_CONTROLLER_DIR_                => scandir(_PS_ADMIN_CONTROLLER_DIR_),
-				_PS_OVERRIDE_DIR_ . 'controllers/front/' => scandir(_PS_OVERRIDE_DIR_ . 'controllers/front/'),
-				_PS_OVERRIDE_DIR_ . 'controllers/admin/' => scandir(_PS_OVERRIDE_DIR_ . 'controllers/admin/'),
+				_EPH_ROOT_DIR_                            => scandir(_EPH_ROOT_DIR_),
+				_EPH_ADMIN_DIR_ . DIRECTORY_SEPARATOR     => scandir(_EPH_ADMIN_DIR_ . DIRECTORY_SEPARATOR),
+				_EPH_FRONT_CONTROLLER_DIR_                => scandir(_EPH_FRONT_CONTROLLER_DIR_),
+				_EPH_ADMIN_CONTROLLER_DIR_                => scandir(_EPH_ADMIN_CONTROLLER_DIR_),
+				_EPH_OVERRIDE_DIR_ . 'controllers/front/' => scandir(_EPH_OVERRIDE_DIR_ . 'controllers/front/'),
+				_EPH_OVERRIDE_DIR_ . 'controllers/admin/' => scandir(_EPH_OVERRIDE_DIR_ . 'controllers/admin/'),
 			];
 
 			// Get all files for folders classes/ and override/classes/ recursively
-			$directories['php'] = array_merge($directories['php'], $this->listFiles(_PS_CLASS_DIR_, [], 'php'));
-			$directories['php'] = array_merge($directories['php'], $this->listFiles(_PS_OVERRIDE_DIR_ . 'classes/', [], 'php'));
+			$directories['php'] = array_merge($directories['php'], $this->listFiles(_EPH_CLASS_DIR_, [], 'php'));
+			$directories['php'] = array_merge($directories['php'], $this->listFiles(_EPH_OVERRIDE_DIR_ . 'classes/', [], 'php'));
 			break;
 
 		case 'fields':
-			$directories['php'] = $this->listFiles(_PS_CLASS_DIR_, [], 'php');
+			$directories['php'] = $this->listFiles(_EPH_CLASS_DIR_, [], 'php');
 			break;
 
 		case 'pdf':
-			$tplTheme = file_exists(_PS_THEME_SELECTED_DIR_ . 'pdf/') ? scandir(_PS_THEME_SELECTED_DIR_ . 'pdf/') : [];
+			$tplTheme = file_exists(_EPH_THEME_SELECTED_DIR_ . 'pdf/') ? scandir(_EPH_THEME_SELECTED_DIR_ . 'pdf/') : [];
 			$directories = [
 				'php' => [
-					_PS_CLASS_DIR_ . 'pdf/'            => scandir(_PS_CLASS_DIR_ . 'pdf/'),
-					_PS_OVERRIDE_DIR_ . 'classes/pdf/' => scandir(_PS_OVERRIDE_DIR_ . 'classes/pdf/'),
+					_EPH_CLASS_DIR_ . 'pdf/'            => scandir(_EPH_CLASS_DIR_ . 'pdf/'),
+					_EPH_OVERRIDE_DIR_ . 'classes/pdf/' => scandir(_EPH_OVERRIDE_DIR_ . 'classes/pdf/'),
 				],
 				'tpl' => [
-					_PS_PDF_DIR_                     => scandir(_PS_PDF_DIR_),
-					_PS_THEME_SELECTED_DIR_ . 'pdf/' => $tplTheme,
+					_EPH_PDF_DIR_                     => scandir(_EPH_PDF_DIR_),
+					_EPH_THEME_SELECTED_DIR_ . 'pdf/' => $tplTheme,
 				],
 			];
 			$directories['tpl'] = array_merge($directories['tpl'], $this->getModulesHasPDF());
@@ -2880,7 +2880,7 @@ class AdminTranslationsControllerCore extends AdminController {
 
 			$directories = [
 				'tpl' => [
-					_PS_MAIL_DIR_ => scandir(_PS_MAIL_DIR_),
+					_EPH_MAIL_DIR_ => scandir(_EPH_MAIL_DIR_),
 				],
 			];
 
@@ -3162,7 +3162,7 @@ class AdminTranslationsControllerCore extends AdminController {
 				if (preg_match('/^(.*).tpl$/', $file) && file_exists($filePath = $dir . $file)) {
 					// get controller name instead of file name
 
-					$prefixKey = Tools::toCamelCase(str_replace(_PS_ADMIN_DIR_ . DIRECTORY_SEPARATOR . 'template', '', $filePath), true);
+					$prefixKey = Tools::toCamelCase(str_replace(_EPH_ADMIN_DIR_ . DIRECTORY_SEPARATOR . 'template', '', $filePath), true);
 					$pos = strrpos($prefixKey, DIRECTORY_SEPARATOR);
 					$tmp = substr($prefixKey, 0, $pos);
 
@@ -3621,8 +3621,8 @@ class AdminTranslationsControllerCore extends AdminController {
 
 			foreach ($modules as $module) {
 
-				if (is_dir(_PS_MODULE_DIR_ . $module) && !in_array($module, static::$ignore_folder)) {
-					$fileByDirectory['php'] = array_merge($fileByDirectory['php'], $this->listFiles(_PS_MODULE_DIR_ . $module . '/', [], 'php'));
+				if (is_dir(_EPH_MODULE_DIR_ . $module) && !in_array($module, static::$ignore_folder)) {
+					$fileByDirectory['php'] = array_merge($fileByDirectory['php'], $this->listFiles(_EPH_MODULE_DIR_ . $module . '/', [], 'php'));
 				}
 
 			}
@@ -3951,7 +3951,7 @@ class AdminTranslationsControllerCore extends AdminController {
 
 		$drawing = new Drawing();
 		$drawing->setName('Logo Ephenyx Shop');
-		$drawing->setPath(_PS_ROOT_ADMIN_DIR_ . '/themes/img/logoFrontOffice.png');
+		$drawing->setPath(_EPH_ROOT_ADMIN_DIR_ . '/themes/img/logoFrontOffice.png');
 		$drawing->setHeight(80);
 		$drawing->setCoordinates('A1');
 		$drawing->setWorksheet($spreadsheet->getActiveSheet());
@@ -4040,7 +4040,7 @@ class AdminTranslationsControllerCore extends AdminController {
 		$spreadsheet->getActiveSheet()->getProtection()->setInsertRows(true);
 		$spreadsheet->getActiveSheet()->getProtection()->setFormatCells(true);
 
-		$filePath = _PS_ADMIN_DIR_ . DIRECTORY_SEPARATOR . 'translations' . DIRECTORY_SEPARATOR . $this->lang_selected->iso_code . DIRECTORY_SEPARATOR;
+		$filePath = _EPH_ADMIN_DIR_ . DIRECTORY_SEPARATOR . 'translations' . DIRECTORY_SEPARATOR . $this->lang_selected->iso_code . DIRECTORY_SEPARATOR;
 		$fileSave = new Xlsx($spreadsheet);
 		$fileSave->save($filePath . $name);
 		$fileToUpload = 'translations' . DIRECTORY_SEPARATOR . $this->lang_selected->iso_code . DIRECTORY_SEPARATOR . $name;

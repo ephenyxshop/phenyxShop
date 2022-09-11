@@ -356,7 +356,7 @@ class WebserviceOutputBuilderCore
             throw new WebserviceException('You must set web service resource for get the resources list.', [82, 500]);
         }
         $output = '';
-        $moreAttr = ['shopName' => htmlspecialchars(Configuration::get('PS_SHOP_NAME'))];
+        $moreAttr = ['shopName' => htmlspecialchars(Configuration::get('EPH_SHOP_NAME'))];
         $output .= $this->objectRender->renderNodeHeader('api', [], $moreAttr);
         foreach ($this->wsResource as $resourceName => $resource) {
             if (in_array($resourceName, array_keys($keyPermissions))) {

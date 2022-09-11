@@ -252,7 +252,7 @@ class AdminProfilesControllerCore extends AdminController {
 	public function ajaxProcessAddNewProfile() {
 
 		$profile = new Profile();
-		$profile->name[Configuration::get('PS_LANG_DEFAULT')] = 'Nouveau Profile';
+		$profile->name[Configuration::get('EPH_LANG_DEFAULT')] = 'Nouveau Profile';
 		$profile->add();
 
 		$result = [
@@ -359,7 +359,7 @@ class AdminProfilesControllerCore extends AdminController {
 
 		/* PhenyxShop demo mode */
 
-		if (_PS_MODE_DEMO_) {
+		if (_EPH_MODE_DEMO_) {
 			$this->errors[] = Tools::displayError('This functionality has been disabled.');
 
 			return;
@@ -367,7 +367,7 @@ class AdminProfilesControllerCore extends AdminController {
 
 		/* PhenyxShop demo mode*/
 
-		if (isset($_GET['delete' . $this->table]) && $_GET[$this->identifier] == (int) (_PS_ADMIN_PROFILE_)) {
+		if (isset($_GET['delete' . $this->table]) && $_GET[$this->identifier] == (int) (_EPH_ADMIN_PROFILE_)) {
 			$this->errors[] = $this->l('For security reasons, you cannot delete the Administrator\'s profile.');
 		} else {
 			parent::postProcess();

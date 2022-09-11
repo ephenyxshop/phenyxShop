@@ -5,7 +5,7 @@ class UpgraderCore {
 	
 	public static function synchAdminMeta($metas) {
 		
-		Configuration::updateValue('PS_ALLOW_ACCENTED_CHARS_URL', 1);
+		Configuration::updateValue('EPH_ALLOW_ACCENTED_CHARS_URL', 1);
 		$idLang = Context::getContext()->language->id;
 					
 		$metaToCreates = [];
@@ -334,7 +334,7 @@ class UpgraderCore {
             		'edit'       => 1,
             		'delete'     => 1,
         		];
-				$profiles = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+				$profiles = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             		(new DbQuery())
                 	->select('`id_profile`')
                 	->from('profile')
@@ -552,24 +552,24 @@ class UpgraderCore {
 				
 				
 				$imagesTypes = ImageType::getImagesTypes('education');
-				$generateHighDpiImages = (bool) Configuration::get('PS_HIGHT_DPI');
+				$generateHighDpiImages = (bool) Configuration::get('EPH_HIGHT_DPI');
 				
 				foreach ($imageToPush as $key => $image) {
 					
 					if ($image['cover'] == 1) {
 						
-						if (file_exists(_PS_UPLOAD_DIR_ . $key)) {
-							$savePath = _PS_UPLOAD_DIR_ . $key;
+						if (file_exists(_EPH_UPLOAD_DIR_ . $key)) {
+							$savePath = _EPH_UPLOAD_DIR_ . $key;
 							if($idCover == $image['id_image_education']) {
 								$imageObj = new ImageEducation($idCover);
 								$newPath = $imageObj->getPathForCreation();
-								if (file_exists(_PS_EDUC_IMG_DIR_ . $imageObj->getImgFolder())) {
-									$toDel = scandir(_PS_EDUC_IMG_DIR_ . $imageObj->getImgFolder());
+								if (file_exists(_EPH_EDUC_IMG_DIR_ . $imageObj->getImgFolder())) {
+									$toDel = scandir(_EPH_EDUC_IMG_DIR_ . $imageObj->getImgFolder());
 									foreach ($toDel as $d) {
 										foreach ($imagesTypes as $imageType) {
 											if (preg_match('/^[0-9]+\-' . $imageType['name'] . '\.(jpg|webp)$/', $d) || (count($imagesTypes) > 1 && preg_match('/^[0-9]+\-[_a-zA-Z0-9-]*\.(jpg|webp)$/', $d))) {
-												if (file_exists(_PS_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $d)) {
-                            						unlink(_PS_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $d);
+												if (file_exists(_EPH_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $d)) {
+                            						unlink(_EPH_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $d);
                         						}
                     						}
                 						}
@@ -616,13 +616,13 @@ class UpgraderCore {
         							$imageObj->update();
 									$newPath = $imageObj->getPathForCreation();
 								
-									if (file_exists(_PS_EDUC_IMG_DIR_ . $imageObj->getImgFolder())) {
-            							$toDel = scandir(_PS_EDUC_IMG_DIR_ . $imageObj->getImgFolder());
+									if (file_exists(_EPH_EDUC_IMG_DIR_ . $imageObj->getImgFolder())) {
+            							$toDel = scandir(_EPH_EDUC_IMG_DIR_ . $imageObj->getImgFolder());
             							foreach ($toDel as $d) {
 											foreach ($imagesTypes as $imageType) {
 												if (preg_match('/^[0-9]+\-' . $imageType['name'] . '\.(jpg|webp)$/', $d) || (count($imagesTypes) > 1 && preg_match('/^[0-9]+\-[_a-zA-Z0-9-]*\.(jpg|webp)$/', $d))) {
-													if (file_exists(_PS_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $d)) {
-                            							unlink(_PS_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $d);
+													if (file_exists(_EPH_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $d)) {
+                            							unlink(_EPH_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $d);
                         							}
                     							}
 											}
@@ -724,29 +724,29 @@ class UpgraderCore {
 							foreach ($imageToPush as $key => $image) {
 
 								if ($image['declinaison_reference'] == $combination->reference) {
-									if (file_exists(_PS_UPLOAD_DIR_ . $key)) {
-										$savePath = _PS_UPLOAD_DIR_ . $key;
+									if (file_exists(_EPH_UPLOAD_DIR_ . $key)) {
+										$savePath = _EPH_UPLOAD_DIR_ . $key;
 										$imageExist = ImageEducation::imageExist($image['id_image_education']);
 										if(is_array($imageExist && count($imageExist))) {
 											$imageObj = new ImageEducation($image['id_image_education']);
 											$imageObj->reference = $image['image_reference'];
 											$imageObj->update();
-											if (file_exists(_PS_EDUC_IMG_DIR_ . $imageObj->getImgFolder())) {
-            									$toDel = scandir(_PS_EDUC_IMG_DIR_ . $imageObj->getImgFolder());
+											if (file_exists(_EPH_EDUC_IMG_DIR_ . $imageObj->getImgFolder())) {
+            									$toDel = scandir(_EPH_EDUC_IMG_DIR_ . $imageObj->getImgFolder());
             									foreach ($toDel as $d) {
 													foreach ($imagesTypes as $imageType) {
 														if (preg_match('/^[0-9]+\-' . $imageType['name'] . '\.(jpg|webp)$/', $d) || (count($imagesTypes) > 1 && preg_match('/^[0-9]+\-[_a-zA-Z0-9-]*\.(jpg|webp)$/', $d))) {
-															if (file_exists(_PS_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $d)) {
-                            									unlink(_PS_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $d);
+															if (file_exists(_EPH_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $d)) {
+                            									unlink(_EPH_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $d);
                         									}
                     									}
 													}
             									}
-            									if (file_exists(_PS_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $key . '.jpg')) {
-                									unlink(_PS_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $key . '.jpg');
+            									if (file_exists(_EPH_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $key . '.jpg')) {
+                									unlink(_EPH_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $key . '.jpg');
 												}
-            									if (file_exists(_PS_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $key . '.webp')) {
-                									unlink(_PS_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $key . '.webp');
+            									if (file_exists(_EPH_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $key . '.webp')) {
+                									unlink(_EPH_EDUC_IMG_DIR_ . $imageObj->getImgFolder() . $key . '.webp');
             									}
         									}
 											$newPath = $imageObj->getPathForCreation();
@@ -845,7 +845,7 @@ class UpgraderCore {
 
 									if ($value['declinaison_reference'] == $combination->reference) {
 
-										if (file_exists(_PS_UPLOAD_DIR_ . $key)) {
+										if (file_exists(_EPH_UPLOAD_DIR_ . $key)) {
 											$image = new ImageEducation();
 											$image->id_education = (int) ($education->id);
 											$image->position = 0;
@@ -856,10 +856,10 @@ class UpgraderCore {
 											}
 
 											if ($image->add()) {
-												$savePath = _PS_UPLOAD_DIR_ . $key;
+												$savePath = _EPH_UPLOAD_DIR_ . $key;
 												$imagesTypes = ImageType::getImagesTypes('education');
 												$newPath = $image->getPathForCreation();
-												$generateHighDpiImages = (bool) Configuration::get('PS_HIGHT_DPI');
+												$generateHighDpiImages = (bool) Configuration::get('EPH_HIGHT_DPI');
 
 												foreach ($imagesTypes as $imageType) {
 													ImageManager::resize($savePath, $newPath . '-' . stripslashes($imageType['name']) . '.' . $image->image_format, $imageType['width'], $imageType['height'], $image->image_format);

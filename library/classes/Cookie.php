@@ -183,7 +183,7 @@ class CookieCore {
         //checks if the language exists, if not choose the default language
 
         if (!$this->_standalone && !Language::getLanguage((int) $this->id_lang)) {
-            $this->id_lang = Configuration::get('PS_LANG_DEFAULT');
+            $this->id_lang = Configuration::get('EPH_LANG_DEFAULT');
             // set detect_language to force going through Tools::setCookieLanguage to figure out browser lang
             $this->detect_language = true;
         }
@@ -360,7 +360,7 @@ class CookieCore {
         return ($this->id_employee
             && Validate::isUnsignedId($this->id_employee)
             && Employee::checkPassword((int) $this->id_employee, $this->passwd)
-            && (!isset($this->_content['remote_addr']) || $this->_content['remote_addr'] == ip2long(Tools::getRemoteAddr()) || !Configuration::get('PS_COOKIE_CHECKIP'))
+            && (!isset($this->_content['remote_addr']) || $this->_content['remote_addr'] == ip2long(Tools::getRemoteAddr()) || !Configuration::get('EPH_COOKIE_CHECKIP'))
         );
     }
 

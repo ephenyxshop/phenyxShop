@@ -92,12 +92,12 @@ class SupplierCore extends ObjectModel {
 		}
 
         $this->link_rewrite = $this->getLink();
-        $this->image_dir = _PS_SUPP_IMG_DIR_;
+        $this->image_dir = _EPH_SUPP_IMG_DIR_;
     }
 	
 	public function getAccount() {
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 			(new DbQuery())
 				->select('account')
 				->from('stdaccount')
@@ -137,7 +137,7 @@ class SupplierCore extends ObjectModel {
     public static function getSuppliers($getNbProducts = false, $idLang = 0, $active = true, $p = false, $n = false, $allGroups = false) {
 
         if (!$idLang) {
-            $idLang = Configuration::get('PS_LANG_DEFAULT');
+            $idLang = Configuration::get('EPH_LANG_DEFAULT');
         }
 
         if (!Group::isFeatureActive()) {
@@ -158,7 +158,7 @@ class SupplierCore extends ObjectModel {
         $query->limit($n, ($p - 1) * $n);
         $query->groupBy('s.id_supplier');
 
-        $suppliers = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        $suppliers = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
 
         if ($suppliers === false) {
             return false;
@@ -172,7 +172,7 @@ class SupplierCore extends ObjectModel {
                 $sqlGroups = (count($groups) ? 'IN (' . implode(',', $groups) . ')' : '= 1');
             }
 
-            $results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('ps.`id_supplier`, COUNT(DISTINCT ps.`id_product`) AS nb_products')
                     ->from('product_supplier', 'ps')
@@ -209,7 +209,7 @@ class SupplierCore extends ObjectModel {
         }
 
         $nbSuppliers = count($suppliers);
-        $rewriteSettings = (int) Configuration::get('PS_REWRITING_SETTINGS');
+        $rewriteSettings = (int) Configuration::get('EPH_REWRITING_SETTINGS');
 
         for ($i = 0; $i < $nbSuppliers; $i++) {
             $suppliers[$i]['link_rewrite'] = ($rewriteSettings ? Tools::link_rewrite($suppliers[$i]['name']) : 0);
@@ -236,7 +236,7 @@ class SupplierCore extends ObjectModel {
 	
 	public function generateSupplierAccount() {
 
-		$idLang = Configuration::get('PS_LANG_DEFAULT');
+		$idLang = Configuration::get('EPH_LANG_DEFAULT');
 		$account = new StdAccount();
 		$account->account = '401' . $this->supplier_code;
 		$account->id_stdaccount_type = 4;
@@ -290,7 +290,7 @@ class SupplierCore extends ObjectModel {
         // @codingStandardsIgnoreStart
 
         if (!isset(static::$cache_name[$idSupplier])) {
-            static::$cache_name[$idSupplier] = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            static::$cache_name[$idSupplier] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`name`')
                     ->from('supplier')
@@ -314,7 +314,7 @@ class SupplierCore extends ObjectModel {
      */
     public static function getIdByName($name) {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('`id_supplier`')
                 ->from('supplier')
@@ -406,7 +406,7 @@ class SupplierCore extends ObjectModel {
 
             $sql->where($sqlGroups);
 
-            return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('COUNT(DISTINCT ps.`id_product`)')
                     ->from('product_supplier', 'ps')
@@ -420,7 +420,7 @@ class SupplierCore extends ObjectModel {
             );
         }
 
-        $nbDaysNewProduct = Validate::isUnsignedInt(Configuration::get('PS_NB_DAYS_NEW_PRODUCT')) ? Configuration::get('PS_NB_DAYS_NEW_PRODUCT') : 20;
+        $nbDaysNewProduct = Validate::isUnsignedInt(Configuration::get('EPH_NB_DAYS_NEW_PRODUCT')) ? Configuration::get('EPH_NB_DAYS_NEW_PRODUCT') : 20;
 
         if (strpos('.', $orderBy) > 0) {
             $orderBy = explode('.', $orderBy);
@@ -489,7 +489,7 @@ class SupplierCore extends ObjectModel {
                 ORDER BY ' . $alias . pSQL($orderBy) . ' ' . pSQL($orderWay) . '
                 LIMIT ' . (((int) $p - 1) * (int) $n) . ',' . (int) $n;
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql, true, false);
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql, true, false);
 
         if (!$result) {
             return false;
@@ -513,7 +513,7 @@ class SupplierCore extends ObjectModel {
      */
     public static function supplierExists($idSupplier) {
 
-        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('id_supplier')
                 ->from('supplier')
@@ -541,7 +541,7 @@ class SupplierCore extends ObjectModel {
      */
     public static function getProductInformationsBySupplier($idSupplier, $idProduct, $idProductAttribute = 0) {
 
-        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('product_supplier_reference, product_supplier_price_te, id_currency')
                 ->from('product_supplier')
@@ -576,7 +576,7 @@ class SupplierCore extends ObjectModel {
             $front = false;
         }
 
-        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('p.`id_product`, pl.`name`')
                 ->from('product', 'p')

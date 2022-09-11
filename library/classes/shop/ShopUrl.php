@@ -111,7 +111,7 @@ class ShopUrlCore extends ObjectModel
             return null;
         }
 
-		if (defined('_PS_ROOT_DIR_')) {
+		if (defined('_EPH_ROOT_DIR_')) {
     		$url = ($ssl) ? 'https://'.$this->admin_ssl : 'http://'.$this->admin_ssl;
 		} else {
 			$url = ($ssl) ? 'https://'.$this->domain_ssl : 'http://'.$this->domain;
@@ -197,8 +197,8 @@ class ShopUrlCore extends ObjectModel
         if ($virtualUri) {
             $virtualUri = preg_replace('#/+#', '/', trim($virtualUri, '/')).'/';
         }
-		if (defined('_PS_ROOT_DIR_')) {
-			return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		if (defined('_EPH_ROOT_DIR_')) {
+			return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             	(new DbQuery())
                 	->select('`id_shop_url`')
 					->from('shop_url')
@@ -208,7 +208,7 @@ class ShopUrlCore extends ObjectModel
                 	->where($this->id ? '`id_shop_url` != '.(int) $this->id : '')
         	);
 		} else {
-			return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+			return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             	(new DbQuery())
 					->select('`id_shop_url`')
                 	->from('shop_url')
@@ -273,7 +273,7 @@ class ShopUrlCore extends ObjectModel
     public static function getMainShopDomain($idShop = null)
     {
         static::cacheMainDomainForShop($idShop);
-		if (defined('_PS_ROOT_DIR_')) {
+		if (defined('_EPH_ROOT_DIR_')) {
 			return static::$main_admin_ssl[(int) $idShop];
 		} else {
 			return static::$main_domain[(int) $idShop];
@@ -294,7 +294,7 @@ class ShopUrlCore extends ObjectModel
     {
         static::cacheMainDomainForShop($idShop);
 
-		if (defined('_PS_ROOT_DIR_')) {
+		if (defined('_EPH_ROOT_DIR_')) {
 			return static::$main_admin_ssl[(int) $idShop];
 		} else {
 			return static::$main_domain_ssl[(int) $idShop];

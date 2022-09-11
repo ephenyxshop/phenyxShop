@@ -124,7 +124,7 @@ class TopMenuCore extends ObjectModel {
                 LEFT JOIN ' . _DB_PREFIX_ . 'cms_category_lang ccl ON (cc.id_cms_category = ccl.id_cms_category AND ccl.id_lang = ' . (int) $context->language->id . ')
                 WHERE atp.`id_topmenu` = ' . $this->id;
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow($sql);
 
         switch ($result['type']) {
         case 1:
@@ -174,7 +174,7 @@ class TopMenuCore extends ObjectModel {
         ];
         $fields = [];
         $languages = Language::getLanguages(false);
-        $defaultLanguage = Configuration::get('PS_LANG_DEFAULT');
+        $defaultLanguage = Configuration::get('EPH_LANG_DEFAULT');
 
         foreach ($languages as $language) {
             $fields[$language['id_lang']]['id_lang'] = $language['id_lang'];
@@ -221,7 +221,7 @@ class TopMenuCore extends ObjectModel {
 	
 	public static function getHigherPosition() {
 
-        $position = DB::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $position = DB::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('MAX(`position`)')
                 ->from('topmenu')
@@ -257,14 +257,14 @@ class TopMenuCore extends ObjectModel {
         $sql = 'SELECT `id_topmenu_column`
                 FROM `' . _DB_PREFIX_ . 'topmenu_columns`
                 WHERE `id_topmenu_depend` = ' . (int) $id_topmenu;
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
     }
 
     public static function getMenusId() {
 
         $sql = 'SELECT atp.`id_topmenu`
         FROM `' . _DB_PREFIX_ . 'topmenu` atp';
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
     }
 
     public static function getMenusFromIdCms($idCms) {
@@ -274,7 +274,7 @@ class TopMenuCore extends ObjectModel {
         WHERE atp.`active` = 1
         AND atp.`type` = 1
         AND atp.`id_cms` = ' . (int) $idCms;
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
     }
 
     public static function getMenusFromIdCmsCategory($idCmsCategory) {
@@ -284,7 +284,7 @@ class TopMenuCore extends ObjectModel {
         WHERE atp.`active` = 1
         AND atp.`type` = 10
         AND atp.`id_cms_category` = ' . (int) $idCmsCategory;
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
     }
 
     public static function disableById($idMenu) {
@@ -296,15 +296,15 @@ class TopMenuCore extends ObjectModel {
 
     public static function getMenus($id_lang, $active = true, $get_from_all_shops = false, $groupRestrict = false) {
 
-        $sql_groups_join = '';
-        $sql_groups_where = '';
+        $sql_grouEPH_join = '';
+        $sql_grouEPH_where = '';
 
         if ($groupRestrict && Group::isFeatureActive()) {
             $groups = TopMenu::getCustomerGroups();
 
             if (count($groups)) {
-                $sql_groups_join = 'LEFT JOIN `' . _DB_PREFIX_ . 'category_group` cg ON (cg.`id_category` = ca.`id_category`)';
-                $sql_groups_where = 'AND IF (atp.`id_category` IS NULL OR atp.`id_category` = 0, 1, cg.`id_group` IN (' . implode(',', array_map('intval', $groups)) . '))';
+                $sql_grouEPH_join = 'LEFT JOIN `' . _DB_PREFIX_ . 'category_group` cg ON (cg.`id_category` = ca.`id_category`)';
+                $sql_grouEPH_where = 'AND IF (atp.`id_category` IS NULL OR atp.`id_category` = 0, 1, cg.`id_group` IN (' . implode(',', array_map('intval', $groups)) . '))';
             }
 
         }
@@ -324,7 +324,7 @@ class TopMenuCore extends ObjectModel {
               
                 LEFT JOIN ' . _DB_PREFIX_ . 'cms_category_lang ccl ON (cc.id_cms_category = ccl.id_cms_category AND ccl.id_lang = ' . (int) $id_lang . ')
                 LEFT JOIN ' . _DB_PREFIX_ . 'category ca ON (ca.id_category = atp.`id_category`)
-                ' . $sql_groups_join . '
+                ' . $sql_grouEPH_join . '
                 LEFT JOIN ' . _DB_PREFIX_ . 'category_lang cal ON (ca.id_category = cal.id_category AND cal.id_lang = ' . (int) $id_lang .  ')
                 LEFT JOIN `' . _DB_PREFIX_ . 'manufacturer` m ON (atp.`id_manufacturer` = m.`id_manufacturer`)
                 LEFT JOIN `' . _DB_PREFIX_ . 'supplier` s ON (atp.`id_supplier` = s.`id_supplier`)'
@@ -332,11 +332,11 @@ class TopMenuCore extends ObjectModel {
                 WHERE atp.`active` = 1 AND (atp.`active_desktop` = 1 || atp.`active_mobile` = 1)
                 AND ((atp.`id_manufacturer` = 0 AND atp.`id_supplier` = 0 AND atp.`id_category` = 0 AND atp.`id_cms` = 0 AND atp.`id_cms_category` = 0)
                 OR c.id_cms IS NOT NULL OR cc.id_cms_category IS NOT NULL OR m.id_manufacturer IS NOT NULL OR ca.id_category IS NOT NULL OR s.`id_supplier` IS NOT NULL)
-                ' . $sql_groups_where : '') . '
+                ' . $sql_grouEPH_where : '') . '
                 GROUP BY atp.`id_topmenu`
                 ORDER BY atp.`position`';
 		
-        $menus = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS($sql);
+        $menus = Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS($sql);
 
         if (is_array($menus) && count($menus)) {
 
@@ -386,7 +386,7 @@ class TopMenuCore extends ObjectModel {
             if (Validate::isLoadedObject(Context::getContext()->customer)) {
                 $groups = FrontController::getCurrentCustomerGroups();
             } else {
-                $groups = [(int) Configuration::get('PS_UNIDENTIFIED_GROUP')];
+                $groups = [(int) Configuration::get('EPH_UNIDENTIFIED_GROUP')];
             }
 
         }
@@ -502,7 +502,7 @@ class TopMenuCore extends ObjectModel {
             }
 
             if ($withExtra && trim($row['have_icon'])) {
-                $icone .= _PS_IMG_ . $type . '_icons/' . $row[$tag] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg');
+                $icone .= _EPH_IMG_ . $type . '_icons/' . $row[$tag] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg');
             }
 
             $url .= $link->getCMSLink((int) $row['id_cms'], $row['link_rewrite']);
@@ -517,7 +517,7 @@ class TopMenuCore extends ObjectModel {
             }
 
             if ($withExtra && trim($row['have_icon'])) {
-                $icone .= _PS_IMG_ . $type . '_icons/' . $row[$tag] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg');
+                $icone .= _EPH_IMG_ . $type . '_icons/' . $row[$tag] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg');
             }
 
             if (trim($row['link'])) {
@@ -537,7 +537,7 @@ class TopMenuCore extends ObjectModel {
             }
 
             if ($withExtra && trim($row['have_icon'])) {
-                $icone .= _PS_IMG_ . $type . '_icons/' . $row[$tag] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg');
+                $icone .= _EPH_IMG_ . $type . '_icons/' . $row[$tag] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg');
             }
 
             $url .= $link->getCategoryLink((int) $row['id_category'], $row['category_link_rewrite']);
@@ -554,7 +554,7 @@ class TopMenuCore extends ObjectModel {
             }
 
             if ($withExtra && trim($row['have_icon'])) {
-                $icone .= _PS_IMG_ . $type . '_icons/' . $row[$tag] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg');
+                $icone .= _EPH_IMG_ . $type . '_icons/' . $row[$tag] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg');
             }
 
             if ((int) $row['id_manufacturer']) {
@@ -576,15 +576,15 @@ class TopMenuCore extends ObjectModel {
                 'atm_search_id'              => 'search_query_atm_' . $type . '_' . $row[$tag],
                 'atm_have_icon'              => trim($row['have_icon']),
                 'atm_withExtra'              => $withExtra,
-                'atm_icon_image_source'      => _PS_IMG_ . $type . '_icons/' . $row[$tag] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg'),
+                'atm_icon_image_source'      => _EPH_IMG_ . $type . '_icons/' . $row[$tag] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg'),
                 'atm_search_value'           => (Tools::strlen($currentSearchQuery) ? $currentSearchQuery : trim(htmlentities($row['name'], ENT_COMPAT, 'UTF-8'))),
-                'atm_is_autocomplete_search' => Configuration::get('EPHTM_AUTOCOMPLET_SEARCH') && version_compare(_PS_VERSION_, '1.7.0.0', '<'),
+                'atm_is_autocomplete_search' => Configuration::get('EPHTM_AUTOCOMPLET_SEARCH') && version_compare(_EPH_VERSION_, '1.7.0.0', '<'),
                 'atm_cookie_id_lang'         => $this->context->cookie->id_lang,
                 'atm_pagelink_search'        => $link->getPageLink('search'),
             ]);
             $cache = Configuration::get('EPHTM_CACHE');
 
-            if (!Configuration::get('PS_SMARTY_CACHE')) {
+            if (!Configuration::get('EPH_SMARTY_CACHE')) {
                 $cache = false;
             }
 
@@ -600,7 +600,7 @@ class TopMenuCore extends ObjectModel {
             $name = '';
 
             if ($withExtra && trim($row['have_icon'])) {
-                $icone .= _PS_IMG_ . $type . '_icons/' . $row[$tag] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg');
+                $icone .= _EPH_IMG_ . $type . '_icons/' . $row[$tag] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg');
             }
 
             if (trim($row['link'])) {
@@ -630,7 +630,7 @@ class TopMenuCore extends ObjectModel {
             }
 
             if ($withExtra && trim($row['have_icon'])) {
-                $icone .= _PS_IMG_ . $type . '_icons/' . $row[$tag] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg');
+                $icone .= _EPH_IMG_ . $type . '_icons/' . $row[$tag] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg');
             }
 
         } else
@@ -669,7 +669,7 @@ class TopMenuCore extends ObjectModel {
             $url .= $link->getCMSCategoryLink((int) $row['id_cms_category'], $row['link_rewrite']);
 
             if ($withExtra && trim($row['have_icon'])) {
-                $icone .= _PS_IMG_ . $type . '_icons/' . $row[$tag] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg');
+                $icone .= _EPH_IMG_ . $type . '_icons/' . $row[$tag] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg');
             }
 
         }
@@ -780,7 +780,7 @@ class TopMenuCore extends ObjectModel {
 
                     $return .= '<i class="pmAtmIcon ' . $row['image_class'] . '"></i>';
                 } else {
-                    $return .= '<img src="' . _PS_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" style="width:32px;display:inline; background:white;margin-right:20px;" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
+                    $return .= '<img src="' . _EPH_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" style="width:32px;display:inline; background:white;margin-right:20px;" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
                 }
 
             }
@@ -805,7 +805,7 @@ class TopMenuCore extends ObjectModel {
 
                     $return .= '<i class="pmAtmIcon ' . $row['image_class'] . '"></i>';
                 } else {
-                    $return .= '<img src="' . _PS_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" style="width:32px;display:inline; background:white;margin-right:20px;" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
+                    $return .= '<img src="' . _EPH_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" style="width:32px;display:inline; background:white;margin-right:20px;" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
                 }
 
             }
@@ -830,7 +830,7 @@ class TopMenuCore extends ObjectModel {
 
                     $return .= '<i class="pmAtmIcon ' . $row['image_class'] . '"></i>';
                 } else {
-                    $return .= '<img src="' . _PS_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" style="width:32px;display:inline; background:white;margin-right:20px;" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
+                    $return .= '<img src="' . _EPH_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" style="width:32px;display:inline; background:white;margin-right:20px;" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
                 }
 
             }
@@ -857,7 +857,7 @@ class TopMenuCore extends ObjectModel {
 
                     $return .= '<i class="pmAtmIcon ' . $row['image_class'] . '"></i>';
                 } else {
-                    $return .= '<img src="' . _PS_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" style="width:32px;display:inline; background:white;margin-right:20px;" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
+                    $return .= '<img src="' . _EPH_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" style="width:32px;display:inline; background:white;margin-right:20px;" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
                 }
 
             }
@@ -886,7 +886,7 @@ class TopMenuCore extends ObjectModel {
 
                     $return .= '<i class="pmAtmIcon ' . $row['image_class'] . '"></i>';
                 } else {
-                    $return .= '<img src="' . _PS_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" style="width:32px;display:inline; background:white;margin-right:20px;" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
+                    $return .= '<img src="' . _EPH_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" style="width:32px;display:inline; background:white;margin-right:20px;" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
                 }
 
             }
@@ -909,7 +909,7 @@ class TopMenuCore extends ObjectModel {
 
                     $return .= '<i class="pmAtmIcon ' . $row['image_class'] . '"></i>';
                 } else {
-                    $return .= '<img src="' . _PS_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" style="width:32px;display:inline; background:white;margin-right:20px;" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
+                    $return .= '<img src="' . _EPH_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" style="width:32px;display:inline; background:white;margin-right:20px;" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
                 }
 
             }
@@ -934,7 +934,7 @@ class TopMenuCore extends ObjectModel {
 
                     $return .= '<i class="pmAtmIcon ' . $row['image_class'] . '"></i>';
                 } else {
-                    $return .= '<img src="' . _PS_IMG_ . $type . '_icons/' . $row['id_topmenu_' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" style="width:64px;" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" class="iconOnly" />';
+                    $return .= '<img src="' . _EPH_IMG_ . $type . '_icons/' . $row['id_topmenu_' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" style="width:64px;" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" class="iconOnly" />';
                 }
 
             }
@@ -955,7 +955,7 @@ class TopMenuCore extends ObjectModel {
             }
 
             if ($withExtra && trim($row['have_icon'])) {
-                $return .= '<img src="' . _PS_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" style="width:64px;" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
+                $return .= '<img src="' . _EPH_IMG_ . $type . '_icons/' . $row['id_top' . $type] . '-' . $_iso_lang . '.' . ($row['image_type'] ?: 'jpg') . '" style="width:64px;" alt="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" title="' . htmlentities($row['name'], ENT_COMPAT, 'UTF-8') . '" />';
             } else {
                 $return .= htmlentities($row['name'], ENT_COMPAT, 'UTF-8');
             }
@@ -1175,7 +1175,7 @@ class TopMenuCore extends ObjectModel {
     private static function getNestedCmsCategories($id_lang) {
 
         $nestedArray = [];
-        $cmsCategories = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $cmsCategories = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             'SELECT cc.*, ccl.*
             FROM `' . _DB_PREFIX_ . 'cms_category` cc
             ' . Shop::addSqlAssociation('cms_category', 'cc') . '
@@ -1228,18 +1228,18 @@ class TopMenuCore extends ObjectModel {
 
         //$data = $this->createTemplate('controllers/top_menu/' . $tpl);
         $context = Context::getContext();
-        $admin_webpath = str_ireplace(_SHOP_CORE_DIR_, '', _PS_ROOT_DIR_);
+        $admin_webpath = str_ireplace(_SHOP_CORE_DIR_, '', _EPH_ROOT_DIR_);
         $admin_webpath = preg_replace('/^' . preg_quote(DIRECTORY_SEPARATOR, '/') . '/', '', $admin_webpath);
 
         $tpl = $context->smarty->createTemplate('controllers/top_menu/' . $tpl, $context->smarty);
         $tpl->assign(
             [
                 'linkTopMenu'       => $context->link->getAdminLink('AdminTopMenu'),
-                'topMenu_img_dir'   => _PS_MENU_DIR_,
-                'menu_img_dir'      => __PS_BASE_URI__ . $admin_webpath . '/themes/default/img/topmenu/',
+                'topMenu_img_dir'   => _EPH_MENU_DIR_,
+                'menu_img_dir'      => __EPH_BASE_URI__ . $admin_webpath . '/themes/default/img/topmenu/',
                 'current_iso_lang'  => Language::getIsoById($context->cookie->id_lang),
                 'current_id_lang'   => (int) $context->language->id,
-                'default_language'  => (int) Configuration::get('PS_LANG_DEFAULT'),
+                'default_language'  => (int) Configuration::get('EPH_LANG_DEFAULT'),
                 'languages'         => Language::getLanguages(false),
                 'options'           => $configOptions,
                 'shopFeatureActive' => Shop::isFeatureActive(),
@@ -1267,7 +1267,7 @@ class TopMenuCore extends ObjectModel {
 
     public static function getIdTopMenuByRef($reference) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_topmenu`')
                 ->from('topmenu')

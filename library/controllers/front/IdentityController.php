@@ -75,13 +75,13 @@ class IdentityControllerCore extends FrontController {
 
         // Call a hook to display more information
 
-        $newsletter = Configuration::get('PS_CUSTOMER_NWSL') || (Module::isInstalled('blocknewsletter') && Module::getInstanceByName('blocknewsletter')->active);
+        $newsletter = Configuration::get('EPH_CUSTOMER_NWSL') || (Module::isInstalled('blocknewsletter') && Module::getInstanceByName('blocknewsletter')->active);
         $this->context->smarty->assign('newsletter', $newsletter);
-        $this->context->smarty->assign('optin', (bool) Configuration::get('PS_CUSTOMER_OPTIN'));
+        $this->context->smarty->assign('optin', (bool) Configuration::get('EPH_CUSTOMER_OPTIN'));
 
         $this->context->smarty->assign('field_required', $this->context->customer->validateFieldsRequiredDatabase());
 
-        $this->setTemplate(_PS_THEME_DIR_ . 'identity.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'identity.tpl');
     }
 
     /**

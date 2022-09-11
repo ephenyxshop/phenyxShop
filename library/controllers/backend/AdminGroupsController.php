@@ -15,10 +15,10 @@ class AdminGroupsControllerCore extends AdminController {
         $this->identifier = 'id_group';
         $this->controller_name = 'AdminGroups';
 
-        $groups_to_keep = [
-            Configuration::get('PS_UNIDENTIFIED_GROUP'),
-            Configuration::get('PS_GUEST_GROUP'),
-            Configuration::get('PS_CUSTOMER_GROUP'),
+        $grouEPH_to_keep = [
+            Configuration::get('EPH_UNIDENTIFIED_GROUP'),
+            Configuration::get('EPH_GUEST_GROUP'),
+            Configuration::get('EPH_CUSTOMER_GROUP'),
         ];
 
         parent::__construct();
@@ -28,7 +28,7 @@ class AdminGroupsControllerCore extends AdminController {
                 'general' => [
                     'title'  => $this->l('Default groups options'),
                     'fields' => [
-                        'PS_UNIDENTIFIED_GROUP' => [
+                        'EPH_UNIDENTIFIED_GROUP' => [
                             'title'      => $this->l('Visitors group'),
                             'desc'       => $this->l('The group defined for your un-identified visitors.'),
                             'cast'       => 'intval',
@@ -36,7 +36,7 @@ class AdminGroupsControllerCore extends AdminController {
                             'list'       => $groups,
                             'identifier' => 'id_group',
                         ],
-                        'PS_GUEST_GROUP'        => [
+                        'EPH_GUEST_GROUP'        => [
                             'title'      => $this->l('Guests group'),
                             'desc'       => $this->l('The group defined for your identified guest customers (used in guest checkout).'),
                             'cast'       => 'intval',
@@ -44,7 +44,7 @@ class AdminGroupsControllerCore extends AdminController {
                             'list'       => $groups,
                             'identifier' => 'id_group',
                         ],
-                        'PS_CUSTOMER_GROUP'     => [
+                        'EPH_CUSTOMER_GROUP'     => [
                             'title'      => $this->l('Customers group'),
                             'desc'       => $this->l('The group defined for your identified registered customers.'),
                             'cast'       => 'intval',
@@ -85,8 +85,8 @@ class AdminGroupsControllerCore extends AdminController {
         $showPrice .= '</select></div>';
 
         $displayMethod = '<div class="pq-theme"><select id="displayMethodSelect"><option value="">' . $this->l('--Select--') . '</option>';
-        $displayMethod .= '<option value="' . PS_TAX_EXC . '">' . $this->l('Tax excluded') . '</option>';
-        $displayMethod .= '<option value="' . PS_TAX_INC . '">' . $this->l('Tax included') . '</option>';
+        $displayMethod .= '<option value="' . EPH_TAX_EXC . '">' . $this->l('Tax excluded') . '</option>';
+        $displayMethod .= '<option value="' . EPH_TAX_INC . '">' . $this->l('Tax included') . '</option>';
         $displayMethod .= '</select></div>';
 
         $gridExtraFunction = ['function buildGroupFilter(){
@@ -270,11 +270,11 @@ class AdminGroupsControllerCore extends AdminController {
                 $group['show_prices'] = '<div class="p-inactive"></div>';
             }
 
-            if ($group['price_display_method'] == PS_TAX_EXC) {
-                $group['displayMethod'] = PS_TAX_EXC;
+            if ($group['price_display_method'] == EPH_TAX_EXC) {
+                $group['displayMethod'] = EPH_TAX_EXC;
                 $group['price_display_method'] = $this->l('Tax excluded');
             } else {
-                $group['displayMethod'] = PS_TAX_INC;
+                $group['displayMethod'] = EPH_TAX_INC;
                 $group['price_display_method'] = $this->l('Tax included');
             }
 
@@ -615,11 +615,11 @@ class AdminGroupsControllerCore extends AdminController {
                     'options' => [
                         'query' => [
                             [
-                                'id_method' => PS_TAX_EXC,
+                                'id_method' => EPH_TAX_EXC,
                                 'name'      => $this->l('Tax excluded'),
                             ],
                             [
-                                'id_method' => PS_TAX_INC,
+                                'id_method' => EPH_TAX_INC,
                                 'name'      => $this->l('Tax included'),
                             ],
                         ],
@@ -877,8 +877,8 @@ class AdminGroupsControllerCore extends AdminController {
 
         if (is_array($category_reduction) && count($category_reduction)) {
 
-            if (!Configuration::getGlobalValue('PS_GROUP_FEATURE_ACTIVE')) {
-                Configuration::updateGlobalValue('PS_GROUP_FEATURE_ACTIVE', 1);
+            if (!Configuration::getGlobalValue('EPH_GROUP_FEATURE_ACTIVE')) {
+                Configuration::updateGlobalValue('EPH_GROUP_FEATURE_ACTIVE', 1);
             }
 
             foreach ($category_reduction as $cat => $reduction) {

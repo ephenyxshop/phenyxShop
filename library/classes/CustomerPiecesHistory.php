@@ -65,7 +65,7 @@ class CustomerPiecesHistoryCore extends ObjectModel {
 
         // executes hook
 
-        if (in_array($newOs->id, [Configuration::get('PS_OS_PAYMENT'), Configuration::get('PS_OS_WS_PAYMENT')])) {
+        if (in_array($newOs->id, [Configuration::get('EPH_OS_PAYMENT'), Configuration::get('EPH_OS_WS_PAYMENT')])) {
             Hook::exec('actionPaymentConfirmation', ['id_customer_piece' => (int) $order->id], null, false, true, false, $order->id_shop);
         }
 
@@ -125,7 +125,7 @@ class CustomerPiecesHistoryCore extends ObjectModel {
                 $links .= '</ul>';
 
                 if (!empty($assign)) {
-                    $tpl = $this->context->smarty->createTemplate(_PS_MAIL_DIR_ . '/download_product.tpl');
+                    $tpl = $this->context->smarty->createTemplate(_EPH_MAIL_DIR_ . '/download_product.tpl');
                     $tpl->assign([
                         'lastname'        => $customer->lastname,
                         'firstname'       => $customer->firstname,
@@ -137,8 +137,8 @@ class CustomerPiecesHistoryCore extends ObjectModel {
 
                     $postfields = [
                         'sender'      => [
-                            'name'  => "Sevice Commerciale " . Configuration::get('PS_SHOP_NAME'),
-                            'email' => 'no-reply@' . Configuration::get('PS_SHOP_URL'),
+                            'name'  => "Sevice Commerciale " . Configuration::get('EPH_SHOP_NAME'),
+                            'email' => 'no-reply@' . Configuration::get('EPH_SHOP_URL'),
                         ],
                         'to'          => [
                             [
@@ -159,11 +159,11 @@ class CustomerPiecesHistoryCore extends ObjectModel {
             // @since 1.5.0 : gets the stock manager
             $manager = null;
 
-            if (Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT')) {
+            if (Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT')) {
                 $manager = StockManagerFactory::getManager();
             }
 
-            $errorOrCanceledStatuses = [Configuration::get('PS_OS_ERROR'), Configuration::get('PS_OS_CANCELED')];
+            $errorOrCanceledStatuses = [Configuration::get('EPH_OS_ERROR'), Configuration::get('EPH_OS_CANCELED')];
 
             $employee = null;
 
@@ -223,7 +223,7 @@ class CustomerPiecesHistoryCore extends ObjectModel {
                 }
 
                 if ($newOs->shipped == 1 && (!Validate::isLoadedObject($oldOs) || $oldOs->shipped == 0) &&
-                    Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT') &&
+                    Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT') &&
                     Warehouse::exists($product['id_warehouse']) &&
                     $manager != null &&
                     (int) $product['advanced_stock_management'] == 1) {
@@ -236,20 +236,20 @@ class CustomerPiecesHistoryCore extends ObjectModel {
                         $product['id_product_attribute'],
                         $warehouse,
                         $product['product_quantity'],
-                        Configuration::get('PS_STOCK_CUSTOMER_ORDER_REASON'),
+                        Configuration::get('EPH_STOCK_CUSTOMER_ORDER_REASON'),
                         true,
                         (int) $order->id,
                         0,
                         $employee
                     );
                 } else if ($newOs->shipped == 0 && Validate::isLoadedObject($oldOs) && $oldOs->shipped == 1 &&
-                    Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT') &&
+                    Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT') &&
                     Warehouse::exists($product['id_warehouse']) &&
                     $manager != null &&
                     (int) $product['advanced_stock_management'] == 1) {
 
                     if (Pack::isPack($product['id_product'])) {
-                        $packProducts = Pack::getItems($product['id_product'], Configuration::get('PS_LANG_DEFAULT', null, null, $order->id_shop));
+                        $packProducts = Pack::getItems($product['id_product'], Configuration::get('EPH_LANG_DEFAULT', null, null, $order->id_shop));
 
                         if (is_array($packProducts && !empty($packProducts))) {
 
@@ -359,7 +359,7 @@ class CustomerPiecesHistoryCore extends ObjectModel {
                     if ($payment->id_currency == $order->id_currency) {
                         $order->total_paid_real += $payment->amount;
                     } else {
-                        $order->total_paid_real += Tools::ps_round(Tools::convertPrice($payment->amount, $payment->id_currency, false), 2);
+                        $order->total_paid_real += Tools::EPH_round(Tools::convertPrice($payment->amount, $payment->id_currency, false), 2);
                     }
 
                     $order->save();
@@ -395,7 +395,7 @@ class CustomerPiecesHistoryCore extends ObjectModel {
     public static function getLastOrderState($idOrder) {
 
         Tools::displayAsDeprecated();
-        $idOrderState = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $idOrderState = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_order_state`')
                 ->from('order_history')
@@ -410,7 +410,7 @@ class CustomerPiecesHistoryCore extends ObjectModel {
         }
 
         // else, returns an OrderState object if it can be loaded
-        $orderState = new OrderState($idOrderState, Configuration::get('PS_LANG_DEFAULT'));
+        $orderState = new OrderState($idOrderState, Configuration::get('EPH_LANG_DEFAULT'));
 
         if (Validate::isLoadedObject($orderState)) {
             return $orderState;
@@ -438,7 +438,7 @@ class CustomerPiecesHistoryCore extends ObjectModel {
     
     public function sendEmail($order, $templateVars = false) {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('osl.`template`, c.`lastname`, c.`firstname`, osl.`name` AS osname, c.`email`, os.`module_name`, os.`id_customer_piece_state`, os.`pdf_invoice`, os.`pdf_delivery`')
                 ->from('customer_piece_history', 'oh')
@@ -453,7 +453,7 @@ class CustomerPiecesHistoryCore extends ObjectModel {
 
             ShopUrl::cacheMainDomainForShop($order->id_shop);
 
-            $tpl = Context::getContext()->smarty->createTemplate(_PS_MAIL_DIR_ . '/' . $result['template'] . '.tpl');
+            $tpl = Context::getContext()->smarty->createTemplate(_EPH_MAIL_DIR_ . '/' . $result['template'] . '.tpl');
 
             $topic = $result['osname'];
 
@@ -487,7 +487,7 @@ class CustomerPiecesHistoryCore extends ObjectModel {
                     
                     $fileName = $order->printPdf();
                     $fileAttachement[] = [
-                        'content' => chunk_split(base64_encode(file_get_contents(_PS_INVOICE_DIR_ . $fileName))),
+                        'content' => chunk_split(base64_encode(file_get_contents(_EPH_INVOICE_DIR_ . $fileName))),
                         'name'    => $fileName,
                     ];
 
@@ -501,8 +501,8 @@ class CustomerPiecesHistoryCore extends ObjectModel {
 
                 $postfields = [
                     'sender'      => [
-                        'name'  => "Service Commerciale " . Configuration::get('PS_SHOP_NAME'),
-                        'email' => 'no-reply@' . Configuration::get('PS_SHOP_URL'),
+                        'name'  => "Service Commerciale " . Configuration::get('EPH_SHOP_NAME'),
+                        'email' => 'no-reply@' . Configuration::get('EPH_SHOP_URL'),
                     ],
                     'to'          => [
                         [
@@ -543,7 +543,7 @@ class CustomerPiecesHistoryCore extends ObjectModel {
 
     public function isValidated() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(oh.`id_customer_piece_history` AS `nb`')
                 ->from('customer_piece_state', 'os')
@@ -563,8 +563,8 @@ class CustomerPiecesHistoryCore extends ObjectModel {
             $context = Context::getContext();
 
             if ($context->link == null) {
-                $protocolLink = (Tools::usingSecureMode() && Configuration::get('PS_SSL_ENABLED')) ? 'https://' : 'http://';
-                $protocolContent = (Tools::usingSecureMode() && Configuration::get('PS_SSL_ENABLED')) ? 'https://' : 'http://';
+                $protocolLink = (Tools::usingSecureMode() && Configuration::get('EPH_SSL_ENABLED')) ? 'https://' : 'http://';
+                $protocolContent = (Tools::usingSecureMode() && Configuration::get('EPH_SSL_ENABLED')) ? 'https://' : 'http://';
                 $context->link = new Link($protocolLink, $protocolContent);
             }
 

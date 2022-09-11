@@ -160,7 +160,7 @@ class MediaAdminCore {
 
 				if (function_exists('preg_last_error') && preg_last_error() == PREG_BACKTRACK_LIMIT_ERROR) {
 
-					if (_PS_MODE_DEV_) {
+					if (_EPH_MODE_DEV_) {
 						Tools::error_log('ERROR: PREG_BACKTRACK_LIMIT_ERROR in function packJSinHTML');
 					}
 
@@ -235,7 +235,7 @@ class MediaAdminCore {
 				$jsContent = JSMin::minify($jsContent);
 			} catch (Exception $e) {
 
-				if (_PS_MODE_DEV_) {
+				if (_EPH_MODE_DEV_) {
 					echo $e->getMessage();
 				}
 
@@ -297,7 +297,7 @@ class MediaAdminCore {
 		$addNoConflict = false;
 
 		if ($version === null) {
-			$version = _PS_JQUERY_VERSION_;
+			$version = _EPH_JQUERY_VERSION_;
 		}
 
 		//set default version
@@ -310,16 +310,16 @@ class MediaAdminCore {
 		}
 
 		if ($folder === null) {
-			$folder = _PS_JS_DIR_. 'jquery/';
+			$folder = _EPH_JS_DIR_. 'jquery/';
 		}
 
 		//set default folder
 		//check if file exists
 		$file = $folder . 'jquery-' . $version . ($minifier ? '.min.js' : '.js');
 
-		// remove PS_BASE_URI on _PS_ROOT_DIR_ for the following
+		// remove EPH_BASE_URI on _EPH_ROOT_DIR_ for the following
 		$urlData = parse_url($file);
-		$fileUri = _PS_ROOT_DIR_ . Tools::str_replace_once(__PS_BASE_URI__, DIRECTORY_SEPARATOR, $urlData['path']);
+		$fileUri = _EPH_ROOT_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, DIRECTORY_SEPARATOR, $urlData['path']);
 		// check if js files exists, if not try to load query from ajax.googleapis.com
 
 		$return = [];
@@ -336,12 +336,12 @@ class MediaAdminCore {
 		}
 
 		if ($addNoConflict) {
-			$return[] = MediaAdmin::getJSPath(_PS_JS_DIR_. 'jquery/jquery.noConflict.php?version=' . $version);
+			$return[] = MediaAdmin::getJSPath(_EPH_JS_DIR_. 'jquery/jquery.noConflict.php?version=' . $version);
 		}
 
 		//added query migrate for compatibility with new version of jquery will be removed in ps 1.6
-		//$return[] =  MediaAdmin::getJSPath(_PS_JS_DIR_. 'jquery/jquery-migrate-1.2.1.min.js');
-		$return[] = MediaAdmin::getJSPath(_PS_JS_DIR_. 'jquery/jquery-migrate-3.3.2.min.js');
+		//$return[] =  MediaAdmin::getJSPath(_EPH_JS_DIR_. 'jquery/jquery-migrate-1.2.1.min.js');
+		$return[] = MediaAdmin::getJSPath(_EPH_JS_DIR_. 'jquery/jquery-migrate-3.3.2.min.js');
 
 		return $return;
 	}
@@ -407,11 +407,11 @@ class MediaAdminCore {
 
 		// Copy shop favicon if it does not exist
 
-		if (Shop::isFeatureActive() && !file_exists(_PS_IMG_DIR_ . "{$path}{$storePath}.{$ext}")) {
-			@copy(_PS_IMG_DIR_ . "{$path}.{$ext}", _PS_IMG_DIR_ . "{$path}{$storePath}.{$ext}");
+		if (Shop::isFeatureActive() && !file_exists(_EPH_IMG_DIR_ . "{$path}{$storePath}.{$ext}")) {
+			@copy(_EPH_IMG_DIR_ . "{$path}.{$ext}", _EPH_IMG_DIR_ . "{$path}{$storePath}.{$ext}");
 		}
 
-		return (string) MediaAdmin::getMediaPath(_PS_IMG_DIR_ . "{$path}.{$ext}");
+		return (string) MediaAdmin::getMediaPath(_EPH_IMG_DIR_ . "{$path}.{$ext}");
 	}
 
 	/**
@@ -436,9 +436,9 @@ class MediaAdminCore {
 		}
 
 		if (!array_key_exists('host', $urlData)) {
-			$mediaUri = '/' . ltrim(str_replace(str_replace(['/', '\\'], DIRECTORY_SEPARATOR, _PS_ROOT_DIR_), __PS_BASE_URI__, $mediaUri), '/\\');
-			// remove PS_BASE_URI on _SHOP_ROOT_DIR_ for the following
-			$fileUri = _PS_ROOT_DIR_ . Tools::str_replace_once(__PS_BASE_URI__, DIRECTORY_SEPARATOR, $mediaUri);
+			$mediaUri = '/' . ltrim(str_replace(str_replace(['/', '\\'], DIRECTORY_SEPARATOR, _EPH_ROOT_DIR_), __EPH_BASE_URI__, $mediaUri), '/\\');
+			// remove EPH_BASE_URI on _SHOP_ROOT_DIR_ for the following
+			$fileUri = _EPH_ROOT_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, DIRECTORY_SEPARATOR, $mediaUri);
 
 			if (!file_exists($fileUri)) {
 				return false;
@@ -468,10 +468,10 @@ class MediaAdminCore {
 	public static function getJqueryUIPath($component, $theme, $checkDependencies) {
 
 		$uiPath = ['js' => [], 'css' => []];
-		$folder = _PS_JS_DIR_. 'jquery/ui/';
+		$folder = _EPH_JS_DIR_. 'jquery/ui/';
 		$file = 'jquery.' . $component . '.min.js';
 		$urlData = parse_url($folder . $file);
-		$fileUri = _PS_ROOT_DIR_  . Tools::str_replace_once(__PS_BASE_URI__, DIRECTORY_SEPARATOR, $urlData['path']);
+		$fileUri = _EPH_ROOT_DIR_  . Tools::str_replace_once(__EPH_BASE_URI__, DIRECTORY_SEPARATOR, $urlData['path']);
 		$uiTmp = [];
 
 		if (file_exists($urlData['path']) && @filemtime($urlData['path'])) {
@@ -554,13 +554,13 @@ class MediaAdminCore {
 		$pluginPath = ['js' => [], 'css' => []];
 
 		if ($folder === null) {
-			$folder = _PS_JS_DIR_. 'jquery/plugins/';
+			$folder = _EPH_JS_DIR_. 'jquery/plugins/';
 		}
 
 		$file = 'jquery.' . $name . '.js';
 		$urlData = parse_url($folder);
 
-		$fileUri = _PS_ROOT_DIR_  . Tools::str_replace_once(__PS_BASE_URI__, DIRECTORY_SEPARATOR, $urlData['path']);
+		$fileUri = _EPH_ROOT_DIR_  . Tools::str_replace_once(__EPH_BASE_URI__, DIRECTORY_SEPARATOR, $urlData['path']);
 
 		if (@file_exists($folder . $file)) {
 			$pluginPath['js'] = MediaAdmin::getJSPath($folder . $file);
@@ -596,13 +596,13 @@ class MediaAdminCore {
 	public static function getJqueryPluginCSSPath($name, $folder = null) {
 
 		if ($folder === null) {
-			$folder = _PS_JS_DIR_. 'jquery/plugins/';
+			$folder = _EPH_JS_DIR_. 'jquery/plugins/';
 		}
 
 		//set default folder
 		$file = 'jquery.' . $name . '.css';
 		$urlData = parse_url($folder);
-		$fileUri = _SHOP_ROOT_DIR_ . Tools::str_replace_once(__PS_BASE_URI__, DIRECTORY_SEPARATOR, $urlData['path']);
+		$fileUri = _SHOP_ROOT_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, DIRECTORY_SEPARATOR, $urlData['path']);
 
 		if (@file_exists($folder . $file)) {
 
@@ -646,7 +646,7 @@ class MediaAdminCore {
 		$compressedCssFilesInfos = [];
 		$protocolLink = Tools::getCurrentUrlProtocolPrefix();
 		//if cache_path not specified, set curent theme cache folder
-		$cachePath = $cachePath ? $cachePath : _PS_THEME_DIR_ . 'cache/';
+		$cachePath = $cachePath ? $cachePath : _EPH_THEME_DIR_ . 'cache/';
 		$cssSplitNeedRefresh = false;
 
 		// group css files by media
@@ -666,10 +666,10 @@ class MediaAdminCore {
 				continue;
 			}
 
-			$infos['path'] = _SHOP_ROOT_DIR_ . Tools::str_replace_once(__PS_BASE_URI__, '/', $urlData['path']);
+			$infos['path'] = _SHOP_ROOT_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, '/', $urlData['path']);
 
 			if (!@filemtime($infos['path'])) {
-				$infos['path'] = _SHOP_CORE_DIR_ . Tools::str_replace_once(__PS_BASE_URI__, '/', $urlData['path']);
+				$infos['path'] = _SHOP_CORE_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, '/', $urlData['path']);
 			}
 
 			$cssFilesByMedia[$media]['files'][] = $infos;
@@ -691,7 +691,7 @@ class MediaAdminCore {
 		}
 
 		// get compressed css file infos
-		$version = (int) Configuration::get('PS_CCCCSS_VERSION');
+		$version = (int) Configuration::get('EPH_CCCCSS_VERSION');
 
 		foreach ($compressedCssFilesInfos as $media => &$info) {
 			$key = md5($info['key'] . $protocolLink);
@@ -708,7 +708,7 @@ class MediaAdminCore {
 			if ($mediaInfos['date'] > $compressedCssFilesInfos[$media]['date']) {
 
 				if ($compressedCssFilesInfos[$media]['date']) {
-					Configuration::updateValue('PS_CCCCSS_VERSION', ++$version);
+					Configuration::updateValue('EPH_CCCCSS_VERSION', ++$version);
 					break;
 				}
 
@@ -756,7 +756,7 @@ class MediaAdminCore {
 		$cssFiles = [];
 
 		foreach ($compressedCssFiles as $media => $filename) {
-			$url = str_replace(_PS_THEME_DIR_, _THEMES_DIR_ . _THEME_NAME_ . '/', $filename);
+			$url = str_replace(_EPH_THEME_DIR_, _THEMES_DIR_ . _THEME_NAME_ . '/', $filename);
 			$cssFiles[$protocolLink . Tools::getMediaServer($url) . $url] = $media;
 		}
 
@@ -869,7 +869,7 @@ class MediaAdminCore {
 			$fileBasename = basename($fileInfo['path']);
 			$cssContent = file_get_contents(
 				_SHOP_ROOT_DIR_
-				. preg_replace('#^' . __PS_BASE_URI__ . '#', '/', $fileInfo['path'])
+				. preg_replace('#^' . __EPH_BASE_URI__ . '#', '/', $fileInfo['path'])
 			);
 			$count = $splitter->countSelectors($cssContent) - $cssRuleLimit;
 
@@ -916,7 +916,7 @@ class MediaAdminCore {
 		$compressedJsFilename = '';
 		$jsExternalFiles = [];
 		$protocolLink = Tools::getCurrentUrlProtocolPrefix();
-		$cachePath = _PS_THEME_DIR_ . 'cache/';
+		$cachePath = _EPH_THEME_DIR_ . 'cache/';
 
 		// get js files infos
 
@@ -928,10 +928,10 @@ class MediaAdminCore {
 				$infos = [];
 				$infos['uri'] = $filename;
 				$urlData = parse_url($filename);
-				$infos['path'] = _SHOP_ROOT_DIR_ . Tools::str_replace_once(__PS_BASE_URI__, '/', $urlData['path']);
+				$infos['path'] = _SHOP_ROOT_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, '/', $urlData['path']);
 
 				if (!@filemtime($infos['path'])) {
-					$infos['path'] = _SHOP_CORE_DIR_ . Tools::str_replace_once(__PS_BASE_URI__, '/', $urlData['path']);
+					$infos['path'] = _SHOP_CORE_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, '/', $urlData['path']);
 				}
 
 				$jsFilesInfos[] = $infos;
@@ -947,7 +947,7 @@ class MediaAdminCore {
 
 		// get compressed js file infos
 		$compressedJsFilename = md5($compressedJsFilename);
-		$version = (int) Configuration::get('PS_CCCJS_VERSION');
+		$version = (int) Configuration::get('EPH_CCCJS_VERSION');
 		$compressedJsPath = $cachePath . 'v_' . $version . '_' . $compressedJsFilename . '.js';
 		$compressedJsFileDate = (int) @filemtime($compressedJsPath);
 
@@ -956,7 +956,7 @@ class MediaAdminCore {
 		if ($jsFilesDate > $compressedJsFileDate) {
 
 			if ($compressedJsFileDate) {
-				Configuration::updateValue('PS_CCCJS_VERSION', ++$version);
+				Configuration::updateValue('EPH_CCCJS_VERSION', ++$version);
 			}
 
 			$compressedJsPath = $cachePath . 'v_' . $version . '_' . $compressedJsFilename . '.js';
@@ -991,11 +991,11 @@ class MediaAdminCore {
 		$url = '';
 
 		if (strpos($compressedJsPath, _SHOP_ROOT_DIR_) !== false) {
-			$url = str_replace(_SHOP_ROOT_DIR_ . '/', __PS_BASE_URI__, $compressedJsPath);
+			$url = str_replace(_SHOP_ROOT_DIR_ . '/', __EPH_BASE_URI__, $compressedJsPath);
 		}
 
 		if (strpos($compressedJsPath, _SHOP_CORE_DIR_) !== false) {
-			$url = str_replace(_SHOP_CORE_DIR_ . '/', __PS_BASE_URI__, $compressedJsPath);
+			$url = str_replace(_SHOP_CORE_DIR_ . '/', __EPH_BASE_URI__, $compressedJsPath);
 		}
 
 		return array_merge([$protocolLink . Tools::getMediaServer($url) . $url], $jsExternalFiles);
@@ -1012,9 +1012,9 @@ class MediaAdminCore {
 	 */
 	public static function clearCache() {
 
-		if (!Configuration::get('PS_KEEP_CCC_FILES')) {
+		if (!Configuration::get('EPH_KEEP_CCC_FILES')) {
 
-			foreach ([_PS_THEME_DIR_ . 'cache'] as $dir) {
+			foreach ([_EPH_THEME_DIR_ . 'cache'] as $dir) {
 
 				if (file_exists($dir)) {
 
@@ -1028,10 +1028,10 @@ class MediaAdminCore {
 
 		}
 
-		$version = (int) Configuration::get('PS_CCCJS_VERSION');
-		Configuration::updateValue('PS_CCCJS_VERSION', ++$version);
-		$version = (int) Configuration::get('PS_CCCCSS_VERSION');
-		Configuration::updateValue('PS_CCCCSS_VERSION', ++$version);
+		$version = (int) Configuration::get('EPH_CCCJS_VERSION');
+		Configuration::updateValue('EPH_CCCJS_VERSION', ++$version);
+		$version = (int) Configuration::get('EPH_CCCCSS_VERSION');
+		Configuration::updateValue('EPH_CCCCSS_VERSION', ++$version);
 	}
 
 	/**
@@ -1179,7 +1179,7 @@ class MediaAdminCore {
 
 							if ($version) {
 
-								if ($version != _PS_JQUERY_VERSION_) {
+								if ($version != _EPH_JQUERY_VERSION_) {
 									Context::getContext()->controller->addJquery($version, null, $minifier);
 								}
 

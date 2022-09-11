@@ -251,7 +251,7 @@ class StockMvtWSCore extends ObjectModelCore
             $query .= $limit.' ';
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
     }
 
     /**

@@ -123,7 +123,7 @@ class PaymentModeCore extends ObjectModel {
 
 	public static function getPaymentModeByModuleId($idModule, $moduleName) {
 
-		$id_payment_mode = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		$id_payment_mode = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 			(new DbQuery())
 				->select('`id_payment_mode`')
 				->from('payment_mode')
@@ -135,7 +135,7 @@ class PaymentModeCore extends ObjectModel {
 		} else {
 			$idLang = Context::getContext()->language->id;
 
-			$search = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+			$search = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 				(new DbQuery())
 					->select('`id_payment_mode`')
 					->from('payment_mode_lang')
@@ -157,7 +157,7 @@ class PaymentModeCore extends ObjectModel {
 
 		$idLang = Context::getContext()->language->id;
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 			(new DbQuery())
 				->select('`name`')
 				->from('payment_mode_lang')

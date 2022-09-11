@@ -53,18 +53,18 @@ class MetaCore extends ObjectModel {
 		
         $selectedPages = [];
 		$adminModuleFiles = [];
-        if (!$files = Tools::scandir(_PS_CORE_DIR_. DIRECTORY_SEPARATOR . '/includes/controllers/front' .  DIRECTORY_SEPARATOR, 'php', '', true)) {
+        if (!$files = Tools::scandir(_EPH_CORE_DIR_. DIRECTORY_SEPARATOR . '/includes/controllers/front' .  DIRECTORY_SEPARATOR, 'php', '', true)) {
             die(Tools::displayError('Cannot scan front root directory'));
         }
-		if (!$adminFiles = Tools::scandir(_PS_CORE_DIR_ . DIRECTORY_SEPARATOR . 'includes/controllers/backend' . DIRECTORY_SEPARATOR, 'php', '', true)) {
+		if (!$adminFiles = Tools::scandir(_EPH_CORE_DIR_ . DIRECTORY_SEPARATOR . 'includes/controllers/backend' . DIRECTORY_SEPARATOR, 'php', '', true)) {
             die(Tools::displayError('Cannot scan admin root directory'));
         }
-		foreach (glob(_PS_MODULE_DIR_ . '*/controllers/admin/*.php') as $file) {
+		foreach (glob(_EPH_MODULE_DIR_ . '*/controllers/admin/*.php') as $file) {
             $filename = basename($file);			          
             $adminModuleFiles[] = $filename;
         }
             
-        if (!$overrideFiles = Tools::scandir(_PS_CORE_DIR_ . DIRECTORY_SEPARATOR . 'includes/override' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'front' . DIRECTORY_SEPARATOR, 'php', '', true)) {
+        if (!$overrideFiles = Tools::scandir(_EPH_CORE_DIR_ . DIRECTORY_SEPARATOR . 'includes/override' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'front' . DIRECTORY_SEPARATOR, 'php', '', true)) {
             die(Tools::displayError('Cannot scan "override" directory'));
         }
 
@@ -109,7 +109,7 @@ class MetaCore extends ObjectModel {
 		
         // Add modules controllers to list (this function is cool !)
 
-        foreach (glob(_PS_MODULE_DIR_ . '*/controllers/front/*.php') as $file) {
+        foreach (glob(_EPH_MODULE_DIR_ . '*/controllers/front/*.php') as $file) {
             $filename = mb_strtolower(basename($file, '.php'));
 
             if ($filename == 'index') {
@@ -163,7 +163,7 @@ class MetaCore extends ObjectModel {
      */
     public static function getMetas() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('meta')
@@ -173,7 +173,7 @@ class MetaCore extends ObjectModel {
 	
 	public static function getLinkRewrite($page, $idLang) {
 		
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
             ->select('ml.url_rewrite')
             ->from('meta', 'm')
@@ -184,7 +184,7 @@ class MetaCore extends ObjectModel {
 	
 	public static function getTitle($page, $idLang) {
 		
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
             ->select('ml.title')
             ->from('meta', 'm')
@@ -205,7 +205,7 @@ class MetaCore extends ObjectModel {
      */
     public static function getMetasByIdLang($idLang) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('meta', 'm')
@@ -236,7 +236,7 @@ class MetaCore extends ObjectModel {
             ->where('`id_lang` = ' . (int) $idLang)
             ->where('`id_shop` = ' . (int) Context::getContext()->shop->id);
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('url_rewrite')
                 ->from('meta_lang')
@@ -261,11 +261,11 @@ class MetaCore extends ObjectModel {
     public static function getMetaTags($idLang, $pageName, $title = '') {
 
         $allowed = false;
-		if(!empty(Configuration::get('PS_MAINTENANCE_IP'))) {
-			$allowed = in_array(Tools::getRemoteAddr(), explode(',', Configuration::get('PS_MAINTENANCE_IP')));
+		if(!empty(Configuration::get('EPH_MAINTENANCE_IP'))) {
+			$allowed = in_array(Tools::getRemoteAddr(), explode(',', Configuration::get('EPH_MAINTENANCE_IP')));
 		}
 		
-		if (!(!Configuration::get('PS_SHOP_ENABLE') && !$allowed)) {
+		if (!(!Configuration::get('EPH_SHOP_ENABLE') && !$allowed)) {
 
             if ($pageName == 'education' && ($idProduct = Tools::getValue('id_education'))) {
                 return Meta::getEducationMetas($idProduct, $idLang, $pageName);
@@ -301,7 +301,7 @@ class MetaCore extends ObjectModel {
      */
     public static function getEducationMetas($idProduct, $idLang, $pageName) {
 
-        if ($row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        if ($row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
             ->select('`name`, `meta_title`, `meta_description`, `meta_keywords`, `description_short`')
             ->from('education_lang')
@@ -337,15 +337,15 @@ class MetaCore extends ObjectModel {
         }
 
         if (empty($metaTags['meta_title'])) {
-            $metaTags['meta_title'] = $defaultValue . ' - ' . Configuration::get('PS_SHOP_NAME');
+            $metaTags['meta_title'] = $defaultValue . ' - ' . Configuration::get('EPH_SHOP_NAME');
         }
 
         if (empty($metaTags['meta_description'])) {
-            $metaTags['meta_description'] = Configuration::get('PS_META_DESCRIPTION', $context->language->id) ? Configuration::get('PS_META_DESCRIPTION', $context->language->id) : '';
+            $metaTags['meta_description'] = Configuration::get('EPH_META_DESCRIPTION', $context->language->id) ? Configuration::get('EPH_META_DESCRIPTION', $context->language->id) : '';
         }
 
         if (empty($metaTags['meta_keywords'])) {
-            $metaTags['meta_keywords'] = Configuration::get('PS_META_KEYWORDS', $context->language->id) ? Configuration::get('PS_META_KEYWORDS', $context->language->id) : '';
+            $metaTags['meta_keywords'] = Configuration::get('EPH_META_KEYWORDS', $context->language->id) ? Configuration::get('EPH_META_KEYWORDS', $context->language->id) : '';
         }
 
         return $metaTags;
@@ -367,7 +367,7 @@ class MetaCore extends ObjectModel {
     public static function getHomeMetas($idLang, $pageName) {
 
         $metas = Meta::getMetaByPage($pageName, $idLang);
-        $ret['meta_title'] = (isset($metas['title']) && $metas['title']) ? $metas['title'] . ' - ' . Configuration::get('PS_SHOP_NAME') : Configuration::get('PS_SHOP_NAME');
+        $ret['meta_title'] = (isset($metas['title']) && $metas['title']) ? $metas['title'] . ' - ' . Configuration::get('EPH_SHOP_NAME') : Configuration::get('EPH_SHOP_NAME');
         $ret['meta_description'] = (isset($metas['description']) && $metas['description']) ? $metas['description'] : '';
         $ret['meta_keywords'] = (isset($metas['keywords']) && $metas['keywords']) ? $metas['keywords'] : '';
 
@@ -387,7 +387,7 @@ class MetaCore extends ObjectModel {
      */
     public static function getMetaByPage($page, $idLang) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('*')
                 ->from('meta', 'm')
@@ -399,7 +399,7 @@ class MetaCore extends ObjectModel {
 
     public static function getMetaById($idMeta, $idLang) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('*')
                 ->from('meta', 'm')
@@ -434,7 +434,7 @@ class MetaCore extends ObjectModel {
 
         if (!Cache::isStored($cacheId)) {
 
-            if ($row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            if ($row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                 ->select('`name`, `meta_title`, `meta_description`, `description`')
                 ->from('education_type_lang', 'cl')
@@ -449,13 +449,13 @@ class MetaCore extends ObjectModel {
                 // Paginate title
 
                 if (!empty($row['meta_title'])) {
-                    $row['meta_title'] = $title . $row['meta_title'] . (!empty($pageNumber) ? ' (' . $pageNumber . ')' : '') . ' - ' . Configuration::get('PS_SHOP_NAME');
+                    $row['meta_title'] = $title . $row['meta_title'] . (!empty($pageNumber) ? ' (' . $pageNumber . ')' : '') . ' - ' . Configuration::get('EPH_SHOP_NAME');
                 } else {
-                    $row['meta_title'] = $row['name'] . (!empty($pageNumber) ? ' (' . $pageNumber . ')' : '') . ' - ' . Configuration::get('PS_SHOP_NAME');
+                    $row['meta_title'] = $row['name'] . (!empty($pageNumber) ? ' (' . $pageNumber . ')' : '') . ' - ' . Configuration::get('EPH_SHOP_NAME');
                 }
 
                 if (!empty($title)) {
-                    $row['meta_title'] = $title . (!empty($pageNumber) ? ' (' . $pageNumber . ')' : '') . ' - ' . Configuration::get('PS_SHOP_NAME');
+                    $row['meta_title'] = $title . (!empty($pageNumber) ? ' (' . $pageNumber . ')' : '') . ' - ' . Configuration::get('EPH_SHOP_NAME');
                 }
 
                 $result = Meta::completeMetaTags($row, $row['name']);
@@ -487,7 +487,7 @@ class MetaCore extends ObjectModel {
      */
     public static function getSupplierMetas($idSupplier, $idLang, $pageName) {
 
-        if ($row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        if ($row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
             ->select('`name`, `meta_title`, `meta_description`, `meta_keywords`')
             ->from('supplier_lang', 'sl')
@@ -501,7 +501,7 @@ class MetaCore extends ObjectModel {
             }
 
             if (!empty($row['meta_title'])) {
-                $row['meta_title'] = $row['meta_title'] . ' - ' . Configuration::get('PS_SHOP_NAME');
+                $row['meta_title'] = $row['meta_title'] . ' - ' . Configuration::get('EPH_SHOP_NAME');
             }
 
             return Meta::completeMetaTags($row, $row['name']);
@@ -526,7 +526,7 @@ class MetaCore extends ObjectModel {
      */
     public static function getCmsMetas($idCms, $idLang, $pageName) {
 
-        if ($row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        if ($row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
             ->select('`meta_title`, `meta_description`, `meta_keywords`')
             ->from('cms_lang')
@@ -534,7 +534,7 @@ class MetaCore extends ObjectModel {
             ->where('`id_cms` = ' . (int) $idCms)
             ->where(Context::getContext()->shop->id ? '`id_shop` = ' . (int) Context::getContext()->shop->id : '')
         )) {
-            $row['meta_title'] = $row['meta_title'] . ' - ' . Configuration::get('PS_SHOP_NAME');
+            $row['meta_title'] = $row['meta_title'] . ' - ' . Configuration::get('EPH_SHOP_NAME');
 
             return Meta::completeMetaTags($row, $row['meta_title']);
         }
@@ -558,7 +558,7 @@ class MetaCore extends ObjectModel {
      */
     public static function getCmsCategoryMetas($idCmsCategory, $idLang, $pageName) {
 
-        if ($row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        if ($row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
             ->select('`meta_title`, `meta_description`, `meta_keywords`')
             ->from('cms_category_lang')
@@ -566,7 +566,7 @@ class MetaCore extends ObjectModel {
             ->where('`id_cms_category` = ' . (int) $idCmsCategory)
             ->where(Context::getContext()->shop->id ? '`id_shop` = ' . (int) Context::getContext()->shop->id : '')
         )) {
-            $row['meta_title'] = $row['meta_title'] . ' - ' . Configuration::get('PS_SHOP_NAME');
+            $row['meta_title'] = $row['meta_title'] . ' - ' . Configuration::get('EPH_SHOP_NAME');
 
             return Meta::completeMetaTags($row, $row['meta_title']);
         }

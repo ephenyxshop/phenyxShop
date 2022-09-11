@@ -37,8 +37,8 @@ class AdminSuppliersControllerCore extends AdminController {
     public function setAjaxMedia() {
 
         return $this->pushJS([
-            __PS_BASE_URI__ . _PS_JS_DIR_ . 'tinymce/tinymce.min.js',
-            _PS_JS_DIR_ . 'admin/tinymce.inc.js',
+            __EPH_BASE_URI__ . _EPH_JS_DIR_ . 'tinymce/tinymce.min.js',
+            _EPH_JS_DIR_ . 'admin/tinymce.inc.js',
         ]);
     }
 
@@ -325,7 +325,7 @@ class AdminSuppliersControllerCore extends AdminController {
             return '';
         }
 
-        $image = _PS_SUPP_IMG_DIR_ . $obj->id . '.jpg';
+        $image = _EPH_SUPP_IMG_DIR_ . $obj->id . '.jpg';
         $imageUrl = ImageManager::thumbnail($image, $this->table . '_' . (int) $obj->id . '.' . $this->imageType, 350, $this->imageType, true, true);
         $imageSize = file_exists($image) ? filesize($image) / 1000 : false;
 
@@ -586,7 +586,7 @@ class AdminSuppliersControllerCore extends AdminController {
         } else {
             $this->fields_value = [
                 'id_address' => 0,
-                'id_country' => Configuration::get('PS_COUNTRY_DEFAULT'),
+                'id_country' => Configuration::get('EPH_COUNTRY_DEFAULT'),
             ];
         }
 

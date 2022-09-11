@@ -72,7 +72,7 @@ class TaxRulesTaxManagerCore implements TaxManagerInterface
         }
 
         if ($taxEnabled === null) {
-            $taxEnabled = $this->configurationManager->get('PS_TAX');
+            $taxEnabled = $this->configurationManager->get('EPH_TAX');
         }
 
         if (!$taxEnabled) {

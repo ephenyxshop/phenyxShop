@@ -20,11 +20,11 @@ class ImageManagerCore {
             return '';
         }
 
-        if (file_exists(_PS_TMP_IMG_DIR_ . $cacheImage) && $regenerate) {
-            @unlink(_PS_TMP_IMG_DIR_ . $cacheImage);
+        if (file_exists(_EPH_TMP_IMG_DIR_ . $cacheImage) && $regenerate) {
+            @unlink(_EPH_TMP_IMG_DIR_ . $cacheImage);
         }
 
-        if ($regenerate || !file_exists(_PS_TMP_IMG_DIR_ . $cacheImage)) {
+        if ($regenerate || !file_exists(_EPH_TMP_IMG_DIR_ . $cacheImage)) {
             $infos = getimagesize($image);
 
             // Evaluate the memory required to resize the image: if it's too much, you can't resize it.
@@ -40,7 +40,7 @@ class ImageManagerCore {
             // Size is already ok
 
             if ($y < $size && $x <= $maxX) {
-                copy($image, _PS_TMP_IMG_DIR_ . $cacheImage);
+                copy($image, _EPH_TMP_IMG_DIR_ . $cacheImage);
             }
 
             // We need to resize */
@@ -52,7 +52,7 @@ class ImageManagerCore {
                     $size = $y / ($x / $maxX);
                 }
 
-                ImageManager::resize($image, _PS_TMP_IMG_DIR_ . $cacheImage, $ratio_x, $size, $imageType);
+                ImageManager::resize($image, _EPH_TMP_IMG_DIR_ . $cacheImage, $ratio_x, $size, $imageType);
             }
 
         }
@@ -62,7 +62,7 @@ class ImageManagerCore {
         if (Context::getContext()->controller->controller_type == 'admin') {
             return '<img src="../img/tmp/' . $cacheImage . ($disableCache ? '?time=' . time() : '') . '" alt="" class="imgm img-thumbnail" />';
         } else {
-            return '<img src="' . _PS_TMP_IMG_ . $cacheImage . ($disableCache ? '?time=' . time() : '') . '" alt="" class="imgm img-thumbnail" />';
+            return '<img src="' . _EPH_TMP_IMG_ . $cacheImage . ($disableCache ? '?time=' . time() : '') . '" alt="" class="imgm img-thumbnail" />';
         }
 
     }
@@ -158,12 +158,12 @@ class ImageManagerCore {
             $srcHeight = $tmpHeight;
         }
 
-        // If PS_IMAGE_QUALITY is activated, the generated image will be a PNG with .jpg as a file extension.
+        // If EPH_IMAGE_QUALITY is activated, the generated image will be a PNG with .jpg as a file extension.
         // This allow for higher quality and for transparency. JPG source files will also benefit from a higher quality
         // because JPG reencoding by GD, even with max quality setting, degrades the image.
 
-        if ($fileType !== 'webp' && (Configuration::get('PS_IMAGE_QUALITY') == 'png_all'
-            || (Configuration::get('PS_IMAGE_QUALITY') == 'png' && $type == IMAGETYPE_PNG) && !$forceType)
+        if ($fileType !== 'webp' && (Configuration::get('EPH_IMAGE_QUALITY') == 'png_all'
+            || (Configuration::get('EPH_IMAGE_QUALITY') == 'png' && $type == IMAGETYPE_PNG) && !$forceType)
         ) {
             $fileType = 'png';
         }
@@ -183,7 +183,7 @@ class ImageManagerCore {
         $widthDiff = $dstWidth / $srcWidth;
         $heightDiff = $dstHeight / $srcHeight;
 
-        $psImageGenerationMethod = Configuration::get('PS_IMAGE_GENERATION_METHOD');
+        $psImageGenerationMethod = Configuration::get('EPH_IMAGE_GENERATION_METHOD');
 
         if ($widthDiff > 1 && $heightDiff > 1) {
             $nextWidth = $srcWidth;
@@ -356,15 +356,15 @@ class ImageManagerCore {
         static $psWebpQuality = null;
 
         if ($psPngQuality === null) {
-            $psPngQuality = Configuration::get('PS_PNG_QUALITY');
+            $psPngQuality = Configuration::get('EPH_PNG_QUALITY');
         }
 
         if ($psJpegQuality === null) {
-            $psJpegQuality = Configuration::get('PS_JPEG_QUALITY');
+            $psJpegQuality = Configuration::get('EPH_JPEG_QUALITY');
         }
 
         if ($psWebpQuality === null) {
-            $psWebpQuality = Configuration::get('PS_WEBP_QUALITY');
+            $psWebpQuality = Configuration::get('EPH_WEBP_QUALITY');
         }
 
         switch ($type) {
@@ -425,7 +425,7 @@ class ImageManagerCore {
    
 		$images =0;
 		$fileToCheck = [];
-		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_PS_PROD_IMG_DIR_));
+		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_EPH_PROD_IMG_DIR_));
 		foreach ($iterator as $filename) {
 				
 			if (preg_match('/\.(jpg|png|jpeg|webp)$/', $filename->getBasename())) {
@@ -445,7 +445,7 @@ class ImageManagerCore {
 		foreach($fileToCheck as $image) {
 			$path_parts = pathinfo($image);
 			$file = $path_parts['filename'];
-			$exist = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow('SELECT id_image, id_product FROM `' . _DB_PREFIX_ . 'image` WHERE id_image = '.(int)$file);
+			$exist = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow('SELECT id_image, id_product FROM `' . _DB_PREFIX_ . 'image` WHERE id_image = '.(int)$file);
 			if(empty($exist)) {
 				unlink($path_parts['dirname'].DIRECTORY_SEPARATOR.$file.'.jpg');
 				$images++;
@@ -798,7 +798,7 @@ class ImageManagerCore {
 
         if ($supported === null) {
             try {
-                $supported = (bool) Configuration::get('PS_HIGHT_DPI');
+                $supported = (bool) Configuration::get('EPH_HIGHT_DPI');
             } catch (PhenyxShopException $e) {
                 $supported = false;
             }
@@ -810,8 +810,8 @@ class ImageManagerCore {
 
     public static function deleteImageType($type) {
 
-        $dir = _PS_PROD_IMG_DIR_;
-        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_PS_PROD_IMG_DIR_));
+        $dir = _EPH_PROD_IMG_DIR_;
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_EPH_PROD_IMG_DIR_));
 
         $pattern = "/" . $type . "/i";
 
@@ -828,8 +828,8 @@ class ImageManagerCore {
 
     public static function deleteWebP() {
 
-        $dir = _PS_PROD_IMG_DIR_;
-        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_PS_PROD_IMG_DIR_));
+        $dir = _EPH_PROD_IMG_DIR_;
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_EPH_PROD_IMG_DIR_));
 
         $pattern = "/webP/i";
 
@@ -848,13 +848,13 @@ class ImageManagerCore {
 
         $list = [];
 		$singularTypes = [
-        		'img'          => ['dir' => _PS_IMG_DIR_, 'iterate' => false],
-        		'module'       => ['dir' => _PS_MODULE_DIR_, 'iterate' => true],
-        		'category'     => ['dir' => _PS_CAT_IMG_DIR_, 'iterate' => false],
-        		'manufacturer' => ['dir' => _PS_MANU_IMG_DIR_, 'iterate' => false],
-        		'supplier'     => ['dir' => _PS_SUPP_IMG_DIR_, 'iterate' => false],
-        		'product'      => ['dir' => _PS_PROD_IMG_DIR_, 'iterate' => true],
-        		'store'        => ['dir' => _PS_STORE_IMG_DIR_, 'iterate' => false],
+        		'img'          => ['dir' => _EPH_IMG_DIR_, 'iterate' => false],
+        		'module'       => ['dir' => _EPH_MODULE_DIR_, 'iterate' => true],
+        		'category'     => ['dir' => _EPH_CAT_IMG_DIR_, 'iterate' => false],
+        		'manufacturer' => ['dir' => _EPH_MANU_IMG_DIR_, 'iterate' => false],
+        		'supplier'     => ['dir' => _EPH_SUPP_IMG_DIR_, 'iterate' => false],
+        		'product'      => ['dir' => _EPH_PROD_IMG_DIR_, 'iterate' => true],
+        		'store'        => ['dir' => _EPH_STORE_IMG_DIR_, 'iterate' => false],
 
     		];
         

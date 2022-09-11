@@ -41,7 +41,7 @@ class GroupReductionCore extends ObjectModel
      */
     public static function getGroupReductions($idGroup, $idLang)
     {
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('gr.`id_group_reduction`, gr.`id_group`, gr.`id_category`, gr.`reduction`, cl.`name` AS category_name')
                 ->from('group_reduction', 'gr')
@@ -95,7 +95,7 @@ class GroupReductionCore extends ObjectModel
      */
     public static function doesExist($idGroup, $idCategory)
     {
-        return (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('gr.`id_group`')
                 ->from('group_reduction', 'gr')
@@ -117,7 +117,7 @@ class GroupReductionCore extends ObjectModel
     {
         Tools::displayAsDeprecated('Use GroupReduction::getGroupsByCategoryId($id_category)');
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('gr.`id_group`')
                 ->from('group_reduction', 'gr')
@@ -137,7 +137,7 @@ class GroupReductionCore extends ObjectModel
      */
     public static function getGroupsReductionByCategoryId($idCategory)
     {
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('gr.`id_group_reduction` AS `id_group_reduction`, gr.`id_group`')
                 ->from('group_reduction', 'gr')
@@ -158,7 +158,7 @@ class GroupReductionCore extends ObjectModel
     {
         Tools::displayAsDeprecated('Use GroupReduction::getGroupsByCategoryId($id_category)');
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('gr.`id_group_reduction`')
                 ->from('group_reduction', 'gr')
@@ -227,7 +227,7 @@ class GroupReductionCore extends ObjectModel
      */
     public static function getGroupsByCategoryId($idCategory)
     {
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('gr.`id_group`, gr.`reduction`, gr.`id_group_reduction`')
                 ->from('group_reduction', 'gr')
@@ -248,7 +248,7 @@ class GroupReductionCore extends ObjectModel
      */
     public static function duplicateReduction($idProductOld, $idProduct)
     {
-        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executes(
+        $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executes(
             (new DbQuery())
                 ->select('pgr.`id_product`, pgr.`id_group`, pgr.`reduction`')
                 ->from('product_group_reduction_cache', 'pgr')
@@ -316,7 +316,7 @@ class GroupReductionCore extends ObjectModel
     protected function _setCache()
     {
         // @codingStandardsIgnoreEnd
-        $products = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $products = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('cp.`id_product`')
                 ->from('category_product', 'cp')
@@ -366,7 +366,7 @@ class GroupReductionCore extends ObjectModel
     protected function _updateCache()
     {
         // @codingStandardsIgnoreEnd
-        $products = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $products = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('cp.`id_product`')
                 ->from('category_product', 'cp')
@@ -402,7 +402,7 @@ class GroupReductionCore extends ObjectModel
      */
     public function delete()
     {
-        $products = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $products = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('cp.`id_product`')
                 ->from('category_product', 'cp')

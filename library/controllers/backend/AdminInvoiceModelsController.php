@@ -28,30 +28,30 @@ class AdminInvoiceModelsControllerCore extends AdminController {
 			'general' => [
 				'title'  => $this->l('Invoice options'),
 				'fields' => [
-					'PS_INVOICE'                 => [
+					'EPH_INVOICE'                 => [
 						'title' => $this->l('Enable invoices'),
 						'desc'  => $this->l('If enabled, your customers will receive an invoice for their purchase(s).'),
 						'cast'  => 'intval',
 						'type'  => 'bool',
 					],
-					'PS_INVOICE_TAXES_BREAKDOWN' => [
+					'EPH_INVOICE_TAXES_BREAKDOWN' => [
 						'title' => $this->l('Enable tax breakdown'),
 						'desc'  => $this->l('Show a summary of tax rates when there are several taxes.'),
 						'cast'  => 'intval',
 						'type'  => 'bool',
 					],
 
-					'PS_INVOICE_USE_YEAR'        => [
+					'EPH_INVOICE_USE_YEAR'        => [
 						'title' => $this->l('Add current year to invoice number'),
 						'cast'  => 'intval',
 						'type'  => 'bool',
 					],
-					'PS_INVOICE_RESET'           => [
+					'EPH_INVOICE_RESET'           => [
 						'title' => $this->l('Reset Invoice progressive number at beginning of the year'),
 						'cast'  => 'intval',
 						'type'  => 'bool',
 					],
-					'PS_INVOICE_YEAR_POS'        => [
+					'EPH_INVOICE_YEAR_POS'        => [
 						'title'      => $this->l('Position of the year number'),
 						'cast'       => 'intval',
 						'show'       => true,
@@ -64,26 +64,26 @@ class AdminInvoiceModelsControllerCore extends AdminController {
 						],
 					],
 
-					'PS_INVOICE_LEGAL_FREE_TEXT' => [
+					'EPH_INVOICE_LEGAL_FREE_TEXT' => [
 						'title' => $this->l('Legal free text'),
 						'desc'  => $this->l('Use this field to display additional text on your invoice, like specific legal information. It will appear below the payment methods summary.'),
 						'size'  => 50,
 						'type'  => 'textareaLang',
 					],
-					'PS_INVOICE_FREE_TEXT'       => [
+					'EPH_INVOICE_FREE_TEXT'       => [
 						'title' => $this->l('Footer text'),
 						'desc'  => $this->l('This text will appear at the bottom of the invoice, below your company details.'),
 						'size'  => 50,
 						'type'  => 'textLang',
 					],
-					'PS_INVOICE_MODEL'           => [
+					'EPH_INVOICE_MODEL'           => [
 						'title'      => $this->l('Invoice model'),
 						'desc'       => $this->l('Choose an invoice model.'),
 						'type'       => 'select',
 						'identifier' => 'value',
 						'list'       => $this->getInvoicesModels(),
 					],
-					'PS_STUDENT_MODEL'           => [
+					'EPH_STUDENT_MODEL'           => [
 						'title'      => $this->l('Modèle Facturation étudiant'),
 						'desc'       => $this->l('Choose an invoice model.'),
 						'type'       => 'select',
@@ -91,7 +91,7 @@ class AdminInvoiceModelsControllerCore extends AdminController {
 						'list'       => $this->getInvoicesModels(),
 					],
 
-					'PS_PDF_USE_CACHE'           => [
+					'EPH_PDF_USE_CACHE'           => [
 						'title'      => $this->l('Use the disk as cache for PDF invoices'),
 						'desc'       => $this->l('Saves memory but slows down the PDF generation.'),
 						'validation' => 'isBool',
@@ -130,21 +130,21 @@ class AdminInvoiceModelsControllerCore extends AdminController {
 	public function setAjaxMedia() {
 
 		return $this->pushJS([
-			_PS_JS_DIR_ . 'colorpicker/jquery.colorpicker.js',
-			_PS_JS_DIR_ . 'colorpicker/i18n/jquery.ui.colorpicker-fr.js',
-			_PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-pantone.js',
-			_PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-crayola.js',
-			_PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-ral-classic.js',
-			_PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-x11.js',
-			_PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-copic.js',
-			_PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-prismacolor.js',
-			_PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-isccnbs.js',
-			_PS_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-din6164.js',
-			_PS_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-rgbslider.js',
-			_PS_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-memory.js',
-			_PS_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-swatchesswitcher.js',
-			_PS_JS_DIR_ . 'colorpicker/parsers/jquery.ui.colorpicker-cmyk-parser.js',
-			_PS_JS_DIR_ . 'colorpicker/parsers/jquery.ui.colorpicker-cmyk-percentage-parser.js',
+			_EPH_JS_DIR_ . 'colorpicker/jquery.colorpicker.js',
+			_EPH_JS_DIR_ . 'colorpicker/i18n/jquery.ui.colorpicker-fr.js',
+			_EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-pantone.js',
+			_EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-crayola.js',
+			_EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-ral-classic.js',
+			_EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-x11.js',
+			_EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-copic.js',
+			_EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-prismacolor.js',
+			_EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-isccnbs.js',
+			_EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-din6164.js',
+			_EPH_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-rgbslider.js',
+			_EPH_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-memory.js',
+			_EPH_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-swatchesswitcher.js',
+			_EPH_JS_DIR_ . 'colorpicker/parsers/jquery.ui.colorpicker-cmyk-parser.js',
+			_EPH_JS_DIR_ . 'colorpicker/parsers/jquery.ui.colorpicker-cmyk-percentage-parser.js',
 		]);
 	}
 
@@ -154,7 +154,7 @@ class AdminInvoiceModelsControllerCore extends AdminController {
 		$this->setAjaxMedia();
 
 		$extracss = $this->pushCSS([
-			_PS_JS_DIR_ . 'colorpicker/jquery.colorpicker.css',
+			_EPH_JS_DIR_ . 'colorpicker/jquery.colorpicker.css',
 		]);
 
 		$data->assign([

@@ -40,7 +40,7 @@ class AddressControllerCore extends FrontController {
             [
                 _THEME_JS_DIR_ . 'tools/vatManagement.js',
                 _THEME_JS_DIR_ . 'tools/statesManagement.js',
-                _PS_JS_DIR_ . 'validate.js',
+                _EPH_JS_DIR_ . 'validate.js',
             ]
         );
     }
@@ -144,8 +144,8 @@ class AddressControllerCore extends FrontController {
 
         if (Module::isInstalled('vatnumber')
             && Module::isEnabled('vatnumber')
-            && file_exists(_PS_MODULE_DIR_ . 'vatnumber/vatnumber.php')) {
-            include_once _PS_MODULE_DIR_ . 'vatnumber/vatnumber.php';
+            && file_exists(_EPH_MODULE_DIR_ . 'vatnumber/vatnumber.php')) {
+            include_once _EPH_MODULE_DIR_ . 'vatnumber/vatnumber.php';
 
             if (method_exists('VatNumber', 'adjustAddressForLayout')) {
                 VatNumber::adjustAddressForLayout($this->_address);
@@ -161,8 +161,8 @@ class AddressControllerCore extends FrontController {
         $this->context->smarty->assign(
             [
                 'address_validation' => Address::$definition['fields'],
-                'one_phone_at_least' => (int) Configuration::get('PS_ONE_PHONE_AT_LEAST'),
-                'onr_phone_at_least' => (int) Configuration::get('PS_ONE_PHONE_AT_LEAST'), //retro compat
+                'one_phone_at_least' => (int) Configuration::get('EPH_ONE_PHONE_AT_LEAST'),
+                'onr_phone_at_least' => (int) Configuration::get('EPH_ONE_PHONE_AT_LEAST'), //retro compat
                 'ajaxurl'            => _MODULE_DIR_,
                 'errors'             => $this->errors,
                 'token'              => Tools::getToken(false),
@@ -185,7 +185,7 @@ class AddressControllerCore extends FrontController {
             unset($this->context->cookie->account_created);
         }
 
-        $this->setTemplate(_PS_THEME_DIR_ . 'address.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'address.tpl');
     }
 
     /**
@@ -222,7 +222,7 @@ class AddressControllerCore extends FrontController {
 
         // Check phone
 
-        if (Configuration::get('PS_ONE_PHONE_AT_LEAST') && !Tools::getValue('phone') && !Tools::getValue('phone_mobile')) {
+        if (Configuration::get('EPH_ONE_PHONE_AT_LEAST') && !Tools::getValue('phone') && !Tools::getValue('phone_mobile')) {
             $this->errors[] = Tools::displayError('You must register at least one phone number.');
         }
 
@@ -267,7 +267,7 @@ class AddressControllerCore extends FrontController {
         if (!$this->context->customer->is_guest && !empty($_POST['alias']) && (int) $this->context->customer->id > 0) {
             $idAddress = Tools::getValue('id_address');
 
-            if (Configuration::get('PS_ORDER_PROCESS_TYPE') && (int) Tools::getValue('opc_id_address_' . Tools::getValue('type')) > 0) {
+            if (Configuration::get('EPH_ORDER_PROCESS_TYPE') && (int) Tools::getValue('opc_id_address_' . Tools::getValue('type')) > 0) {
                 $idAddress = Tools::getValue('opc_id_address_' . Tools::getValue('type'));
             }
 
@@ -309,7 +309,7 @@ class AddressControllerCore extends FrontController {
 
         }
 
-        if ($this->ajax && Configuration::get('PS_ORDER_PROCESS_TYPE')) {
+        if ($this->ajax && Configuration::get('EPH_ORDER_PROCESS_TYPE')) {
             $this->errors = array_unique(array_merge($this->errors, $address->validateController()));
 
             if (count($this->errors)) {
@@ -334,9 +334,9 @@ class AddressControllerCore extends FrontController {
                 $this->context->cart->autosetProductAddress();
             }
 
-            if (Tools::getValue('select_address', false) || (Tools::getValue('type') == 'invoice' && Configuration::get('PS_ORDER_PROCESS_TYPE'))) {
+            if (Tools::getValue('select_address', false) || (Tools::getValue('type') == 'invoice' && Configuration::get('EPH_ORDER_PROCESS_TYPE'))) {
                 $this->context->cart->id_address_invoice = (int) $address->id;
-            } else if (Configuration::get('PS_ORDER_PROCESS_TYPE')) {
+            } else if (Configuration::get('EPH_ORDER_PROCESS_TYPE')) {
                 $this->context->cart->id_address_invoice = (int) $this->context->cart->id_address_delivery;
             }
 
@@ -381,7 +381,7 @@ class AddressControllerCore extends FrontController {
         $this->id_country = (int) Tools::getCountry($this->_address);
         // Generate countries list
 
-        if (Configuration::get('PS_RESTRICT_DELIVERED_COUNTRIES')) {
+        if (Configuration::get('EPH_RESTRICT_DELIVERED_COUNTRIES')) {
             $countries = Carrier::getDeliveredCountries($this->context->language->id, true, true);
         } else {
             $countries = Country::getCountries($this->context->language->id, true);
@@ -435,11 +435,11 @@ class AddressControllerCore extends FrontController {
      */
     protected function assignVatNumber() {
 
-        $vatNumberExists = file_exists(_PS_MODULE_DIR_ . 'vatnumber/vatnumber.php');
+        $vatNumberExists = file_exists(_EPH_MODULE_DIR_ . 'vatnumber/vatnumber.php');
         $vatNumberManagement = Configuration::get('VATNUMBER_MANAGEMENT');
 
         if ($vatNumberManagement && $vatNumberExists) {
-            include_once _PS_MODULE_DIR_ . 'vatnumber/vatnumber.php';
+            include_once _EPH_MODULE_DIR_ . 'vatnumber/vatnumber.php';
         }
 
         if ($vatNumberManagement && $vatNumberExists && VatNumber::isApplicable((int) Tools::getCountry())) {
@@ -452,7 +452,7 @@ class AddressControllerCore extends FrontController {
 
         $this->context->smarty->assign(
             [
-                'vatnumber_ajax_call' => file_exists(_PS_MODULE_DIR_ . 'vatnumber/ajax.php'),
+                'vatnumber_ajax_call' => file_exists(_EPH_MODULE_DIR_ . 'vatnumber/ajax.php'),
                 'vat_display'         => $vatDisplay,
             ]
         );

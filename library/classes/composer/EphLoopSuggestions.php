@@ -70,7 +70,7 @@ class EphLoopSuggestions {
 			$titlefield = 'name';
 		}
 
-		$categories = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
+		$categories = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS('
         SELECT * FROM `' . _DB_PREFIX_ . 'smart_blog_category` sbc INNER JOIN `' . _DB_PREFIX_ . 'smart_blog_category_lang` sbcl ON(sbc.`id_smart_blog_category` = sbcl.`id_smart_blog_category` AND sbcl.`id_lang` = ' . (int) ($id_lang) . ')
 INNER JOIN `' . _DB_PREFIX_ . 'smart_blog_category_shop` sbs ON sbs.id_smart_blog_category = sbc.id_smart_blog_category WHERE ' . $exclude . 'sbc.`active`= 1 AND sbs.id_shop = ' . (int) Context::getContext()->shop->id . ' AND sbcl.' . $titlefield . ' LIKE "%' . $query . '%" LIMIT ' . $limit);
 
@@ -116,7 +116,7 @@ INNER JOIN `' . _DB_PREFIX_ . 'smart_blog_category_shop` sbs ON sbs.id_smart_blo
 			}
 
 			$sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'smart_blog_tag` WHERE ' . $exclude . ' id_lang=' . $id_lang . ' AND name LIKE "%' . $query . '%" LIMIT ' . $limit;
-			$categories = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+			$categories = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
 
 			if (empty($categories)) {$this->content = '';return;}
 

@@ -76,7 +76,7 @@ class BookRecordsCore extends ObjectModel {
     public static function getRecordDetailsById($idRecord) {
 
         $idLang = Context::getContext()->language->id;
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('brd.*, s.account, sl.`name` as accountName')
                 ->from('book_record_details', 'brd')

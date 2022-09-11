@@ -70,13 +70,13 @@ class ConnectionsSourceCore extends ObjectModel {
         if (isset($_SERVER['HTTP_REFERER'])) {
             // If the referrer is internal (i.e. from your own website), then we drop the connection
             $parsed = parse_url($_SERVER['HTTP_REFERER']);
-            $parsedHost = parse_url(Tools::getProtocol() . Tools::getHttpHost(false, false) . __PS_BASE_URI__);
+            $parsedHost = parse_url(Tools::getProtocol() . Tools::getHttpHost(false, false) . __EPH_BASE_URI__);
 
             if (!isset($parsed['host']) || (!isset($parsed['path']) || !isset($parsedHost['path']))) {
                 return false;
             }
 
-            if ((preg_replace('/^www./', '', $parsed['host']) == preg_replace('/^www./', '', Tools::getHttpHost(false, false))) && !strncmp($parsed['path'], $parsedHost['path'], strlen(__PS_BASE_URI__))) {
+            if ((preg_replace('/^www./', '', $parsed['host']) == preg_replace('/^www./', '', Tools::getHttpHost(false, false))) && !strncmp($parsed['path'], $parsedHost['path'], strlen(__EPH_BASE_URI__))) {
                 return false;
             }
 
@@ -131,7 +131,7 @@ class ConnectionsSourceCore extends ObjectModel {
      */
     public static function getOrderSources($idOrder) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
         SELECT cos.http_referer, cos.request_uri, cos.keywords, cos.date_add
         FROM ' . _DB_PREFIX_ . 'orders o

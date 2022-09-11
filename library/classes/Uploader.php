@@ -386,7 +386,7 @@ class UploaderCore {
     public function getSavePath() {
 
         if (!isset($this->_save_path)) {
-            $this->setSavePath(_PS_UPLOAD_DIR_);
+            $this->setSavePath(_EPH_UPLOAD_DIR_);
         }
 
         return $this->_normalizeDirectory($this->_save_path);

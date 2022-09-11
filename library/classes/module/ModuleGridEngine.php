@@ -67,7 +67,7 @@ class ModuleGridEngineCore extends Module
             return false;
         }
 
-        return Configuration::updateValue('PS_STATS_GRID_RENDER', $this->name);
+        return Configuration::updateValue('EPH_STATS_GRID_RENDER', $this->name);
     }
 
     /**
@@ -78,7 +78,7 @@ class ModuleGridEngineCore extends Module
      */
     public static function getGridEngines()
     {
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('m.`name`')
                 ->from('module', 'm')

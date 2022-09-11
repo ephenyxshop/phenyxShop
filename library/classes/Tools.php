@@ -176,7 +176,7 @@ class ToolsCore {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function redirect($url, $baseUri = __PS_BASE_URI__, Link $link = null, $headers = null) {
+    public static function redirect($url, $baseUri = __EPH_BASE_URI__, Link $link = null, $headers = null) {
 
         if (!$link) {
             $link = Context::getContext()->link;
@@ -191,7 +191,7 @@ class ToolsCore {
             if (strpos($url, 'index.php?controller=') !== false && strpos($url, 'index.php/') == 0) {
                 $url = substr($url, strlen('index.php?controller='));
 
-                if (Configuration::get('PS_REWRITING_SETTINGS')) {
+                if (Configuration::get('EPH_REWRITING_SETTINGS')) {
                     $url = Tools::strReplaceFirst('&', '?', $url);
                 }
 
@@ -248,7 +248,7 @@ class ToolsCore {
     }
 
     /**
-     * Redirect URLs already containing PS_BASE_URI
+     * Redirect URLs already containing EPH_BASE_URI
      *
      * @param string $url Desired URL
      *
@@ -259,8 +259,8 @@ class ToolsCore {
 
         if (!preg_match('@^https?://@i', $url)) {
 
-            if (strpos($url, __PS_BASE_URI__) !== false && strpos($url, __PS_BASE_URI__) == 0) {
-                $url = substr($url, strlen(__PS_BASE_URI__));
+            if (strpos($url, __EPH_BASE_URI__) !== false && strpos($url, __EPH_BASE_URI__) == 0) {
+                $url = substr($url, strlen(__EPH_BASE_URI__));
             }
 
             if (strpos($url, 'index.php?controller=') !== false && strpos($url, 'index.php/') == 0) {
@@ -305,7 +305,7 @@ class ToolsCore {
      */
     public static function getShopProtocol() {
 
-        $protocol = (Configuration::get('PS_SSL_ENABLED') || (!empty($_SERVER['HTTPS'])
+        $protocol = (Configuration::get('EPH_SSL_ENABLED') || (!empty($_SERVER['HTTPS'])
             && mb_strtolower($_SERVER['HTTPS']) != 'off')) ? 'https://' : 'http://';
 
         return $protocol;
@@ -451,11 +451,11 @@ class ToolsCore {
      */
     public static function secureReferrer($referrer) {
 
-        if (preg_match('/^http[s]?:\/\/' . Tools::getServerName() . '(:' . _PS_SSL_PORT_ . ')?\/.*$/Ui', $referrer)) {
+        if (preg_match('/^http[s]?:\/\/' . Tools::getServerName() . '(:' . _EPH_SSL_PORT_ . ')?\/.*$/Ui', $referrer)) {
             return $referrer;
         }
 
-        return __PS_BASE_URI__;
+        return __EPH_BASE_URI__;
     }
 
     /**
@@ -533,7 +533,7 @@ class ToolsCore {
 
         }
 
-        if (!Configuration::get('PS_DETECT_LANG')) {
+        if (!Configuration::get('EPH_DETECT_LANG')) {
             unset($cookie->detect_language);
         }
 
@@ -564,11 +564,11 @@ class ToolsCore {
         /* If language file not present, you must use default language file */
 
         if (!$cookie->id_lang || !Validate::isUnsignedId($cookie->id_lang)) {
-            $cookie->id_lang = (int) Configuration::get('PS_LANG_DEFAULT');
+            $cookie->id_lang = (int) Configuration::get('EPH_LANG_DEFAULT');
         }
 
         $iso = Language::getIsoById((int) $cookie->id_lang);
-        @include_once _PS_THEME_DIR_ . 'lang/' . $iso . '.php';
+        @include_once _EPH_THEME_DIR_ . 'lang/' . $iso . '.php';
 
         return $iso;
     }
@@ -630,7 +630,7 @@ class ToolsCore {
         // update language only if new id is different from old id
         // or if default language changed
         $cookieIdLang = $context->cookie->id_lang;
-        $configurationIdLang = Configuration::get('PS_LANG_DEFAULT');
+        $configurationIdLang = Configuration::get('EPH_LANG_DEFAULT');
 
         if ((($idLang = (int) Tools::getValue('id_lang')) && Validate::isUnsignedId($idLang) && $cookieIdLang != (int) $idLang)
             || (($idLang == $configurationIdLang) && Validate::isUnsignedId($idLang) && $idLang != $cookieIdLang)
@@ -644,7 +644,7 @@ class ToolsCore {
 
             $params = $_GET;
 
-            if (Configuration::get('PS_REWRITING_SETTINGS') || !Language::isMultiLanguageActivated()) {
+            if (Configuration::get('EPH_REWRITING_SETTINGS') || !Language::isMultiLanguageActivated()) {
                 unset($params['id_lang']);
             }
 
@@ -670,7 +670,7 @@ class ToolsCore {
         if (!$idCountry && isset($address) && isset($address->id_country) && $address->id_country) {
             $idCountry = (int) $address->id_country;
         } else
-        if (Configuration::get('PS_DETECT_COUNTRY') && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+        if (Configuration::get('EPH_DETECT_COUNTRY') && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
             preg_match('#(?<=-)\w\w|\w\w(?!-)#', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $array);
 
             if (is_array($array) && isset($array[0]) && Validate::isLanguageIsoCode($array[0])) {
@@ -680,7 +680,7 @@ class ToolsCore {
         }
 
         if (!isset($idCountry) || !$idCountry) {
-            $idCountry = (int) Configuration::get('PS_COUNTRY_DEFAULT');
+            $idCountry = (int) Configuration::get('EPH_COUNTRY_DEFAULT');
         }
 
         return (int) $idCountry;
@@ -713,7 +713,7 @@ class ToolsCore {
         }
 
         if (!Validate::isLoadedObject($currency) || (bool) $currency->deleted || !(bool) $currency->active) {
-            $currency = Currency::getCurrencyInstance(Configuration::get('PS_CURRENCY_DEFAULT'));
+            $currency = Currency::getCurrencyInstance(Configuration::get('EPH_CURRENCY_DEFAULT'));
         }
 
         $cookie->id_currency = (int) $currency->id;
@@ -842,14 +842,14 @@ class ToolsCore {
 
         if (is_array($tbCurrency)) {
             $currencyIso = $tbCurrency['iso_code'];
-            $currencyDecimals = (int) $tbCurrency['decimals'] * _PS_PRICE_DISPLAY_PRECISION_;
+            $currencyDecimals = (int) $tbCurrency['decimals'] * _EPH_PRICE_DISPLAY_PRECISION_;
             $currencyArray = $tbCurrency;
             $tbCurrency = new Currency();
             $tbCurrency->hydrate($currencyArray);
         } else
         if (is_object($tbCurrency)) {
             $currencyIso = $tbCurrency->iso_code;
-            $currencyDecimals = (int) $tbCurrency->decimals * _PS_PRICE_DISPLAY_PRECISION_;
+            $currencyDecimals = (int) $tbCurrency->decimals * _EPH_PRICE_DISPLAY_PRECISION_;
         } else {
             return '';
         }
@@ -866,7 +866,7 @@ class ToolsCore {
         if (!$auto) {
             $cChar = $tbCurrency->sign;
             $cFormat = $tbCurrency->format;
-            $cDecimals = (int) $tbCurrency->decimals * _PS_PRICE_DISPLAY_PRECISION_;
+            $cDecimals = (int) $tbCurrency->decimals * _EPH_PRICE_DISPLAY_PRECISION_;
             $cBlank = $tbCurrency->blank;
             $blank = ($cBlank ? ' ' : '');
             $ret = 0;
@@ -875,7 +875,7 @@ class ToolsCore {
                 $price *= -1;
             }
 
-            $price = Tools::ps_round($price, $cDecimals);
+            $price = Tools::EPH_round($price, $cDecimals);
 
             /*
                                             * If the language is RTL and the selected currency format contains spaces as thousands separator
@@ -926,7 +926,7 @@ class ToolsCore {
             return $ret;
         }
 
-        $price = Tools::ps_round($price, $currencyDecimals);
+        $price = Tools::EPH_round($price, $currencyDecimals);
         $languageIso = $context->language->language_code;
 
         $currencyRepository = new CurrencyRepository();
@@ -971,15 +971,15 @@ class ToolsCore {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function ps_round($value, $precision = 0, $roundMode = null) {
+    public static function EPH_round($value, $precision = 0, $roundMode = null) {
 
         if ($roundMode === null) {
 
             if (Tools::$round_mode == null) {
                 try {
-                    Tools::$round_mode = (int) Configuration::get('PS_PRICE_ROUND_MODE');
+                    Tools::$round_mode = (int) Configuration::get('EPH_PRICE_ROUND_MODE');
                 } catch (PhenyxShopException $e) {
-                    Tools::$round_mode = PS_ROUND_HALF_UP;
+                    Tools::$round_mode = EPH_ROUND_HALF_UP;
                 }
 
             }
@@ -988,17 +988,17 @@ class ToolsCore {
         }
 
         switch ($roundMode) {
-        case PS_ROUND_UP:
+        case EPH_ROUND_UP:
             return Tools::ceilf($value, $precision);
-        case PS_ROUND_DOWN:
+        case EPH_ROUND_DOWN:
             return Tools::floorf($value, $precision);
-        case PS_ROUND_HALF_DOWN:
-        case PS_ROUND_HALF_EVEN:
-        case PS_ROUND_HALF_ODD:
+        case EPH_ROUND_HALF_DOWN:
+        case EPH_ROUND_HALF_EVEN:
+        case EPH_ROUND_HALF_ODD:
             return Tools::math_round($value, $precision, $roundMode);
-        case PS_ROUND_HALF_UP:
+        case EPH_ROUND_HALF_UP:
         default:
-            return Tools::math_round($value, $precision, PS_ROUND_HALF_UP);
+            return Tools::math_round($value, $precision, EPH_ROUND_HALF_UP);
         }
 
     }
@@ -1071,7 +1071,7 @@ class ToolsCore {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function math_round($value, $places, $mode = PS_ROUND_HALF_UP) {
+    public static function math_round($value, $places, $mode = EPH_ROUND_HALF_UP) {
 
         //If PHP_ROUND_HALF_UP exist (PHP 5.3) use it and pass correct mode value (PhenyxShop define - 1)
 		$value = (float) $value;
@@ -1151,9 +1151,9 @@ class ToolsCore {
         if ($value >= 0.0) {
             $tmpValue = floor($value + 0.5);
 
-            if (($mode == PS_ROUND_HALF_DOWN && $value == (-0.5 + $tmpValue)) ||
-                ($mode == PS_ROUND_HALF_EVEN && $value == (0.5 + 2 * floor($tmpValue / 2.0))) ||
-                ($mode == PS_ROUND_HALF_ODD && $value == (0.5 + 2 * floor($tmpValue / 2.0) - 1.0))
+            if (($mode == EPH_ROUND_HALF_DOWN && $value == (-0.5 + $tmpValue)) ||
+                ($mode == EPH_ROUND_HALF_EVEN && $value == (0.5 + 2 * floor($tmpValue / 2.0))) ||
+                ($mode == EPH_ROUND_HALF_ODD && $value == (0.5 + 2 * floor($tmpValue / 2.0) - 1.0))
             ) {
                 $tmpValue = $tmpValue - 1.0;
             }
@@ -1161,9 +1161,9 @@ class ToolsCore {
         } else {
             $tmpValue = ceil($value - 0.5);
 
-            if (($mode == PS_ROUND_HALF_DOWN && $value == (0.5 + $tmpValue)) ||
-                ($mode == PS_ROUND_HALF_EVEN && $value == (-0.5 + 2 * ceil($tmpValue / 2.0))) ||
-                ($mode == PS_ROUND_HALF_ODD && $value == (-0.5 + 2 * ceil($tmpValue / 2.0) + 1.0))
+            if (($mode == EPH_ROUND_HALF_DOWN && $value == (0.5 + $tmpValue)) ||
+                ($mode == EPH_ROUND_HALF_EVEN && $value == (-0.5 + 2 * ceil($tmpValue / 2.0))) ||
+                ($mode == EPH_ROUND_HALF_ODD && $value == (-0.5 + 2 * ceil($tmpValue / 2.0) + 1.0))
             ) {
                 $tmpValue = $tmpValue + 1.0;
             }
@@ -1191,7 +1191,7 @@ class ToolsCore {
         static $defaultCurrency = null;
 
         if ($defaultCurrency === null) {
-            $defaultCurrency = (int) Configuration::get('PS_CURRENCY_DEFAULT');
+            $defaultCurrency = (int) Configuration::get('EPH_CURRENCY_DEFAULT');
         }
 
         if (!$context) {
@@ -1276,14 +1276,14 @@ class ToolsCore {
         }
 
         if ($currencyFrom === null) {
-            $currencyFrom = new Currency(Configuration::get('PS_CURRENCY_DEFAULT'));
+            $currencyFrom = new Currency(Configuration::get('EPH_CURRENCY_DEFAULT'));
         }
 
         if ($currencyTo === null) {
-            $currencyTo = new Currency(Configuration::get('PS_CURRENCY_DEFAULT'));
+            $currencyTo = new Currency(Configuration::get('EPH_CURRENCY_DEFAULT'));
         }
 
-        if ($currencyFrom->id == Configuration::get('PS_CURRENCY_DEFAULT')) {
+        if ($currencyFrom->id == Configuration::get('EPH_CURRENCY_DEFAULT')) {
             $amount *= $currencyTo->conversion_rate;
         } else {
             $conversionRate = ($currencyFrom->conversion_rate == 0 ? 1 : $currencyFrom->conversion_rate);
@@ -1294,7 +1294,7 @@ class ToolsCore {
         }
 
         if ($round) {
-            $amount = Tools::ps_round($amount, _EPH_PRICE_DATABASE_PRECISION_);
+            $amount = Tools::EPH_round($amount, _EPH_PRICE_DATABASE_PRECISION_);
         }
 
         return $amount;
@@ -1378,7 +1378,7 @@ class ToolsCore {
 
     protected static function throwDeprecated($error, $message, $class) {
 
-        if (_PS_DISPLAY_COMPATIBILITY_WARNING_) {
+        if (_EPH_DISPLAY_COMPATIBILITY_WARNING_) {
             trigger_error($error, E_USER_WARNING);
             Logger::addLog($message, 3, $class);
         }
@@ -1581,7 +1581,7 @@ class ToolsCore {
                 break;
             }
 
-            $relativeFile = (isset($trace['file'])) ? 'in /' . ltrim(str_replace([_PS_ROOT_DIR_, '\\'], ['', '/'], $trace['file']), '/') : '';
+            $relativeFile = (isset($trace['file'])) ? 'in /' . ltrim(str_replace([_EPH_ROOT_DIR_, '\\'], ['', '/'], $trace['file']), '/') : '';
             $currentLine = (isset($trace['line'])) ? ':' . $trace['line'] : '';
 
             echo '<li>
@@ -1800,7 +1800,7 @@ class ToolsCore {
      */
     public static function getAdminImageUrl($image = null, $entities = false) {
 
-        return Tools::getAdminUrl(basename(_PS_IMG_DIR_) . '/' . $image, $entities);
+        return Tools::getAdminUrl(basename(_EPH_IMG_DIR_) . '/' . $image, $entities);
     }
 
     /**
@@ -1816,7 +1816,7 @@ class ToolsCore {
      */
     public static function getAdminUrl($url = null, $entities = false) {
 
-        $link = Tools::getHttpHost(true) . __PS_BASE_URI__;
+        $link = Tools::getHttpHost(true) . __EPH_BASE_URI__;
 
         if (isset($url)) {
             $link .= ($entities ? Tools::htmlentitiesUTF8($url) : $url);
@@ -1854,7 +1854,7 @@ class ToolsCore {
         }
 
         if ($http) {
-            $host = (Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://') . $host;
+            $host = (Configuration::get('EPH_SSL_ENABLED') ? 'https://' : 'http://') . $host;
         }
 
         return $host;
@@ -1896,7 +1896,7 @@ class ToolsCore {
         }
 
         $idCategory = (int) $idCategory;
-        $pipe = (Configuration::get('PS_NAVIGATION_PIPE') ? Configuration::get('PS_NAVIGATION_PIPE') : '>');
+        $pipe = (Configuration::get('EPH_NAVIGATION_PIPE') ? Configuration::get('EPH_NAVIGATION_PIPE') : '>');
 
         $defaultCategory = 1;
 
@@ -1929,7 +1929,7 @@ class ToolsCore {
             return '<span class="navigation_end">'.$path.'</span>';
         }
 
-        $pipe = Configuration::get('PS_NAVIGATION_PIPE');
+        $pipe = Configuration::get('EPH_NAVIGATION_PIPE');
         if (empty($pipe)) {
             $pipe = '>';
         }
@@ -2022,9 +2022,9 @@ class ToolsCore {
             $context = Context::getContext();
         }
 
-        @include_once _PS_TRANSLATIONS_DIR_ . $context->language->iso_code . '/errors.php';
+        @include_once _EPH_TRANSLATIONS_DIR_ . $context->language->iso_code . '/errors.php';
 
-        if (defined('_PS_MODE_DEV_') && _PS_MODE_DEV_ && $string == 'Fatal error') {
+        if (defined('_EPH_MODE_DEV_') && _EPH_MODE_DEV_ && $string == 'Fatal error') {
             return ('<pre>' . print_r(debug_backtrace(), true) . '</pre>');
         }
 
@@ -2094,7 +2094,7 @@ class ToolsCore {
         }
 
         if ($allowAccentedChars === null) {
-            $allowAccentedChars = Configuration::get('PS_ALLOW_ACCENTED_CHARS_URL');
+            $allowAccentedChars = Configuration::get('EPH_ALLOW_ACCENTED_CHARS_URL');
         }
 
         $returnStr = trim($str);
@@ -2681,7 +2681,7 @@ class ToolsCore {
      */
     public static function stripslashes($string) {
 
-        if (_PS_MAGIC_QUOTES_GPC_) {
+        if (_EPH_MAGIC_QUOTES_GPC_) {
             $string = stripslashes($string);
         }
 
@@ -2895,7 +2895,7 @@ class ToolsCore {
 
         if (!Cache::isStored($cache_id)) {
             $guzzle = new \GuzzleHttp\Client([
-                'verify'  => _PS_TOOL_DIR_ . 'cacert.pem',
+                'verify'  => _EPH_TOOL_DIR_ . 'cacert.pem',
                 'timeout' => 20,
             ]);
             try {
@@ -3220,7 +3220,7 @@ class ToolsCore {
         }
 
         if ($http) {
-            $domain = (Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://') . $domain;
+            $domain = (Configuration::get('EPH_SSL_ENABLED') ? 'https://' : 'http://') . $domain;
         }
 
         return $domain;
@@ -3270,26 +3270,26 @@ class ToolsCore {
      */
     public static function generateHtaccess($path = null, $rewrite_settings = null, $cache_control = null, $specific = '', $disable_multiviews = null, $medias = false, $disable_modsec = null) {
 
-        if (defined('PS_INSTALLATION_IN_PROGRESS') && $rewrite_settings === null) {
+        if (defined('EPH_INSTALLATION_IN_PROGRESS') && $rewrite_settings === null) {
             return true;
         }
 
         // Default values for parameters
 
         if (is_null($path)) {
-            $path = _PS_ROOT_DIR_ . '/.htaccess';
+            $path = _EPH_ROOT_DIR_ . '/.htaccess';
         }
 
         if (is_null($cache_control)) {
-            $cache_control = (int) Configuration::get('PS_HTACCESS_CACHE_CONTROL');
+            $cache_control = (int) Configuration::get('EPH_HTACCESS_CACHE_CONTROL');
         }
 
         if (is_null($disable_multiviews)) {
-            $disable_multiviews = (int) Configuration::get('PS_HTACCESS_DISABLE_MULTIVIEWS');
+            $disable_multiviews = (int) Configuration::get('EPH_HTACCESS_DISABLE_MULTIVIEWS');
         }
 
         if ($disable_modsec === null) {
-            $disable_modsec = (int) Configuration::get('PS_HTACCESS_DISABLE_MODSEC');
+            $disable_modsec = (int) Configuration::get('EPH_HTACCESS_DISABLE_MODSEC');
         }
 
         // Check current content of .htaccess and save all code outside of ephenyx comments
@@ -3416,14 +3416,14 @@ class ToolsCore {
         fwrite($write_fd, 'RewriteCond %{DOCUMENT_ROOT}/$1.webp -f' . "\n");
         fwrite($write_fd, 'RewriteRule (.+)\.(jpe?g|png)$ $1.webp [T=image/webp]' . "\n");
 
-        if (!$medias && Configuration::getMultiShopValues('PS_MEDIA_SERVER_1')
-            && Configuration::getMultiShopValues('PS_MEDIA_SERVER_2')
-            && Configuration::getMultiShopValues('PS_MEDIA_SERVER_3')
+        if (!$medias && Configuration::getMultiShopValues('EPH_MEDIA_SERVER_1')
+            && Configuration::getMultiShopValues('EPH_MEDIA_SERVER_2')
+            && Configuration::getMultiShopValues('EPH_MEDIA_SERVER_3')
         ) {
             $medias = [
-                Configuration::getMultiShopValues('PS_MEDIA_SERVER_1'),
-                Configuration::getMultiShopValues('PS_MEDIA_SERVER_2'),
-                Configuration::getMultiShopValues('PS_MEDIA_SERVER_3'),
+                Configuration::getMultiShopValues('EPH_MEDIA_SERVER_1'),
+                Configuration::getMultiShopValues('EPH_MEDIA_SERVER_2'),
+                Configuration::getMultiShopValues('EPH_MEDIA_SERVER_3'),
             ];
         }
 
@@ -3447,7 +3447,7 @@ class ToolsCore {
 
         }
 
-        if (Configuration::get('PS_WEBSERVICE_CGI_HOST')) {
+        if (Configuration::get('EPH_WEBSERVICE_CGI_HOST')) {
             fwrite($write_fd, "RewriteCond %{HTTP:Authorization} ^(.*)\nRewriteRule . - [E=HTTP_AUTHORIZATION:%1]\n\n");
         }
 
@@ -3471,7 +3471,7 @@ class ToolsCore {
         		fwrite($write_fd, 'RewriteRule ^veille/(.*)$ %{ENV:REWRITEBASE}webephenyx/veille.php?url=$1 [QSA,L]' . "\n\n");
 
                 if (!$rewrite_settings) {
-                    $rewrite_settings = (int) Configuration::get('PS_REWRITING_SETTINGS', null, null, (int) $uri['id_shop']);
+                    $rewrite_settings = (int) Configuration::get('EPH_REWRITING_SETTINGS', null, null, (int) $uri['id_shop']);
                 }
 
                 $domain_rewrite_cond = 'RewriteCond %{HTTP_HOST} ^' . $domain . '$' . "\n";
@@ -3498,7 +3498,7 @@ class ToolsCore {
                     // Compatibility with the old image filesystem
                     fwrite($write_fd, "# Images\n");
 
-                    if (Configuration::get('PS_LEGACY_IMAGES')) {
+                    if (Configuration::get('EPH_LEGACY_IMAGES')) {
                         fwrite($write_fd, $media_domains);
                         fwrite($write_fd, $domain_rewrite_cond);
                         fwrite($write_fd, 'RewriteRule ^([a-z0-9]+)\-([a-z0-9]+)(\-[_a-zA-Z0-9-]*)(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}content/img/p/$1-$2$3$4.jpg [L]' . "\n");
@@ -3637,7 +3637,7 @@ FileETag none
 
         fclose($write_fd);
 
-        if (!defined('PS_INSTALLATION_IN_PROGRESS')) {
+        if (!defined('EPH_INSTALLATION_IN_PROGRESS')) {
             Hook::exec('actionHtaccessCreate');
         }
 
@@ -3654,7 +3654,7 @@ FileETag none
      */
     public static function generateIndex() {
 
-        if (defined('_DB_PREFIX_') && Configuration::get('PS_DISABLE_OVERRIDES')) {
+        if (defined('_DB_PREFIX_') && Configuration::get('EPH_DISABLE_OVERRIDES')) {
             PhenyxShopAutoload::getInstance()->_include_override_path = false;
         }
 
@@ -3671,7 +3671,7 @@ FileETag none
     public static function getDefaultIndexContent() {
 
         // Use a random, existing index.php as template.
-        $content = file_get_contents(_PS_ROOT_DIR_ . '/classes/index.php');
+        $content = file_get_contents(_EPH_ROOT_DIR_ . '/classes/index.php');
 
         // Drop the license section, we can't really claim a license for an
         // auto-generated file.
@@ -3752,7 +3752,7 @@ FileETag none
 
         $smarty = $context->smarty;
 
-        if (!Configuration::get('PS_SMARTY_CACHE')) {
+        if (!Configuration::get('EPH_SMARTY_CACHE')) {
             return;
         }
 
@@ -4019,7 +4019,7 @@ FileETag none
         switch ($type) {
         case 'by':
             $list = [0 => 'name', 1 => 'price', 2 => 'date_add', 3 => 'date_upd', 4 => 'position', 5 => 'manufacturer_name', 6 => 'quantity', 7 => 'reference'];
-            $value = (is_null($value) || $value === false || $value === '') ? (int) Configuration::get('PS_PRODUCTS_ORDER_BY') : $value;
+            $value = (is_null($value) || $value === false || $value === '') ? (int) Configuration::get('EPH_PRODUCTS_ORDER_BY') : $value;
             $value = (isset($list[$value])) ? $list[$value] : ((in_array($value, $list)) ? $value : 'position');
             $order_by_prefix = '';
 
@@ -4045,7 +4045,7 @@ FileETag none
             break;
 
         case 'way':
-            $value = (is_null($value) || $value === false || $value === '') ? (int) Configuration::get('PS_PRODUCTS_ORDER_WAY') : $value;
+            $value = (is_null($value) || $value === false || $value === '') ? (int) Configuration::get('EPH_PRODUCTS_ORDER_WAY') : $value;
             $list = [0 => 'asc', 1 => 'desc'];
 
             return ((isset($list[$value])) ? $list[$value] : ((in_array($value, $list)) ? $value : 'asc'));
@@ -4100,7 +4100,7 @@ FileETag none
 
         Tools::displayAsDeprecated();
 
-        if ($die || (defined('_PS_MODE_DEV_') && _PS_MODE_DEV_)) {
+        if ($die || (defined('_EPH_MODE_DEV_') && _EPH_MODE_DEV_)) {
             die($msg);
         }
 
@@ -4194,22 +4194,22 @@ FileETag none
 		];
 		$iterator = new AppendIterator();
         foreach ($recursive_directory as $key => $directory) {
-			if(is_dir(_PS_ROOT_DIR_ . '/' . $directory )) {
-				$iterator->append(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_PS_ROOT_DIR_ . '/' . $directory . '/')));
+			if(is_dir(_EPH_ROOT_DIR_ . '/' . $directory )) {
+				$iterator->append(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_EPH_ROOT_DIR_ . '/' . $directory . '/')));
 			}
         }
 		foreach ($iterator as $file) {
             Tools::deleteDirectory($file->getPathname());
         }
 		
-		mkdir(_PS_ROOT_DIR_ .'/includes/cache/smarty/cache', 0777, true);
-		Tools::generateIndexFiles(_PS_ROOT_DIR_ .'/includes/cache/smarty/cache/');
-		mkdir(_PS_ROOT_DIR_ .'/includes/cache/smarty/compile', 0777, true);
-		Tools::generateIndexFiles(_PS_ROOT_DIR_ .'/includes/cache/smarty/compile/');
-		mkdir(_PS_ROOT_DIR_ .'/includes/cache/purifier/CSS', 0777, true);
-		Tools::generateIndexFiles(_PS_ROOT_DIR_ .'/includes/cache/purifier/CSS/');
-		mkdir(_PS_ROOT_DIR_ .'/includes/cache/purifier/URI', 0777, true);
-		Tools::generateIndexFiles(_PS_ROOT_DIR_ .'/includes/cache/purifier/URI/');
+		mkdir(_EPH_ROOT_DIR_ .'/includes/cache/smarty/cache', 0777, true);
+		Tools::generateIndexFiles(_EPH_ROOT_DIR_ .'/includes/cache/smarty/cache/');
+		mkdir(_EPH_ROOT_DIR_ .'/includes/cache/smarty/compile', 0777, true);
+		Tools::generateIndexFiles(_EPH_ROOT_DIR_ .'/includes/cache/smarty/compile/');
+		mkdir(_EPH_ROOT_DIR_ .'/includes/cache/purifier/CSS', 0777, true);
+		Tools::generateIndexFiles(_EPH_ROOT_DIR_ .'/includes/cache/purifier/CSS/');
+		mkdir(_EPH_ROOT_DIR_ .'/includes/cache/purifier/URI', 0777, true);
+		Tools::generateIndexFiles(_EPH_ROOT_DIR_ .'/includes/cache/purifier/URI/');
     }
 
     public static function generateIndexFiles($directory) {
@@ -4236,8 +4236,8 @@ FileETag none
 
         // Change template dir if called from the BackOffice
         $current_template_dir = Context::getContext()->smarty->getTemplateDir();
-        Context::getContext()->smarty->setTemplateDir(_PS_THEME_DIR_);
-        Tools::clearCache(null, _PS_THEME_DIR_ . 'product-list-colors.tpl', Product::getColorsListCacheId((int) $id_product, false));
+        Context::getContext()->smarty->setTemplateDir(_EPH_THEME_DIR_);
+        Tools::clearCache(null, _EPH_THEME_DIR_ . 'product-list-colors.tpl', Product::getColorsListCacheId((int) $id_product, false));
         Context::getContext()->smarty->setTemplateDir($current_template_dir);
     }
 
@@ -4919,7 +4919,7 @@ FileETag none
         }
 
         if ($use_html_purifier === null) {
-            $use_html_purifier = (bool) Configuration::get('PS_USE_HTMLPURIFIER');
+            $use_html_purifier = (bool) Configuration::get('EPH_USE_HTMLPURIFIER');
         }
 
         if ($use_html_purifier) {
@@ -4929,7 +4929,7 @@ FileETag none
 
                 $config->set('Attr.EnableID', true);
                 $config->set('HTML.Trusted', true);
-                $config->set('Cache.SerializerPath', _PS_CACHE_DIR_ . 'purifier');
+                $config->set('Cache.SerializerPath', _EPH_CACHE_DIR_ . 'purifier');
                 $config->set('Attr.AllowedFrameTargets', ['_blank', '_self', '_parent', '_top']);
                 $config->set('Core.NormalizeNewlines', false);
 
@@ -4937,7 +4937,7 @@ FileETag none
                     $config->set('URI.UnescapeCharacters', implode('', $uriUnescape));
                 }
 
-                if (Configuration::get('PS_ALLOW_HTML_IFRAME')) {
+                if (Configuration::get('EPH_ALLOW_HTML_IFRAME')) {
                     $config->set('HTML.SafeIframe', true);
                     $config->set('HTML.SafeObject', true);
                     $config->set('URI.SafeIframeRegexp', '/.*/');
@@ -5006,13 +5006,13 @@ FileETag none
                 $purifier = new HTMLPurifier($config);
             }
 
-            if (_PS_MAGIC_QUOTES_GPC_) {
+            if (_EPH_MAGIC_QUOTES_GPC_) {
                 $html = stripslashes($html);
             }
 
             $html = $purifier->purify($html);
 
-            if (_PS_MAGIC_QUOTES_GPC_) {
+            if (_EPH_MAGIC_QUOTES_GPC_) {
                 $html = addslashes($html);
             }
 
@@ -5728,7 +5728,7 @@ FileETag none
      */
     public static function getTimeZone() {
 
-        $timezone = Configuration::get('PS_TIMEZONE');
+        $timezone = Configuration::get('EPH_TIMEZONE');
 
         if (!$timezone) {
             // Fallback use php timezone settings.
@@ -5916,13 +5916,13 @@ FileETag none
         $context = Context::getContext();
 
         $htmlContent = $postfields['htmlContent'];
-        $tpl = $context->smarty->createTemplate(_PS_MAIL_DIR_ . 'header.tpl');
+        $tpl = $context->smarty->createTemplate(_EPH_MAIL_DIR_ . 'header.tpl');
         $tpl->assign([
             'title'        => $postfields['subject'],
-            'logoMailLink' => 'https://' . Configuration::get('PS_SHOP_URL') . '/img/' . Configuration::get('PS_LOGO_MAIL'),
+            'logoMailLink' => 'https://' . Configuration::get('EPH_SHOP_URL') . '/img/' . Configuration::get('EPH_LOGO_MAIL'),
         ]);
         $header = $tpl->fetch();
-        $tpl = $context->smarty->createTemplate(_PS_MAIL_DIR_ . 'footer.tpl');
+        $tpl = $context->smarty->createTemplate(_EPH_MAIL_DIR_ . 'footer.tpl');
         $tpl->assign([
             'tag' => Configuration::get('EPH_FOOTER_EMAIL'),
         ]);
@@ -6287,11 +6287,11 @@ FileETag none
     public static function generateThemeJson() {
 
         $iterator = new AppendIterator();
-        $iterator->append(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_PS_ROOT_DIR_ . _EPH_THEMES_DIR_.'phenyx-theme-default/')));
+        $iterator->append(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_EPH_ROOT_DIR_ . _EPH_THEMES_DIR_.'phenyx-theme-default/')));
 
         foreach ($iterator as $file) {
             $filePath = $file->getPathname();
-            $filePath = str_replace(_PS_ROOT_DIR_, '', $filePath);
+            $filePath = str_replace(_EPH_ROOT_DIR_, '', $filePath);
 
             if (in_array($file->getFilename(), ['.', '..', 'index.php', 'index.tpl', 'list-services-container.tpl', 'list-certifications-container.tpl', '.htaccess', 'custom.css', 'root.css', 'fonts.css'])) {
                 continue;
@@ -6388,17 +6388,17 @@ FileETag none
         $iterator = new AppendIterator();
 
         foreach ($recursive_directory as $key => $directory) {
-			if(is_dir(_PS_ROOT_DIR_ . '/' . $directory )) {
-				$iterator->append(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_PS_ROOT_DIR_ . '/' . $directory . '/')));
+			if(is_dir(_EPH_ROOT_DIR_ . '/' . $directory )) {
+				$iterator->append(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_EPH_ROOT_DIR_ . '/' . $directory . '/')));
 			}
         }
-		$iterator->append(new DirectoryIterator(_PS_ROOT_DIR_ . '/../administration'));
-		$iterator->append(new DirectoryIterator(_PS_ROOT_DIR_ . '/app'));
+		$iterator->append(new DirectoryIterator(_EPH_ROOT_DIR_ . '/../administration'));
+		$iterator->append(new DirectoryIterator(_EPH_ROOT_DIR_ . '/app'));
 
 
         foreach ($iterator as $file) {
             $filePath = $file->getPathname();
-            $filePath = str_replace(_PS_ROOT_DIR_, '', $filePath);
+            $filePath = str_replace(_EPH_ROOT_DIR_, '', $filePath);
 			if (strpos($filePath, '/smarty/compile') !== false) {
 				continue;
 			}
@@ -6703,7 +6703,7 @@ FileETag none
 		
         $map_seeting = [];
 		
-        $seetings = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $seetings = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('cml.name, c.*, ccl.`name` as `category`, cml.`description`')
                 ->from('composer_map', 'c')
@@ -6763,7 +6763,7 @@ FileETag none
         foreach ($seetings as &$seeting) {
 			
 			
-            $params = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $params = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('cpt.`value`as `type`, cmpl.heading, cmp.*, cmpl.description, cmpl.param_group as `group`')
                     ->from('composer_map_params', 'cmp')
@@ -6789,7 +6789,7 @@ FileETag none
 				if($param['param_name'] == 'img_size') {
 					$param['values'] = Tools::getComposerImageTypes();
 				} else {
-					$values = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+					$values = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 						(new DbQuery())
 						->select('cv.`value_key`, cvl.`name`')
 						->from('composer_value', 'cv')
@@ -6834,7 +6834,7 @@ FileETag none
 	
 	public static function getComposerImageTypes() {
 		
-		 $images_types = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		 $images_types = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('vc_image_type')
@@ -6863,7 +6863,7 @@ FileETag none
 
         foreach ($att_ids as $th_id) {
 
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('*')
                     ->from('vc_media')
@@ -6908,7 +6908,7 @@ FileETag none
 	
 	public static function getImageTypeByName($name) {
 		
-		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+		$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('*')
                     ->from('vc_image_type')
@@ -7213,7 +7213,7 @@ FileETag none
 		
 		$income = [];
 	
-		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS(
+		$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS(
                 '
             SELECT
             LEFT(`session_date`, 10) as date
@@ -7416,13 +7416,13 @@ FileETag none
 		
 		$iterator = new AppendIterator();
 
-		$iterator->append(new DirectoryIterator(_PS_ROOT_DIR_ . '/includes/plugins'));
+		$iterator->append(new DirectoryIterator(_EPH_ROOT_DIR_ . '/includes/plugins'));
 		foreach ($iterator as $file) {
 			if (in_array($file->getFilename(), ['.', '..', '.htaccess', 'index.php'])) {
                 continue;
     		}
 			$filePath = $file->getPathname();
-			$module = str_replace(_PS_ROOT_DIR_ . '/includes/plugins/', '', $filePath);
+			$module = str_replace(_EPH_ROOT_DIR_ . '/includes/plugins/', '', $filePath);
 			if(file_exists($filePath.'/'.$module.'.php')) {
 				$folder[] = $module;
 			} else {
@@ -7435,7 +7435,7 @@ FileETag none
 				if(in_array($module->name, $folder)) {
 					$moduletochecks[] = $module->name;
 				} else {
-					$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+					$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
        					(new DbQuery())
            				->select('`id_hook`')
            				->from('hook_module')
@@ -7454,13 +7454,13 @@ FileETag none
 			} 
 		}
 		$iterator = new AppendIterator();
-		$iterator->append(new DirectoryIterator(_PS_THEME_DIR_ . 'css/plugins'));
+		$iterator->append(new DirectoryIterator(_EPH_THEME_DIR_ . 'css/plugins'));
 		foreach ($iterator as $file) {
 			if (in_array($file->getFilename(), ['.', '..', '.htaccess', 'index.php'])) {
                 continue;
     		}
 			$filePath = $file->getPathname();
-			$filePath = str_replace(_PS_THEME_DIR_ . 'css/plugins/', '', $filePath);
+			$filePath = str_replace(_EPH_THEME_DIR_ . 'css/plugins/', '', $filePath);
 			if(in_array($filePath, $moduletochecks)) {
 				
 			} else {
@@ -7468,13 +7468,13 @@ FileETag none
 			}	
 		}
 		$iterator = new AppendIterator();
-		$iterator->append(new DirectoryIterator(_PS_THEME_DIR_ . 'js/plugins'));
+		$iterator->append(new DirectoryIterator(_EPH_THEME_DIR_ . 'js/plugins'));
 		foreach ($iterator as $file) {
 			if (in_array($file->getFilename(), ['.', '..', '.htaccess', 'index.php'])) {
                 continue;
     		}
 			$filePath = $file->getPathname();
-			$filePath = str_replace(_PS_THEME_DIR_ . 'js/plugins/', '', $filePath);
+			$filePath = str_replace(_EPH_THEME_DIR_ . 'js/plugins/', '', $filePath);
 			if(in_array($filePath, $moduletochecks)) {
 				
 			} else {
@@ -7482,13 +7482,13 @@ FileETag none
 			}		
 		}
 		$iterator = new AppendIterator();
-		$iterator->append(new DirectoryIterator(_PS_THEME_DIR_ . 'plugins'));
+		$iterator->append(new DirectoryIterator(_EPH_THEME_DIR_ . 'plugins'));
 		foreach ($iterator as $file) {
 			if (in_array($file->getFilename(), ['.', '..', '.htaccess', 'index.php'])) {
                 continue;
 			}
 			$filePath = $file->getPathname();
-			$filePath = str_replace(_PS_THEME_DIR_ . 'plugins/', '', $filePath);
+			$filePath = str_replace(_EPH_THEME_DIR_ . 'plugins/', '', $filePath);
 			if(in_array($filePath, $moduletochecks)) {
 				
 			} else {

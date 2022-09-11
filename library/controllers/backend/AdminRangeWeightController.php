@@ -26,8 +26,8 @@ class AdminRangeWeightControllerCore extends AdminController {
         $this->fields_list = [
             'id_range_weight' => ['title' => $this->l('ID'), 'align' => 'center', 'width' => 25],
             'carrier_name'    => ['title' => $this->l('Carrier'), 'align' => 'left', 'width' => 'auto', 'filter_key' => 'ca!name'],
-            'delimiter1'      => ['title' => $this->l('From'), 'width' => 86, 'type' => 'float', 'suffix' => Configuration::get('PS_WEIGHT_UNIT'), 'align' => 'right'],
-            'delimiter2'      => ['title' => $this->l('To'), 'width' => 86, 'type' => 'float', 'suffix' => Configuration::get('PS_WEIGHT_UNIT'), 'align' => 'right'],
+            'delimiter1'      => ['title' => $this->l('From'), 'width' => 86, 'type' => 'float', 'suffix' => Configuration::get('EPH_WEIGHT_UNIT'), 'align' => 'right'],
+            'delimiter2'      => ['title' => $this->l('To'), 'width' => 86, 'type' => 'float', 'suffix' => Configuration::get('EPH_WEIGHT_UNIT'), 'align' => 'right'],
         ];
 
         $this->_join = 'LEFT JOIN ' . _DB_PREFIX_ . 'carrier ca ON (ca.`id_carrier` = a.`id_carrier`)';
@@ -66,7 +66,7 @@ class AdminRangeWeightControllerCore extends AdminController {
      */
     public function renderForm() {
 
-        $carriers = Carrier::getCarriers($this->context->language->id, true, false, false, null, Carrier::PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE);
+        $carriers = Carrier::getCarriers($this->context->language->id, true, false, false, null, Carrier::EPH_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE);
 
         foreach ($carriers as $key => $carrier) {
 
@@ -100,7 +100,7 @@ class AdminRangeWeightControllerCore extends AdminController {
                     'label'    => $this->l('From'),
                     'name'     => 'delimiter1',
                     'required' => true,
-                    'suffix'   => Configuration::get('PS_WEIGHT_UNIT'),
+                    'suffix'   => Configuration::get('EPH_WEIGHT_UNIT'),
                     'hint'     => $this->l('Start range (included).'),
                 ],
                 [
@@ -108,7 +108,7 @@ class AdminRangeWeightControllerCore extends AdminController {
                     'label'    => $this->l('To'),
                     'name'     => 'delimiter2',
                     'required' => true,
-                    'suffix'   => Configuration::get('PS_WEIGHT_UNIT'),
+                    'suffix'   => Configuration::get('EPH_WEIGHT_UNIT'),
                     'hint'     => $this->l('End range (excluded).'),
                 ],
             ],

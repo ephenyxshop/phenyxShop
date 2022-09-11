@@ -58,7 +58,7 @@ class CategoryControllerCore extends FrontController {
             return;
         }
 
-        if (!Validate::isLoadedObject($this->category) || in_array($this->category->id, [Configuration::get('PS_HOME_CATEGORY'), Configuration::get('PS_ROOT_CATEGORY')])) {
+        if (!Validate::isLoadedObject($this->category) || in_array($this->category->id, [Configuration::get('EPH_HOME_CATEGORY'), Configuration::get('EPH_ROOT_CATEGORY')])) {
             $this->redirect_after = '404';
             $this->redirect();
         }
@@ -128,7 +128,7 @@ class CategoryControllerCore extends FrontController {
             $this->category->description = JsComposer::do_shortcode($description);
         }
 
-        $this->setTemplate(_PS_THEME_DIR_ . 'category.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'category.tpl');
 
         if (!$this->customer_access) {
             return;
@@ -153,13 +153,13 @@ class CategoryControllerCore extends FrontController {
                 'id_category_parent'   => (int) $this->category->id_parent,
                 'return_category_name' => Tools::safeOutput($this->category->name),
                 'path'                 => Tools::getPath($this->category->id),
-                'add_prod_display'     => Configuration::get('PS_ATTRIBUTE_CATEGORY_DISPLAY'),
+                'add_prod_display'     => Configuration::get('EPH_ATTRIBUTE_CATEGORY_DISPLAY'),
                 'categorySize'         => Image::getSize(ImageType::getFormatedName('category')),
                 'mediumSize'           => Image::getSize(ImageType::getFormatedName('medium')),
                 'thumbSceneSize'       => Image::getSize(ImageType::getFormatedName('m_scene')),
                 'homeSize'             => Image::getSize(ImageType::getFormatedName('home')),
-                'allow_oosp'           => (int) Configuration::get('PS_ORDER_OUT_OF_STOCK'),
-                'comparator_max_item'  => (int) Configuration::get('PS_COMPARATOR_MAX_ITEM'),
+                'allow_oosp'           => (int) Configuration::get('EPH_ORDER_OUT_OF_STOCK'),
+                'comparator_max_item'  => (int) Configuration::get('EPH_COMPARATOR_MAX_ITEM'),
                 'body_classes'         => [$this->php_self . '-' . $this->category->id, $this->php_self . '-' . $this->category->link_rewrite],
             ]
         );

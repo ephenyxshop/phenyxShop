@@ -54,8 +54,8 @@ class AdminPieceStatusesControllerCore extends AdminController {
 	public function setAjaxMedia() {
 
 		return $this->pushJS([
-			_PS_JS_DIR_ . 'tinymce/tinymce.min.js',
-			_PS_JS_DIR_ . 'tinymce.inc.js',
+			_EPH_JS_DIR_ . 'tinymce/tinymce.min.js',
+			_EPH_JS_DIR_ . 'tinymce.inc.js',
 		]);
 	}
 
@@ -179,7 +179,7 @@ class AdminPieceStatusesControllerCore extends AdminController {
 
 	public function getCustomerPieceStateRequest() {
 
-		$orders = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$orders = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('a.*, b.name, b.template')
 				->from('customer_piece_state', 'a')
@@ -626,8 +626,8 @@ class AdminPieceStatusesControllerCore extends AdminController {
 
 				foreach (Language::getIDs(false) as $idLang) {
 
-					if (file_exists(_PS_ROOT_DIR_ . '/mails/fr/' . $this->object->template[$idLang] . '.tpl')) {
-						$this->fields_value['viewTemplate'][$idLang] = file_get_contents(_PS_ROOT_DIR_ . '/mails/fr/' . $this->object->template[$idLang] . '.tpl');
+					if (file_exists(_EPH_ROOT_DIR_ . '/mails/fr/' . $this->object->template[$idLang] . '.tpl')) {
+						$this->fields_value['viewTemplate'][$idLang] = file_get_contents(_EPH_ROOT_DIR_ . '/mails/fr/' . $this->object->template[$idLang] . '.tpl');
 					}
 
 				}
@@ -758,7 +758,7 @@ class AdminPieceStatusesControllerCore extends AdminController {
 					$formatter = new Formatter();
 					$content = str_replace('&gt;', '>', Tools::getValue('viewTemplate_' . $idLang));
 					$output = $formatter->format($content);
-					$file = fopen(_PS_ROOT_DIR_ . "/mails/fr/" . $CustomerPieceState->template[$idLang] . '.tpl', "w");
+					$file = fopen(_EPH_ROOT_DIR_ . "/mails/fr/" . $CustomerPieceState->template[$idLang] . '.tpl', "w");
 					fwrite($file, $output);
 				}
 
@@ -787,14 +787,14 @@ class AdminPieceStatusesControllerCore extends AdminController {
 
 			// If there is no folder for the given iso_code in /mails or in /themes/[theme_name]/mails, we bypass this language
 
-			if (!@filemtime(_PS_ADMIN_DIR_ . '/' . $defaultPath . $isoCode) && !@filemtime(_PS_ADMIN_DIR_ . '/' . $themePath . $isoCode)) {
+			if (!@filemtime(_EPH_ADMIN_DIR_ . '/' . $defaultPath . $isoCode) && !@filemtime(_EPH_ADMIN_DIR_ . '/' . $themePath . $isoCode)) {
 				continue;
 			}
 
-			$themeTemplatesDir = _PS_ADMIN_DIR_ . '/' . $themePath . $isoCode;
+			$themeTemplatesDir = _EPH_ADMIN_DIR_ . '/' . $themePath . $isoCode;
 			$themeTemplates = is_dir($themeTemplatesDir) ? scandir($themeTemplatesDir) : [];
 			// We merge all available emails in one array
-			$templates = array_unique(array_merge(scandir(_PS_ADMIN_DIR_ . '/' . $defaultPath . $isoCode), $themeTemplates));
+			$templates = array_unique(array_merge(scandir(_EPH_ADMIN_DIR_ . '/' . $defaultPath . $isoCode), $themeTemplates));
 
 			foreach ($templates as $key => $template) {
 

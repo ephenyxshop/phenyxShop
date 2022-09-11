@@ -164,7 +164,7 @@ class AdminCmsCategoriesControllerCore extends AdminController {
             $this->editObject = 'Ajouter une nouvelle catégorie CMS';
         }
 
-        $this->tpl_form_vars['PS_ALLOW_ACCENTED_CHARS_URL'] = (int) Configuration::get('PS_ALLOW_ACCENTED_CHARS_URL');
+        $this->tpl_form_vars['EPH_ALLOW_ACCENTED_CHARS_URL'] = (int) Configuration::get('EPH_ALLOW_ACCENTED_CHARS_URL');
 
         return parent::renderForm();
     }

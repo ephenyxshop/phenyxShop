@@ -140,7 +140,7 @@ abstract class PaymentModuleCore extends Module {
         $id_currency = $currency_special ? (int) $currency_special : (int) $this->context->cart->id_currency;
         $this->context->currency = new Currency((int) $id_currency, null, (int) $this->context->shop->id);
 
-        if (Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_delivery') {
+        if (Configuration::get('EPH_TAX_ADDRESS_TYPE') == 'id_address_delivery') {
             $context_country = $this->context->country;
         }
 
@@ -191,7 +191,7 @@ abstract class PaymentModuleCore extends Module {
            
 
             $order_creation_failed = false;
-            $cart_total_paid = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH), 2);
+            $cart_total_paid = (float) Tools::EPH_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH), 2);
 
             foreach ($cart_delivery_option as $id_address => $key_carriers) {
 
@@ -220,7 +220,7 @@ abstract class PaymentModuleCore extends Module {
 
                         if (isset($this->context->cookie) && isset($this->context->cookie->id_customer) && $this->context->cookie->id_customer && !empty($rule->code)) {
 
-                            if (Configuration::get('PS_ORDER_PROCESS_TYPE') == 1) {
+                            if (Configuration::get('EPH_ORDER_PROCESS_TYPE') == 1) {
                                 Tools::redirect('index.php?controller=order-opc&submitAddDiscount=1&discount_name=' . urlencode($rule->code));
                             }
 
@@ -243,7 +243,7 @@ abstract class PaymentModuleCore extends Module {
                     /** @var Order $order */
                     $piece = new CustomerPieces();
 
-                    if (Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_delivery') {
+                    if (Configuration::get('EPH_TAX_ADDRESS_TYPE') == 'id_address_delivery') {
                         $address = new Address((int) $id_address);
                         $this->context->country = new Country((int) $address->id_country, (int) $this->context->cart->id_lang);
 
@@ -298,13 +298,13 @@ abstract class PaymentModuleCore extends Module {
 
                     $piece->module = $this->name;
 
-                    $piece->total_paid = (float) Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH, $package['product_list'], $id_carrier), _PS_PRICE_COMPUTE_PRECISION_);
+                    $piece->total_paid = (float) Tools::EPH_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH, $package['product_list'], $id_carrier), _EPH_PRICE_COMPUTE_PRECISION_);
                     $piece->id_carrier = $id_carrier;
                     $piece->id_address_delivery = (int) $id_address;
                     $piece->id_address_invoice = (int) $this->context->cart->id_address_invoice;
                     $piece->conversion_rate = $this->context->currency->conversion_rate;
-                    $piece->round_mode = Configuration::get('PS_PRICE_ROUND_MODE');
-                    $piece->round_type = Configuration::get('PS_ROUND_TYPE');
+                    $piece->round_mode = Configuration::get('EPH_PRICE_ROUND_MODE');
+                    $piece->round_type = Configuration::get('EPH_ROUND_TYPE');
                     $piece->piece_number = $pieceNumber;
                     $piece->validate = 0;
 
@@ -387,10 +387,10 @@ abstract class PaymentModuleCore extends Module {
                     $product_var_tpl_list = [];
 
                     foreach ($package['product_list'] as $product) {
-                        $price = Product::getPriceStatic((int) $product['id_product'], false, ($product['id_product_attribute'] ? (int) $product['id_product_attribute'] : null), 6, null, false, true, $product['cart_quantity'], false, (int) $piece->id_customer, (int) $piece->id_cart, (int) $piece->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
-                        $price_wt = Product::getPriceStatic((int) $product['id_product'], true, ($product['id_product_attribute'] ? (int) $product['id_product_attribute'] : null), 2, null, false, true, $product['cart_quantity'], false, (int) $piece->id_customer, (int) $piece->id_cart, (int) $piece->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
+                        $price = Product::getPriceStatic((int) $product['id_product'], false, ($product['id_product_attribute'] ? (int) $product['id_product_attribute'] : null), 6, null, false, true, $product['cart_quantity'], false, (int) $piece->id_customer, (int) $piece->id_cart, (int) $piece->{Configuration::get('EPH_TAX_ADDRESS_TYPE')});
+                        $price_wt = Product::getPriceStatic((int) $product['id_product'], true, ($product['id_product_attribute'] ? (int) $product['id_product_attribute'] : null), 2, null, false, true, $product['cart_quantity'], false, (int) $piece->id_customer, (int) $piece->id_cart, (int) $piece->{Configuration::get('EPH_TAX_ADDRESS_TYPE')});
 
-                        $product_price = Product::getTaxCalculationMethod() == PS_TAX_EXC ? Tools::ps_round($price, 2) : $price_wt;
+                        $product_price = Product::getTaxCalculationMethod() == EPH_TAX_EXC ? Tools::EPH_round($price, 2) : $price_wt;
 
                         $product_var_tpl = [
                             'reference'     => $product['reference'],
@@ -518,7 +518,7 @@ abstract class PaymentModuleCore extends Module {
                             if ($voucher->add()) {
                                 // If the voucher has conditions, they are now copied to the new voucher
                                 CartRule::copyConditions($cart_rule['obj']->id, $voucher->id);
-                                $tpl = $this->context->smarty->createTemplate(_PS_MAIL_DIR_ . '/voucher.tpl');
+                                $tpl = $this->context->smarty->createTemplate(_EPH_MAIL_DIR_ . '/voucher.tpl');
                                 $tpl->assign([
                                     'voucher_amount' => Tools::displayPrice($voucher->reduction_amount, $this->context->currency, false),
                                     'voucher_num'    => $voucher->code,
@@ -529,8 +529,8 @@ abstract class PaymentModuleCore extends Module {
                                 ]);
                                 $postfields = [
                                     'sender'      => [
-                                        'name'  => "Sevice Commerciale " . Configuration::get('PS_SHOP_NAME'),
-                                        'email' => 'no-reply@' . Configuration::get('PS_SHOP_URL'),
+                                        'name'  => "Sevice Commerciale " . Configuration::get('EPH_SHOP_NAME'),
+                                        'email' => 'no-reply@' . Configuration::get('EPH_SHOP_URL'),
                                     ],
                                     'to'          => [
                                         [
@@ -556,7 +556,7 @@ abstract class PaymentModuleCore extends Module {
 
                         $piece->addCartRule($cart_rule['obj']->id, $cart_rule['obj']->name, $values, 0, $cart_rule['obj']->free_shipping);
 
-                        if ($id_order_state != Configuration::get('PS_OS_ERROR') && $id_order_state != Configuration::get('PS_OS_CANCELED') && !in_array($cart_rule['obj']->id, $cart_rule_used)) {
+                        if ($id_order_state != Configuration::get('EPH_OS_ERROR') && $id_order_state != Configuration::get('EPH_OS_CANCELED') && !in_array($cart_rule['obj']->id, $cart_rule_used)) {
                             $cart_rule_used[] = $cart_rule['obj']->id;
 
                             // Create a new instance of Cart Rule without id_lang, in order to update its quantity
@@ -635,10 +635,10 @@ abstract class PaymentModuleCore extends Module {
 
                     // Switch to back order if needed
 
-                    if (Configuration::get('PS_STOCK_MANAGEMENT') && ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock <= 0)) {
+                    if (Configuration::get('EPH_STOCK_MANAGEMENT') && ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock <= 0)) {
                         $history = new CustomerPiecesHistory();
                         $history->id_customer_piece = (int) $piece->id;
-                        $history->changeIdOrderState(Configuration::get($piece->validate ? 'PS_OS_OUTOFSTOCK_PAID' : 'PS_OS_OUTOFSTOCK_UNPAID'), $piece, true);
+                        $history->changeIdOrderState(Configuration::get($piece->validate ? 'EPH_OS_OUTOFSTOCK_PAID' : 'EPH_OS_OUTOFSTOCK_UNPAID'), $piece, true);
                         $history->add();
                     }
 
@@ -697,7 +697,7 @@ abstract class PaymentModuleCore extends Module {
                         'discounts'            => $cart_rules_list_html,
                         'discounts_txt'        => $cart_rules_list_txt,
                         'total_paid'           => Tools::displayPrice($piece->total_paid, $this->context->currency, false),
-                        'total_products'       => Tools::displayPrice(Product::getTaxCalculationMethod() == PS_TAX_EXC ? $piece->total_products : $piece->total_products_wt, $this->context->currency, false),
+                        'total_products'       => Tools::displayPrice(Product::getTaxCalculationMethod() == EPH_TAX_EXC ? $piece->total_products : $piece->total_products_wt, $this->context->currency, false),
                         'total_discounts'      => Tools::displayPrice($piece->total_discounts, $this->context->currency, false),
                         'total_shipping'       => Tools::displayPrice($piece->total_shipping, $this->context->currency, false),
                         'total_wrapping'       => Tools::displayPrice($piece->total_wrapping, $this->context->currency, false),
@@ -709,7 +709,7 @@ abstract class PaymentModuleCore extends Module {
                     
                     $fileName = $piece->printPdf();
                     $fileAttachement[] = [
-                        'content' => chunk_split(base64_encode(file_get_contents(_PS_INVOICE_DIR_ . $fileName))),
+                        'content' => chunk_split(base64_encode(file_get_contents(_EPH_INVOICE_DIR_ . $fileName))),
                         'name'    => $fileName,
                     ];
 
@@ -720,7 +720,7 @@ abstract class PaymentModuleCore extends Module {
                     $template = PaymentModule::getMailTemplate($id_order_state, $piece->id_lang);
 
                     if (Validate::isEmail($this->context->customer->email)) {
-                        $tpl = Context::getContext()->smarty->createTemplate(_PS_MAIL_DIR_ . '/' . $template . '.tpl');
+                        $tpl = Context::getContext()->smarty->createTemplate(_EPH_MAIL_DIR_ . '/' . $template . '.tpl');
 
                         foreach ($data as $key => $value) {
                             $tpl->assign($key, $value);
@@ -728,8 +728,8 @@ abstract class PaymentModuleCore extends Module {
 
                         $postfields = [
                             'sender'      => [
-                                'name'  => "Service Commerciale " . Configuration::get('PS_SHOP_NAME'),
-                                'email' => Configuration::get('PS_SHOP_EMAIL'),
+                                'name'  => "Service Commerciale " . Configuration::get('EPH_SHOP_NAME'),
+                                'email' => Configuration::get('EPH_SHOP_EMAIL'),
                             ],
                             'to'          => [
                                 [
@@ -739,8 +739,8 @@ abstract class PaymentModuleCore extends Module {
                             ],
                             'cc'          => [
                                 [
-                                    'name'  => "Sevice Commercial " . Configuration::get('PS_SHOP_NAME'),
-                                    'email' => Configuration::get('PS_SHOP_EMAIL'),
+                                    'name'  => "Sevice Commercial " . Configuration::get('EPH_SHOP_NAME'),
+                                    'email' => Configuration::get('EPH_SHOP_EMAIL'),
                                 ],
                             ],
                             'subject'     => 'Confirmation de commande',
@@ -751,7 +751,7 @@ abstract class PaymentModuleCore extends Module {
 
                     }
 
-                    if (Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT')) {
+                    if (Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT')) {
                         $product_list = $piece->getProducts();
 
                         foreach ($product_list as $product) {
@@ -797,7 +797,7 @@ abstract class PaymentModuleCore extends Module {
 
     public static function getMailTemplate($id_order_state, $idLang) {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`template`')
                 ->from('customer_piece_state_lang')
@@ -866,7 +866,7 @@ abstract class PaymentModuleCore extends Module {
             } else
 
             if ($currency == -2) {
-                $id_currency = (int) Configuration::get('PS_CURRENCY_DEFAULT');
+                $id_currency = (int) Configuration::get('EPH_CURRENCY_DEFAULT');
             } else {
                 $id_currency = $currency;
             }
@@ -946,10 +946,10 @@ abstract class PaymentModuleCore extends Module {
 
     protected function getEmailTemplateContent($template_name, $var) {
 
-        $email_configuration = Configuration::get('PS_MAIL_TYPE');
+        $email_configuration = Configuration::get('EPH_MAIL_TYPE');
 
-        $theme_template_path = _PS_THEME_DIR_ . 'mails' . DIRECTORY_SEPARATOR . $template_name;
-        $default_mail_template_path = _PS_MAIL_DIR_ . $template_name;
+        $theme_template_path = _EPH_THEME_DIR_ . 'mails' . DIRECTORY_SEPARATOR . $template_name;
+        $default_mail_template_path = _EPH_MAIL_DIR_ . $template_name;
 
         if (Tools::file_exists_cache($theme_template_path)) {
             $default_mail_template_path = $theme_template_path;

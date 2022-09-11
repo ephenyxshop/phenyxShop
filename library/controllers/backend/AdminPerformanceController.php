@@ -78,12 +78,12 @@ class AdminPerformanceControllerCore extends AdminController {
         $data = $this->createTemplate('controllers/performance/smarty.tpl');
 
         $data->assign([
-            'smarty_force_compile' => Configuration::get('PS_SMARTY_FORCE_COMPILE'),
-            'smarty_cache'         => Configuration::get('PS_SMARTY_CACHE'),
-            'smarty_caching_type'  => Configuration::get('PS_SMARTY_CACHING_TYPE'),
-            'smarty_clear_cache'   => Configuration::get('PS_SMARTY_CLEAR_CACHE'),
-            'smarty_console'       => Configuration::get('PS_SMARTY_CONSOLE'),
-            'smarty_console_key'   => Configuration::get('PS_SMARTY_CONSOLE_KEY'),
+            'smarty_force_compile' => Configuration::get('EPH_SMARTY_FORCE_COMPILE'),
+            'smarty_cache'         => Configuration::get('EPH_SMARTY_CACHE'),
+            'smarty_caching_type'  => Configuration::get('EPH_SMARTY_CACHING_TYPE'),
+            'smarty_clear_cache'   => Configuration::get('EPH_SMARTY_CLEAR_CACHE'),
+            'smarty_console'       => Configuration::get('EPH_SMARTY_CONSOLE'),
+            'smarty_console_key'   => Configuration::get('EPH_SMARTY_CONSOLE_KEY'),
         ]);
 
         return $data->fetch();
@@ -106,15 +106,15 @@ class AdminPerformanceControllerCore extends AdminController {
         $data = $this->createTemplate('controllers/performance/compression.tpl');
 
         $data->assign([
-            'PS_CSS_THEME_CACHE'                => Configuration::get('PS_CSS_THEME_CACHE'),
-            'PS_JS_THEME_CACHE'                 => Configuration::get('PS_JS_THEME_CACHE'),
-            'PS_JS_HTML_THEME_COMPRESSION'      => Configuration::get('PS_JS_HTML_THEME_COMPRESSION'),
-            'PS_HTACCESS_CACHE_CONTROL'         => Configuration::get('PS_HTACCESS_CACHE_CONTROL'),
-            'PS_JS_DEFER'                       => Configuration::get('PS_JS_DEFER'),
-            'PS_CSS_BACKOFFICE_CACHE'           => Configuration::get('PS_CSS_BACKOFFICE_CACHE'),
-            'PS_JS_BACKOFFICE_CACHE'            => Configuration::get('PS_JS_BACKOFFICE_CACHE'),
-            'PS_JS_HTML_BACKOFFICE_COMPRESSION' => Configuration::get('PS_JS_HTML_BACKOFFICE_COMPRESSION'),
-            'PS_JS_BACKOFFICE_DEFER'            => Configuration::get('PS_JS_BACKOFFICE_DEFER'),
+            'EPH_CSS_THEME_CACHE'                => Configuration::get('EPH_CSS_THEME_CACHE'),
+            'EPH_JS_THEME_CACHE'                 => Configuration::get('EPH_JS_THEME_CACHE'),
+            'EPH_JS_HTML_THEME_COMPRESSION'      => Configuration::get('EPH_JS_HTML_THEME_COMPRESSION'),
+            'EPH_HTACCESS_CACHE_CONTROL'         => Configuration::get('EPH_HTACCESS_CACHE_CONTROL'),
+            'EPH_JS_DEFER'                       => Configuration::get('EPH_JS_DEFER'),
+            'EPH_CSS_BACKOFFICE_CACHE'           => Configuration::get('EPH_CSS_BACKOFFICE_CACHE'),
+            'EPH_JS_BACKOFFICE_CACHE'            => Configuration::get('EPH_JS_BACKOFFICE_CACHE'),
+            'EPH_JS_HTML_BACKOFFICE_COMPRESSION' => Configuration::get('EPH_JS_HTML_BACKOFFICE_COMPRESSION'),
+            'EPH_JS_BACKOFFICE_DEFER'            => Configuration::get('EPH_JS_BACKOFFICE_DEFER'),
             'EPH_KEEP_CCC_FILES'                => Configuration::get('EPH_KEEP_CCC_FILES'),
             'ccc_up'                            => 1,
         ]);
@@ -127,7 +127,7 @@ class AdminPerformanceControllerCore extends AdminController {
         $data = $this->createTemplate('controllers/performance/encrypt.tpl');
 
         $data->assign([
-            'PS_CIPHER_ALGORITHM' => Configuration::get('PS_CIPHER_ALGORITHM'),
+            'EPH_CIPHER_ALGORITHM' => Configuration::get('EPH_CIPHER_ALGORITHM'),
         ]);
 
         return $data->fetch();
@@ -150,14 +150,14 @@ class AdminPerformanceControllerCore extends AdminController {
         $warningRedis = str_replace('[a]', '<a href="https://pecl.php.net/package/redis" target="_blank">', $warningRedis);
         $warningRedis = str_replace('[/a]', '</a>', $warningRedis);
 
-        $warningFs = ' ' . sprintf($this->l('(the directory %s must be writable)'), realpath(_PS_CACHEFS_DIRECTORY_));
+        $warningFs = ' ' . sprintf($this->l('(the directory %s must be writable)'), realpath(_EPH_CACHEFS_DIRECTORY_));
 
         $data = $this->createTemplate('controllers/performance/servercaching.tpl');
-        $depth = Configuration::get('PS_CACHEFS_DIRECTORY_DEPTH');
+        $depth = Configuration::get('EPH_CACHEFS_DIRECTORY_DEPTH');
         $data->assign([
             'EPH_CACHE_ENABLED'           => Configuration::get('EPH_CACHE_ENABLED'),
             'EPH_CACHE_SYSTEM'            => Configuration::get('EPH_CACHE_SYSTEM') ?: 'CacheFs',
-            'ps_cache_fs_directory_depth' => $depth ? $depth : 1,
+            'EPH_cache_fs_directory_depth' => $depth ? $depth : 1,
             'memcached_servers'           => CacheMemcache::getMemcachedServers(),
             'redis_servers'               => CacheRedis::getRedisServers(),
             'cacheDisabled'               => !Cache::isEnabled(),
@@ -166,7 +166,7 @@ class AdminPerformanceControllerCore extends AdminController {
             'warningApc'                  => $warningApc,
             'warningRedis'                => $warningRedis,
             'warningFs'                   => $warningFs,
-            'isWritable'                  => is_writable(_PS_CACHEFS_DIRECTORY_),
+            'isWritable'                  => is_writable(_EPH_CACHEFS_DIRECTORY_),
             'memcache'                    => extension_loaded('memcache'),
             'memcached'                   => extension_loaded('memcached'),
             'apcu'                        => extension_loaded('apcu'),
@@ -277,20 +277,20 @@ class AdminPerformanceControllerCore extends AdminController {
                     'name'   => 'smarty_force_compile',
                     'values' => [
                         [
-                            'id'    => 'smarty_force_compile_' . _PS_SMARTY_NO_COMPILE_,
-                            'value' => _PS_SMARTY_NO_COMPILE_,
+                            'id'    => 'smarty_force_compile_' . _EPH_SMARTY_NO_COMPILE_,
+                            'value' => _EPH_SMARTY_NO_COMPILE_,
                             'label' => $this->l('Never recompile template files'),
                             'hint'  => $this->l('This option should be used in a production environment.'),
                         ],
                         [
-                            'id'    => 'smarty_force_compile_' . _PS_SMARTY_CHECK_COMPILE_,
-                            'value' => _PS_SMARTY_CHECK_COMPILE_,
+                            'id'    => 'smarty_force_compile_' . _EPH_SMARTY_CHECK_COMPILE_,
+                            'value' => _EPH_SMARTY_CHECK_COMPILE_,
                             'label' => $this->l('Recompile templates if the files have been updated'),
                             'hint'  => $this->l('Templates are recompiled when they are updated. If you experience compilation troubles when you update your template files, you should use Force Compile instead of this option. It should never be used in a production environment.'),
                         ],
                         [
-                            'id'    => 'smarty_force_compile_' . _PS_SMARTY_FORCE_COMPILE_,
-                            'value' => _PS_SMARTY_FORCE_COMPILE_,
+                            'id'    => 'smarty_force_compile_' . _EPH_SMARTY_FORCE_COMPILE_,
+                            'value' => _EPH_SMARTY_FORCE_COMPILE_,
                             'label' => $this->l('Force compilation'),
                             'hint'  => $this->l('This forces Smarty to (re)compile templates on every invocation. This is handy for development and debugging. Note: This should never be used in a production environment.'),
                         ],
@@ -323,7 +323,7 @@ class AdminPerformanceControllerCore extends AdminController {
                         [
                             'id'    => 'smarty_caching_type_filesystem',
                             'value' => 'filesystem',
-                            'label' => $this->l('File System') . (is_writable(_PS_CACHE_DIR_ . 'smarty/cache') ? '' : ' ' . sprintf($this->l('(the directory %s must be writable)'), realpath(_PS_CACHE_DIR_ . 'smarty/cache'))),
+                            'label' => $this->l('File System') . (is_writable(_EPH_CACHE_DIR_ . 'smarty/cache') ? '' : ' ' . sprintf($this->l('(the directory %s must be writable)'), realpath(_EPH_CACHE_DIR_ . 'smarty/cache'))),
                         ],
                         [
                             'id'    => 'smarty_caching_type_mysql',
@@ -356,12 +356,12 @@ class AdminPerformanceControllerCore extends AdminController {
             ],
         ];
 
-        $this->fields_value['smarty_force_compile'] = Configuration::get('PS_SMARTY_FORCE_COMPILE');
-        $this->fields_value['smarty_cache'] = Configuration::get('PS_SMARTY_CACHE');
-        $this->fields_value['smarty_caching_type'] = Configuration::get('PS_SMARTY_CACHING_TYPE');
-        $this->fields_value['smarty_clear_cache'] = Configuration::get('PS_SMARTY_CLEAR_CACHE');
-        $this->fields_value['smarty_console'] = Configuration::get('PS_SMARTY_CONSOLE');
-        $this->fields_value['smarty_console_key'] = Configuration::get('PS_SMARTY_CONSOLE_KEY');
+        $this->fields_value['smarty_force_compile'] = Configuration::get('EPH_SMARTY_FORCE_COMPILE');
+        $this->fields_value['smarty_cache'] = Configuration::get('EPH_SMARTY_CACHE');
+        $this->fields_value['smarty_caching_type'] = Configuration::get('EPH_SMARTY_CACHING_TYPE');
+        $this->fields_value['smarty_clear_cache'] = Configuration::get('EPH_SMARTY_CLEAR_CACHE');
+        $this->fields_value['smarty_console'] = Configuration::get('EPH_SMARTY_CONSOLE');
+        $this->fields_value['smarty_console_key'] = Configuration::get('EPH_SMARTY_CONSOLE_KEY');
     }
 
     /**
@@ -462,8 +462,8 @@ class AdminPerformanceControllerCore extends AdminController {
             ],
         ];
 
-        $this->fields_value['native_module'] = Configuration::get('PS_DISABLE_NON_NATIVE_MODULE');
-        $this->fields_value['overrides'] = Configuration::get('PS_DISABLE_OVERRIDES');
+        $this->fields_value['native_module'] = Configuration::get('EPH_DISABLE_NON_NATIVE_MODULE');
+        $this->fields_value['overrides'] = Configuration::get('EPH_DISABLE_OVERRIDES');
         $this->fields_value['debug_mode'] = $this->isDebugModeEnabled();
         $this->fields_value['profiling'] = $this->isProfilingEnabled();
     }
@@ -556,15 +556,15 @@ class AdminPerformanceControllerCore extends AdminController {
                 [
                     'type'   => 'switch',
                     'label'  => $this->l('Smart cache for CSS'),
-                    'name'   => 'PS_CSS_THEME_CACHE',
+                    'name'   => 'EPH_CSS_THEME_CACHE',
                     'values' => [
                         [
-                            'id'    => 'PS_CSS_THEME_CACHE_1',
+                            'id'    => 'EPH_CSS_THEME_CACHE_1',
                             'value' => 1,
                             'label' => $this->l('Use CCC for CSS'),
                         ],
                         [
-                            'id'    => 'PS_CSS_THEME_CACHE_0',
+                            'id'    => 'EPH_CSS_THEME_CACHE_0',
                             'value' => 0,
                             'label' => $this->l('Keep CSS as original'),
                         ],
@@ -573,15 +573,15 @@ class AdminPerformanceControllerCore extends AdminController {
                 [
                     'type'   => 'switch',
                     'label'  => $this->l('Smart cache for JavaScript'),
-                    'name'   => 'PS_JS_THEME_CACHE',
+                    'name'   => 'EPH_JS_THEME_CACHE',
                     'values' => [
                         [
-                            'id'    => 'PS_JS_THEME_CACHE_1',
+                            'id'    => 'EPH_JS_THEME_CACHE_1',
                             'value' => 1,
                             'label' => $this->l('Use CCC for JavaScript'),
                         ],
                         [
-                            'id'    => 'PS_JS_THEME_CACHE_0',
+                            'id'    => 'EPH_JS_THEME_CACHE_0',
                             'value' => 0,
                             'label' => $this->l('Keep JavaScript as original'),
                         ],
@@ -590,15 +590,15 @@ class AdminPerformanceControllerCore extends AdminController {
                 [
                     'type'   => 'switch',
                     'label'  => $this->l('Compress inline JavaScript in HTML'),
-                    'name'   => 'PS_JS_HTML_THEME_COMPRESSION',
+                    'name'   => 'EPH_JS_HTML_THEME_COMPRESSION',
                     'values' => [
                         [
-                            'id'    => 'PS_JS_HTML_THEME_COMPRESSION_1',
+                            'id'    => 'EPH_JS_HTML_THEME_COMPRESSION_1',
                             'value' => 1,
                             'label' => $this->l('Compress inline JavaScript in HTML after "Smarty compile" execution'),
                         ],
                         [
-                            'id'    => 'PS_JS_HTML_THEME_COMPRESSION_0',
+                            'id'    => 'EPH_JS_HTML_THEME_COMPRESSION_0',
                             'value' => 0,
                             'label' => $this->l('Keep inline JavaScript in HTML as original'),
                         ],
@@ -607,15 +607,15 @@ class AdminPerformanceControllerCore extends AdminController {
                 [
                     'type'   => 'switch',
                     'label'  => $this->l('Move JavaScript to the end'),
-                    'name'   => 'PS_JS_DEFER',
+                    'name'   => 'EPH_JS_DEFER',
                     'values' => [
                         [
-                            'id'    => 'PS_JS_DEFER_1',
+                            'id'    => 'EPH_JS_DEFER_1',
                             'value' => 1,
                             'label' => $this->l('Move JavaScript to the end of the HTML document'),
                         ],
                         [
-                            'id'    => 'PS_JS_DEFER_0',
+                            'id'    => 'EPH_JS_DEFER_0',
                             'value' => 0,
                             'label' => $this->l('Keep JavaScript in HTML at its original position'),
                         ],
@@ -629,16 +629,16 @@ class AdminPerformanceControllerCore extends AdminController {
         $this->fields_form[3]['form']['input'][] = [
             'type'   => 'switch',
             'label'  => $this->l('Apache optimization'),
-            'name'   => 'PS_HTACCESS_CACHE_CONTROL',
+            'name'   => 'EPH_HTACCESS_CACHE_CONTROL',
             'hint'   => $this->l('This will add directives to your .htaccess file, which should improve caching and compression.'),
             'values' => [
                 [
-                    'id'    => 'PS_HTACCESS_CACHE_CONTROL_1',
+                    'id'    => 'EPH_HTACCESS_CACHE_CONTROL_1',
                     'value' => 1,
                     'label' => $this->l('Yes'),
                 ],
                 [
-                    'id'    => 'PS_HTACCESS_CACHE_CONTROL_0',
+                    'id'    => 'EPH_HTACCESS_CACHE_CONTROL_0',
                     'value' => 0,
                     'label' => $this->l('No'),
                 ],
@@ -662,11 +662,11 @@ class AdminPerformanceControllerCore extends AdminController {
             ],
         ];
 
-        $this->fields_value['PS_CSS_THEME_CACHE'] = Configuration::get('PS_CSS_THEME_CACHE');
-        $this->fields_value['PS_JS_THEME_CACHE'] = Configuration::get('PS_JS_THEME_CACHE');
-        $this->fields_value['PS_JS_HTML_THEME_COMPRESSION'] = Configuration::get('PS_JS_HTML_THEME_COMPRESSION');
-        $this->fields_value['PS_HTACCESS_CACHE_CONTROL'] = Configuration::get('PS_HTACCESS_CACHE_CONTROL');
-        $this->fields_value['PS_JS_DEFER'] = Configuration::get('PS_JS_DEFER');
+        $this->fields_value['EPH_CSS_THEME_CACHE'] = Configuration::get('EPH_CSS_THEME_CACHE');
+        $this->fields_value['EPH_JS_THEME_CACHE'] = Configuration::get('EPH_JS_THEME_CACHE');
+        $this->fields_value['EPH_JS_HTML_THEME_COMPRESSION'] = Configuration::get('EPH_JS_HTML_THEME_COMPRESSION');
+        $this->fields_value['EPH_HTACCESS_CACHE_CONTROL'] = Configuration::get('EPH_HTACCESS_CACHE_CONTROL');
+        $this->fields_value['EPH_JS_DEFER'] = Configuration::get('EPH_JS_DEFER');
         $this->fields_value['EPH_KEEP_CCC_FILES'] = Configuration::get('EPH_KEEP_CCC_FILES');
         $this->fields_value['ccc_up'] = 1;
     }
@@ -712,9 +712,9 @@ class AdminPerformanceControllerCore extends AdminController {
             ],
         ];
 
-        $this->fields_value['_MEDIA_SERVER_1_'] = Configuration::get('PS_MEDIA_SERVER_1');
-        $this->fields_value['_MEDIA_SERVER_2_'] = Configuration::get('PS_MEDIA_SERVER_2');
-        $this->fields_value['_MEDIA_SERVER_3_'] = Configuration::get('PS_MEDIA_SERVER_3');
+        $this->fields_value['_MEDIA_SERVER_1_'] = Configuration::get('EPH_MEDIA_SERVER_1');
+        $this->fields_value['_MEDIA_SERVER_2_'] = Configuration::get('EPH_MEDIA_SERVER_2');
+        $this->fields_value['_MEDIA_SERVER_3_'] = Configuration::get('EPH_MEDIA_SERVER_3');
     }
 
     /**
@@ -752,21 +752,21 @@ class AdminPerformanceControllerCore extends AdminController {
                 [
                     'type'   => 'radio',
                     'label'  => $this->l('Algorithm'),
-                    'name'   => 'PS_CIPHER_ALGORITHM',
+                    'name'   => 'EPH_CIPHER_ALGORITHM',
                     'hint'   => $this->l('The Rijndael is faster than our custom BlowFish class, but requires the "mcrypt" or "openssl" PHP extension. If you change this configuration option, all cookies will be reset.'),
                     'values' => [
                         [
-                            'id'    => 'PS_CIPHER_ALGORITHM_2',
+                            'id'    => 'EPH_CIPHER_ALGORITHM_2',
                             'value' => 2,
                             'label' => sprintf($this->l('Use the PHP Encryption library with the %s extension (highest security).'), $usePhpEncryptionWith) . (extension_loaded('openssl') ? '' : $warningOpenssl),
                         ],
                         [
-                            'id'    => 'PS_CIPHER_ALGORITHM_1',
+                            'id'    => 'EPH_CIPHER_ALGORITHM_1',
                             'value' => 1,
                             'label' => sprintf($this->l('Use Rijndael with the %s extension.'), $useRijndaelWith) . (!extension_loaded('openssl') && !function_exists('mcrypt_encrypt') ? $warningOpenssl : (!extension_loaded('openssl') ? (!function_exists('mcrypt_encrypt') ? $warningMcrypt : '') : '')),
                         ],
                         [
-                            'id'    => 'PS_CIPHER_ALGORITHM_0',
+                            'id'    => 'EPH_CIPHER_ALGORITHM_0',
                             'value' => 0,
                             'label' => $this->l('Use the custom BlowFish class.'),
                         ],
@@ -778,7 +778,7 @@ class AdminPerformanceControllerCore extends AdminController {
             ],
         ];
 
-        $this->fields_value['PS_CIPHER_ALGORITHM'] = Configuration::get('PS_CIPHER_ALGORITHM');
+        $this->fields_value['EPH_CIPHER_ALGORITHM'] = Configuration::get('EPH_CIPHER_ALGORITHM');
     }
 
     /**
@@ -801,7 +801,7 @@ class AdminPerformanceControllerCore extends AdminController {
         $warningRedis = str_replace('[a]', '<a href="https://pecl.php.net/package/redis" target="_blank">', $warningRedis);
         $warningRedis = str_replace('[/a]', '</a>', $warningRedis);
 
-        $warningFs = ' ' . sprintf($this->l('(the directory %s must be writable)'), realpath(_PS_CACHEFS_DIRECTORY_));
+        $warningFs = ' ' . sprintf($this->l('(the directory %s must be writable)'), realpath(_EPH_CACHEFS_DIRECTORY_));
         $this->fields_form[6]['form'] = [
             'legend'           => [
                 'title' => $this->l('Server Side Caching'),
@@ -839,7 +839,7 @@ class AdminPerformanceControllerCore extends AdminController {
                         [
                             'id'    => 'CacheFs',
                             'value' => 'CacheFs',
-                            'label' => $this->l('File System') . (is_writable(_PS_CACHEFS_DIRECTORY_) ? '' : $warningFs),
+                            'label' => $this->l('File System') . (is_writable(_EPH_CACHEFS_DIRECTORY_) ? '' : $warningFs),
                         ],
                         [
                             'id'    => 'CacheMemcache',
@@ -866,7 +866,7 @@ class AdminPerformanceControllerCore extends AdminController {
                 [
                     'type'  => 'text',
                     'label' => $this->l('Directory depth'),
-                    'name'  => 'ps_cache_fs_directory_depth',
+                    'name'  => 'EPH_cache_fs_directory_depth',
                 ],
             ],
             'submit'           => [
@@ -875,10 +875,10 @@ class AdminPerformanceControllerCore extends AdminController {
             'memcachedServers' => true,
             'redisServers'     => true,
         ];
-        $depth = Configuration::get('PS_CACHEFS_DIRECTORY_DEPTH');
+        $depth = Configuration::get('EPH_CACHEFS_DIRECTORY_DEPTH');
         $this->fields_value['EPH_CACHE_ENABLED'] = Configuration::get('EPH_CACHE_ENABLED');
         $this->fields_value['EPH_CACHE_SYSTEM'] = Configuration::get('EPH_CACHE_SYSTEM') ?: 'CacheFs';
-        $this->fields_value['ps_cache_fs_directory_depth'] = $depth ? $depth : 1;
+        $this->fields_value['EPH_cache_fs_directory_depth'] = $depth ? $depth : 1;
         $this->tpl_form_vars['memcached_servers'] = CacheMemcache::getMemcachedServers();
         $this->tpl_form_vars['redis_servers'] = CacheRedis::getRedisServers();
         $this->tpl_form_vars['cacheDisabled'] = !Cache::isEnabled();
@@ -1000,15 +1000,15 @@ class AdminPerformanceControllerCore extends AdminController {
 
     public function ajaxProcessSavePerformance() {
 
-        Configuration::updateValue('PS_SMARTY_FORCE_COMPILE', Tools::getValue('smarty_force_compile', _PS_SMARTY_NO_COMPILE_));
+        Configuration::updateValue('EPH_SMARTY_FORCE_COMPILE', Tools::getValue('smarty_force_compile', _EPH_SMARTY_NO_COMPILE_));
 
-        if (Configuration::get('PS_SMARTY_CACHE') != Tools::getValue('smarty_cache') || Configuration::get('PS_SMARTY_CACHING_TYPE') != Tools::getValue('smarty_caching_type')) {
+        if (Configuration::get('EPH_SMARTY_CACHE') != Tools::getValue('smarty_cache') || Configuration::get('EPH_SMARTY_CACHING_TYPE') != Tools::getValue('smarty_caching_type')) {
             Tools::clearSmartyCache();
         }
 
-        Configuration::updateValue('PS_SMARTY_CACHE', Tools::getValue('smarty_cache', 0));
-        Configuration::updateValue('PS_SMARTY_CACHING_TYPE', Tools::getValue('smarty_caching_type'));
-        Configuration::updateValue('PS_SMARTY_CLEAR_CACHE', Tools::getValue('smarty_clear_cache'));
+        Configuration::updateValue('EPH_SMARTY_CACHE', Tools::getValue('smarty_cache', 0));
+        Configuration::updateValue('EPH_SMARTY_CACHING_TYPE', Tools::getValue('smarty_caching_type'));
+        Configuration::updateValue('EPH_SMARTY_CLEAR_CACHE', Tools::getValue('smarty_clear_cache'));
 
         $debugMode = (bool) Tools::getValue('debug_mode');
 
@@ -1026,9 +1026,9 @@ class AdminPerformanceControllerCore extends AdminController {
             $profilingStatus = $this->disableProfiling();
         }
 
-        $themeCacheDirectory = _PS_ALL_THEMES_DIR_ . $this->context->shop->theme_directory . '/cache/';
+        $themeCacheDirectory = _EPH_ALL_THEMES_DIR_ . $this->context->shop->theme_directory . '/cache/';
 
-        if (((bool) Tools::getValue('PS_CSS_THEME_CACHE') || (bool) Tools::getValue('PS_JS_THEME_CACHE')) && !is_writable($themeCacheDirectory)) {
+        if (((bool) Tools::getValue('EPH_CSS_THEME_CACHE') || (bool) Tools::getValue('EPH_JS_THEME_CACHE')) && !is_writable($themeCacheDirectory)) {
 
             if (@file_exists($themeCacheDirectory) || !@mkdir($themeCacheDirectory, 0777, true)) {
                 $this->errors[] = sprintf(Tools::displayError('To use Smart Cache directory %s must be writable.'), realpath($themeCacheDirectory));
@@ -1036,49 +1036,49 @@ class AdminPerformanceControllerCore extends AdminController {
 
         }
 
-        if ($tmp = (int) Tools::getValue('PS_CSS_THEME_CACHE')) {
-            $version = (int) Configuration::get('PS_CCCCSS_VERSION');
+        if ($tmp = (int) Tools::getValue('EPH_CSS_THEME_CACHE')) {
+            $version = (int) Configuration::get('EPH_CCCCSS_VERSION');
 
-            if (Configuration::get('PS_CSS_THEME_CACHE') != $tmp) {
-                Configuration::updateValue('PS_CCCCSS_VERSION', ++$version);
+            if (Configuration::get('EPH_CSS_THEME_CACHE') != $tmp) {
+                Configuration::updateValue('EPH_CCCCSS_VERSION', ++$version);
             }
 
         }
 
-        if ($tmp = (int) Tools::getValue('PS_JS_THEME_CACHE')) {
-            $version = (int) Configuration::get('PS_CCCJS_VERSION');
+        if ($tmp = (int) Tools::getValue('EPH_JS_THEME_CACHE')) {
+            $version = (int) Configuration::get('EPH_CCCJS_VERSION');
 
-            if (Configuration::get('PS_JS_THEME_CACHE') != $tmp) {
-                Configuration::updateValue('PS_CCCJS_VERSION', ++$version);
+            if (Configuration::get('EPH_JS_THEME_CACHE') != $tmp) {
+                Configuration::updateValue('EPH_CCCJS_VERSION', ++$version);
             }
 
         }
 
-        Configuration::updateValue('PS_CSS_BACKOFFICE_CACHE', (int) Tools::getValue('PS_CSS_BACKOFFICE_CACHE'));
-        Configuration::updateValue('PS_JS_BACKOFFICE_CACHE', (int) Tools::getValue('PS_JS_BACKOFFICE_CACHE'));
-        Configuration::updateValue('PS_JS_HTML_BACKOFFICE_COMPRESSION', (int) Tools::getValue('PS_JS_HTML_BACKOFFICE_COMPRESSION'));
-        Configuration::updateValue('PS_JS_BACKOFFICE_DEFER', (int) Tools::getValue('PS_JS_BACKOFFICE_DEFER'));
+        Configuration::updateValue('EPH_CSS_BACKOFFICE_CACHE', (int) Tools::getValue('EPH_CSS_BACKOFFICE_CACHE'));
+        Configuration::updateValue('EPH_JS_BACKOFFICE_CACHE', (int) Tools::getValue('EPH_JS_BACKOFFICE_CACHE'));
+        Configuration::updateValue('EPH_JS_HTML_BACKOFFICE_COMPRESSION', (int) Tools::getValue('EPH_JS_HTML_BACKOFFICE_COMPRESSION'));
+        Configuration::updateValue('EPH_JS_BACKOFFICE_DEFER', (int) Tools::getValue('EPH_JS_BACKOFFICE_DEFER'));
 
-        if (!Configuration::updateValue('PS_CSS_THEME_CACHE', (int) Tools::getValue('PS_CSS_THEME_CACHE')) ||
-            !Configuration::updateValue('PS_JS_THEME_CACHE', (int) Tools::getValue('PS_JS_THEME_CACHE')) ||
-            !Configuration::updateValue('PS_JS_HTML_THEME_COMPRESSION', (int) Tools::getValue('PS_JS_HTML_THEME_COMPRESSION')) ||
-            !Configuration::updateValue('PS_JS_DEFER', (int) Tools::getValue('PS_JS_DEFER')) ||
+        if (!Configuration::updateValue('EPH_CSS_THEME_CACHE', (int) Tools::getValue('EPH_CSS_THEME_CACHE')) ||
+            !Configuration::updateValue('EPH_JS_THEME_CACHE', (int) Tools::getValue('EPH_JS_THEME_CACHE')) ||
+            !Configuration::updateValue('EPH_JS_HTML_THEME_COMPRESSION', (int) Tools::getValue('EPH_JS_HTML_THEME_COMPRESSION')) ||
+            !Configuration::updateValue('EPH_JS_DEFER', (int) Tools::getValue('EPH_JS_DEFER')) ||
             !Configuration::updateValue('EPH_KEEP_CCC_FILES', (int) Tools::getValue('EPH_KEEP_CCC_FILES')) ||
-            !Configuration::updateValue('PS_HTACCESS_CACHE_CONTROL', (int) Tools::getValue('PS_HTACCESS_CACHE_CONTROL'))
+            !Configuration::updateValue('EPH_HTACCESS_CACHE_CONTROL', (int) Tools::getValue('EPH_HTACCESS_CACHE_CONTROL'))
         ) {
             $this->errors[] = Tools::displayError('Unknown error.');
         } else {
 
-            if (Configuration::get('PS_HTACCESS_CACHE_CONTROL')) {
+            if (Configuration::get('EPH_HTACCESS_CACHE_CONTROL')) {
 
-                if (is_writable(_PS_ROOT_DIR_ . '/.htaccess')) {
+                if (is_writable(_EPH_ROOT_DIR_ . '/.htaccess')) {
                     Tools::generateHtaccess();
                 } else {
                     $message = $this->l('Before being able to use this tool, you need to:');
                     $message .= '<br />- ' . $this->l('Create a blank .htaccess in your root directory.');
                     $message .= '<br />- ' . $this->l('Give it write permissions (CHMOD 666 on Unix system).');
                     $this->errors[] = Tools::displayError($message, false);
-                    Configuration::updateValue('PS_HTACCESS_CACHE_CONTROL', false);
+                    Configuration::updateValue('EPH_HTACCESS_CACHE_CONTROL', false);
                 }
 
             }
@@ -1127,12 +1127,12 @@ class AdminPerformanceControllerCore extends AdminController {
 
             if ($cachingSystem == 'CacheFs') {
 
-                if (!is_dir(_PS_CACHEFS_DIRECTORY_)) {
-                    @mkdir(_PS_CACHEFS_DIRECTORY_, 0777, true);
+                if (!is_dir(_EPH_CACHEFS_DIRECTORY_)) {
+                    @mkdir(_EPH_CACHEFS_DIRECTORY_, 0777, true);
                 } else
 
-                if (!is_writable(_PS_CACHEFS_DIRECTORY_)) {
-                    $this->errors[] = sprintf(Tools::displayError('To use CacheFS, the directory %s must be writable.'), realpath(_PS_CACHEFS_DIRECTORY_));
+                if (!is_writable(_EPH_CACHEFS_DIRECTORY_)) {
+                    $this->errors[] = sprintf(Tools::displayError('To use CacheFS, the directory %s must be writable.'), realpath(_EPH_CACHEFS_DIRECTORY_));
                 }
 
             }
@@ -1142,14 +1142,14 @@ class AdminPerformanceControllerCore extends AdminController {
 
             if ($cachingSystem == 'CacheFs') {
 
-                if (!($depth = Tools::getValue('ps_cache_fs_directory_depth'))) {
+                if (!($depth = Tools::getValue('EPH_cache_fs_directory_depth'))) {
                     $this->errors[] = Tools::displayError('Please set a directory depth.');
                 }
 
                 if (!count($this->errors)) {
                     CacheFs::deleteCacheDirectory();
                     CacheFs::createCacheDirectories((int) $depth);
-                    Configuration::updateValue('PS_CACHEFS_DIRECTORY_DEPTH', (int) $depth);
+                    Configuration::updateValue('EPH_CACHEFS_DIRECTORY_DEPTH', (int) $depth);
                 }
 
             } else
@@ -1224,7 +1224,7 @@ class AdminPerformanceControllerCore extends AdminController {
                     <option disabled="disabled">' . $this->l('___________ CUSTOM ___________') . '</option>';
 
         // @todo do something better with controllers
-        $controllers = Performer::getControllers(_PS_FRONT_CONTROLLER_DIR_);
+        $controllers = Performer::getControllers(_EPH_FRONT_CONTROLLER_DIR_);
         ksort($controllers);
 
         foreach ($fileList as $k => $v) {
@@ -1275,10 +1275,10 @@ class AdminPerformanceControllerCore extends AdminController {
 
         $m = [];
 
-        if (!preg_match('/define\(\'_PS_MODE_DEV_\', ([a-zA-Z]+)\);/Ui', $definesClean, $m)) {
-            $definesClean = php_strip_whitespace(_PS_ROOT_DIR_ . '/app/defines.inc.php');
+        if (!preg_match('/define\(\'_EPH_MODE_DEV_\', ([a-zA-Z]+)\);/Ui', $definesClean, $m)) {
+            $definesClean = php_strip_whitespace(_EPH_ROOT_DIR_ . '/app/defines.inc.php');
 
-            if (!preg_match('/define\(\'_PS_MODE_DEV_\', ([a-zA-Z]+)\);/Ui', $definesClean, $m)) {
+            if (!preg_match('/define\(\'_EPH_MODE_DEV_\', ([a-zA-Z]+)\);/Ui', $definesClean, $m)) {
                 return false;
             }
 
@@ -1303,10 +1303,10 @@ class AdminPerformanceControllerCore extends AdminController {
 
         $m = [];
 
-        if (!preg_match('/define\(\'_PS_DEBUG_PROFILING_\', ([a-zA-Z]+)\);/Ui', $definesClean, $m)) {
-            $definesClean = php_strip_whitespace(_PS_ROOT_DIR_ . '/app/defines.inc.php');
+        if (!preg_match('/define\(\'_EPH_DEBUG_PROFILING_\', ([a-zA-Z]+)\);/Ui', $definesClean, $m)) {
+            $definesClean = php_strip_whitespace(_EPH_ROOT_DIR_ . '/app/defines.inc.php');
 
-            if (!preg_match('/define\(\'_PS_DEBUG_PROFILING_\', ([a-zA-Z]+)\);/Ui', $definesClean, $m)) {
+            if (!preg_match('/define\(\'_EPH_DEBUG_PROFILING_\', ([a-zA-Z]+)\);/Ui', $definesClean, $m)) {
                 return false;
             }
 
@@ -1328,7 +1328,7 @@ class AdminPerformanceControllerCore extends AdminController {
      */
     public function isDefinesReadable() {
 
-        return is_readable(_PS_ROOT_DIR_ . '/app/defines.inc.php');
+        return is_readable(_EPH_ROOT_DIR_ . '/app/defines.inc.php');
     }
 
     /**
@@ -1344,21 +1344,21 @@ class AdminPerformanceControllerCore extends AdminController {
             return static::DEBUG_MODE_ERROR_NO_READ_ACCESS;
         }
 
-        $definesClean = php_strip_whitespace(_PS_ROOT_DIR_ . '/app/defines.inc.php');
-        $defines = file_get_contents(_PS_ROOT_DIR_ . '/app/defines.inc.php');
+        $definesClean = php_strip_whitespace(_EPH_ROOT_DIR_ . '/app/defines.inc.php');
+        $defines = file_get_contents(_EPH_ROOT_DIR_ . '/app/defines.inc.php');
 
-        if (!preg_match('/define\(\'_PS_MODE_DEV_\', ([a-zA-Z]+)\);/Ui', $definesClean)) {
+        if (!preg_match('/define\(\'_EPH_MODE_DEV_\', ([a-zA-Z]+)\);/Ui', $definesClean)) {
             return static::DEBUG_MODE_ERROR_NO_DEFINITION_FOUND;
         }
 
-        $defines = preg_replace('/define\(\'_PS_MODE_DEV_\', ([a-zA-Z]+)\);/Ui', 'define(\'_PS_MODE_DEV_\', true);', $defines);
+        $defines = preg_replace('/define\(\'_EPH_MODE_DEV_\', ([a-zA-Z]+)\);/Ui', 'define(\'_EPH_MODE_DEV_\', true);', $defines);
 
-        if (!@file_put_contents(_PS_ROOT_DIR_ . '/app/defines.inc.php', $defines)) {
+        if (!@file_put_contents(_EPH_ROOT_DIR_ . '/app/defines.inc.php', $defines)) {
             return static::DEBUG_MODE_ERROR_NO_WRITE_ACCESS;
         }
 
         if (function_exists('opcache_invalidate')) {
-            opcache_invalidate(_PS_ROOT_DIR_ . '/app/defines.inc.php');
+            opcache_invalidate(_EPH_ROOT_DIR_ . '/app/defines.inc.php');
         }
 
         return static::DEBUG_MODE_SUCCEEDED;
@@ -1377,21 +1377,21 @@ class AdminPerformanceControllerCore extends AdminController {
             return static::DEBUG_MODE_ERROR_NO_READ_ACCESS;
         }
 
-        $definesClean = php_strip_whitespace(_PS_ROOT_DIR_ . '/app/defines.inc.php');
-        $defines = file_get_contents(_PS_ROOT_DIR_ . '/app/defines.inc.php');
+        $definesClean = php_strip_whitespace(_EPH_ROOT_DIR_ . '/app/defines.inc.php');
+        $defines = file_get_contents(_EPH_ROOT_DIR_ . '/app/defines.inc.php');
 
-        if (!preg_match('/define\(\'_PS_MODE_DEV_\', ([a-zA-Z]+)\);/Ui', $definesClean)) {
+        if (!preg_match('/define\(\'_EPH_MODE_DEV_\', ([a-zA-Z]+)\);/Ui', $definesClean)) {
             return static::DEBUG_MODE_ERROR_NO_DEFINITION_FOUND;
         }
 
-        $defines = preg_replace('/define\(\'_PS_MODE_DEV_\', ([a-zA-Z]+)\);/Ui', 'define(\'_PS_MODE_DEV_\', false);', $defines);
+        $defines = preg_replace('/define\(\'_EPH_MODE_DEV_\', ([a-zA-Z]+)\);/Ui', 'define(\'_EPH_MODE_DEV_\', false);', $defines);
 
-        if (!@file_put_contents(_PS_ROOT_DIR_ . '/app/defines.inc.php', $defines)) {
+        if (!@file_put_contents(_EPH_ROOT_DIR_ . '/app/defines.inc.php', $defines)) {
             return static::DEBUG_MODE_ERROR_NO_WRITE_ACCESS;
         }
 
         if (function_exists('opcache_invalidate')) {
-            opcache_invalidate(_PS_ROOT_DIR_ . '/app/defines.inc.php');
+            opcache_invalidate(_EPH_ROOT_DIR_ . '/app/defines.inc.php');
         }
 
         return static::DEBUG_MODE_SUCCEEDED;
@@ -1410,21 +1410,21 @@ class AdminPerformanceControllerCore extends AdminController {
             return static::PROFILING_ERROR_NO_READ_ACCESS;
         }
 
-        $definesClean = php_strip_whitespace(_PS_ROOT_DIR_ . '/app/defines.inc.php');
-        $defines = file_get_contents(_PS_ROOT_DIR_ . '/app/defines.inc.php');
+        $definesClean = php_strip_whitespace(_EPH_ROOT_DIR_ . '/app/defines.inc.php');
+        $defines = file_get_contents(_EPH_ROOT_DIR_ . '/app/defines.inc.php');
 
-        if (!preg_match('/define\(\'_PS_DEBUG_PROFILING_\', ([a-zA-Z]+)\);/Ui', $definesClean)) {
+        if (!preg_match('/define\(\'_EPH_DEBUG_PROFILING_\', ([a-zA-Z]+)\);/Ui', $definesClean)) {
             return static::PROFILING_ERROR_NO_DEFINITION_FOUND;
         }
 
-        $defines = preg_replace('/define\(\'_PS_DEBUG_PROFILING_\', ([a-zA-Z]+)\);/Ui', 'define(\'_PS_DEBUG_PROFILING_\', true);', $defines);
+        $defines = preg_replace('/define\(\'_EPH_DEBUG_PROFILING_\', ([a-zA-Z]+)\);/Ui', 'define(\'_EPH_DEBUG_PROFILING_\', true);', $defines);
 
-        if (!@file_put_contents(_PS_ROOT_DIR_ . '/app/defines.inc.php', $defines)) {
+        if (!@file_put_contents(_EPH_ROOT_DIR_ . '/app/defines.inc.php', $defines)) {
             return static::PROFILING_ERROR_NO_WRITE_ACCESS;
         }
 
         if (function_exists('opcache_invalidate')) {
-            opcache_invalidate(_PS_ROOT_DIR_ . '/app/defines.inc.php');
+            opcache_invalidate(_EPH_ROOT_DIR_ . '/app/defines.inc.php');
         }
 
         return static::PROFILING_SUCCEEDED;
@@ -1443,21 +1443,21 @@ class AdminPerformanceControllerCore extends AdminController {
             return static::PROFILING_ERROR_NO_READ_ACCESS;
         }
 
-        $definesClean = php_strip_whitespace(_PS_ROOT_DIR_ . '/app/defines.inc.php');
-        $defines = file_get_contents(_PS_ROOT_DIR_ . '/app/defines.inc.php');
+        $definesClean = php_strip_whitespace(_EPH_ROOT_DIR_ . '/app/defines.inc.php');
+        $defines = file_get_contents(_EPH_ROOT_DIR_ . '/app/defines.inc.php');
 
-        if (!preg_match('/define\(\'_PS_DEBUG_PROFILING_\', ([a-zA-Z]+)\);/Ui', $definesClean)) {
+        if (!preg_match('/define\(\'_EPH_DEBUG_PROFILING_\', ([a-zA-Z]+)\);/Ui', $definesClean)) {
             return static::PROFILING_ERROR_NO_DEFINITION_FOUND;
         }
 
-        $defines = preg_replace('/define\(\'_PS_DEBUG_PROFILING_\', ([a-zA-Z]+)\);/Ui', 'define(\'_PS_DEBUG_PROFILING_\', false);', $defines);
+        $defines = preg_replace('/define\(\'_EPH_DEBUG_PROFILING_\', ([a-zA-Z]+)\);/Ui', 'define(\'_EPH_DEBUG_PROFILING_\', false);', $defines);
 
-        if (!@file_put_contents(_PS_ROOT_DIR_ . '/app/defines.inc.php', $defines)) {
+        if (!@file_put_contents(_EPH_ROOT_DIR_ . '/app/defines.inc.php', $defines)) {
             return static::PROFILING_ERROR_NO_WRITE_ACCESS;
         }
 
         if (function_exists('opcache_invalidate')) {
-            opcache_invalidate(_PS_ROOT_DIR_ . '/app/defines.inc.php');
+            opcache_invalidate(_EPH_ROOT_DIR_ . '/app/defines.inc.php');
         }
 
         return static::PROFILING_SUCCEEDED;
@@ -1468,7 +1468,7 @@ class AdminPerformanceControllerCore extends AdminController {
      */
     public function displayAjaxTestMemcachedServer() {
 
-        if (_PS_MODE_DEMO_) {
+        if (_EPH_MODE_DEMO_) {
             die(Tools::displayError('This functionality has been disabled.'));
         }
 
@@ -1542,7 +1542,7 @@ class AdminPerformanceControllerCore extends AdminController {
      */
     public function ajaxProcessTestRedisServer() {
 
-        if (_PS_MODE_DEMO_) {
+        if (_EPH_MODE_DEMO_) {
             die(Tools::displayError('This functionality has been disabled.'));
         }
 

@@ -181,7 +181,7 @@ class CustomerCore extends ObjectModel {
 	 */
 	public function __construct($id = null) {
 
-		$this->id_default_group = (int) Configuration::get('PS_CUSTOMER_GROUP');
+		$this->id_default_group = (int) Configuration::get('EPH_CUSTOMER_GROUP');
 		parent::__construct($id);
 
 		if ($this->id) {
@@ -192,7 +192,7 @@ class CustomerCore extends ObjectModel {
 
 	public function getAccount() {
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 			(new DbQuery())
 				->select('account')
 				->from('stdaccount')
@@ -235,7 +235,7 @@ class CustomerCore extends ObjectModel {
 	public static function generateCustomerAccount(Customer $student, $postcode = null) {
 
 		$affectation = Configuration::get('EPH_STUDENT_AFFECTATION');
-		$idLang = Configuration::get('PS_LANG_DEFAULT');
+		$idLang = Configuration::get('EPH_LANG_DEFAULT');
 		
 		$cc = Db::getInstance()->getValue('SELECT `id_stdaccount` FROM `' . _DB_PREFIX_ . 'stdaccount` ORDER BY `id_stdaccount` DESC');
 		$iso_code = '';
@@ -276,7 +276,7 @@ class CustomerCore extends ObjectModel {
 
 		$sql->orderBy('`id_customer` ASC');
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
 	}
 
 	/**
@@ -326,7 +326,7 @@ class CustomerCore extends ObjectModel {
 			$sql->where('`id_customer` = ' . (int) $idCustomer);
 			$sql->where('`active` = 1');
 			$sql->where('`deleted` = 0');
-			$result = (bool) !Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
+			$result = (bool) !Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow($sql);
 			Cache::store($cacheId, $result);
 
 			return $result;
@@ -351,7 +351,7 @@ class CustomerCore extends ObjectModel {
 
 		if (!Validate::isEmail($email)) {
 
-			if (defined('_PS_MODE_DEV_') && _PS_MODE_DEV_) {
+			if (defined('_EPH_MODE_DEV_') && _EPH_MODE_DEV_) {
 				die(Tools::displayError('Invalid email'));
 			}
 
@@ -367,7 +367,7 @@ class CustomerCore extends ObjectModel {
 			$sql->where('`is_guest` = 0');
 		}
 
-		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+		$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($sql);
 
 		return ($returnId ? (int) $result : (bool) $result);
 	}
@@ -386,7 +386,7 @@ class CustomerCore extends ObjectModel {
 		$key = (int) $idCustomer . '-' . (int) $idAddress;
 
 		if (!array_key_exists($key, static::$_customerHasAddress)) {
-			static::$_customerHasAddress[$key] = (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+			static::$_customerHasAddress[$key] = (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 				'
 			SELECT `id_address`
 			FROM `' . _DB_PREFIX_ . 'address`
@@ -427,7 +427,7 @@ class CustomerCore extends ObjectModel {
 	 */
 	public static function getAddressesTotalById($idCustomer) {
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 			'
 			SELECT COUNT(`id_address`)
 			FROM `' . _DB_PREFIX_ . 'address`
@@ -462,7 +462,7 @@ class CustomerCore extends ObjectModel {
 			$sql .= ' LIMIT 0, ' . (int) $limit;
 		}
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
 	}
 
 	/**
@@ -475,7 +475,7 @@ class CustomerCore extends ObjectModel {
 	 */
 	public static function searchByIp($ip) {
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			'
 		SELECT DISTINCT c.*
 		FROM `' . _DB_PREFIX_ . 'customer` c
@@ -499,7 +499,7 @@ class CustomerCore extends ObjectModel {
 			static $psCustomerGroup = null;
 
 			if ($psCustomerGroup === null) {
-				$psCustomerGroup = Configuration::get('PS_CUSTOMER_GROUP');
+				$psCustomerGroup = Configuration::get('EPH_CUSTOMER_GROUP');
 			}
 
 			return $psCustomerGroup;
@@ -533,7 +533,7 @@ class CustomerCore extends ObjectModel {
 			$cart = Context::getContext()->cart;
 		}
 
-		if (!$cart || !$cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')}) {
+		if (!$cart || !$cart->{Configuration::get('EPH_TAX_ADDRESS_TYPE')}) {
 			$idAddress = (int) Db::getInstance()->getValue(
 				'
 				SELECT `id_address`
@@ -542,12 +542,12 @@ class CustomerCore extends ObjectModel {
 				AND `deleted` = 0 ORDER BY `id_address`'
 			);
 		} else {
-			$idAddress = $cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')};
+			$idAddress = $cart->{Configuration::get('EPH_TAX_ADDRESS_TYPE')};
 		}
 
 		$ids = Address::getCountryAndState($idAddress);
 
-		return (int) $ids['id_country'] ? $ids['id_country'] : Configuration::get('PS_COUNTRY_DEFAULT');
+		return (int) $ids['id_country'] ? $ids['id_country'] : Configuration::get('EPH_COUNTRY_DEFAULT');
 	}
 
 	/**
@@ -566,25 +566,25 @@ class CustomerCore extends ObjectModel {
 		$this->id_lang = ($this->id_lang) ? $this->id_lang : Context::getContext()->language->id;
 		$this->birthday = (empty($this->years) ? $this->birthday : (int) $this->years . '-' . (int) $this->months . '-' . (int) $this->days);
 		$this->secure_key = md5(uniqid(rand(), true));
-		$this->last_passwd_gen = date('Y-m-d H:i:s', strtotime('-' . Configuration::get('PS_PASSWD_TIME_FRONT') . 'minutes'));
+		$this->last_passwd_gen = date('Y-m-d H:i:s', strtotime('-' . Configuration::get('EPH_PASSWD_TIME_FRONT') . 'minutes'));
 
 		if ($this->newsletter && !Validate::isDate($this->newsletter_date_add)) {
 			$this->newsletter_date_add = date('Y-m-d H:i:s');
 		}
 
-		if ($this->id_default_group == Configuration::get('PS_CUSTOMER_GROUP')) {
+		if ($this->id_default_group == Configuration::get('EPH_CUSTOMER_GROUP')) {
 
 			if ($this->is_guest) {
-				$this->id_default_group = (int) Configuration::get('PS_GUEST_GROUP');
+				$this->id_default_group = (int) Configuration::get('EPH_GUEST_GROUP');
 			} else {
-				$this->id_default_group = (int) Configuration::get('PS_CUSTOMER_GROUP');
+				$this->id_default_group = (int) Configuration::get('EPH_CUSTOMER_GROUP');
 			}
 
 		}
 
 		/* Can't create a guest customer, if this feature is disabled */
 
-		if ($this->is_guest && !Configuration::get('PS_GUEST_CHECKOUT_ENABLED')) {
+		if ($this->is_guest && !Configuration::get('EPH_GUEST_CHECKOUT_ENABLED')) {
 			return false;
 		}
 
@@ -651,7 +651,7 @@ class CustomerCore extends ObjectModel {
 	public function delete() {
 
 		if (!count(CustomerPieces::getCustomerOrders((int) $this->id))) {
-			$addresses = $this->getAddresses((int) Configuration::get('PS_LANG_DEFAULT'));
+			$addresses = $this->getAddresses((int) Configuration::get('EPH_LANG_DEFAULT'));
 
 			foreach ($addresses as $address) {
 				$obj = new Address((int) $address['id_address']);
@@ -702,7 +702,7 @@ class CustomerCore extends ObjectModel {
 	
 	public static function getBankAccount($idCustomer) {
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 			->select('*')
 			->from('bank_account')
@@ -728,7 +728,7 @@ class CustomerCore extends ObjectModel {
 		$cacheId = 'Customer::getAddresses' . (int) $this->id . '-' . (int) $idLang . '-' . $shareOrder;
 
 		if (!Cache::isStored($cacheId)) {
-			$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+			$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 				(new DbQuery())
 					->select('DISTINCT a.*, cl.`name` AS `country`, s.`name` AS `state`, s.`iso_code` AS `state_iso`')
 					->from('address', 'a')
@@ -776,7 +776,7 @@ class CustomerCore extends ObjectModel {
 			$sql->where('`is_guest` = 0');
 		}
 
-		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
+		$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow($sql);
 
 		if (!$result) {
 			return false;
@@ -829,7 +829,7 @@ class CustomerCore extends ObjectModel {
 	 */
 	public function getStats() {
 
-		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+		$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
 			(new DbQuery())
 				->select('COUNT(`id_order`) AS `nb_orders`, SUM(`total_paid` / o.`conversion_rate`) AS `total_orders`')
 				->from('orders', 'o')
@@ -837,7 +837,7 @@ class CustomerCore extends ObjectModel {
 				->where('o.`valid` = 1')
 		);
 
-		$result2 = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+		$result2 = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
 			(new DbQuery())
 				->select('MAX(c.`date_add`) AS `last_visit`')
 				->from('guest', 'g')
@@ -845,7 +845,7 @@ class CustomerCore extends ObjectModel {
 				->where('g.`id_customer` = ' . (int) $this->id)
 		);
 
-		$result3 = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+		$result3 = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
 			(new DbQuery())
 				->select('(YEAR(CURRENT_DATE)-YEAR(c.`birthday`)) - (RIGHT(CURRENT_DATE, 5) < RIGHT(c.`birthday`, 5)) AS `age`')
 				->from('customer', 'c')
@@ -871,7 +871,7 @@ class CustomerCore extends ObjectModel {
 			return [];
 		}
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('m.*, l.`name` as `language`')
 				->from('mail', 'm')
@@ -895,7 +895,7 @@ class CustomerCore extends ObjectModel {
 			return [];
 		}
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('c.`id_connections`, c.`date_add`, COUNT(cp.`id_page`) AS `pages`')
 				->select('TIMEDIFF(MAX(cp.time_end), c.date_add) AS time, http_referer,INET_NTOA(ip_address) AS ipaddress')
@@ -935,7 +935,7 @@ class CustomerCore extends ObjectModel {
 		$cacheId = 'Customer::customerIdExistsStatic' . (int) $idCustomer;
 
 		if (!Cache::isStored($cacheId)) {
-			$result = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+			$result = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 				(new DbQuery())
 					->select('`id_customer`')
 					->from('customer', 'c')
@@ -973,18 +973,18 @@ class CustomerCore extends ObjectModel {
 	public static function getGroupsStatic($idCustomer) {
 
 		if (!Group::isFeatureActive()) {
-			return [Configuration::get('PS_CUSTOMER_GROUP')];
+			return [Configuration::get('EPH_CUSTOMER_GROUP')];
 		}
 
 		// @codingStandardsIgnoreStart
 
 		if ($idCustomer == 0) {
-			static::$_customer_groups[$idCustomer] = [(int) Configuration::get('PS_UNIDENTIFIED_GROUP')];
+			static::$_customer_groups[$idCustomer] = [(int) Configuration::get('EPH_UNIDENTIFIED_GROUP')];
 		}
 
 		if (!isset(static::$_customer_groups[$idCustomer])) {
 			static::$_customer_groups[$idCustomer] = [];
-			$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+			$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 				(new DbQuery())
 					->select('cg.`id_group`')
 					->from('customer_group', 'cg')
@@ -1022,7 +1022,7 @@ class CustomerCore extends ObjectModel {
 	 */
 	public function getBoughtProducts() {
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('*')
 				->from('orders', 'o')
@@ -1081,10 +1081,10 @@ class CustomerCore extends ObjectModel {
 		$this->is_guest = 0;
 		$this->passwd = Tools::hash($password);
 		$this->cleanGroups();
-		$this->addGroups([Configuration::get('PS_CUSTOMER_GROUP')]); // add default customer group
+		$this->addGroups([Configuration::get('EPH_CUSTOMER_GROUP')]); // add default customer group
 
 		if ($this->update()) {
-			$tpl = Context::getContext()->smarty->createTemplate(_PS_MAIL_DIR_ . '/fr/guest_to_customer.tpl');
+			$tpl = Context::getContext()->smarty->createTemplate(_EPH_MAIL_DIR_ . '/fr/guest_to_customer.tpl');
 			$tpl->assign([
 				'firstname' => $this->firstname,
 				'lastname'  => $this->lastname,
@@ -1094,8 +1094,8 @@ class CustomerCore extends ObjectModel {
 
 			$postfields = [
 				'sender'      => [
-					'name'  => "Sevice Commerciale " . Configuration::get('PS_SHOP_NAME'),
-					'email' => 'no-reply@' . Configuration::get('PS_SHOP_URL'),
+					'name'  => "Sevice Commerciale " . Configuration::get('EPH_SHOP_NAME'),
+					'email' => 'no-reply@' . Configuration::get('EPH_SHOP_URL'),
 				],
 				'to'          => [
 					[
@@ -1147,7 +1147,7 @@ class CustomerCore extends ObjectModel {
 		}
 
 		if ($this->deleted) {
-			$addresses = $this->getAddresses((int) Configuration::get('PS_LANG_DEFAULT'));
+			$addresses = $this->getAddresses((int) Configuration::get('EPH_LANG_DEFAULT'));
 
 			foreach ($addresses as $address) {
 				$obj = new Address((int) $address['id_address']);
@@ -1234,7 +1234,7 @@ class CustomerCore extends ObjectModel {
 			$sql->from(bqSQL(static::$definition['table']));
 			$sql->where('`id_customer` = ' . (int) $idCustomer);
 
-			$hashedPassword = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+			$hashedPassword = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($sql);
 
 			return password_verify($plaintextOrHashedPassword, $hashedPassword);
 		}
@@ -1262,7 +1262,7 @@ class CustomerCore extends ObjectModel {
 			$sql->from(bqSQL(static::$definition['table']));
 			$sql->where('`id_customer` = ' . (int) $idCustomer);
 			$sql->where('`passwd` = \'' . pSQL($hashedPassword) . '\'');
-			$result = (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+			$result = (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($sql);
 			Cache::store($cacheId, $result);
 
 			return $result;
@@ -1339,7 +1339,7 @@ class CustomerCore extends ObjectModel {
 	 */
 	public function getOutstanding() {
 
-		$totalPaid = (float) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		$totalPaid = (float) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 			(new DbQuery())
 				->select('SUM(oi.`total_paid_tax_incl`)')
 				->from('order_invoice', 'oi')
@@ -1348,7 +1348,7 @@ class CustomerCore extends ObjectModel {
 				->where('o.`id_customer` = ' . (int) $this->id)
 		);
 
-		$totalRest = (float) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		$totalRest = (float) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 			(new DbQuery())
 				->select('SUM(op.`amount`)')
 				->from('order_payment', 'op')
@@ -1372,7 +1372,7 @@ class CustomerCore extends ObjectModel {
 	 */
 	public function getWsGroups() {
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('cg.`id_group` AS `id`')
 				->from('customer_group', 'cg')

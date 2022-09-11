@@ -18,7 +18,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
      */
     public function displayAjaxGetKpi() {
 
-        $currency = new Currency(Configuration::get('PS_CURRENCY_DEFAULT'));
+        $currency = new Currency(Configuration::get('EPH_CURRENCY_DEFAULT'));
 
         switch (Tools::getValue('kpi')) {
         case 'conversion_rate':
@@ -152,7 +152,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
             break;
 
         case 'newsletter_registrations':
-            $value = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $value = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 '
                 SELECT COUNT(*)
                 FROM `' . _DB_PREFIX_ . 'customer`
@@ -161,7 +161,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
             );
 
             if (Module::isInstalled('blocknewsletter')) {
-                $value += Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                $value += Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                     '
                     SELECT COUNT(*)
                     FROM `' . _DB_PREFIX_ . 'newsletter`
@@ -221,7 +221,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
             break;
 
         case 'orders_per_customer':
-            $value = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $value = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 '
                 SELECT COUNT(*)
                 FROM `' . _DB_PREFIX_ . 'customer` c
@@ -230,7 +230,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
             );
 
             if ($value) {
-                $orders = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                $orders = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                     '
                     SELECT COUNT(*)
                     FROM `' . _DB_PREFIX_ . 'orders` o
@@ -245,7 +245,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
             break;
 
         case 'average_order_value':
-            $row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 '
                 SELECT
                     COUNT(`id_order`) as orders,
@@ -361,7 +361,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
         } else {
 
             if ($granularity == 'day') {
-                $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS(
+                $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS(
                     '
                 SELECT LEFT(`date_add`, 10) as date, COUNT(' . ($unique ? 'DISTINCT id_guest' : '*') . ') as visits
                 FROM `' . _DB_PREFIX_ . 'connections`
@@ -375,7 +375,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
                 }
 
             } else if ($granularity == 'month') {
-                $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS(
+                $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS(
                     '
                 SELECT LEFT(`date_add`, 7) as date, COUNT(' . ($unique ? 'DISTINCT id_guest' : '*') . ') as visits
                 FROM `' . _DB_PREFIX_ . 'connections`
@@ -389,7 +389,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
                 }
 
             } else {
-                $visits = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                $visits = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                     '
                 SELECT COUNT(' . ($unique ? 'DISTINCT id_guest' : '*') . ') as visits
                 FROM `' . _DB_PREFIX_ . 'connections`
@@ -418,7 +418,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
 
         if ($granularity == 'day') {
             $orders = [];
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS(
                 '
             SELECT LEFT(`date_add`, 10) as date, COUNT(*) as orders
             FROM `' . _DB_PREFIX_ . 'customer_pieces` o
@@ -434,7 +434,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
             return $orders;
         } else if ($granularity == 'month') {
             $orders = [];
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS(
                 '
             SELECT LEFT(`date_add`, 7) as date, COUNT(*) as orders
             FROM `' . _DB_PREFIX_ . 'customer_pieces` o
@@ -449,7 +449,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
 
             return $orders;
         } else {
-            $orders = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $orders = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 '
             SELECT COUNT(*) as orders
             FROM `' . _DB_PREFIX_ . 'customer_pieces` o
@@ -473,7 +473,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
      */
     public static function getAbandonedCarts($dateFrom, $dateTo) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
         SELECT COUNT(DISTINCT id_guest)
         FROM `' . _DB_PREFIX_ . 'cart`
@@ -492,7 +492,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
      */
     public static function getInstalledModules() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
         SELECT COUNT(DISTINCT m.`id_module`)
         FROM `' . _DB_PREFIX_ . 'module` m
@@ -509,7 +509,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
      */
     public static function getDisabledModules() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
         SELECT COUNT(*)
         FROM `' . _DB_PREFIX_ . 'module` m
@@ -558,7 +558,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
      */
     public static function getPercentProductStock() {
 
-        $row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             '
         SELECT SUM(IF(IFNULL(stock.quantity, 0) > 0, 1, 0)) as with_stock, COUNT(*) as products
         FROM `' . _DB_PREFIX_ . 'product` p
@@ -578,7 +578,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
      */
     public static function getPercentProductOutOfStock() {
 
-        $row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             '
         SELECT SUM(IF(IFNULL(stock.quantity, 0) = 0, 1, 0)) as without_stock, COUNT(*) as products
         FROM `' . _DB_PREFIX_ . 'product` p
@@ -604,7 +604,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
         LEFT JOIN `' . _DB_PREFIX_ . 'product_attribute` pa ON p.id_product = pa.id_product
         ' . Shop::addSqlAssociation('product_attribute', 'pa', false) . '
         WHERE product_shop.active = 1';
-        $value = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+        $value = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($sql);
 
         return round(100 * $value, 2) . '%';
     }
@@ -618,7 +618,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
      */
     public static function getDisabledCategories() {
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
         SELECT COUNT(*)
         FROM `' . _DB_PREFIX_ . 'category` c
@@ -636,7 +636,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
      */
     public static function getDisabledProducts() {
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
         SELECT COUNT(*)
         FROM `' . _DB_PREFIX_ . 'product` p
@@ -654,7 +654,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
      */
     public static function getTotalProducts() {
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
         SELECT COUNT(*)
         FROM `' . _DB_PREFIX_ . 'product` p
@@ -672,7 +672,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
      */
     public static function get8020SalesCatalog($dateFrom, $dateTo) {
 
-        $distinctProducts = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $distinctProducts = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
         SELECT COUNT(DISTINCT od.product_id)
         FROM `' . _DB_PREFIX_ . 'orders` o
@@ -697,7 +697,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
      */
     public static function getEmptyCategories() {
 
-        $total = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $total = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
         SELECT COUNT(*)
         FROM `' . _DB_PREFIX_ . 'category` c
@@ -705,7 +705,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
         AND c.active = 1
         AND c.nright = c.nleft + 1'
         );
-        $used = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $used = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
         SELECT COUNT(DISTINCT cp.id_category)
         FROM `' . _DB_PREFIX_ . 'category` c
@@ -727,7 +727,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
      */
     public static function getCustomerMainGender() {
 
-        $row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             '
         SELECT SUM(IF(g.id_gender IS NOT NULL, 1, 0)) as total, SUM(IF(type = 0, 1, 0)) as male, SUM(IF(type = 1, 1, 0)) as female, SUM(IF(type = 2, 1, 0)) as neutral
         FROM `' . _DB_PREFIX_ . 'customer` c
@@ -755,7 +755,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
      */
     public static function getAverageCustomerAge() {
 
-        $value = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $value = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
         SELECT AVG(DATEDIFF("' . date('Y-m-d') . ' 00:00:00", birthday))
         FROM `' . _DB_PREFIX_ . 'customer` c
@@ -790,7 +790,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
      */
     public static function getAverageMessageResponseTime($dateFrom, $dateTo) {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
         SELECT MIN(cm1.date_add) as question, MIN(cm2.date_add) as reply
         FROM `' . _DB_PREFIX_ . 'customer_message` cm1
@@ -828,7 +828,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
      */
     public static function getMessagesPerThread($dateFrom, $dateTo) {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
         SELECT COUNT(*) as messages
         FROM `' . _DB_PREFIX_ . 'customer_thread` ct
@@ -870,7 +870,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
             return false;
         }
 
-        $row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             '
         SELECT a.id_country, COUNT(*) as orders
         FROM `' . _DB_PREFIX_ . 'orders` o
@@ -896,7 +896,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
 
         if ($granularity == 'day') {
             $sales = [];
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS(
                 '
             SELECT LEFT(`date_add`, 10) as date, SUM(total_tax_excl / o.conversion_rate) as sales
             FROM `' . _DB_PREFIX_ . 'customer_pieces` o
@@ -912,7 +912,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
             return $sales;
         } else if ($granularity == 'month') {
             $sales = [];
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS(
                 '
             SELECT LEFT(`date_add`, 7) as date, SUM(total_tax_excl / o.conversion_rate) as sales
             FROM `' . _DB_PREFIX_ . 'customer_pieces` o
@@ -927,7 +927,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
 
             return $sales;
         } else {
-            return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 '
             SELECT SUM(total_tax_excl / o.conversion_rate)
             FROM `' . _DB_PREFIX_ . 'customer_pieces` o
@@ -974,21 +974,21 @@ class AdminStatsControllerCore extends AdminStatsTabController {
         foreach ($orders as $order) {
             // Add flat fees for this order
             $flatFees = Configuration::get('CONF_ORDER_FIXED') + (
-                $order['id_currency'] == Configuration::get('PS_CURRENCY_DEFAULT')
+                $order['id_currency'] == Configuration::get('EPH_CURRENCY_DEFAULT')
                 ? Configuration::get('CONF_' . strtoupper($order['module']) . '_FIXED')
                 : Configuration::get('CONF_' . strtoupper($order['module']) . '_FIXED_FOREIGN')
             );
 
             // Add variable fees for this order
             $varFees = $order['total_paid_tax_incl'] * (
-                $order['id_currency'] == Configuration::get('PS_CURRENCY_DEFAULT')
+                $order['id_currency'] == Configuration::get('EPH_CURRENCY_DEFAULT')
                 ? Configuration::get('CONF_' . strtoupper($order['module']) . '_VAR')
                 : Configuration::get('CONF_' . strtoupper($order['module']) . '_VAR_FOREIGN')
             ) / 100;
 
             // Add shipping fees for this order
             $shippingFees = $order['total_shipping_tax_excl'] * (
-                $order['id_country'] == Configuration::get('PS_COUNTRY_DEFAULT')
+                $order['id_country'] == Configuration::get('EPH_COUNTRY_DEFAULT')
                 ? Configuration::get('CONF_' . strtoupper($order['carrier_reference']) . '_SHIP')
                 : Configuration::get('CONF_' . strtoupper($order['carrier_reference']) . '_SHIP_OVERSEAS')
             ) / 100;
@@ -1026,7 +1026,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
 
         if ($granularity == 'day') {
             $purchases = [];
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS(
                 '
             SELECT
                 LEFT(`invoice_date`, 10) as date,
@@ -1049,7 +1049,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
 
             return $purchases;
         } else {
-            return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 '
             SELECT SUM(od.`product_quantity` * IF(
                 od.`purchase_supplier_price` > 0,
@@ -1075,7 +1075,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
      */
     public static function getTotalCategories() {
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
         SELECT COUNT(*)
         FROM `' . _DB_PREFIX_ . 'category` c
@@ -1095,7 +1095,7 @@ class AdminStatsControllerCore extends AdminStatsTabController {
      */
     public static function getBestCategory($dateFrom, $dateTo) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
         SELECT ca.`id_category`
         FROM `' . _DB_PREFIX_ . 'category` ca
@@ -1123,14 +1123,14 @@ class AdminStatsControllerCore extends AdminStatsTabController {
     public function setMedia($isNewTheme = false) {
 
         parent::setMedia($isNewTheme);
-        $adminWebpath = str_ireplace(_PS_ROOT_ADMIN_DIR_, '', _PS_ADMIN_DIR_);
+        $adminWebpath = str_ireplace(_EPH_ROOT_ADMIN_DIR_, '', _EPH_ADMIN_DIR_);
         $adminWebpath = preg_replace('/^' . preg_quote(DIRECTORY_SEPARATOR, '/') . '/', '', $adminWebpath);
 
         $this->addJS([
-            _PS_JS_DIR_ . 'vendor/d3.v3.min.js',
-            __PS_BASE_URI__ . $adminWebpath . '/themes/' . $this->context->employee->bo_theme . '/js/vendor/nv.d3.min.js',
+            _EPH_JS_DIR_ . 'vendor/d3.v3.min.js',
+            __EPH_BASE_URI__ . $adminWebpath . '/themes/' . $this->context->employee->bo_theme . '/js/vendor/nv.d3.min.js',
         ]);
-        $this->addCSS(__PS_BASE_URI__ . $adminWebpath . '/themes/' . $this->context->employee->bo_theme . '/css/vendor/nv.d3.css');
+        $this->addCSS(__EPH_BASE_URI__ . $adminWebpath . '/themes/' . $this->context->employee->bo_theme . '/css/vendor/nv.d3.css');
     }
 
 }

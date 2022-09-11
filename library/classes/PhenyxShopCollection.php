@@ -649,7 +649,7 @@ class PhenyxShopCollectionCore implements Iterator, ArrayAccess, Countable {
             echo $this->query . '<br />';
         }
 
-        $this->results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($this->query);
+        $this->results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($this->query);
 
         if ($this->results && is_array($this->results)) {
             $this->results = ObjectModel::hydrateCollection($this->classname, $this->results, $this->id_lang);

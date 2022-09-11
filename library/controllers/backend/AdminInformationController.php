@@ -106,13 +106,13 @@ class AdminInformationControllerCore extends AdminController {
                 'url'   => $this->context->shop->getBaseURL(),
                 'theme' => $this->context->shop->theme_name,
             ],
-            'mail'            => Configuration::get('PS_MAIL_METHOD') == 1,
+            'mail'            => Configuration::get('EPH_MAIL_METHOD') == 1,
             'smtp'            => [
-                'server'     => Configuration::get('PS_MAIL_SERVER'),
-                'user'       => Configuration::get('PS_MAIL_USER'),
-                'password'   => Configuration::get('PS_MAIL_PASSWD'),
-                'encryption' => Configuration::get('PS_MAIL_SMTP_ENCRYPTION'),
-                'port'       => Configuration::get('PS_MAIL_SMTP_PORT'),
+                'server'     => Configuration::get('EPH_MAIL_SERVER'),
+                'user'       => Configuration::get('EPH_MAIL_USER'),
+                'password'   => Configuration::get('EPH_MAIL_PASSWD'),
+                'encryption' => Configuration::get('EPH_MAIL_SMTP_ENCRYPTION'),
+                'port'       => Configuration::get('EPH_MAIL_SMTP_PORT'),
             ],
             'user_agent'      => $_SERVER['HTTP_USER_AGENT'],
         ];
@@ -238,7 +238,7 @@ class AdminInformationControllerCore extends AdminController {
             'updated'       => [],
             'obsolete'      => [],
         ];
-        $filesFile = _PS_CONFIG_DIR_ . 'json/files.json';
+        $filesFile = _EPH_CONFIG_DIR_ . 'json/files.json';
 
         if (file_exists($filesFile)) {
             $files = json_decode(file_get_contents($filesFile), true);
@@ -247,7 +247,7 @@ class AdminInformationControllerCore extends AdminController {
             $this->fileList['listMissing'] = $filesFile;
         }
 
-        if (file_exists(_PS_ROOT_ADMIN_DIR_ . '/admin-dev/')) {
+        if (file_exists(_EPH_ROOT_ADMIN_DIR_ . '/admin-dev/')) {
             $this->fileList['isDevelopment'] = true;
         }
 
@@ -264,14 +264,14 @@ class AdminInformationControllerCore extends AdminController {
     public static function generateMd5List() {
 
         $md5List = [];
-        $adminDir = str_replace(_PS_ROOT_ADMIN_DIR_, '', _PS_ADMIN_DIR_);
+        $adminDir = str_replace(_EPH_ROOT_ADMIN_DIR_, '', _EPH_ADMIN_DIR_);
 
         $iterator = static::getCheckFileIterator();
 
         foreach ($iterator as $file) {
             /** @var DirectoryIterator $file */
             $filePath = $file->getPathname();
-            $filePath = str_replace(_PS_ROOT_ADMIN_DIR_, '', $filePath);
+            $filePath = str_replace(_EPH_ROOT_ADMIN_DIR_, '', $filePath);
 
             if (in_array($file->getFilename(), ['.', '..', 'index.php'])) {
                 continue;
@@ -289,7 +289,7 @@ class AdminInformationControllerCore extends AdminController {
         }
 
         file_put_contents(
-            _PS_CONFIG_DIR_ . 'json/files.json',
+            _EPH_CONFIG_DIR_ . 'json/files.json',
             json_encode($md5List, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
         );
 
@@ -304,18 +304,18 @@ class AdminInformationControllerCore extends AdminController {
     protected static function getCheckFileIterator() {
 
         $iterator = new AppendIterator();
-        $iterator->append(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_PS_CLASS_DIR_)));
-        $iterator->append(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_PS_CONTROLLER_DIR_)));
-        $iterator->append(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_PS_ROOT_ADMIN_DIR_ . '/Core')));
-        $iterator->append(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_PS_ROOT_ADMIN_DIR_ . '/Adapter')));
+        $iterator->append(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_EPH_CLASS_DIR_)));
+        $iterator->append(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_EPH_CONTROLLER_DIR_)));
+        $iterator->append(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_EPH_ROOT_ADMIN_DIR_ . '/Core')));
+        $iterator->append(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_EPH_ROOT_ADMIN_DIR_ . '/Adapter')));
         // if() for retrocompatibility, only. Make it unconditional after 1.0.8.
 
         if (!defined('_EPH_VERSION_')
             || version_compare(_EPH_VERSION_, '1.0.7', '>')) {
-            $iterator->append(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_PS_ROOT_ADMIN_DIR_ . '/vendor')));
+            $iterator->append(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_EPH_ROOT_ADMIN_DIR_ . '/vendor')));
         }
 
-        $iterator->append(new DirectoryIterator(_PS_ADMIN_DIR_));
+        $iterator->append(new DirectoryIterator(_EPH_ADMIN_DIR_));
 
         return $iterator;
     }
@@ -328,10 +328,10 @@ class AdminInformationControllerCore extends AdminController {
      */
     public function getListOfUpdatedFiles(array $md5List, $basePath = null) {
 
-        $adminDir = str_replace(_PS_ROOT_ADMIN_DIR_, '', _PS_ADMIN_DIR_);
+        $adminDir = str_replace(_EPH_ROOT_ADMIN_DIR_, '', _EPH_ADMIN_DIR_);
 
         if (is_null($basePath)) {
-            $basePath = rtrim(_PS_ROOT_ADMIN_DIR_, DIRECTORY_SEPARATOR);
+            $basePath = rtrim(_EPH_ROOT_ADMIN_DIR_, DIRECTORY_SEPARATOR);
         }
 
         foreach ($md5List as $file => $md5) {

@@ -56,13 +56,13 @@ class AdminTaxRulesGroupControllerCore extends AdminController {
         ]);
 
         $this->addJS([
-            __PS_BASE_URI__ . _PS_JS_DIR_ . 'pgrid/pqSelect/pqselect.min.js',
-            __PS_BASE_URI__ . _PS_JS_DIR_ . 'pgrid/pqgrid.min.js',
-            __PS_BASE_URI__ . _PS_JS_DIR_ . 'pgrid/localize/pq-localize-fr.js',
-            __PS_BASE_URI__ . _PS_JS_DIR_ . 'pgrid/pqTouch/pqtouch.min.js',
-            __PS_BASE_URI__ . _PS_JS_DIR_ . 'pgrid/jsZip-2.5.0/jszip.min.js',
-            __PS_BASE_URI__ . _PS_JS_DIR_ . 'pgrid/FileSaver.js',
-            __PS_BASE_URI__ . _PS_JS_DIR_ . 'pgrid/javascript-detect-element-resize/jquery.resize.js',
+            __EPH_BASE_URI__ . _EPH_JS_DIR_ . 'pgrid/pqSelect/pqselect.min.js',
+            __EPH_BASE_URI__ . _EPH_JS_DIR_ . 'pgrid/pqgrid.min.js',
+            __EPH_BASE_URI__ . _EPH_JS_DIR_ . 'pgrid/localize/pq-localize-fr.js',
+            __EPH_BASE_URI__ . _EPH_JS_DIR_ . 'pgrid/pqTouch/pqtouch.min.js',
+            __EPH_BASE_URI__ . _EPH_JS_DIR_ . 'pgrid/jsZip-2.5.0/jszip.min.js',
+            __EPH_BASE_URI__ . _EPH_JS_DIR_ . 'pgrid/FileSaver.js',
+            __EPH_BASE_URI__ . _EPH_JS_DIR_ . 'pgrid/javascript-detect-element-resize/jquery.resize.js',
 
         ]);
 
@@ -88,7 +88,7 @@ class AdminTaxRulesGroupControllerCore extends AdminController {
             'AjaxLink'       => $this->context->link->getAdminLink($this->controller_name),
             'paragridScript' => $this->generateParaGridScript(),
             'titleBar'       => $this->TitleBar,
-            'bo_imgdir'      => __PS_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+            'bo_imgdir'      => __EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
             'idController'   => '',
         ]);
 

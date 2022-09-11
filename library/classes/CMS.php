@@ -65,7 +65,7 @@ class CMSCore extends ObjectModel {
             $link = Context::getContext()->link;
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('c.`id_cms`, cl.`link_rewrite`, cl.`meta_title`')
                 ->from('cms', 'c')
@@ -106,10 +106,10 @@ class CMSCore extends ObjectModel {
     public static function listCms($idLang = null, $idBlock = false, $active = true) {
 
         if (empty($idLang)) {
-            $idLang = (int) Configuration::get('PS_LANG_DEFAULT');
+            $idLang = (int) Configuration::get('EPH_LANG_DEFAULT');
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('c.`id_cms`, l.`meta_title`')
                 ->from('cms', 'c')
@@ -181,7 +181,7 @@ class CMSCore extends ObjectModel {
      */
     public static function getUrlRewriteInformations($idCms) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('l.`id_lang`, c.`link_rewrite`')
                 ->from('cms_lang', 'c')
@@ -206,14 +206,14 @@ class CMSCore extends ObjectModel {
     public static function getCMSContent($idCms, $idLang = null, $idShop = null) {
 
         if (is_null($idLang)) {
-            $idLang = (int) Configuration::get('PS_LANG_DEFAULT');
+            $idLang = (int) Configuration::get('EPH_LANG_DEFAULT');
         }
 
         if (is_null($idShop)) {
-            $idShop = (int) Configuration::get('PS_SHOP_DEFAULT');
+            $idShop = (int) Configuration::get('EPH_SHOP_DEFAULT');
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('`content`')
                 ->from('cms_lang')
@@ -266,7 +266,7 @@ class CMSCore extends ObjectModel {
      */
     public static function getLastPosition($idCategory) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('MAX(`position`) + 1')
                 ->from('cms')
@@ -309,7 +309,7 @@ class CMSCore extends ObjectModel {
      */
     public static function cleanPositions($idCategory) {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_cms`')
                 ->from('cms')

@@ -191,7 +191,7 @@ class AdminLanguagesControllerCore extends AdminController {
 
         foreach ($languages as &$lang) {
 
-            if (file_exists(_PS_ROOT_ADMIN_DIR_ . '/img/l/' . $lang['id_lang'] . '.jpg')) {
+            if (file_exists(_EPH_ROOT_ADMIN_DIR_ . '/img/l/' . $lang['id_lang'] . '.jpg')) {
                 $flag = '/img/l/' . $lang['id_lang'] . '.jpg';
             } else {
                 $flag = '/img/l/none.jpg';
@@ -349,7 +349,7 @@ class AdminLanguagesControllerCore extends AdminController {
             'input'  => [
                 [
                     'type' => 'hidden',
-                    'name' => 'ps_version',
+                    'name' => 'EPH_version',
                 ],
                 [
                     'type'      => 'text',
@@ -486,7 +486,7 @@ class AdminLanguagesControllerCore extends AdminController {
             ];
         }
 
-        $this->fields_value = ['ps_version' => _PS_VERSION_];
+        $this->fields_value = ['EPH_version' => _EPH_VERSION_];
 
         return parent::renderForm();
     }
@@ -524,7 +524,7 @@ class AdminLanguagesControllerCore extends AdminController {
      */
     protected function checkDeletion($object) {
 
-        if (_PS_MODE_DEMO_) {
+        if (_EPH_MODE_DEMO_) {
             $this->errors[] = Tools::displayError('This functionality has been disabled.');
 
             return false;
@@ -532,7 +532,7 @@ class AdminLanguagesControllerCore extends AdminController {
 
         if (Validate::isLoadedObject($object)) {
 
-            if ($object->id == Configuration::get('PS_LANG_DEFAULT')) {
+            if ($object->id == Configuration::get('EPH_LANG_DEFAULT')) {
                 $this->errors[] = $this->l('You cannot delete the default language.');
             } else
             if ($object->id == $this->context->language->id) {
@@ -561,7 +561,7 @@ class AdminLanguagesControllerCore extends AdminController {
 
         $language = Language::getIsoById($idLanguage);
         $imageTypes = ImageType::getImagesTypes('products');
-        $dirs = [_PS_PROD_IMG_DIR_, _PS_CAT_IMG_DIR_, _PS_MANU_IMG_DIR_, _PS_SUPP_IMG_DIR_, _PS_MANU_IMG_DIR_];
+        $dirs = [_EPH_PROD_IMG_DIR_, _EPH_CAT_IMG_DIR_, _EPH_MANU_IMG_DIR_, _EPH_SUPP_IMG_DIR_, _EPH_MANU_IMG_DIR_];
 
         foreach ($dirs as $dir) {
 
@@ -621,7 +621,7 @@ class AdminLanguagesControllerCore extends AdminController {
      */
     protected function checkDisableStatus($object) {
 
-        if (_PS_MODE_DEMO_) {
+        if (_EPH_MODE_DEMO_) {
             $this->errors[] = Tools::displayError('This functionality has been disabled.');
 
             return false;
@@ -631,7 +631,7 @@ class AdminLanguagesControllerCore extends AdminController {
             $this->errors[] = Tools::displayError('An error occurred while updating the status for an object.') . ' <b>' . $this->table . '</b> ' . Tools::displayError('(cannot load object)');
         } else {
 
-            if ($object->id == (int) Configuration::get('PS_LANG_DEFAULT')) {
+            if ($object->id == (int) Configuration::get('EPH_LANG_DEFAULT')) {
                 $this->errors[] = Tools::displayError('You cannot change the status of the default language.');
             } else {
                 return true;
@@ -652,7 +652,7 @@ class AdminLanguagesControllerCore extends AdminController {
     protected function checkEmployeeIdLang($currentIdLang) {
 
         //update employee lang if current id lang is disabled
-        Db::getInstance()->execute('UPDATE `' . _DB_PREFIX_ . 'employee` set `id_lang`=' . (int) Configuration::get('PS_LANG_DEFAULT') . ' WHERE `id_lang`=' . (int) $currentIdLang);
+        Db::getInstance()->execute('UPDATE `' . _DB_PREFIX_ . 'employee` set `id_lang`=' . (int) Configuration::get('EPH_LANG_DEFAULT') . ' WHERE `id_lang`=' . (int) $currentIdLang);
     }
 
     /**
@@ -664,7 +664,7 @@ class AdminLanguagesControllerCore extends AdminController {
      */
     public function processAdd() {
 
-        if (_PS_MODE_DEMO_) {
+        if (_EPH_MODE_DEMO_) {
             $this->errors[] = Tools::displayError('This functionality has been disabled.');
 
             return false;
@@ -707,34 +707,34 @@ class AdminLanguagesControllerCore extends AdminController {
                 $this->errors[] = $error;
             } else {
 
-                if (!($tmpName = tempnam(_PS_TMP_IMG_DIR_, 'PS')) || !move_uploaded_file($_FILES['no_picture']['tmp_name'], $tmpName)) {
+                if (!($tmpName = tempnam(_EPH_TMP_IMG_DIR_, 'PS')) || !move_uploaded_file($_FILES['no_picture']['tmp_name'], $tmpName)) {
                     return;
                 }
 
-                if (!ImageManager::resize($tmpName, _PS_IMG_DIR_ . 'p/' . $language . '.jpg')) {
+                if (!ImageManager::resize($tmpName, _EPH_IMG_DIR_ . 'p/' . $language . '.jpg')) {
                     $this->errors[] = Tools::displayError('An error occurred while copying "No Picture" image to your product folder.');
                 }
 
-                if (!ImageManager::resize($tmpName, _PS_IMG_DIR_ . 'c/' . $language . '.jpg')) {
+                if (!ImageManager::resize($tmpName, _EPH_IMG_DIR_ . 'c/' . $language . '.jpg')) {
                     $this->errors[] = Tools::displayError('An error occurred while copying "No picture" image to your category folder.');
                 }
 
-                if (!ImageManager::resize($tmpName, _PS_IMG_DIR_ . 'm/' . $language . '.jpg')) {
+                if (!ImageManager::resize($tmpName, _EPH_IMG_DIR_ . 'm/' . $language . '.jpg')) {
                     $this->errors[] = Tools::displayError('An error occurred while copying "No picture" image to your manufacturer folder.');
                 } else {
                     $imageTypes = ImageType::getImagesTypes('products');
 
                     foreach ($imageTypes as $k => $imageType) {
 
-                        if (!ImageManager::resize($tmpName, _PS_IMG_DIR_ . 'p/' . $language . '-default-' . stripslashes($imageType['name']) . '.jpg', $imageType['width'], $imageType['height'])) {
+                        if (!ImageManager::resize($tmpName, _EPH_IMG_DIR_ . 'p/' . $language . '-default-' . stripslashes($imageType['name']) . '.jpg', $imageType['width'], $imageType['height'])) {
                             $this->errors[] = Tools::displayError('An error occurred while resizing "No picture" image to your product directory.');
                         }
 
-                        if (!ImageManager::resize($tmpName, _PS_IMG_DIR_ . 'c/' . $language . '-default-' . stripslashes($imageType['name']) . '.jpg', $imageType['width'], $imageType['height'])) {
+                        if (!ImageManager::resize($tmpName, _EPH_IMG_DIR_ . 'c/' . $language . '-default-' . stripslashes($imageType['name']) . '.jpg', $imageType['width'], $imageType['height'])) {
                             $this->errors[] = Tools::displayError('An error occurred while resizing "No picture" image to your category directory.');
                         }
 
-                        if (!ImageManager::resize($tmpName, _PS_IMG_DIR_ . 'm/' . $language . '-default-' . stripslashes($imageType['name']) . '.jpg', $imageType['width'], $imageType['height'])) {
+                        if (!ImageManager::resize($tmpName, _EPH_IMG_DIR_ . 'm/' . $language . '-default-' . stripslashes($imageType['name']) . '.jpg', $imageType['width'], $imageType['height'])) {
                             $this->errors[] = Tools::displayError('An error occurred while resizing "No picture" image to your manufacturer directory.');
                         }
 
@@ -758,7 +758,7 @@ class AdminLanguagesControllerCore extends AdminController {
      */
     public function processUpdate() {
 
-        if (_PS_MODE_DEMO_) {
+        if (_EPH_MODE_DEMO_) {
             $this->errors[] = Tools::displayError('This functionality has been disabled.');
 
             return false;
@@ -891,8 +891,8 @@ class AdminLanguagesControllerCore extends AdminController {
 
         parent::afterImageUpload();
 
-        if (($idLang = (int) Tools::getValue('id_lang')) && isset($_FILES) && count($_FILES) && file_exists(_PS_LANG_IMG_DIR_ . $idLang . '.jpg')) {
-            $currentFile = _PS_TMP_IMG_DIR_ . 'lang_mini_' . $idLang . '_' . $this->context->shop->id . '.jpg';
+        if (($idLang = (int) Tools::getValue('id_lang')) && isset($_FILES) && count($_FILES) && file_exists(_EPH_LANG_IMG_DIR_ . $idLang . '.jpg')) {
+            $currentFile = _EPH_TMP_IMG_DIR_ . 'lang_mini_' . $idLang . '_' . $this->context->shop->id . '.jpg';
 
             if (file_exists($currentFile)) {
                 unlink($currentFile);

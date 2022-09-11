@@ -48,7 +48,7 @@ abstract class ModuleCore {
     /** @var string Registered Version in database */
     public $registered_version;
     /** @var array filled with known compliant PrestaShop versions */
-    public $ps_versions_compliancy = [];
+    public $EPH_versions_compliancy = [];
     /**
      * @var string Filled with known compliant thirty bees versions
      *             This string contains a SemVer 1.0.0 range
@@ -143,20 +143,20 @@ abstract class ModuleCore {
      */
     public function __construct($name = null, Context $context = null) {
 
-        if (isset($this->ps_versions_compliancy) && !isset($this->ps_versions_compliancy['min'])) {
-            $this->ps_versions_compliancy['min'] = '1.4.0.0';
+        if (isset($this->EPH_versions_compliancy) && !isset($this->EPH_versions_compliancy['min'])) {
+            $this->EPH_versions_compliancy['min'] = '1.4.0.0';
         }
 
-        if (isset($this->ps_versions_compliancy) && !isset($this->ps_versions_compliancy['max'])) {
-            $this->ps_versions_compliancy['max'] = _PS_VERSION_;
+        if (isset($this->EPH_versions_compliancy) && !isset($this->EPH_versions_compliancy['max'])) {
+            $this->EPH_versions_compliancy['max'] = _EPH_VERSION_;
         }
 
-        if (strlen($this->ps_versions_compliancy['min']) == 3) {
-            $this->ps_versions_compliancy['min'] .= '.0.0';
+        if (strlen($this->EPH_versions_compliancy['min']) == 3) {
+            $this->EPH_versions_compliancy['min'] .= '.0.0';
         }
 
-        if (strlen($this->ps_versions_compliancy['max']) == 3) {
-            $this->ps_versions_compliancy['max'] .= '.999.999';
+        if (strlen($this->EPH_versions_compliancy['max']) == 3) {
+            $this->EPH_versions_compliancy['max'] .= '.999.999';
         }
 
         // Load context and smarty
@@ -179,11 +179,11 @@ abstract class ModuleCore {
             // If cache is not generated, we generate it
 
             if (static::$modules_cache == null && !is_array(static::$modules_cache)) {
-                $idShop = (Validate::isLoadedObject($this->context->shop) ? $this->context->shop->id : Configuration::get('PS_SHOP_DEFAULT'));
+                $idShop = (Validate::isLoadedObject($this->context->shop) ? $this->context->shop->id : Configuration::get('EPH_SHOP_DEFAULT'));
 
                 static::$modules_cache = [];
                 // Join clause is done to check if the module is activated in current shop context
-                $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+                $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                     (new DbQuery())
                         ->select('m.`id_module`, m.`name`, ms.`id_module` AS `mshop`')
                         ->from('module', 'm')
@@ -214,14 +214,14 @@ abstract class ModuleCore {
 
                 }
 
-                $this->_path = __PS_BASE_URI__ . 'includes/plugins/' . $this->name . '/';
+                $this->_path = __EPH_BASE_URI__ . 'includes/plugins/' . $this->name . '/';
             }
 
             if (!$this->context->controller instanceof Controller) {
                 static::$modules_cache = null;
             }
 
-            $this->local_path = _PS_MODULE_DIR_ . $this->name . '/';
+            $this->local_path = _EPH_MODULE_DIR_ . $this->name . '/';
         }
 
         // @codingStandardsIgnoreEnd
@@ -431,7 +431,7 @@ abstract class ModuleCore {
 
         if (!Validate::isModuleName($moduleName)) {
 
-            if (_PS_MODE_DEV_) {
+            if (_EPH_MODE_DEV_) {
                 die(Tools::displayError(Tools::safeOutput($moduleName) . ' is not a valid module name.'));
             }
 
@@ -440,7 +440,7 @@ abstract class ModuleCore {
 
         if (!isset(static::$_INSTANCE[$moduleName])) {
 
-            if (!Tools::file_exists_no_cache(_PS_MODULE_DIR_ . $moduleName . '/' . $moduleName . '.php')) {
+            if (!Tools::file_exists_no_cache(_EPH_MODULE_DIR_ . $moduleName . '/' . $moduleName . '.php')) {
                 return false;
             }
 
@@ -466,7 +466,7 @@ abstract class ModuleCore {
         // @codingStandardsIgnoreStart
 
         if (Module::$_log_modules_perfs === null) {
-            $modulo = _PS_DEBUG_PROFILING_ ? 1 : Configuration::get('PS_log_modules_perfs_MODULO');
+            $modulo = _EPH_DEBUG_PROFILING_ ? 1 : Configuration::get('EPH_log_modules_perfs_MODULO');
             Module::$_log_modules_perfs = ($modulo && mt_rand(0, $modulo - 1) == 0);
 
             if (Module::$_log_modules_perfs) {
@@ -484,12 +484,12 @@ abstract class ModuleCore {
 
         // @codingStandardsIgnoreEnd
 
-        include_once _PS_MODULE_DIR_ . $moduleName . '/' . $moduleName . '.php';
+        include_once _EPH_MODULE_DIR_ . $moduleName . '/' . $moduleName . '.php';
 
         $r = false;
 
-        if (Tools::file_exists_no_cache(_PS_OVERRIDE_DIR_ . 'plugins/' . $moduleName . '/' . $moduleName . '.php')) {
-            include_once _PS_OVERRIDE_DIR_ . 'plugins/' . $moduleName . '/' . $moduleName . '.php';
+        if (Tools::file_exists_no_cache(_EPH_OVERRIDE_DIR_ . 'plugins/' . $moduleName . '/' . $moduleName . '.php')) {
+            include_once _EPH_OVERRIDE_DIR_ . 'plugins/' . $moduleName . '/' . $moduleName . '.php';
             $override = $moduleName . 'Override';
 
             if (class_exists($override, false)) {
@@ -544,7 +544,7 @@ abstract class ModuleCore {
 
         $list = [];
 
-        $upgradePath = _PS_MODULE_DIR_ . $moduleName . '/upgrade/';
+        $upgradePath = _EPH_MODULE_DIR_ . $moduleName . '/upgrade/';
 
         // Check if folder exist and it could be read
 
@@ -592,7 +592,7 @@ abstract class ModuleCore {
             Module::upgradeModuleVersion($moduleName, $moduleVersion);
         }
 
-        usort($list, 'ps_module_version_sort');
+        usort($list, 'EPH_module_version_sort');
 
         // Set the list to module cache
         // @codingStandardsIgnoreStart
@@ -708,7 +708,7 @@ abstract class ModuleCore {
             $_MODULE = [];
             $reflectionClass = new ReflectionClass($currentClass);
             $filePath = realpath($reflectionClass->getFileName());
-            $realpathModuleDir = realpath(_PS_MODULE_DIR_);
+            $realpathModuleDir = realpath(_EPH_MODULE_DIR_);
 
             if (substr(realpath($filePath), 0, strlen($realpathModuleDir)) == $realpathModuleDir) {
                 // For controllers in module/controllers path
@@ -720,7 +720,7 @@ abstract class ModuleCore {
                     static::$classInModule[$currentClass] = substr(dirname($filePath), strlen($realpathModuleDir) + 1);
                 }
 
-                $file = _PS_MODULE_DIR_ . static::$classInModule[$currentClass] . '/' . Context::getContext()->language->iso_code . '.php';
+                $file = _EPH_MODULE_DIR_ . static::$classInModule[$currentClass] . '/' . Context::getContext()->language->iso_code . '.php';
 
                 if (file_exists($file) && include_once ($file)) {
                     $_MODULES = !empty($_MODULES) ? array_merge($_MODULES, $_MODULE) : $_MODULE;
@@ -754,7 +754,7 @@ abstract class ModuleCore {
         if (is_null($id2name)) {
             $id2name = [];
 
-            if ($results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            if ($results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                 ->select('`id_module`, `name`')
                 ->from('module')
@@ -787,11 +787,11 @@ abstract class ModuleCore {
         $iso = substr(Context::getContext()->language->iso_code, 0, 2);
 
         // Config file
-        $configFile = _PS_MODULE_DIR_ . $module . '/config_' . $iso . '.xml';
+        $configFile = _EPH_MODULE_DIR_ . $module . '/config_' . $iso . '.xml';
         // For "en" iso code, we keep the default config.xml name
 
         if ($iso == 'en' || !file_exists($configFile)) {
-            $configFile = _PS_MODULE_DIR_ . $module . '/config.xml';
+            $configFile = _EPH_MODULE_DIR_ . $module . '/config.xml';
 
             if (!file_exists($configFile)) {
                 return 'Module ' . ucfirst($module);
@@ -817,7 +817,7 @@ abstract class ModuleCore {
 
         // Find translations
         global $_MODULES;
-        $file = _PS_MODULE_DIR_ . $module . '/' . Context::getContext()->language->iso_code . '.php';
+        $file = _EPH_MODULE_DIR_ . $module . '/' . Context::getContext()->language->iso_code . '.php';
 
         if (file_exists($file) && include_once ($file)) {
 
@@ -871,7 +871,7 @@ abstract class ModuleCore {
         $modulesDir = Module::getModulesDirOnDisk();
 
         $modulesInstalled = [];
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('m.`name`, m.`version`, mp.`interest`, module_shop.`enable_device`')
                 ->from('module', 'm')
@@ -895,13 +895,13 @@ abstract class ModuleCore {
             // Check if config.xml module file exists and if it's not outdated
 
             if ($iso == 'en') {
-                $configFile = _PS_MODULE_DIR_ . $module . '/config.xml';
+                $configFile = _EPH_MODULE_DIR_ . $module . '/config.xml';
             } else {
-                $configFile = _PS_MODULE_DIR_ . $module . '/config_' . $iso . '.xml';
+                $configFile = _EPH_MODULE_DIR_ . $module . '/config_' . $iso . '.xml';
             }
 
             $xmlExist = (file_exists($configFile));
-            $needNewConfigFile = $xmlExist ? (@filemtime($configFile) < @filemtime(_PS_MODULE_DIR_ . $module . '/' . $module . '.php')) : true;
+            $needNewConfigFile = $xmlExist ? (@filemtime($configFile) < @filemtime(_EPH_MODULE_DIR_ . $module . '/' . $module . '.php')) : true;
 
             // If config.xml exists and that the use config flag is at true
 
@@ -924,7 +924,7 @@ abstract class ModuleCore {
                 // If no errors in Xml, no need instand and no need new config.xml file, we load only translations
 
                 if (!count($errors) && (int) $xmlModule->need_instance == 0) {
-                    $file = _PS_MODULE_DIR_ . $module . '/' . Context::getContext()->language->iso_code . '.php';
+                    $file = _EPH_MODULE_DIR_ . $module . '/' . Context::getContext()->language->iso_code . '.php';
 
                     if (file_exists($file) && include_once ($file)) {
 
@@ -971,8 +971,8 @@ abstract class ModuleCore {
 				
                 if (!class_exists($module, false)) {
                     // Get content from php file
-                    $filePath = _PS_MODULE_DIR_ . $module . '/' . $module . '.php';
-                    $file = trim(file_get_contents(_PS_MODULE_DIR_ . $module . '/' . $module . '.php'));
+                    $filePath = _EPH_MODULE_DIR_ . $module . '/' . $module . '.php';
+                    $file = trim(file_get_contents(_EPH_MODULE_DIR_ . $module . '/' . $module . '.php'));
 
                     if (substr($file, 0, 5) == '<?php') {
                         $file = substr($file, 5);
@@ -988,9 +988,9 @@ abstract class ModuleCore {
                     // This way require_once will works correctly
 					fwrite($filetest,"ici beug".PHP_EOL);
                     if (eval('if (false){   ' . $file . "\n" . ' }') !== false) {
-                        require_once _PS_MODULE_DIR_ . $module . '/' . $module . '.php';
+                        require_once _EPH_MODULE_DIR_ . $module . '/' . $module . '.php';
                     } else {
-                        $errors[] = sprintf(Tools::displayError('%1$s (parse error in %2$s)'), $module, substr($filePath, strlen(_PS_ROOT_DIR_)));
+                        $errors[] = sprintf(Tools::displayError('%1$s (parse error in %2$s)'), $module, substr($filePath, strlen(_EPH_ROOT_DIR_)));
                     }
 
                 }
@@ -1055,7 +1055,7 @@ abstract class ModuleCore {
 
                     unset($tmpModule);
                 } else {
-                    $errors[] = sprintf(Tools::displayError('%1$s (class missing in %2$s)'), $module, substr($filePath, strlen(_PS_ROOT_DIR_)));
+                    $errors[] = sprintf(Tools::displayError('%1$s (class missing in %2$s)'), $module, substr($filePath, strlen(_EPH_ROOT_DIR_)));
                 }
 
             }
@@ -1066,7 +1066,7 @@ abstract class ModuleCore {
 
         if (!empty($moduleNameList)) {
             $list = Shop::getContextListShopID();
-            $results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('m.`id_module`, m.`name`, (SELECT COUNT(*) FROM `' . _DB_PREFIX_ . 'module_shop` ms WHERE m.`id_module` = ms.`id_module` AND ms.`id_shop` IN (' . implode(',', $list) . ')) AS `total`')
                     ->from('module', 'm')
@@ -1093,7 +1093,7 @@ abstract class ModuleCore {
         // This array gets filled with requested module images to download (key = module code, value = guzzle promise)
         $imagePromises = [];
         $guzzle = new \GuzzleHttp\Client([
-            'verify'  => _PS_TOOL_DIR_ . 'cacert.pem',
+            'verify'  => _EPH_TOOL_DIR_ . 'cacert.pem',
             'timeout' => 20,
         ]);
 
@@ -1137,8 +1137,8 @@ abstract class ModuleCore {
 
                 if (isset($module['img'])) {
 
-                    if (!file_exists(_PS_TMP_IMG_DIR_ . md5($name) . '.png')) {
-                        $imagePromises[$name] = $guzzle->getAsync($module['img'], ['sink' => _PS_TMP_IMG_DIR_ . md5($name) . '.png']);
+                    if (!file_exists(_EPH_TMP_IMG_DIR_ . md5($name) . '.png')) {
+                        $imagePromises[$name] = $guzzle->getAsync($module['img'], ['sink' => _EPH_TMP_IMG_DIR_ . md5($name) . '.png']);
                     }
 
                     $item['image'] = '../img/tmp/' . md5($name) . '.png';
@@ -1204,13 +1204,13 @@ abstract class ModuleCore {
     public static function getModulesDirOnDisk() {
 
         $moduleList = [];
-        $modules = scandir(_PS_MODULE_DIR_);
+        $modules = scandir(_EPH_MODULE_DIR_);
 
         foreach ($modules as $name) {
 
-            if (is_file(_PS_MODULE_DIR_ . $name)) {
+            if (is_file(_EPH_MODULE_DIR_ . $name)) {
                 continue;
-            } else if (is_dir(_PS_MODULE_DIR_ . $name . DIRECTORY_SEPARATOR) && file_exists(_PS_MODULE_DIR_ . $name . '/' . $name . '.php')) {
+            } else if (is_dir(_EPH_MODULE_DIR_ . $name . DIRECTORY_SEPARATOR) && file_exists(_EPH_MODULE_DIR_ . $name . '/' . $name . '.php')) {
 
                 if (!Validate::isModuleName($name)) {
                     throw new PhenyxShopException(sprintf('Module %s is not a valid module name', $name));
@@ -1272,7 +1272,7 @@ abstract class ModuleCore {
      */
     public static function getNativeModuleList() {
 
-        require _PS_CONFIG_DIR_ . 'default_modules.php';
+        require _EPH_CONFIG_DIR_ . 'default_modules.php';
 
         return $_EPH_DEFAULT_MODULES_;
     }
@@ -1295,7 +1295,7 @@ abstract class ModuleCore {
             $query->where("`name` NOT IN ('" . implode("', '", array_map('pSQL', $nativeModules)) . "')");
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
     }
 
     /**
@@ -1433,7 +1433,7 @@ abstract class ModuleCore {
             $groups = $context->customer->getGroups();
 
             if (!count($groups)) {
-                $groups = [Configuration::get('PS_UNIDENTIFIED_GROUP')];
+                $groups = [Configuration::get('EPH_UNIDENTIFIED_GROUP')];
             }
 
         }
@@ -1442,12 +1442,12 @@ abstract class ModuleCore {
         $groups = $context->customer->getGroups();
 
         if (!count($groups)) {
-            $groups = [Configuration::get('PS_UNIDENTIFIED_GROUP')];
+            $groups = [Configuration::get('EPH_UNIDENTIFIED_GROUP')];
         }
 
         $hookPayment = 'Payment';
 
-        if (Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        if (Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
             ->select('`id_hook`')
             ->from('hook')
@@ -1458,7 +1458,7 @@ abstract class ModuleCore {
 
         $list = Shop::getContextListShopID();
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('DISTINCT m.`id_module`, h.`id_hook`, m.`name`, hm.`position`')
                 ->from('module', 'm')
@@ -1536,7 +1536,7 @@ abstract class ModuleCore {
      */
     public static function getAuthorizedModules($groupId) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('m.`id_module`, m.`name`')
                 ->from('module_group', 'mg')
@@ -1585,7 +1585,7 @@ abstract class ModuleCore {
 
                 foreach ($this->dependencies as $dependency) {
 
-                    if (!Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+                    if (!Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                         (new DbQuery())
                         ->select('`id_module`')
                         ->from('module')
@@ -1625,9 +1625,9 @@ abstract class ModuleCore {
 
             // Invalidate opcache
 
-            if (function_exists('opcache_invalidate') && file_exists(_PS_MODULE_DIR_ . $this->name)) {
+            if (function_exists('opcache_invalidate') && file_exists(_EPH_MODULE_DIR_ . $this->name)) {
 
-                foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_PS_MODULE_DIR_ . $this->name)) as $file) {
+                foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(_EPH_MODULE_DIR_ . $this->name)) as $file) {
                     /** @var SplFileInfo $file */
 
                     if (substr($file->getFilename(), -4) !== '.php' || $file->isLink()) {
@@ -1717,11 +1717,11 @@ abstract class ModuleCore {
      */
     public function checkCompliancy() {
 
-        if (version_compare(_PS_VERSION_, $this->ps_versions_compliancy['min'], '<')) {
+        if (version_compare(_EPH_VERSION_, $this->EPH_versions_compliancy['min'], '<')) {
             return false;
         }
 
-        if (version_compare('1.6.1.20', $this->ps_versions_compliancy['max'], '>')) {
+        if (version_compare('1.6.1.20', $this->EPH_versions_compliancy['max'], '>')) {
             return false;
         }
 
@@ -1758,7 +1758,7 @@ abstract class ModuleCore {
         $cacheId = 'Module::getModuleIdByName_' . pSQL($name);
 
         if (!Cache::isStored($cacheId)) {
-            $result = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $result = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`id_module`')
                     ->from('module')
@@ -1842,7 +1842,7 @@ abstract class ModuleCore {
 
         if ($file = PhenyxShopAutoload::getInstance()->getClassPath($classname)) {
             // Check if override file is writable
-            $overridePath = _PS_ROOT_DIR_ . '/' . $file;
+            $overridePath = _EPH_ROOT_DIR_ . '/' . $file;
 
             if ((!file_exists($overridePath) && !is_writable(dirname($overridePath))) || (file_exists($overridePath) && !is_writable($overridePath))) {
                 throw new Exception(sprintf(Tools::displayError('file (%s) not writable'), $overridePath));
@@ -1942,7 +1942,7 @@ abstract class ModuleCore {
         } else {
             $overrideSrc = $pathOverride;
 
-            $overrideDest = _PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . 'override' . DIRECTORY_SEPARATOR . $path;
+            $overrideDest = _EPH_ROOT_DIR_ . DIRECTORY_SEPARATOR . 'override' . DIRECTORY_SEPARATOR . $path;
             $dirName = dirname($overrideDest);
 
             if (!$origPath && !is_dir($dirName)) {
@@ -2069,9 +2069,9 @@ abstract class ModuleCore {
         // Check if override file is writable
 
         if ($origPath) {
-            $overridePath = _PS_ROOT_DIR_ . '/' . $file;
+            $overridePath = _EPH_ROOT_DIR_ . '/' . $file;
         } else {
-            $overridePath = _PS_OVERRIDE_DIR_ . $path;
+            $overridePath = _EPH_OVERRIDE_DIR_ . $path;
         }
 
         if (!is_file($overridePath) || !is_writable($overridePath)) {
@@ -2251,7 +2251,7 @@ abstract class ModuleCore {
 
         foreach ($this->controllers as $controller) {
             $page = 'module-' . $this->name . '-' . $controller;
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('*')
                     ->from('meta')
@@ -2312,7 +2312,7 @@ abstract class ModuleCore {
         // Store the results in an array
         $items = [];
 
-        if ($results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        if ($results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
             ->select('`id_shop`')
             ->from('module_shop')
@@ -2504,7 +2504,7 @@ abstract class ModuleCore {
         }
 
         // Retrieve hooks used by the module
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_hook`')
                 ->from('hook_module')
@@ -2518,7 +2518,7 @@ abstract class ModuleCore {
 
         foreach ($this->controllers as $controller) {
             $pageName = 'module-' . $this->name . '-' . $controller;
-            $meta = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $meta = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`id_meta`')
                     ->from('meta')
@@ -2609,7 +2609,7 @@ abstract class ModuleCore {
      */
     public function cleanPositions($idHook, $shopList = null) {
 
-        $results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_module`, `id_shop`')
                 ->from('hook_module')
@@ -3148,7 +3148,7 @@ abstract class ModuleCore {
 
         if (!Cache::isStored($cache_id)) {
             $exceptions_cache = [];
-            $dbSlave = Db::getInstance(_PS_USE_SQL_SLAVE_);
+            $dbSlave = Db::getInstance(_EPH_USE_SQL_SLAVE_);
             $result = $dbSlave->executeS(
                 (new DbQuery())
                     ->select('*')
@@ -3224,7 +3224,7 @@ abstract class ModuleCore {
      */
     public function isEnabledForShopContext() {
 
-        return (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(*) n')
                 ->from('module_shop')
@@ -3249,7 +3249,7 @@ abstract class ModuleCore {
             return false;
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(*)')
                 ->FROM('hook_module', 'hm')
@@ -3285,7 +3285,7 @@ abstract class ModuleCore {
             $this->smarty->assign(
                 [
                     'module_dir'          => $this->context->link->getBaseFrontLink(). '/includes/plugins/' . basename($file, '.php') . '/',
-                    'module_template_dir' => ($overloaded ? _THEME_DIR_ : __PS_BASE_URI__) . 'includes/plugins/' . basename($file, '.php') . '/',
+                    'module_template_dir' => ($overloaded ? _THEME_DIR_ : __EPH_BASE_URI__) . 'includes/plugins/' . basename($file, '.php') . '/',
                     'allow_push'          => $this->allow_push,
                 ]
             );
@@ -3302,7 +3302,7 @@ abstract class ModuleCore {
 
             $this->resetCurrentSubTemplate($template, $cache_id, $compile_id);
 
-            if ($result && _PS_MODE_DEV_ && !Validate::isJSON($result)) {
+            if ($result && _EPH_MODE_DEV_ && !Validate::isJSON($result)) {
                 $tpl_path = $this->getTemplatePath($template);
                 $result = '<!-- START ' . $tpl_path . ' -->' . $result . '<!-- END ' . $tpl_path . ' -->';
             }
@@ -3322,17 +3322,17 @@ abstract class ModuleCore {
      */
     protected static function _isTemplateOverloadedStatic($module_name, $template) {
 
-        if (file_exists(_PS_THEME_DIR_ . 'plugins/' . $module_name . '/' . $template)) {
-            return _PS_THEME_DIR_ . 'plugins/' . $module_name . '/' . $template;
-        } else if (file_exists(_PS_THEME_DIR_ . 'plugins/' . $module_name . '/views/templates/hook/' . $template)) {
-            return _PS_THEME_DIR_ . 'plugins/' . $module_name . '/views/templates/hook/' . $template;
-        } else if (file_exists(_PS_THEME_DIR_ . 'plugins/' . $module_name . '/views/templates/front/' . $template)) {
-            return _PS_THEME_DIR_ . 'plugins/' . $module_name . '/views/templates/front/' . $template;
-        } else if (file_exists(_PS_MODULE_DIR_ . $module_name . '/views/templates/hook/' . $template)) {
+        if (file_exists(_EPH_THEME_DIR_ . 'plugins/' . $module_name . '/' . $template)) {
+            return _EPH_THEME_DIR_ . 'plugins/' . $module_name . '/' . $template;
+        } else if (file_exists(_EPH_THEME_DIR_ . 'plugins/' . $module_name . '/views/templates/hook/' . $template)) {
+            return _EPH_THEME_DIR_ . 'plugins/' . $module_name . '/views/templates/hook/' . $template;
+        } else if (file_exists(_EPH_THEME_DIR_ . 'plugins/' . $module_name . '/views/templates/front/' . $template)) {
+            return _EPH_THEME_DIR_ . 'plugins/' . $module_name . '/views/templates/front/' . $template;
+        } else if (file_exists(_EPH_MODULE_DIR_ . $module_name . '/views/templates/hook/' . $template)) {
             return false;
-        } else if (file_exists(_PS_MODULE_DIR_ . $module_name . '/views/templates/front/' . $template)) {
+        } else if (file_exists(_EPH_MODULE_DIR_ . $module_name . '/views/templates/front/' . $template)) {
             return false;
-        } else if (file_exists(_PS_MODULE_DIR_ . $module_name . '/' . $template)) {
+        } else if (file_exists(_EPH_MODULE_DIR_ . $module_name . '/' . $template)) {
             return false;
         }
 
@@ -3381,12 +3381,12 @@ abstract class ModuleCore {
 
         if ($overloaded) {
             return $overloaded;
-        } else if (file_exists(_PS_MODULE_DIR_ . $this->name . '/views/templates/hook/' . $template)) {
-            return _PS_MODULE_DIR_ . $this->name . '/views/templates/hook/' . $template;
-        } else if (file_exists(_PS_MODULE_DIR_ . $this->name . '/views/templates/front/' . $template)) {
-            return _PS_MODULE_DIR_ . $this->name . '/views/templates/front/' . $template;
-        } else if (file_exists(_PS_MODULE_DIR_ . $this->name . '/' . $template)) {
-            return _PS_MODULE_DIR_ . $this->name . '/' . $template;
+        } else if (file_exists(_EPH_MODULE_DIR_ . $this->name . '/views/templates/hook/' . $template)) {
+            return _EPH_MODULE_DIR_ . $this->name . '/views/templates/hook/' . $template;
+        } else if (file_exists(_EPH_MODULE_DIR_ . $this->name . '/views/templates/front/' . $template)) {
+            return _EPH_MODULE_DIR_ . $this->name . '/views/templates/front/' . $template;
+        } else if (file_exists(_EPH_MODULE_DIR_ . $this->name . '/' . $template)) {
+            return _EPH_MODULE_DIR_ . $this->name . '/' . $template;
         } else {
             return null;
         }
@@ -3491,13 +3491,13 @@ abstract class ModuleCore {
             $employee = Context::getContext()->employee;
         }
 
-        if ($employee->id_profile == _PS_ADMIN_PROFILE_) {
+        if ($employee->id_profile == _EPH_ADMIN_PROFILE_) {
             return true;
         }
 
         if (!isset(static::$cache_permissions[$employee->id_profile])) {
             static::$cache_permissions[$employee->id_profile] = [];
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('SELECT `id_module`, `view`, `configure`, `uninstall` FROM `' . _DB_PREFIX_ . 'module_access` WHERE `id_profile` = ' . (int) $employee->id_profile);
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS('SELECT `id_module`, `view`, `configure`, `uninstall` FROM `' . _DB_PREFIX_ . 'module_access` WHERE `id_profile` = ' . (int) $employee->id_profile);
 
             foreach ($result as $row) {
                 static::$cache_permissions[$employee->id_profile][$row['id_module']]['view'] = $row['view'];
@@ -3574,7 +3574,7 @@ abstract class ModuleCore {
 
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('`position`')
                 ->from('hook_module')
@@ -3649,7 +3649,7 @@ abstract class ModuleCore {
         $cache_array = [];
         $cache_array[] = $name !== null ? $name : $this->name;
 
-        if (Configuration::get('PS_SSL_ENABLED')) {
+        if (Configuration::get('EPH_SSL_ENABLED')) {
             $cache_array[] = (int) Tools::usingSecureMode();
         }
 
@@ -3684,7 +3684,7 @@ abstract class ModuleCore {
      */
     protected function _getApplicableTemplateDir($template) {
 
-        return $this->_isTemplateOverloaded($template) ? _PS_THEME_DIR_ : _PS_MODULE_DIR_ . $this->name . '/';
+        return $this->_isTemplateOverloaded($template) ? _EPH_THEME_DIR_ : _EPH_MODULE_DIR_ . $this->name . '/';
     }
 
     /**
@@ -3701,15 +3701,15 @@ abstract class ModuleCore {
      */
     protected function _clearCache($template, $cacheId = null, $compileId = null) {
 
-        static $ps_smarty_clear_cache = null;
+        static $EPH_smarty_clear_cache = null;
 
-        if ($ps_smarty_clear_cache === null) {
-            $ps_smarty_clear_cache = Configuration::get('PS_SMARTY_CLEAR_CACHE');
+        if ($EPH_smarty_clear_cache === null) {
+            $EPH_smarty_clear_cache = Configuration::get('EPH_SMARTY_CLEAR_CACHE');
         }
 
         if (static::$_batch_mode) {
 
-            if ($ps_smarty_clear_cache == 'never') {
+            if ($EPH_smarty_clear_cache == 'never') {
                 return 0;
             }
 
@@ -3726,7 +3726,7 @@ abstract class ModuleCore {
 
         } else {
 
-            if ($ps_smarty_clear_cache == 'never') {
+            if ($EPH_smarty_clear_cache == 'never') {
                 return 0;
             }
 
@@ -3803,9 +3803,9 @@ abstract class ModuleCore {
             $moduleXML->appendChild($element);
         }
 
-        if (is_writable(_PS_MODULE_DIR_ . $this->name . '/')) {
+        if (is_writable(_EPH_MODULE_DIR_ . $this->name . '/')) {
             $iso = substr(Context::getContext()->language->iso_code, 0, 2);
-            $file = _PS_MODULE_DIR_ . $this->name . '/' . ($iso == 'en' ? 'config.xml' : 'config_' . $iso . '.xml');
+            $file = _EPH_MODULE_DIR_ . $this->name . '/' . ($iso == 'en' ? 'config.xml' : 'config_' . $iso . '.xml');
             @unlink($file);
             @file_put_contents($file, $xml->saveXml());
             @chmod($file, 0664);
@@ -3833,7 +3833,7 @@ abstract class ModuleCore {
 
 }
 
-function ps_module_version_sort($a, $b) {
+function EPH_module_version_sort($a, $b) {
 
     return version_compare($a['version'], $b['version']);
 }

@@ -37,17 +37,17 @@ class AdminMetaControllerCore extends AdminController {
 
         $this->bootstrap = true;
         $this->identifier_name = 'page';
-        $this->ht_file = _PS_ROOT_DIR_ . '/../.htaccess';
-        $this->rb_file = _PS_ROOT_DIR_ . '/../robots.txt';
+        $this->ht_file = _EPH_ROOT_DIR_ . '/../.htaccess';
+        $this->rb_file = _EPH_ROOT_DIR_ . '/../robots.txt';
         $this->rb_data = $this->getRobotsContent();
 
         parent::__construct();
 
-        $this->sm_file = _PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . $this->context->shop->id . '_index_sitemap.xml';
+        $this->sm_file = _EPH_ROOT_DIR_ . DIRECTORY_SEPARATOR . $this->context->shop->id . '_index_sitemap.xml';
         // Options to generate friendly urls
         $modRewrite = Tools::modRewriteActive();
         $generalFields = [
-            'PS_REWRITING_SETTINGS'       => [
+            'EPH_REWRITING_SETTINGS'       => [
                 'title'      => $this->l('Friendly URL'),
                 'hint'       => ($this->l('This option gives your shop SEO friendly, human readable URLs, e.g. http://example.com/blouse instead of http://example.com/index.php?id_product=1&controller=product (recommended).')),
                 'validation' => 'isBool',
@@ -56,7 +56,7 @@ class AdminMetaControllerCore extends AdminController {
                 'desc'       => (!$modRewrite ? $this->l('URL rewriting (mod_rewrite) is not active on your server, or it is not possible to check your server configuration. If you want to use Friendly URLs, you must activate this mod.') : ''),
                 'disabled'   => !$modRewrite,
             ],
-            'PS_ALLOW_ACCENTED_CHARS_URL' => [
+            'EPH_ALLOW_ACCENTED_CHARS_URL' => [
                 'title'      => $this->l('Accented URL'),
                 'hint'       => $this->l('Enable this option if you want to allow accented characters in your friendly URLs.') . ' ' . $this->l('You should only activate this option if you are using non-latin characters. For all the latin charsets, your SEO will be better without this option.'),
                 'validation' => 'isBool',
@@ -65,7 +65,7 @@ class AdminMetaControllerCore extends AdminController {
                 'desc'       => (!$modRewrite ? $this->l('Not available because URL rewriting (mod_rewrite) isn\'t available.') : ''),
                 'disabled'   => !$modRewrite,
             ],
-            'PS_CANONICAL_REDIRECT'       => [
+            'EPH_CANONICAL_REDIRECT'       => [
                 'title'      => $this->l('Redirect to the canonical URL'),
                 'validation' => 'isUnsignedInt',
                 'cast'       => 'intval',
@@ -82,7 +82,7 @@ class AdminMetaControllerCore extends AdminController {
         $urlDescription = '';
 
         if ($this->checkConfiguration($this->ht_file)) {
-            $generalFields['PS_HTACCESS_DISABLE_MULTIVIEWS'] = [
+            $generalFields['EPH_HTACCESS_DISABLE_MULTIVIEWS'] = [
                 'title'      => $this->l('Disable Apache\'s MultiViews option'),
                 'hint'       => $this->l('Enable this option only if you have problems with URL rewriting.'),
                 'validation' => 'isBool',
@@ -90,7 +90,7 @@ class AdminMetaControllerCore extends AdminController {
                 'type'       => 'bool',
             ];
 
-            $generalFields['PS_HTACCESS_DISABLE_MODSEC'] = [
+            $generalFields['EPH_HTACCESS_DISABLE_MODSEC'] = [
                 'title'      => $this->l('Disable Apache\'s mod_security module'),
                 'hint'       => $this->l('Some of ephenyx\' features might not work correctly with a specific configuration of Apache\'s mod_security module. We recommend to turn it off.'),
                 'validation' => 'isBool',
@@ -161,9 +161,9 @@ class AdminMetaControllerCore extends AdminController {
 
         // Add display route options to options form
 
-        if (Configuration::get('PS_REWRITING_SETTINGS') || Tools::getValue('PS_REWRITING_SETTINGS')) {
+        if (Configuration::get('EPH_REWRITING_SETTINGS') || Tools::getValue('EPH_REWRITING_SETTINGS')) {
 
-            if (Configuration::get('PS_REWRITING_SETTINGS')) {
+            if (Configuration::get('EPH_REWRITING_SETTINGS')) {
                 $this->addAllRouteFields();
             }
 
@@ -198,7 +198,7 @@ class AdminMetaControllerCore extends AdminController {
                     'enableLiveAutocompletion'  => true,
                     'maxLines'                  => 400,
                     'visibility'                => Shop::CONTEXT_ALL,
-                    'value'                     => Tools::isSubmit('robots') ? Tools::getValue('robots') : @file_get_contents(_PS_ROOT_DIR_ . '/robots.txt'),
+                    'value'                     => Tools::isSubmit('robots') ? Tools::getValue('robots') : @file_get_contents(_EPH_ROOT_DIR_ . '/robots.txt'),
                     'auto_value'                => false,
                 ],
             ],
@@ -226,7 +226,7 @@ class AdminMetaControllerCore extends AdminController {
                     'enableLiveAutocompletion'  => true,
                     'maxLines'                  => 400,
                     'visibility'                => Shop::CONTEXT_ALL,
-                    'value'                     => Tools::isSubmit('htaccess') ? Tools::getValue('htaccess') : @file_get_contents(_PS_ROOT_DIR_ . '/.htaccess'),
+                    'value'                     => Tools::isSubmit('htaccess') ? Tools::getValue('htaccess') : @file_get_contents(_EPH_ROOT_DIR_ . '/.htaccess'),
                     'auto_value'                => false,
                 ],
             ],
@@ -256,7 +256,7 @@ class AdminMetaControllerCore extends AdminController {
         }
 
         $this->extracss = $this->pushCSS([
-            _PS_JS_DIR_ . 'ace/aceinput.css',
+            _EPH_JS_DIR_ . 'ace/aceinput.css',
             _EPH_ADMIN_THEME_DIR_ . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/metas.css',
 
         ]);
@@ -268,7 +268,7 @@ class AdminMetaControllerCore extends AdminController {
     public function setAjaxMedia() {
 
         return $this->pushJS([
-            _PS_JS_DIR_ . 'jquery/plugins/jquery.tagify.js',
+            _EPH_JS_DIR_ . 'jquery/plugins/jquery.tagify.js',
             'https://cdn.ephenyxapi.com/ace/ace.js',
         ]);
     }
@@ -466,7 +466,7 @@ class AdminMetaControllerCore extends AdminController {
 
     public function generateOptions($tab) {
 
-        if (Configuration::get('PS_REWRITING_SETTINGS')) {
+        if (Configuration::get('EPH_REWRITING_SETTINGS')) {
             $this->addAllRouteFields();
         }
 
@@ -515,11 +515,11 @@ class AdminMetaControllerCore extends AdminController {
 
             if ($key == 'domain') {
                 $shopUrl->domain = $value;
-                Configuration::updateValue('PS_SHOP_DOMAIN', $value);
+                Configuration::updateValue('EPH_SHOP_DOMAIN', $value);
             } else
             if ($key == 'domain_ssl') {
                 $shopUrl->domain_ssl = $value;
-                Configuration::updateValue('PS_SHOP_DOMAIN_SSL', $value);
+                Configuration::updateValue('EPH_SHOP_DOMAIN_SSL', $value);
             } else
             if ($key == 'uri') {
                 $shopUrl->phisical_uri = $value;
@@ -743,8 +743,8 @@ class AdminMetaControllerCore extends AdminController {
 
         parent::postProcess();
 
-        if (_PS_MODE_DEMO_ && Tools::isSubmit('submitOptionsmeta')
-            && (Tools::getValue('domain') != Configuration::get('PS_SHOP_DOMAIN') || Tools::getValue('domain_ssl') != Configuration::get('PS_SHOP_DOMAIN_SSL'))) {
+        if (_EPH_MODE_DEMO_ && Tools::isSubmit('submitOptionsmeta')
+            && (Tools::getValue('domain') != Configuration::get('EPH_SHOP_DOMAIN') || Tools::getValue('domain_ssl') != Configuration::get('EPH_SHOP_DOMAIN_SSL'))) {
             $this->errors[] = Tools::displayError('This functionality has been disabled.');
 
             return null;
@@ -942,7 +942,7 @@ class AdminMetaControllerCore extends AdminController {
         $return = [
             'success'  => true,
             'message'  => $this->l('Le fichier htaccess a été régénéré avec succès'),
-            'htaccess' => @file_get_contents(_PS_ROOT_DIR_ . '/.htaccess'),
+            'htaccess' => @file_get_contents(_EPH_ROOT_DIR_ . '/.htaccess'),
         ];
 
         die(Tools::jsonEncode($return));
@@ -1030,7 +1030,7 @@ class AdminMetaControllerCore extends AdminController {
             if (file_exists($this->sm_file) && filesize($this->sm_file)) {
                 fwrite($writeFd, "# Sitemap\n");
                 $sitemapFilename = basename($this->sm_file);
-                fwrite($writeFd, 'Sitemap: ' . (Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://') . $_SERVER['SERVER_NAME'] . __PS_BASE_URI__ . $sitemapFilename . "\n");
+                fwrite($writeFd, 'Sitemap: ' . (Configuration::get('EPH_SSL_ENABLED') ? 'https://' : 'http://') . $_SERVER['SERVER_NAME'] . __EPH_BASE_URI__ . $sitemapFilename . "\n");
             }
 
             Hook::exec(
@@ -1046,7 +1046,7 @@ class AdminMetaControllerCore extends AdminController {
             $return = [
                 'success' => true,
                 'message' => $this->l('Le fichier robot.txt a été régénéré avec succès'),
-                'robots'  => @file_get_contents(_PS_ROOT_DIR_ . '/robots.txt'),
+                'robots'  => @file_get_contents(_EPH_ROOT_DIR_ . '/robots.txt'),
             ];
 
             die(Tools::jsonEncode($return));
@@ -1105,13 +1105,13 @@ class AdminMetaControllerCore extends AdminController {
     }
 
     /**
-     * Called when PS_REWRITING_SETTINGS option is saved
+     * Called when EPH_REWRITING_SETTINGS option is saved
      *
      * @since 1.8.5.0
      */
     public function updateOptionPsRewritingSettings() {
 
-        Configuration::updateValue('PS_REWRITING_SETTINGS', (int) Tools::getValue('PS_REWRITING_SETTINGS'));
+        Configuration::updateValue('EPH_REWRITING_SETTINGS', (int) Tools::getValue('EPH_REWRITING_SETTINGS'));
 
         $this->updateOptionDomain(Tools::getValue('domain'));
         $this->updateOptionDomainSsl(Tools::getValue('domain_ssl'));
@@ -1120,12 +1120,12 @@ class AdminMetaControllerCore extends AdminController {
             $this->updateOptionUri(Tools::getValue('uri'));
         }
 
-        if (Tools::generateHtaccess($this->ht_file, null, null, '', Tools::getValue('PS_HTACCESS_DISABLE_MULTIVIEWS'), false, Tools::getValue('PS_HTACCESS_DISABLE_MODSEC'))) {
+        if (Tools::generateHtaccess($this->ht_file, null, null, '', Tools::getValue('EPH_HTACCESS_DISABLE_MULTIVIEWS'), false, Tools::getValue('EPH_HTACCESS_DISABLE_MODSEC'))) {
             Tools::enableCache();
             Tools::clearCache($this->context->smarty);
             Tools::restoreCacheSettings();
         } else {
-            Configuration::updateValue('PS_REWRITING_SETTINGS', 0);
+            Configuration::updateValue('EPH_REWRITING_SETTINGS', 0);
             // Message copied/pasted from the information tip
             $message = $this->l('Before being able to use this tool, you need to:');
             $message .= '<br />- ' . $this->l('Create a blank .htaccess in your root directory.');
@@ -1207,7 +1207,7 @@ class AdminMetaControllerCore extends AdminController {
             if (Validate::isCleanHtml($value)) {
                 $this->url->domain = $value;
                 $this->url->update();
-                Configuration::updateGlobalValue('PS_SHOP_DOMAIN', $value);
+                Configuration::updateGlobalValue('EPH_SHOP_DOMAIN', $value);
             } else {
                 $this->errors[] = Tools::displayError('This domain is not valid.');
             }
@@ -1232,7 +1232,7 @@ class AdminMetaControllerCore extends AdminController {
             if (Validate::isCleanHtml($value)) {
                 $this->url->domain_ssl = $value;
                 $this->url->update();
-                Configuration::updateGlobalValue('PS_SHOP_DOMAIN_SSL', $value);
+                Configuration::updateGlobalValue('EPH_SHOP_DOMAIN_SSL', $value);
             } else {
                 $this->errors[] = Tools::displayError('The SSL domain is not valid.');
             }
@@ -1266,7 +1266,7 @@ class AdminMetaControllerCore extends AdminController {
      */
     public function saveRobotsFile() {
 
-        @file_put_contents(_PS_ROOT_DIR_ . '/robots.txt', Tools::getValue('robots'));
+        @file_put_contents(_EPH_ROOT_DIR_ . '/robots.txt', Tools::getValue('robots'));
     }
 
     /**
@@ -1276,7 +1276,7 @@ class AdminMetaControllerCore extends AdminController {
      */
     public function saveHtaccessFile() {
 
-        @file_put_contents(_PS_ROOT_DIR_ . '/.htaccess', Tools::getValue('htaccess'));
+        @file_put_contents(_EPH_ROOT_DIR_ . '/.htaccess', Tools::getValue('htaccess'));
     }
 
     /**
@@ -1331,14 +1331,14 @@ class AdminMetaControllerCore extends AdminController {
         // Rewrite files
         $tab['Files'] = [];
 
-        if (Configuration::get('PS_REWRITING_SETTINGS')) {
+        if (Configuration::get('EPH_REWRITING_SETTINGS')) {
             $sql = 'SELECT ml.url_rewrite, l.iso_code
                     FROM ' . _DB_PREFIX_ . 'meta m
                     INNER JOIN ' . _DB_PREFIX_ . 'meta_lang ml ON ml.id_meta = m.id_meta
                     INNER JOIN ' . _DB_PREFIX_ . 'lang l ON l.id_lang = ml.id_lang
                     WHERE l.active = 1 AND m.page IN (\'' . implode('\', \'', $disallowControllers) . '\')';
 
-            if ($results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql)) {
+            if ($results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql)) {
 
                 foreach ($results as $row) {
                     $tab['Files'][$row['iso_code']][] = $row['url_rewrite'];

@@ -55,7 +55,7 @@ class OrderControllerCore extends ParentOrderController {
         $currency = Currency::getCurrency((int) $this->context->cart->id_currency);
 
         $orderTotal = $this->context->cart->getOrderTotal();
-        $minimalPurchase = Tools::convertPrice((float) Configuration::get('PS_PURCHASE_MINIMUM'), $currency);
+        $minimalPurchase = Tools::convertPrice((float) Configuration::get('EPH_PURCHASE_MINIMUM'), $currency);
 
         if ($this->context->cart->getOrderTotal(false, Cart::ONLY_PRODUCTS) < $minimalPurchase && $this->step > 0) {
             $_GET['step'] = $this->step = 0;
@@ -85,7 +85,7 @@ class OrderControllerCore extends ParentOrderController {
                 $params['multi-shipping'] = $multi;
             }
 
-            if ($guest = (int) Configuration::get('PS_GUEST_CHECKOUT_ENABLED')) {
+            if ($guest = (int) Configuration::get('EPH_GUEST_CHECKOUT_ENABLED')) {
                 $params['display_guest_checkout'] = $guest;
             }
 
@@ -210,7 +210,7 @@ class OrderControllerCore extends ParentOrderController {
         }
 
         // Check for alternative payment api
-        $isAdvancedPaymentApi = (bool) Configuration::get('PS_ADVANCED_PAYMENT_API');
+        $isAdvancedPaymentApi = (bool) Configuration::get('EPH_ADVANCED_PAYMENT_API');
 
         // 4 steps to the order
 
@@ -218,7 +218,7 @@ class OrderControllerCore extends ParentOrderController {
 
         case OrderController::STEP_SUMMARY_EMPTY_CART:
             $this->context->smarty->assign('empty', 1);
-            $this->setTemplate(_PS_THEME_DIR_ . 'shopping-cart.tpl');
+            $this->setTemplate(_EPH_THEME_DIR_ . 'shopping-cart.tpl');
             break;
 
         case OrderController::STEP_ADDRESSES:
@@ -228,9 +228,9 @@ class OrderControllerCore extends ParentOrderController {
             if (Tools::getValue('multi-shipping') == 1) {
                 $this->_assignSummaryInformations();
                 $this->context->smarty->assign('product_list', $this->context->cart->getProducts());
-                $this->setTemplate(_PS_THEME_DIR_ . 'order-address-multishipping.tpl');
+                $this->setTemplate(_EPH_THEME_DIR_ . 'order-address-multishipping.tpl');
             } else {
-                $this->setTemplate(_PS_THEME_DIR_ . 'order-address.tpl');
+                $this->setTemplate(_EPH_THEME_DIR_ . 'order-address.tpl');
             }
 
             break;
@@ -243,14 +243,14 @@ class OrderControllerCore extends ParentOrderController {
 
             $this->autoStep();
             $this->_assignCarrier();
-            $this->setTemplate(_PS_THEME_DIR_ . 'order-carrier.tpl');
+            $this->setTemplate(_EPH_THEME_DIR_ . 'order-carrier.tpl');
             break;
 
         case OrderController::STEP_PAYMENT:
             // Check that the conditions (so active) were accepted by the customer
             $cgv = Tools::getValue('cgv') || $this->context->cookie->check_cgv;
 
-            if ($isAdvancedPaymentApi === false && Configuration::get('PS_CONDITIONS')
+            if ($isAdvancedPaymentApi === false && Configuration::get('EPH_CONDITIONS')
                 && (!Validate::isBool($cgv) || $cgv == false)
             ) {
                 Tools::redirect('index.php?controller=order&step=2');
@@ -310,12 +310,12 @@ class OrderControllerCore extends ParentOrderController {
 
             // assign some informations to display cart
             $this->_assignSummaryInformations();
-            $this->setTemplate(_PS_THEME_DIR_ . 'order-payment.tpl');
+            $this->setTemplate(_EPH_THEME_DIR_ . 'order-payment.tpl');
             break;
 
         default:
             $this->_assignSummaryInformations();
-            $this->setTemplate(_PS_THEME_DIR_ . 'shopping-cart.tpl');
+            $this->setTemplate(_EPH_THEME_DIR_ . 'shopping-cart.tpl');
             break;
         }
 
@@ -544,7 +544,7 @@ class OrderControllerCore extends ParentOrderController {
         /* We may need to display an order summary */
         $this->context->smarty->assign($this->context->cart->getSummaryDetails());
 
-        if ((bool) Configuration::get('PS_ADVANCED_PAYMENT_API')) {
+        if ((bool) Configuration::get('EPH_ADVANCED_PAYMENT_API')) {
             $this->context->cart->checkedTOS = null;
         } else {
             $this->context->cart->checkedTOS = 1;
@@ -556,9 +556,9 @@ class OrderControllerCore extends ParentOrderController {
         $this->context->smarty->assign(
             [
                 'total_price'          => (float) $orderTotal,
-                'taxes_enabled'        => (int) Configuration::get('PS_TAX'),
-                'cms_id'               => (int) Configuration::get('PS_CONDITIONS_CMS_ID'),
-                'conditions'           => (int) Configuration::get('PS_CONDITIONS'),
+                'taxes_enabled'        => (int) Configuration::get('EPH_TAX'),
+                'cms_id'               => (int) Configuration::get('EPH_CONDITIONS_CMS_ID'),
+                'conditions'           => (int) Configuration::get('EPH_CONDITIONS'),
                 'checkedTOS'           => (int) $this->context->cart->checkedTOS,
                 'override_tos_display' => $hookOverrideTosDisplay,
             ]

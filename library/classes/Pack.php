@@ -22,7 +22,7 @@ class PackCore extends Product {
 
         $sum = 0;
         $priceDisplayMethod = !static::$_taxCalculationMethod;
-        $items = Pack::getItems($idProduct, Configuration::get('PS_LANG_DEFAULT'));
+        $items = Pack::getItems($idProduct, Configuration::get('EPH_LANG_DEFAULT'));
 
         foreach ($items as $item) {
             /** @var Product $item */
@@ -97,7 +97,7 @@ class PackCore extends Product {
      */
     public static function isFeatureActive() {
 
-        return Configuration::get('PS_PACK_FEATURE_ACTIVE');
+        return Configuration::get('EPH_PACK_FEATURE_ACTIVE');
     }
 
     /**
@@ -110,7 +110,7 @@ class PackCore extends Product {
     public static function noPackWholesalePrice($idProduct) {
 
         $sum = 0;
-        $items = Pack::getItems($idProduct, Configuration::get('PS_LANG_DEFAULT'));
+        $items = Pack::getItems($idProduct, Configuration::get('EPH_LANG_DEFAULT'));
 
         foreach ($items as $item) {
             $sum += $item->wholesale_price * $item->pack_quantity;
@@ -132,7 +132,7 @@ class PackCore extends Product {
             return true;
         }
 
-        $items = Pack::getItems((int) $idProduct, Configuration::get('PS_LANG_DEFAULT'));
+        $items = Pack::getItems((int) $idProduct, Configuration::get('EPH_LANG_DEFAULT'));
 
         foreach ($items as $item) {
             /** @var Product $item */
@@ -181,7 +181,7 @@ class PackCore extends Product {
                 AND a.`id_product_pack` = ' . (int) $idProduct . '
                 GROUP BY a.`id_product_item`, a.`id_product_attribute_item`';
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
 
         foreach ($result as &$line) {
 
@@ -201,7 +201,7 @@ class PackCore extends Product {
                 GROUP BY pa.`id_product_attribute`, ag.`id_attribute_group`
                 ORDER BY pa.`id_product_attribute`';
 
-                $attrName = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+                $attrName = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
 
                 if (isset($attrName[0]['id_product_attribute_image']) && $attrName[0]['id_product_attribute_image']) {
                     $line['id_image'] = $attrName[0]['id_product_attribute_image'];
@@ -309,7 +309,7 @@ class PackCore extends Product {
             $sql .= ' LIMIT ' . (int) $limit;
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
 
         if (!$full) {
             return $result;
@@ -383,7 +383,7 @@ class PackCore extends Product {
 
         return Db::getInstance()->update('product', ['cache_is_pack' => 0], 'id_product = ' . (int) $idProduct) &&
         Db::getInstance()->execute('DELETE FROM `' . _DB_PREFIX_ . 'pack` WHERE `id_product_pack` = ' . (int) $idProduct) &&
-        Configuration::updateGlobalValue('PS_PACK_FEATURE_ACTIVE', Pack::isCurrentlyUsed());
+        Configuration::updateGlobalValue('EPH_PACK_FEATURE_ACTIVE', Pack::isCurrentlyUsed());
     }
 
     /**
@@ -400,7 +400,7 @@ class PackCore extends Product {
     public static function isCurrentlyUsed($table = null, $hasActiveColumn = false) {
 
         // We dont't use the parent method because the identifier isn't id_pack
-        return (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
             SELECT `id_product_pack`
             FROM `' . _DB_PREFIX_ . 'pack`
@@ -435,7 +435,7 @@ class PackCore extends Product {
                 'quantity'                  => (int) $qty,
             ]
         )
-        && Configuration::updateGlobalValue('PS_PACK_FEATURE_ACTIVE', '1');
+        && Configuration::updateGlobalValue('EPH_PACK_FEATURE_ACTIVE', '1');
     }
 
     /**
@@ -471,7 +471,7 @@ class PackCore extends Product {
             return false;
         }
 
-        $products = Pack::getItems($idProduct, Configuration::get('PS_LANG_DEFAULT'));
+        $products = Pack::getItems($idProduct, Configuration::get('EPH_LANG_DEFAULT'));
 
         foreach ($products as $product) {
             // if one product uses the advanced stock management
@@ -499,7 +499,7 @@ class PackCore extends Product {
             return false;
         }
 
-        $products = Pack::getItems($idProduct, Configuration::get('PS_LANG_DEFAULT'));
+        $products = Pack::getItems($idProduct, Configuration::get('EPH_LANG_DEFAULT'));
 
         foreach ($products as $product) {
             // if one product uses the advanced stock management

@@ -323,9 +323,9 @@ abstract class AdminTabCore {
             /* New tab loading */
             $classname = 'Admin' . $subtab;
 
-            if (($module = Db::getInstance()->getValue('SELECT `module` FROM `' . _DB_PREFIX_ . 'tab` WHERE `class_name` = \'' . pSQL($classname) . '\'')) && file_exists(_PS_MODULE_DIR_ . '/' . $module . '/' . $classname . '.php')) {
-                include_once _PS_MODULE_DIR_ . '/' . $module . '/' . $classname . '.php';
-            } else if (file_exists(_PS_ROOT_DIR_ . '/tabs/' . $classname . '.php')) {
+            if (($module = Db::getInstance()->getValue('SELECT `module` FROM `' . _DB_PREFIX_ . 'tab` WHERE `class_name` = \'' . pSQL($classname) . '\'')) && file_exists(_EPH_MODULE_DIR_ . '/' . $module . '/' . $classname . '.php')) {
+                include_once _EPH_MODULE_DIR_ . '/' . $module . '/' . $classname . '.php';
+            } else if (file_exists(_EPH_ROOT_DIR_ . '/tabs/' . $classname . '.php')) {
                 include_once 'tabs/' . $classname . '.php';
             }
 
@@ -442,10 +442,10 @@ abstract class AdminTabCore {
      */
     public function displayForm($firstCall = true) {
 
-        $allowEmployeeFormLang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
+        $allowEmployeeFormLang = Configuration::get('EPH_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('EPH_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
 
         if ($allowEmployeeFormLang && !$this->context->cookie->employee_form_lang) {
-            $this->context->cookie->employee_form_lang = (int) (Configuration::get('PS_LANG_DEFAULT'));
+            $this->context->cookie->employee_form_lang = (int) (Configuration::get('EPH_LANG_DEFAULT'));
         }
 
         $useLangFromCookie = false;
@@ -464,7 +464,7 @@ abstract class AdminTabCore {
         }
 
         if (!$useLangFromCookie) {
-            $this->_defaultFormLanguage = (int) (Configuration::get('PS_LANG_DEFAULT'));
+            $this->_defaultFormLanguage = (int) (Configuration::get('EPH_LANG_DEFAULT'));
         } else {
             $this->_defaultFormLanguage = (int) ($this->context->cookie->employee_form_lang);
         }
@@ -1045,9 +1045,9 @@ abstract class AdminTabCore {
 
                         if (isset($tr['id_image'])) {
                             $image = new Image((int) $tr['id_image']);
-                            $pathToImage = _PS_IMG_DIR_ . $params['image'] . '/' . $image->getExistingImgPath() . '.' . $this->imageType;
+                            $pathToImage = _EPH_IMG_DIR_ . $params['image'] . '/' . $image->getExistingImgPath() . '.' . $this->imageType;
                         } else {
-                            $pathToImage = _PS_IMG_DIR_ . $params['image'] . '/' . $itemId . (isset($tr['id_image']) ? '-' . (int) ($tr['id_image']) : '') . '.' . $this->imageType;
+                            $pathToImage = _EPH_IMG_DIR_ . $params['image'] . '/' . $itemId . (isset($tr['id_image']) ? '-' . (int) ($tr['id_image']) : '') . '.' . $this->imageType;
                         }
 
                         echo ImageManager::thumbnail($pathToImage, $this->table . '_mini_' . $itemId . '.' . $this->imageType, 45, $this->imageType);
@@ -1470,17 +1470,17 @@ abstract class AdminTabCore {
         if (array_key_exists('dir', $this->fieldImageSettings)) {
             $dir = $this->fieldImageSettings['dir'] . '/';
 
-            if (file_exists(_PS_IMG_DIR_ . $dir . $id . '.' . $this->imageType) && !unlink(_PS_IMG_DIR_ . $dir . $id . '.' . $this->imageType)) {
+            if (file_exists(_EPH_IMG_DIR_ . $dir . $id . '.' . $this->imageType) && !unlink(_EPH_IMG_DIR_ . $dir . $id . '.' . $this->imageType)) {
                 return false;
             }
 
         }
 
-        if (file_exists(_PS_TMP_IMG_DIR_ . $this->table . '_' . $id . '.' . $this->imageType) && !unlink(_PS_TMP_IMG_DIR_ . $this->table . '_' . $id . '.' . $this->imageType)) {
+        if (file_exists(_EPH_TMP_IMG_DIR_ . $this->table . '_' . $id . '.' . $this->imageType) && !unlink(_EPH_TMP_IMG_DIR_ . $this->table . '_' . $id . '.' . $this->imageType)) {
             return false;
         }
 
-        if (file_exists(_PS_TMP_IMG_DIR_ . $this->table . '_mini_' . $id . '.' . $this->imageType) && !unlink(_PS_TMP_IMG_DIR_ . $this->table . '_mini_' . $id . '.' . $this->imageType)) {
+        if (file_exists(_EPH_TMP_IMG_DIR_ . $this->table . '_mini_' . $id . '.' . $this->imageType) && !unlink(_EPH_TMP_IMG_DIR_ . $this->table . '_mini_' . $id . '.' . $this->imageType)) {
             return false;
         }
 
@@ -1488,7 +1488,7 @@ abstract class AdminTabCore {
 
         foreach ($types as $imageType) {
 
-            if (file_exists(_PS_IMG_DIR_ . $dir . $id . '-' . stripslashes($imageType['name']) . '.' . $this->imageType) && !unlink(_PS_IMG_DIR_ . $dir . $id . '-' . stripslashes($imageType['name']) . '.' . $this->imageType)) {
+            if (file_exists(_EPH_IMG_DIR_ . $dir . $id . '-' . stripslashes($imageType['name']) . '.' . $this->imageType) && !unlink(_EPH_IMG_DIR_ . $dir . $id . '-' . stripslashes($imageType['name']) . '.' . $this->imageType)) {
                 return false;
             }
 
@@ -2055,7 +2055,7 @@ abstract class AdminTabCore {
 
         if ((count($rules['requiredLang']) || count($rules['sizeLang']) || count($rules['validateLang']))) {
             /* Language() instance determined by default language */
-            $defaultLanguage = new Language((int) (Configuration::get('PS_LANG_DEFAULT')));
+            $defaultLanguage = new Language((int) (Configuration::get('EPH_LANG_DEFAULT')));
 
             /* All availables languages */
             $languages = Language::getLanguages(false);
@@ -2333,13 +2333,13 @@ abstract class AdminTabCore {
 
             if ($error = ImageManager::validateUpload($_FILES[$name], Tools::getMaxUploadSize($maxSize))) {
                 $this->_errors[] = $error;
-            } else if (!($tmpName = tempnam(_PS_TMP_IMG_DIR_, 'PS')) || !move_uploaded_file($_FILES[$name]['tmp_name'], $tmpName)) {
+            } else if (!($tmpName = tempnam(_EPH_TMP_IMG_DIR_, 'PS')) || !move_uploaded_file($_FILES[$name]['tmp_name'], $tmpName)) {
                 return false;
             } else {
                 $_FILES[$name]['tmp_name'] = $tmpName;
                 // Copy new image
 
-                if (!ImageManager::resize($tmpName, _PS_IMG_DIR_ . $dir . $id . '.' . $this->imageType, (int) $width, (int) $height, ($ext ? $ext : $this->imageType))) {
+                if (!ImageManager::resize($tmpName, _EPH_IMG_DIR_ . $dir . $id . '.' . $this->imageType, (int) $width, (int) $height, ($ext ? $ext : $this->imageType))) {
                     $this->_errors[] = Tools::displayError('An error occurred while uploading image.');
                 }
 
@@ -3023,10 +3023,10 @@ abstract class AdminTabCore {
      */
     protected function warnDomainName() {
 
-        if ($_SERVER['HTTP_HOST'] != Configuration::get('PS_SHOP_DOMAIN') && $_SERVER['HTTP_HOST'] != Configuration::get('PS_SHOP_DOMAIN_SSL')) {
+        if ($_SERVER['HTTP_HOST'] != Configuration::get('EPH_SHOP_DOMAIN') && $_SERVER['HTTP_HOST'] != Configuration::get('EPH_SHOP_DOMAIN_SSL')) {
             $this->displayWarning(
                 $this->l('You are currently connected with the following domain name:') . ' <span style="color: #CC0000;">' . $_SERVER['HTTP_HOST'] . '</span><br />' .
-                $this->l('This one is different from the main shop\'s domain name set in "Preferences > SEO & URLs":') . ' <span style="color: #CC0000;">' . Configuration::get('PS_SHOP_DOMAIN') . '</span><br />
+                $this->l('This one is different from the main shop\'s domain name set in "Preferences > SEO & URLs":') . ' <span style="color: #CC0000;">' . Configuration::get('EPH_SHOP_DOMAIN') . '</span><br />
             <a href="index.php?tab=AdminMeta&token=' . Tools::getAdminTokenLite('AdminMeta') . '#SEO%20%26%20URLs">' .
                 $this->l('Click here if you want to modify the main shop\'s domain name') . '</a>'
             );

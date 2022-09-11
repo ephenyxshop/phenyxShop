@@ -96,7 +96,7 @@ class EmployeeMenuCore extends ObjectModel {
 			if($profile['id_profile'] == 1) {
 				continue;
 			}
-        	$accesses[$profile['id_profile']] = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        	$accesses[$profile['id_profile']] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                  (new DbQuery())
                ->select('`view`, `add`, `edit`, `delete`')
                 ->from('employee_access')
@@ -110,7 +110,7 @@ class EmployeeMenuCore extends ObjectModel {
 	
 	public function getParentReference() {
 		
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`reference`')
                 ->from('employee_menu')
@@ -160,7 +160,7 @@ class EmployeeMenuCore extends ObjectModel {
 		 
         $cacheId = 'getCurrentParentId_'.mb_strtolower(Tools::getValue('controller'));
         if (!Cache::isStored($cacheId)) {
-            $value = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $value = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`id_parent`')
                     ->from('employee_menu')
@@ -185,7 +185,7 @@ class EmployeeMenuCore extends ObjectModel {
 		
         if (static::$_getIdFromClassName === null) {
             static::$_getIdFromClassName = [];
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('`id_employee_menu`, `class_name`')
                     ->from('employee_menu'),
@@ -250,7 +250,7 @@ class EmployeeMenuCore extends ObjectModel {
 	public static function getChlidren($idParent) {
 	
 		$employee_menu = [];
-		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
  		(new DbQuery())
      		->select('t.id_employee_menu, t.id_parent, tl.`name`')
 			->from('employee_menu', 't')
@@ -301,7 +301,7 @@ class EmployeeMenuCore extends ObjectModel {
 
        	$select .= '<select name="id_parent" id="id_parent">';
 		$select .= '<option value="1">Accueil</option>';
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
  			(new DbQuery())
      		->select('t.id_employee_menu, t.id_parent, tl.`name`')
      		->from('employee_menu', 't')
@@ -347,7 +347,7 @@ class EmployeeMenuCore extends ObjectModel {
         if (!isset(static::$_cache_employee_menu[$idLang])) {
             static::$_cache_employee_menu[$idLang] = [];
            
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                 ->select('t.*, tl.`name`')
                 ->from('employee_menu', 't')
@@ -512,7 +512,7 @@ class EmployeeMenuCore extends ObjectModel {
     public static function checkTabRights($idTab) {
 
         
-		if (Context::getContext()->employee->id_profile == _PS_ADMIN_PROFILE_) {
+		if (Context::getContext()->employee->id_profile == _EPH_ADMIN_PROFILE_) {
             return true;
         }
 		static::$_tabAccesses = [];
@@ -574,7 +574,7 @@ class EmployeeMenuCore extends ObjectModel {
 
         if (!Cache::isStored($cacheId)) {
             /* Tabs selection */
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('*')
                     ->from('employee_menu', 't')
@@ -602,7 +602,7 @@ class EmployeeMenuCore extends ObjectModel {
      */
     public static function getTabByIdProfile($idParent, $idProfile) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('t.`id_employee_menu`, t.`id_parent`, tl.`name`, a.`id_profile`')
                 ->from('employee_menu', 't')
@@ -676,7 +676,7 @@ class EmployeeMenuCore extends ObjectModel {
      */
     public static function getNewLastPosition($idParent) {
 
-        return (Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('IFNULL(MAX(`position`), 0) + 1')
                 ->from('employee_menu')
@@ -714,7 +714,7 @@ class EmployeeMenuCore extends ObjectModel {
 		}
 
         /* Profile selection */
-        $profiles = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $profiles = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_profile`')
                 ->from('profile')
@@ -789,7 +789,7 @@ class EmployeeMenuCore extends ObjectModel {
      */
     public function cleanPositions($idParent) {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_employee_menu`')
                 ->from('employee_menu')
@@ -864,7 +864,7 @@ class EmployeeMenuCore extends ObjectModel {
      */
     public static function getNbTabs($idParent = null) {
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(*)')
                 ->from('employee_menu', 't')
@@ -920,7 +920,7 @@ class EmployeeMenuCore extends ObjectModel {
      */
     public function updatePosition($way, $position) {
 
-        if (!$res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        if (!$res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
             ->select('t.`id_employee_menu`, t.`position`, t.`id_parent`')
             ->from('employee_menu', 't')
@@ -965,7 +965,7 @@ class EmployeeMenuCore extends ObjectModel {
 
     public static function getmetroTabColors() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('tabmetro_color')
@@ -987,7 +987,7 @@ class EmployeeMenuCore extends ObjectModel {
 
     public static function getIdEmployeeMenuTypeByRef($reference) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_employee_menu`')
                 ->from('employee_menu')
@@ -997,7 +997,7 @@ class EmployeeMenuCore extends ObjectModel {
 
     public static function getIdParentEmployeeMenuTypeByRef($reference) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_parent`')
                 ->from('employee_menu')
@@ -1009,7 +1009,7 @@ class EmployeeMenuCore extends ObjectModel {
 
         $list = [];
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('t.`class_name`, t.`module`')
                 ->from('employee_menu', 't')
@@ -1033,8 +1033,8 @@ class EmployeeMenuCore extends ObjectModel {
         $modulesList = ['default_list' => [], 'slider_list' => []];
         $xmlTabModulesList = false;
 
-        if (file_exists(_PS_ROOT_DIR_ . Module::CACHE_FILE_TAB_MODULES_LIST)) {
-            $xmlTabModulesList = @simplexml_load_file(_PS_ROOT_DIR_ . Module::CACHE_FILE_TAB_MODULES_LIST);
+        if (file_exists(_EPH_ROOT_DIR_ . Module::CACHE_FILE_TAB_MODULES_LIST)) {
+            $xmlTabModulesList = @simplexml_load_file(_EPH_ROOT_DIR_ . Module::CACHE_FILE_TAB_MODULES_LIST);
         }
 
         $className = null;
@@ -1078,7 +1078,7 @@ class EmployeeMenuCore extends ObjectModel {
 	
 	public static function getClassNameById($idTab) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`class_name`')
                 ->from('employee_menu')

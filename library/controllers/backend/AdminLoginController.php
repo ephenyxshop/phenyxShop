@@ -43,12 +43,12 @@ class AdminLoginControllerCore extends AdminController {
      */
     public function initContent() {
 		
-        if (!Tools::usingSecureMode() && Configuration::get('PS_SSL_ENABLED')) {
+        if (!Tools::usingSecureMode() && Configuration::get('EPH_SSL_ENABLED')) {
             // You can uncomment these lines if you want to force https even from localhost and automatically redirect
             // header('HTTP/1.1 301 Moved Permanently');
             // header('Location: '.Tools::getShopDomainSsl(true).$_SERVER['REQUEST_URI']);
             // exit();
-            $clientIsMaintenanceOrLocal = in_array(Tools::getRemoteAddr(), array_merge(['127.0.0.1'], explode(',', Configuration::get('PS_MAINTENANCE_IP'))));
+            $clientIsMaintenanceOrLocal = in_array(Tools::getRemoteAddr(), array_merge(['127.0.0.1'], explode(',', Configuration::get('EPH_MAINTENANCE_IP'))));
             // If ssl is enabled, https protocol is required. Exception for maintenance and local (127.0.0.1) IP
 
             if ($clientIsMaintenanceOrLocal) {
@@ -69,12 +69,12 @@ class AdminLoginControllerCore extends AdminController {
 
         
 
-        $rand = basename(_PS_ROOT_DIR_) . '/';
+        $rand = basename(_EPH_ROOT_DIR_) . '/';
 
         $this->context->smarty->assign(
             [
                 'randomNb' => $rand,
-                'adminUrl' => Tools::getCurrentUrlProtocolPrefix() . Tools::getShopDomain() . __PS_BASE_URI__ . $rand,
+                'adminUrl' => Tools::getCurrentUrlProtocolPrefix() . Tools::getShopDomain() . __EPH_BASE_URI__ . $rand,
 				'link'            			=> $this->context->link,
             ]
         );
@@ -95,7 +95,7 @@ class AdminLoginControllerCore extends AdminController {
                 [
                     'errors'                    => $this->errors,
                     'nbErrors'                  => $nbErrors,
-                    'shop_name'                 => Tools::safeOutput(Configuration::get('PS_SHOP_NAME')),
+                    'shop_name'                 => Tools::safeOutput(Configuration::get('EPH_SHOP_NAME')),
                     'disableDefaultErrorOutPut' => true,
 					
                 ]
@@ -132,13 +132,13 @@ class AdminLoginControllerCore extends AdminController {
 
         $this->addJS( 'https://code.jquery.com/jquery-3.6.0.min.js');
         $this->addjqueryPlugin('validate');
-        $this->addJS(_PS_JS_DIR_.'jquery/plugins/validate/localization/messages_' . $this->context->language->iso_code . '.js');
+        $this->addJS(_EPH_JS_DIR_.'jquery/plugins/validate/localization/messages_' . $this->context->language->iso_code . '.js');
 		$this->addCSS(_EPH_ADMIN_THEME_DIR_. $this->bo_theme . '/css/admin-theme.css', 'all', 0);
         $this->addCSS(_EPH_ADMIN_THEME_DIR_. $this->bo_theme . '/css/overrides.css', 'all', PHP_INT_MAX);
         
         $this->addJS('https://cdn.ephenyxapi.com/vendor/spin.js');
         $this->addJS('https://cdn.ephenyxapi.com/vendor/ladda.js');
-        MediaAdmin::addJsDef(['img_dir' => _PS_IMG_]);
+        MediaAdmin::addJsDef(['img_dir' => _EPH_IMG_]);
         MediaAdmin::addJsDefL('one_error', $this->l('There is one error.', null, true, false));
         MediaAdmin::addJsDefL('more_errors', $this->l('There are several errors.', null, true, false));
 
@@ -147,10 +147,10 @@ class AdminLoginControllerCore extends AdminController {
 	
 	public function initLogoAndFavicon() {
 
-        $logo = $this->context->link->getBaseFrontLink() .DIRECTORY_SEPARATOR . 'content' .DIRECTORY_SEPARATOR . 'img' .DIRECTORY_SEPARATOR . Configuration::get('PS_LOGO');
+        $logo = $this->context->link->getBaseFrontLink() .DIRECTORY_SEPARATOR . 'content' .DIRECTORY_SEPARATOR . 'img' .DIRECTORY_SEPARATOR . Configuration::get('EPH_LOGO');
 
         return [
-            'favicon_url'       => $this->context->link->getBaseFrontLink() .DIRECTORY_SEPARATOR . 'content'.DIRECTORY_SEPARATOR . 'img' .DIRECTORY_SEPARATOR .Configuration::get('PS_FAVICON'),
+            'favicon_url'       => $this->context->link->getBaseFrontLink() .DIRECTORY_SEPARATOR . 'content'.DIRECTORY_SEPARATOR . 'img' .DIRECTORY_SEPARATOR .Configuration::get('EPH_FAVICON'),
             'logo_image_width'  => Configuration::get('SHOP_LOGO_WIDTH'),
             'logo_image_height' => Configuration::get('SHOP_LOGO_HEIGHT'),
             'logo_url'          => $logo,
@@ -302,7 +302,7 @@ class AdminLoginControllerCore extends AdminController {
         $employeeExists = false;
         $nextEmailTime = PHP_INT_MAX;
 
-        if (_PS_MODE_DEMO_) {
+        if (_EPH_MODE_DEMO_) {
             $this->errors[] = Tools::displayError('This functionality has been disabled.');
         } else {
             $email = trim(Tools::getValue('email_forgot'));
@@ -313,7 +313,7 @@ class AdminLoginControllerCore extends AdminController {
                 $employeeExists = $employee->getByEmail($email);
 
                 if ($employeeExists) {
-                    $nextEmailTime = strtotime($employee->last_passwd_gen . '+' . Configuration::get('PS_PASSWD_TIME_BACK') . ' minutes');
+                    $nextEmailTime = strtotime($employee->last_passwd_gen . '+' . Configuration::get('EPH_PASSWD_TIME_BACK') . ' minutes');
                 }
 
             }
@@ -327,7 +327,7 @@ class AdminLoginControllerCore extends AdminController {
             $employee->passwd = Tools::hash($password);
             $employee->last_passwd_gen = date('Y-m-d H:i:s', time());
 
-            $tpl = $this->context->smarty->createTemplate(_PS_MAIL_DIR_ . '/fr/employee_password.tpl');
+            $tpl = $this->context->smarty->createTemplate(_EPH_MAIL_DIR_ . '/fr/employee_password.tpl');
             $tpl->assign([
                 'email'     => $employee->email,
                 'lastname'  => $employee->lastname,
@@ -337,8 +337,8 @@ class AdminLoginControllerCore extends AdminController {
             ]);
             $postfields = [
                 'sender'      => [
-                    'name'  => "Service  Administratif ".Configuration::get('PS_SHOP_NAME'),
-                    'email' => 'no-reply@'.Configuration::get('PS_SHOP_URL'),
+                    'name'  => "Service  Administratif ".Configuration::get('EPH_SHOP_NAME'),
+                    'email' => 'no-reply@'.Configuration::get('EPH_SHOP_URL'),
                 ],
                 'to'          => [
                     [
@@ -360,7 +360,7 @@ class AdminLoginControllerCore extends AdminController {
         if (!count($this->errors)) {
             $this->ajaxDie(json_encode([
                 'hasErrors' => false,
-                'confirm'   => sprintf($this->l('A new password has been emailed to the given email address, if it wasn\'t done within the last %s minutes before.', 'AdminTab', false, false), Configuration::get('PS_PASSWD_TIME_BACK')),
+                'confirm'   => sprintf($this->l('A new password has been emailed to the given email address, if it wasn\'t done within the last %s minutes before.', 'AdminTab', false, false), Configuration::get('EPH_PASSWD_TIME_BACK')),
             ]));
         } else if (Tools::isSubmit('ajax')) {
             $this->ajaxDie(json_encode(['hasErrors' => true, 'errors' => $this->errors]));

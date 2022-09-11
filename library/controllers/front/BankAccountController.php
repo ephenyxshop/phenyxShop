@@ -73,7 +73,7 @@ class BankAccountControllerCore extends FrontController {
 			$countries = BankAccount::getCountries($this->context->language->id, true);
 		}
 
-		$this->context->smarty->assign('Shop_Name', Configuration::get('PS_SHOP_NAME'));
+		$this->context->smarty->assign('Shop_Name', Configuration::get('EPH_SHOP_NAME'));
 		$this->context->smarty->assign('ICSNumber', Configuration::get('EPH_ICS_NUMBER'));
 		$idCompany = Configuration::get('EPH_COMPANY_ID');
 		$company = new Company($idCompany);
@@ -89,9 +89,9 @@ class BankAccountControllerCore extends FrontController {
 		);
 
 		if ($this->context->customer->id_default_group > 3) {
-			$this->setTemplate(_PS_THEME_DIR_ . 'bank-btobe.tpl');
+			$this->setTemplate(_EPH_THEME_DIR_ . 'bank-btobe.tpl');
 		} else {
-			$this->setTemplate(_PS_THEME_DIR_ . 'bank.tpl');
+			$this->setTemplate(_EPH_THEME_DIR_ . 'bank.tpl');
 		}
 
 	}
@@ -168,7 +168,7 @@ class BankAccountControllerCore extends FrontController {
 
 				foreach ($files as $file) {
 					$ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-					$destinationFile = _PS_UPLOAD_DIR_ . 'RIB_' . $bank->id . '.' . $ext;
+					$destinationFile = _EPH_UPLOAD_DIR_ . 'RIB_' . $bank->id . '.' . $ext;
 					copy($file['save_path'], $destinationFile);
 
 				}
@@ -213,7 +213,7 @@ class BankAccountControllerCore extends FrontController {
 				'margin_header' => 10,
 				'margin_footer' => 10,
 			]);
-			$data = $context->smarty->createTemplate(_PS_PDF_DIR_.'header.tpl');
+			$data = $context->smarty->createTemplate(_EPH_PDF_DIR_.'header.tpl');
 			$data->assign(
 				[
 					'company'     => $company,
@@ -226,7 +226,7 @@ class BankAccountControllerCore extends FrontController {
 			);
 
 			$mpdf->SetHTMLHeader($data->fetch());
-			$data = $context->smarty->createTemplate(_PS_PDF_DIR_.'footer.tpl');
+			$data = $context->smarty->createTemplate(_EPH_PDF_DIR_.'footer.tpl');
 			$data->assign(
 				[
 					'mandat' => $mandat,
@@ -234,7 +234,7 @@ class BankAccountControllerCore extends FrontController {
 			);
 			$mpdf->SetHTMLFooter($data->fetch(), 'O');
 
-			$data = $context->smarty->createTemplate(_PS_PDF_DIR_.'pdf.css.tpl');
+			$data = $context->smarty->createTemplate(_EPH_PDF_DIR_.'pdf.css.tpl');
 			$data->assign(
 				[
 					'color' => '#ef9331',
@@ -242,7 +242,7 @@ class BankAccountControllerCore extends FrontController {
 			);
 			$stylesheet = $data->fetch();
 
-			$data = $context->smarty->createTemplate(_PS_PDF_DIR_.'' . $template);
+			$data = $context->smarty->createTemplate(_EPH_PDF_DIR_.'' . $template);
 
 			$data->assign(
 				[
@@ -272,7 +272,7 @@ class BankAccountControllerCore extends FrontController {
 				'content' => chunk_split(base64_encode(file_get_contents($fileName))),
 				'name'    => $this->l('Mandat Sepa ').$bank->id.'.pdf',
 			];
-			$tpl = $context->smarty->createTemplate(_PS_MAIL_DIR_ . 'fr/mandat_sepa.tpl');
+			$tpl = $context->smarty->createTemplate(_EPH_MAIL_DIR_ . 'fr/mandat_sepa.tpl');
 			$tpl->assign([
 				'customer' => $customer,
 				'bank'     => $bank,
@@ -281,8 +281,8 @@ class BankAccountControllerCore extends FrontController {
 			]);
 			$postfields = [
 				'sender'      => [
-					'name'  => "Service Administratif " . Configuration::get('PS_SHOP_NAME'),
-					'email' => Configuration::get('PS_SHOP_EMAIL'),
+					'name'  => "Service Administratif " . Configuration::get('EPH_SHOP_NAME'),
+					'email' => Configuration::get('EPH_SHOP_EMAIL'),
 				],
 				'to'          => [
 					[

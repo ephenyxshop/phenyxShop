@@ -43,13 +43,13 @@ class AdminBackupControllerCore extends AdminController {
             'general' => [
                 'title'  => $this->l('Backup options'),
                 'fields' => [
-                    'PS_BACKUP_ALL'        => [
+                    'EPH_BACKUP_ALL'        => [
                         'title' => $this->l('Ignore statistics tables'),
                         'desc'  => $this->l('Drop existing tables during import.') . '<br />' . _DB_PREFIX_ . 'connections, ' . _DB_PREFIX_ . 'connections_page, ' . _DB_PREFIX_ . 'connections_source, ' . _DB_PREFIX_ . 'guest, ' . _DB_PREFIX_ . 'statssearch',
                         'cast'  => 'intval',
                         'type'  => 'bool',
                     ],
-                    'PS_BACKUP_DROP_TABLE' => [
+                    'EPH_BACKUP_DROP_TABLE' => [
                         'title' => $this->l('Drop existing tables during import'),
                         'hint'  => [
                             $this->l('If enabled, the backup script will drop your tables prior to restoring data.'),
@@ -67,9 +67,9 @@ class AdminBackupControllerCore extends AdminController {
     public function setMedia($isNewTheme = false) {
 
         parent::setMedia($isNewTheme);
-        $this->addCSS(__PS_BASE_URI__ . _PS_JS_DIR_ . '' . $this->bo_theme . '/css/jquery-ui.css');
+        $this->addCSS(__EPH_BASE_URI__ . _EPH_JS_DIR_ . '' . $this->bo_theme . '/css/jquery-ui.css');
         $this->addJquery('3.4.1');
-        $this->addJS(__PS_BASE_URI__ . _PS_JS_DIR_ . 'jquery-ui/jquery-ui.js');
+        $this->addJS(__EPH_BASE_URI__ . _EPH_JS_DIR_ . 'jquery-ui/jquery-ui.js');
 
     }
 
@@ -164,7 +164,7 @@ class AdminBackupControllerCore extends AdminController {
 
         /* PhenyxShop demo mode */
 
-        if (_PS_MODE_DEMO_) {
+        if (_EPH_MODE_DEMO_) {
             $this->errors[] = Tools::displayError('This functionality has been disabled.');
 
             return;

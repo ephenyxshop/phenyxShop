@@ -284,7 +284,7 @@ class CryptBlowfishCore {
 
     public $_iv = null;
 
-    protected $_unpackMode = PS_UNPACK_NATIVE;
+    protected $_unpackMode = EPH_UNPACK_NATIVE;
 
     public function __construct($key, $iv) {
 
@@ -298,7 +298,7 @@ class CryptBlowfishCore {
         $datar = 0;
 
         if (PHP_VERSION_ID == '50201' || PHP_VERSION_ID == '50206') {
-            $this->_unpackMode = PS_UNPACK_MODIFIED;
+            $this->_unpackMode = EPH_UNPACK_MODIFIED;
         }
 
         for ($i = 0; $i < 18; $i++) {
@@ -366,7 +366,7 @@ class CryptBlowfishCore {
         $plainText .= str_repeat(chr(0), (8 - ($len % 8)) % 8);
 
         for ($i = 0; $i < $len; $i += 8) {
-            list(, $Xl, $Xr) = ($this->_unpackMode == PS_UNPACK_NATIVE ? unpack('N2', substr($plainText, $i, 8)) : $this->myUnpackN2(substr($plainText, $i, 8)));
+            list(, $Xl, $Xr) = ($this->_unpackMode == EPH_UNPACK_NATIVE ? unpack('N2', substr($plainText, $i, 8)) : $this->myUnpackN2(substr($plainText, $i, 8)));
             $this->_encipher($Xl, $Xr);
             $cipherText .= pack('N2', $Xl, $Xr);
         }
@@ -396,7 +396,7 @@ class CryptBlowfishCore {
         $cipherText .= str_repeat(chr(0), (8 - ($len % 8)) % 8);
 
         for ($i = 0; $i < $len; $i += 8) {
-            list(, $Xl, $Xr) = ($this->_unpackMode == PS_UNPACK_NATIVE ? unpack('N2', substr($cipherText, $i, 8)) : $this->myUnpackN2(substr($cipherText, $i, 8)));
+            list(, $Xl, $Xr) = ($this->_unpackMode == EPH_UNPACK_NATIVE ? unpack('N2', substr($cipherText, $i, 8)) : $this->myUnpackN2(substr($cipherText, $i, 8)));
             $this->_decipher($Xl, $Xr);
             $plainText .= pack('N2', $Xl, $Xr);
         }

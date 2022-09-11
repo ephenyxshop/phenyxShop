@@ -37,8 +37,8 @@ class AdminCartRulesControllerCore extends AdminController {
         }
 
         $this->extracss = $this->pushCSS([
-            _PS_JS_DIR_ . 'jquery/plugins/autocomplete/jquery.autocomplete.css',
-            _PS_JS_DIR_ . 'jquery/ui/themes/base/jquery.ui.datepicker.css',
+            _EPH_JS_DIR_ . 'jquery/plugins/autocomplete/jquery.autocomplete.css',
+            _EPH_JS_DIR_ . 'jquery/ui/themes/base/jquery.ui.datepicker.css',
 
         ]);
     }
@@ -46,10 +46,10 @@ class AdminCartRulesControllerCore extends AdminController {
     public function setAjaxMedia() {
 
         return $this->pushJS([
-            _PS_JS_DIR_ . 'jquery/ui/i18n/jquery.ui.datepicker-fr.js',
-            _PS_JS_DIR_ . 'jquery/plugins/jquery.typewatch.js',
-            _PS_JS_DIR_ . 'jquery/plugins/autocomplete/jquery.autocomplete.js',
-            _PS_JS_DIR_ . 'jquery/plugins/jquery.jscroll.js',
+            _EPH_JS_DIR_ . 'jquery/ui/i18n/jquery.ui.datepicker-fr.js',
+            _EPH_JS_DIR_ . 'jquery/plugins/jquery.typewatch.js',
+            _EPH_JS_DIR_ . 'jquery/plugins/autocomplete/jquery.autocomplete.js',
+            _EPH_JS_DIR_ . 'jquery/plugins/jquery.jscroll.js',
         ]);
     }
 
@@ -74,7 +74,7 @@ class AdminCartRulesControllerCore extends AdminController {
             'AjaxLink'        => $this->context->link->getAdminLink($this->controller_name),
             'paragridScript'  => $this->generateParaGridScript(),
             'titleBar'        => $this->TitleBar,
-            'bo_imgdir'       => __PS_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+            'bo_imgdir'       => __EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
             'current_id_lang' => $this->context->language->id,
             'idController'    => '',
         ]);
@@ -1011,7 +1011,7 @@ class AdminCartRulesControllerCore extends AdminController {
                 foreach ($carrier as $field => &$value) {
 
                     if ($field == 'name' && $value == '0') {
-                        $value = Configuration::get('PS_SHOP_NAME');
+                        $value = Configuration::get('EPH_SHOP_NAME');
                     }
 
                 }
@@ -1067,8 +1067,8 @@ class AdminCartRulesControllerCore extends AdminController {
                 'gift_product_select'           => $giftProductSelect,
                 'gift_product_attribute_select' => $giftProductAttributeSelect,
                 'reductionProductFilter'        => $reductionProductFilter,
-                'defaultCurrency'               => Configuration::get('PS_CURRENCY_DEFAULT'),
-                'id_lang_default'               => Configuration::get('PS_LANG_DEFAULT'),
+                'defaultCurrency'               => Configuration::get('EPH_CURRENCY_DEFAULT'),
+                'id_lang_default'               => Configuration::get('EPH_LANG_DEFAULT'),
                 'languages'                     => $languages,
                 'currencies'                    => $currencies,
                 'countries'                     => $countries,
@@ -1077,7 +1077,7 @@ class AdminCartRulesControllerCore extends AdminController {
                 'shops'                         => $shops,
                 'cart_rules'                    => $cartRules,
                 'product_rule_groups'           => $productRuleGroups,
-                'product_rule_groups_counter'   => count($productRuleGroups),
+                'product_rule_grouEPH_counter'   => count($productRuleGroups),
                 'attribute_groups'              => $attributeGroups,
                 'currentIndex'                  => static::$currentIndex,
                 'currentToken'                  => $this->token,

@@ -72,7 +72,7 @@ class HookCore extends ObjectModel {
      */
     public static function getHooks($position = false) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
             SELECT * FROM `' . _DB_PREFIX_ . 'hook` h
             ' . ($position ? 'WHERE h.`position` = 1' : '') . '
@@ -174,7 +174,7 @@ class HookCore extends ObjectModel {
         $cacheId = 'hook_module_list';
 
         if (!Cache::isStored($cacheId)) {
-            $results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
+            $results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS('
                 SELECT h.id_hook, h.name AS h_name, h.title, h.description, h.position, h.live_edit, hm.position AS hm_position, m.id_module, m.name, m.active
                 FROM `' . _DB_PREFIX_ . 'hook_module` hm
                 STRAIGHT_JOIN `' . _DB_PREFIX_ . 'hook` h ON (h.id_hook = hm.id_hook AND hm.id_shop = ' . (int) Context::getContext()->shop->id . ')
@@ -228,7 +228,7 @@ class HookCore extends ObjectModel {
         $order = new CustomerPieces((int) $idOrder);
         $new_os = new CustomerPieceState((int) $newOrderStatusId, $order->id_lang);
 
-        $return = ((int) $new_os->id == Configuration::get('PS_OS_PAYMENT')) ? Hook::exec('paymentConfirm', ['id_customer_piece' => (int) ($order->id)]) : true;
+        $return = ((int) $new_os->id == Configuration::get('EPH_OS_PAYMENT')) ? Hook::exec('paymentConfirm', ['id_customer_piece' => (int) ($order->id)]) : true;
         $return = Hook::exec('updateOrderStatus', ['newOrderStatus' => $new_os, 'id_customer_piece' => (int) ($order->id)]) && $return;
 
         return $return;
@@ -352,7 +352,7 @@ class HookCore extends ObjectModel {
         static $disableNonNativeModules = null;
 
         if ($disableNonNativeModules === null) {
-            $disableNonNativeModules = (bool) Configuration::get('PS_DISABLE_NON_NATIVE_MODULE');
+            $disableNonNativeModules = (bool) Configuration::get('EPH_DISABLE_NON_NATIVE_MODULE');
         }
 
         // Check arguments validity
@@ -555,9 +555,9 @@ class HookCore extends ObjectModel {
                     if (isset($context->customer) && $context->customer->isLogged()) {
                         $groups = $context->customer->getGroups();
                     } else if (isset($context->customer) && $context->customer->isLogged(true)) {
-                        $groups = [(int) Configuration::get('PS_GUEST_GROUP')];
+                        $groups = [(int) Configuration::get('EPH_GUEST_GROUP')];
                     } else {
-                        $groups = [(int) Configuration::get('PS_UNIDENTIFIED_GROUP')];
+                        $groups = [(int) Configuration::get('EPH_UNIDENTIFIED_GROUP')];
                     }
 
                 }
@@ -622,7 +622,7 @@ class HookCore extends ObjectModel {
 
             $list = [];
 
-            if ($result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql)) {
+            if ($result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql)) {
 
                 foreach ($result as $row) {
                     $row['hook'] = strtolower($row['hook']);
@@ -777,7 +777,7 @@ class HookCore extends ObjectModel {
         if (!Cache::isStored($cacheId)) {
             // Get all hook ID by name and alias
             $hookIds = [];
-            $db = Db::getInstance(_PS_USE_SQL_SLAVE_);
+            $db = Db::getInstance(_EPH_USE_SQL_SLAVE_);
             $result = $db->executeS(
                 '
             SELECT `id_hook`, `name`
@@ -817,7 +817,7 @@ class HookCore extends ObjectModel {
         // Define if we will log modules performances for this session
 
         if (Module::$_log_modules_perfs === null) {
-            $modulo = _PS_DEBUG_PROFILING_ ? 1 : Configuration::get('PS_log_modules_perfs_MODULO');
+            $modulo = _EPH_DEBUG_PROFILING_ ? 1 : Configuration::get('EPH_log_modules_perfs_MODULO');
             Module::$_log_modules_perfs = ($modulo && mt_rand(0, $modulo - 1) == 0);
 
             if (Module::$_log_modules_perfs) {
@@ -879,9 +879,9 @@ class HookCore extends ObjectModel {
                         <img style="padding-right:5px;" src="' . _MODULE_DIR_ . Tools::safeOutput($moduleInstance->name) . '/logo.gif">'
         . Tools::safeOutput($moduleInstance->displayName) . '<span style="float:right">
                 <a href="#" id="' . (int) $idHook . '_' . (int) $moduleInstance->id . '" class="moveModule">
-                    <img src="' . _PS_ADMIN_IMG_ . 'arrow_out.png"></a>
+                    <img src="' . _EPH_ADMIN_IMG_ . 'arrow_out.png"></a>
                 <a href="#" id="' . (int) $idHook . '_' . (int) $moduleInstance->id . '" class="unregisterHook">
-                    <img src="' . _PS_ADMIN_IMG_ . 'delete.gif"></a></span>
+                    <img src="' . _EPH_ADMIN_IMG_ . 'delete.gif"></a></span>
                 </span>' . $display . '</div>';
     }
 
@@ -1062,7 +1062,7 @@ class HookCore extends ObjectModel {
             die(Tools::displayError());
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('`id_hook`, `name`')
                 ->from('hook')

@@ -92,7 +92,7 @@ class ManufacturerCore extends ObjectModel {
         parent::__construct($id, $idLang);
 
         $this->link_rewrite = $this->getLink();
-        $this->image_dir = _PS_MANU_IMG_DIR_;
+        $this->image_dir = _EPH_MANU_IMG_DIR_;
     }
 
     /**
@@ -133,14 +133,14 @@ class ManufacturerCore extends ObjectModel {
         }
 
         if (!$idLang) {
-            $idLang = (int) Configuration::get('PS_LANG_DEFAULT');
+            $idLang = (int) Configuration::get('EPH_LANG_DEFAULT');
         }
 
         if (!Group::isFeatureActive()) {
             $allGroup = true;
         }
 
-        $manufacturers = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $manufacturers = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('m.*, ml.`description`, ml.`short_description`')
                 ->from('manufacturer', 'm')
@@ -171,7 +171,7 @@ class ManufacturerCore extends ObjectModel {
                 ->leftJoin('category_product', 'cp', 'cp.`id_category` = cg.`id_category`')
                 ->where('p.`id_product` = cp.`id_product`')
                 ->where('cg.`id_group` ' . $sqlGroups);
-            $results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('p.`id_manufacturer`, COUNT(DISTINCT p.`id_product`) AS `nb_products`')
                     ->from('product', 'p')
@@ -211,7 +211,7 @@ class ManufacturerCore extends ObjectModel {
         }
 
         $totalManufacturers = count($manufacturers);
-        $rewriteSettings = (int) Configuration::get('PS_REWRITING_SETTINGS');
+        $rewriteSettings = (int) Configuration::get('EPH_REWRITING_SETTINGS');
 
         for ($i = 0; $i < $totalManufacturers; $i++) {
             $manufacturers[$i]['link_rewrite'] = ($rewriteSettings ? Tools::link_rewrite($manufacturers[$i]['name']) : 0);
@@ -232,7 +232,7 @@ class ManufacturerCore extends ObjectModel {
     public static function getNameById($idManufacturer) {
 
         if (!isset(static::$cacheName[$idManufacturer])) {
-            static::$cacheName[$idManufacturer] = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            static::$cacheName[$idManufacturer] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('name')
                     ->from('manufacturer')
@@ -256,7 +256,7 @@ class ManufacturerCore extends ObjectModel {
      */
     public static function getIdByName($name) {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('`id_manufacturer`')
                 ->from('manufacturer')
@@ -341,7 +341,7 @@ class ManufacturerCore extends ObjectModel {
                 ->join($activeCategory ? 'INNER JOIN `' . _DB_PREFIX_ . 'category` ca ON (cp.`id_category` = ca.`id_category` AND ca.`active` = 1)' : '')
                 ->where('p.`id_product` = cp.`id_product`')
                 ->where('cg.`id_group` ' . $sqlGroups);
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('p.`id_product`')
                     ->from('product', 'p')
@@ -378,7 +378,7 @@ class ManufacturerCore extends ObjectModel {
             ->select(Combination::isFeatureActive() ? 'product_attribute_shop.`minimal_quantity` AS `product_attribute_minimal_quantity`, IFNULL(product_attribute_shop.`id_product_attribute`,0) AS `id_product_attribute`' : '')
             ->select('pl.`description`, pl.`description_short`, pl.`link_rewrite`, pl.`meta_description`, pl.`meta_keywords`')
             ->select('pl.`meta_title`, pl.`name`, pl.`available_now`, pl.`available_later`, image_shop.`id_image` AS `id_image`, il.`legend`, m.`name` AS `manufacturer_name`')
-            ->select('DATEDIFF(product_shop.`date_add`, DATE_SUB("' . date('Y-m-d') . ' 00:00:00", INTERVAL ' . (Validate::isUnsignedInt(Configuration::get('PS_NB_DAYS_NEW_PRODUCT')) ? (int) Configuration::get('PS_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY)) > 0 AS `new`')
+            ->select('DATEDIFF(product_shop.`date_add`, DATE_SUB("' . date('Y-m-d') . ' 00:00:00", INTERVAL ' . (Validate::isUnsignedInt(Configuration::get('EPH_NB_DAYS_NEW_PRODUCT')) ? (int) Configuration::get('EPH_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY)) > 0 AS `new`')
             ->from('product', 'p')
             ->join(Shop::addSqlAssociation('product', 'p'))
             ->join(Combination::isFeatureActive() ? 'LEFT JOIN `' . _DB_PREFIX_ . 'product_attribute_shop` product_attribute_shop ON (p.`id_product` = product_attribute_shop.`id_product` AND product_attribute_shop.`default_on` = 1 AND product_attribute_shop.`id_shop` = ' . (int) $context->shop->id . ')' : '')
@@ -410,7 +410,7 @@ class ManufacturerCore extends ObjectModel {
         $sql->groupBy('p.`id_product`');
         $sql->orderBy($aliasWithDot . '`' . bqSQL($orderBy) . '` ' . pSQL($orderWay));
         $sql->limit((int) $n, ((int) $p - 1) * (int) $n);
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
 
         if (!$result) {
             return false;
@@ -437,7 +437,7 @@ class ManufacturerCore extends ObjectModel {
      */
     public static function manufacturerExists($idManufacturer) {
 
-        $row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('`id_manufacturer`')
                 ->from('manufacturer', 'm')
@@ -526,7 +526,7 @@ class ManufacturerCore extends ObjectModel {
             $front = false;
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('p.`id_product`, pl.`name`')
                 ->from('product', 'p')
@@ -550,7 +550,7 @@ class ManufacturerCore extends ObjectModel {
      */
     public function getAddresses($idLang) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('a.*, cl.`name` AS `country`, s.`name` AS `state`')
                 ->from('address', 'a')
@@ -572,7 +572,7 @@ class ManufacturerCore extends ObjectModel {
      */
     public function getWsAddresses() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('a.`id_address` AS `id`')
                 ->from('address', 'a')
@@ -653,7 +653,7 @@ class ManufacturerCore extends ObjectModel {
             return false;
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_address`')
                 ->from('address')

@@ -26,7 +26,7 @@ class HelperImageUploaderCore extends HelperUploader {
      */
     public function getSavePath() {
 
-        return $this->_normalizeDirectory(_PS_TMP_IMG_DIR_);
+        return $this->_normalizeDirectory(_EPH_TMP_IMG_DIR_);
     }
 
     /**

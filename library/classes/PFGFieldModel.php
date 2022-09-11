@@ -98,7 +98,7 @@ class PFGFieldModelCore extends ObjectModel {
 	 */
 	public static function updatePositionField($id_pfg, $id_field, $position) {
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->execute('UPDATE ' . _DB_PREFIX_ . self::$definition['table'] . ' SET position = ' . pSQL((int) $position) . ' WHERE id_pfg = ' . pSQL((int) $id_pfg) . ' AND id_field = ' . pSQL((int) $id_field));
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->execute('UPDATE ' . _DB_PREFIX_ . self::$definition['table'] . ' SET position = ' . pSQL((int) $position) . ' WHERE id_pfg = ' . pSQL((int) $id_pfg) . ' AND id_field = ' . pSQL((int) $id_field));
 	}
 
 	/**
@@ -127,7 +127,7 @@ class PFGFieldModelCore extends ObjectModel {
 	 */
 	public static function findFields($id_pfg) {
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS('
 				SELECT f.type, f.name, f.required, f.class, f.style, f.extra, f.related, fl.values, fl.label
 				FROM `' . _DB_PREFIX_ . 'pfg_fields` f
 				LEFT JOIN `' . _DB_PREFIX_ . 'pfg_fields_lang` fl ON f.id_pfg_field = fl.id_pfg_field
@@ -166,7 +166,7 @@ class PFGFieldModelCore extends ObjectModel {
 			$query = 'SELECT name FROM `' . _DB_PREFIX_ . 'pfg_fields` WHERE id_pfg = ' . pSQL((int) $id_pfg) . ' AND name = "' . pSQL($name) . '"';
 		}
 
-		return count(Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query)) > 0;
+		return count(Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query)) > 0;
 	}
 
 }

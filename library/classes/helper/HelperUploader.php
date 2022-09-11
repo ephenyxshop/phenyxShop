@@ -421,21 +421,21 @@ class HelperUploaderCore extends Uploader {
      */
     public function render() {
 
-        $adminWebpath = str_ireplace(_SHOP_CORE_DIR_, '', _PS_ROOT_DIR_);
+        $adminWebpath = str_ireplace(_SHOP_CORE_DIR_, '', _EPH_ROOT_DIR_);
         $adminWebpath = preg_replace('/^' . preg_quote(DIRECTORY_SEPARATOR, '/') . '/', '', $adminWebpath);
         $boTheme = ((Validate::isLoadedObject($this->getContext()->employee)
             && $this->getContext()->employee->bo_theme) ? $this->getContext()->employee->bo_theme : 'default');
 
-        if (!file_exists(_PS_BO_ALL_THEMES_DIR_ . $boTheme . DIRECTORY_SEPARATOR . 'template')) {
+        if (!file_exists(_EPH_BO_ALL_THEMES_DIR_ . $boTheme . DIRECTORY_SEPARATOR . 'template')) {
             $boTheme = 'default';
         }
 
-        $this->getContext()->controller->addJs(__PS_BASE_URI__ . $adminWebpath . '/js/jquery.iframe-transport.js');
-        $this->getContext()->controller->addJs(__PS_BASE_URI__ . $adminWebpath . '/js/jquery.fileupload.js');
-        $this->getContext()->controller->addJs(__PS_BASE_URI__ . $adminWebpath . '/js/jquery.fileupload-process.js');
-        $this->getContext()->controller->addJs(__PS_BASE_URI__ . $adminWebpath . '/js/jquery.fileupload-validate.js');
-        $this->getContext()->controller->addJs(__PS_BASE_URI__ . $adminWebpath . '/js/vendor/spin.js');
-        $this->getContext()->controller->addJs(__PS_BASE_URI__ . $adminWebpath . '/js/vendor/ladda.js');
+        $this->getContext()->controller->addJs(__EPH_BASE_URI__ . $adminWebpath . '/js/jquery.iframe-transport.js');
+        $this->getContext()->controller->addJs(__EPH_BASE_URI__ . $adminWebpath . '/js/jquery.fileupload.js');
+        $this->getContext()->controller->addJs(__EPH_BASE_URI__ . $adminWebpath . '/js/jquery.fileupload-process.js');
+        $this->getContext()->controller->addJs(__EPH_BASE_URI__ . $adminWebpath . '/js/jquery.fileupload-validate.js');
+        $this->getContext()->controller->addJs(__EPH_BASE_URI__ . $adminWebpath . '/js/vendor/spin.js');
+        $this->getContext()->controller->addJs(__EPH_BASE_URI__ . $adminWebpath . '/js/vendor/ladda.js');
 
         if ($this->useAjax() && !isset($this->_template)) {
             $this->setTemplate(static::DEFAULT_AJAX_TEMPLATE);

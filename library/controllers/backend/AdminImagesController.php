@@ -32,13 +32,13 @@ class AdminImagesControllerCore extends AdminController {
     ];
 
     const SINGULAR_DIR = [
-        'img'          => ['dir' => _PS_IMG_DIR_, 'iterate' => false],
-        'module'       => ['dir' => _PS_MODULE_DIR_, 'iterate' => true],
-        'category'     => ['dir' => _PS_CAT_IMG_DIR_, 'iterate' => false],
-        'manufacturer' => ['dir' => _PS_MANU_IMG_DIR_, 'iterate' => false],
-        'supplier'     => ['dir' => _PS_SUPP_IMG_DIR_, 'iterate' => false],
-        'product'      => ['dir' => _PS_PROD_IMG_DIR_, 'iterate' => true],
-        'store'        => ['dir' => _PS_STORE_IMG_DIR_, 'iterate' => false],
+        'img'          => ['dir' => _EPH_IMG_DIR_, 'iterate' => false],
+        'module'       => ['dir' => _EPH_MODULE_DIR_, 'iterate' => true],
+        'category'     => ['dir' => _EPH_CAT_IMG_DIR_, 'iterate' => false],
+        'manufacturer' => ['dir' => _EPH_MANU_IMG_DIR_, 'iterate' => false],
+        'supplier'     => ['dir' => _EPH_SUPP_IMG_DIR_, 'iterate' => false],
+        'product'      => ['dir' => _EPH_PROD_IMG_DIR_, 'iterate' => true],
+        'store'        => ['dir' => _EPH_STORE_IMG_DIR_, 'iterate' => false],
 
     ];
 
@@ -52,9 +52,9 @@ class AdminImagesControllerCore extends AdminController {
         $this->lang = false;
         $this->context = Context::getContext();
 
-        // No need to display the old image system migration tool except if product images are in _PS_PROD_IMG_DIR_
+        // No need to display the old image system migration tool except if product images are in _EPH_PROD_IMG_DIR_
         $this->display_move = false;
-        $dir = _PS_PROD_IMG_DIR_;
+        $dir = _EPH_PROD_IMG_DIR_;
 
         if (is_dir($dir)) {
 
@@ -81,14 +81,14 @@ class AdminImagesControllerCore extends AdminController {
                 'bottom'      => '',
                 'description' => $this->l('JPEG images have a small file size and standard quality. PNG images have a larger file size, a higher quality and support transparency. Note that in all cases the image files will have the .jpg extension.') . '<br /><br />' . $this->l('WARNING: This feature may not be compatible with your theme, or with some of your modules. In particular, PNG mode is not compatible with the Watermark module. If you encounter any issues, turn it off by selecting "Use JPEG".'),
                 'fields'      => [
-                    'PS_IMAGE_QUALITY'            => [
+                    'EPH_IMAGE_QUALITY'            => [
                         'title'    => $this->l('Image format'),
                         'show'     => true,
                         'required' => true,
                         'type'     => 'radio',
                         'choices'  => ['jpg' => $this->l('Use JPEG.'), 'png' => $this->l('Use PNG only if the base image is in PNG format.'), 'png_all' => $this->l('Use PNG for all images.')],
                     ],
-                    'PS_JPEG_QUALITY'             => [
+                    'EPH_JPEG_QUALITY'             => [
                         'title'      => $this->l('JPEG compression'),
                         'hint'       => $this->l('Ranges from 0 (worst quality, smallest file) to 100 (best quality, biggest file).') . ' ' . $this->l('Recommended: 90.'),
                         'validation' => 'isUnsignedId',
@@ -96,7 +96,7 @@ class AdminImagesControllerCore extends AdminController {
                         'cast'       => 'intval',
                         'type'       => 'text',
                     ],
-                    'PS_PNG_QUALITY'              => [
+                    'EPH_PNG_QUALITY'              => [
                         'title'      => $this->l('PNG compression'),
                         'hint'       => $this->l('PNG compression is lossless: unlike JPG, you do not lose image quality with a high compression ratio. However, photographs will compress very badly.') . ' ' . $this->l('Ranges from 0 (biggest file) to 9 (smallest file, slowest decompression).') . ' ' . $this->l('Recommended: 7.'),
                         'validation' => 'isUnsignedId',
@@ -104,7 +104,7 @@ class AdminImagesControllerCore extends AdminController {
                         'cast'       => 'intval',
                         'type'       => 'text',
                     ],
-                    'PS_IMAGE_GENERATION_METHOD'  => [
+                    'EPH_IMAGE_GENERATION_METHOD'  => [
                         'title'      => $this->l('Generate images based on one side of the source image'),
                         'validation' => 'isUnsignedId',
                         'required'   => false,
@@ -127,7 +127,7 @@ class AdminImagesControllerCore extends AdminController {
                         'identifier' => 'id',
                         'visibility' => Shop::CONTEXT_ALL,
                     ],
-                    'PS_PRODUCT_PICTURE_MAX_SIZE' => [
+                    'EPH_PRODUCT_PICTURE_MAX_SIZE' => [
                         'title'      => $this->l('Maximum file size of product customization pictures'),
                         'hint'       => $this->l('The maximum file size of pictures that customers can upload to customize a product (in bytes).'),
                         'validation' => 'isUnsignedInt',
@@ -137,7 +137,7 @@ class AdminImagesControllerCore extends AdminController {
                         'suffix'     => $this->l('bytes'),
                         'visibility' => Shop::CONTEXT_ALL,
                     ],
-                    'PS_PRODUCT_PICTURE_WIDTH'    => [
+                    'EPH_PRODUCT_PICTURE_WIDTH'    => [
                         'title'      => $this->l('Product picture width'),
                         'hint'       => $this->l('Width of product customization pictures that customers can upload (in pixels).'),
                         'validation' => 'isUnsignedInt',
@@ -148,7 +148,7 @@ class AdminImagesControllerCore extends AdminController {
                         'suffix'     => $this->l('pixels'),
                         'visibility' => Shop::CONTEXT_ALL,
                     ],
-                    'PS_PRODUCT_PICTURE_HEIGHT'   => [
+                    'EPH_PRODUCT_PICTURE_HEIGHT'   => [
                         'title'      => $this->l('Product picture height'),
                         'hint'       => $this->l('Height of product customization pictures that customers can upload (in pixels).'),
                         'validation' => 'isUnsignedInt',
@@ -159,7 +159,7 @@ class AdminImagesControllerCore extends AdminController {
                         'suffix'     => $this->l('pixels'),
                         'visibility' => Shop::CONTEXT_ALL,
                     ],
-                    'PS_HIGHT_DPI'                => [
+                    'EPH_HIGHT_DPI'                => [
                         'type'       => 'bool',
                         'title'      => $this->l('Generate high resolution images'),
                         'required'   => false,
@@ -464,7 +464,7 @@ class AdminImagesControllerCore extends AdminController {
         ];
 
         if ($this->display_move) {
-            $this->fields_options['product_images']['fields']['PS_LEGACY_IMAGES'] = [
+            $this->fields_options['product_images']['fields']['EPH_LEGACY_IMAGES'] = [
                 'title'      => $this->l('Use the legacy image filesystem'),
                 'hint'       => $this->l('This should be set to yes unless you successfully moved images in "Images" page under the "Preferences" menu.'),
                 'validation' => 'isBool',
@@ -501,10 +501,10 @@ class AdminImagesControllerCore extends AdminController {
 	public function setAjaxMedia() {
 		
 		return $this->pushJS([
-			  _PS_JS_DIR_.'toastr.min.js',
-			  _PS_JS_DIR_.'ajaxq.js',
-			  _PS_JS_DIR_.'regenerate.js',
-			  _PS_JS_DIR_.'images.js',
+			  _EPH_JS_DIR_.'toastr.min.js',
+			  _EPH_JS_DIR_.'ajaxq.js',
+			  _EPH_JS_DIR_.'regenerate.js',
+			  _EPH_JS_DIR_.'images.js',
 		]);
 	}
 	
@@ -902,12 +902,12 @@ class AdminImagesControllerCore extends AdminController {
         if (!$indexationStatus || !array_sum(array_column(array_values($indexationStatus), 'indexed'))) {
             // First run, regenerate no picture images, too
             $process = [
-                'categories'    => _PS_CAT_IMG_DIR_,
-                'manufacturers' => _PS_MANU_IMG_DIR_,
-                'suppliers'     => _PS_SUPP_IMG_DIR_,
-                'scenes'        => _PS_SCENE_IMG_DIR_,
-                'products'      => _PS_PROD_IMG_DIR_,
-                'stores'        => _PS_STORE_IMG_DIR_,
+                'categories'    => _EPH_CAT_IMG_DIR_,
+                'manufacturers' => _EPH_MANU_IMG_DIR_,
+                'suppliers'     => _EPH_SUPP_IMG_DIR_,
+                'scenes'        => _EPH_SCENE_IMG_DIR_,
+                'products'      => _EPH_PROD_IMG_DIR_,
+                'stores'        => _EPH_STORE_IMG_DIR_,
             ];
 
             foreach ($process as $type => $dir) {
@@ -935,12 +935,12 @@ class AdminImagesControllerCore extends AdminController {
     public function ajaxProcessDeleteOldImages() {
 
         $process = [
-            ['type' => 'categories', 'dir' => _PS_CAT_IMG_DIR_],
-            ['type' => 'manufacturers', 'dir' => _PS_MANU_IMG_DIR_],
-            ['type' => 'suppliers', 'dir' => _PS_SUPP_IMG_DIR_],
-            ['type' => 'scenes', 'dir' => _PS_SCENE_IMG_DIR_],
-            ['type' => 'products', 'dir' => _PS_PROD_IMG_DIR_],
-            ['type' => 'stores', 'dir' => _PS_STORE_IMG_DIR_],
+            ['type' => 'categories', 'dir' => _EPH_CAT_IMG_DIR_],
+            ['type' => 'manufacturers', 'dir' => _EPH_MANU_IMG_DIR_],
+            ['type' => 'suppliers', 'dir' => _EPH_SUPP_IMG_DIR_],
+            ['type' => 'scenes', 'dir' => _EPH_SCENE_IMG_DIR_],
+            ['type' => 'products', 'dir' => _EPH_PROD_IMG_DIR_],
+            ['type' => 'stores', 'dir' => _EPH_STORE_IMG_DIR_],
         ];
 
         foreach ($process as $proc) {
@@ -970,12 +970,12 @@ class AdminImagesControllerCore extends AdminController {
     public function ajaxProcessResetImageStats() {
 
         $process = [
-            ['type' => 'categories', 'dir' => _PS_CAT_IMG_DIR_],
-            ['type' => 'manufacturers', 'dir' => _PS_MANU_IMG_DIR_],
-            ['type' => 'suppliers', 'dir' => _PS_SUPP_IMG_DIR_],
-            ['type' => 'scenes', 'dir' => _PS_SCENE_IMG_DIR_],
-            ['type' => 'products', 'dir' => _PS_PROD_IMG_DIR_],
-            ['type' => 'stores', 'dir' => _PS_STORE_IMG_DIR_],
+            ['type' => 'categories', 'dir' => _EPH_CAT_IMG_DIR_],
+            ['type' => 'manufacturers', 'dir' => _EPH_MANU_IMG_DIR_],
+            ['type' => 'suppliers', 'dir' => _EPH_SUPP_IMG_DIR_],
+            ['type' => 'scenes', 'dir' => _EPH_SCENE_IMG_DIR_],
+            ['type' => 'products', 'dir' => _EPH_PROD_IMG_DIR_],
+            ['type' => 'stores', 'dir' => _EPH_STORE_IMG_DIR_],
         ];
 
         foreach ($process as $proc) {
@@ -1004,12 +1004,12 @@ class AdminImagesControllerCore extends AdminController {
         $languages = Language::getLanguages(false);
 
         $process = [
-            ['type' => 'categories', 'dir' => _PS_CAT_IMG_DIR_],
-            ['type' => 'manufacturers', 'dir' => _PS_MANU_IMG_DIR_],
-            ['type' => 'suppliers', 'dir' => _PS_SUPP_IMG_DIR_],
-            ['type' => 'scenes', 'dir' => _PS_SCENE_IMG_DIR_],
-            ['type' => 'products', 'dir' => _PS_PROD_IMG_DIR_],
-            ['type' => 'stores', 'dir' => _PS_STORE_IMG_DIR_],
+            ['type' => 'categories', 'dir' => _EPH_CAT_IMG_DIR_],
+            ['type' => 'manufacturers', 'dir' => _EPH_MANU_IMG_DIR_],
+            ['type' => 'suppliers', 'dir' => _EPH_SUPP_IMG_DIR_],
+            ['type' => 'scenes', 'dir' => _EPH_SCENE_IMG_DIR_],
+            ['type' => 'products', 'dir' => _EPH_PROD_IMG_DIR_],
+            ['type' => 'stores', 'dir' => _EPH_STORE_IMG_DIR_],
         ];
 
         // Launching generation process
@@ -1189,12 +1189,12 @@ class AdminImagesControllerCore extends AdminController {
     protected function regenerateNewImage($entityType, $idEntity) {
 
         $process = [
-            'categories'    => _PS_CAT_IMG_DIR_,
-            'manufacturers' => _PS_MANU_IMG_DIR_,
-            'suppliers'     => _PS_SUPP_IMG_DIR_,
-            'scenes'        => _PS_SCENE_IMG_DIR_,
-            'products'      => _PS_PROD_IMG_DIR_,
-            'stores'        => _PS_STORE_IMG_DIR_,
+            'categories'    => _EPH_CAT_IMG_DIR_,
+            'manufacturers' => _EPH_MANU_IMG_DIR_,
+            'suppliers'     => _EPH_SUPP_IMG_DIR_,
+            'scenes'        => _EPH_SCENE_IMG_DIR_,
+            'products'      => _EPH_PROD_IMG_DIR_,
+            'stores'        => _EPH_STORE_IMG_DIR_,
         ];
         $type = ImageType::getImagesTypes($entityType);
 
@@ -1311,7 +1311,7 @@ class AdminImagesControllerCore extends AdminController {
                             $this->l('Source file for %s id %s is corrupt: %s'),
                             $entityType,
                             $idEntity,
-                            str_replace(_PS_ROOT_ADMIN_DIR_, '', $dir . $image)
+                            str_replace(_EPH_ROOT_ADMIN_DIR_, '', $dir . $image)
                         );
                     } else {
                         $success = ImageManager::resize(
@@ -1381,7 +1381,7 @@ class AdminImagesControllerCore extends AdminController {
 
         $lastId = (int) Configuration::get('EPH_IMAGES_LAST_UPD_' . strtoupper($entityType));
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('MIN(`' . bqSQL($primary) . '`)')
                 ->from($table)
@@ -1396,7 +1396,7 @@ class AdminImagesControllerCore extends AdminController {
             return false;
         }
 
-        $generateHighDpiImages = (bool) Configuration::get('PS_HIGHT_DPI');
+        $generateHighDpiImages = (bool) Configuration::get('EPH_HIGHT_DPI');
 
         if (!$productsImages) {
             $formattedThumbScene = ImageType::getFormatedName('thumb_scene');
@@ -1418,7 +1418,7 @@ class AdminImagesControllerCore extends AdminController {
                             continue;
                         }
 
-                        if (($dir == _PS_CAT_IMG_DIR_) && ($imageType['name'] == $formattedMedium) && is_file(_PS_CAT_IMG_DIR_ . str_replace('.', '_thumb.', $image))) {
+                        if (($dir == _EPH_CAT_IMG_DIR_) && ($imageType['name'] == $formattedMedium) && is_file(_EPH_CAT_IMG_DIR_ . str_replace('.', '_thumb.', $image))) {
                             $image = str_replace('.', '_thumb.', $image);
                         }
 
@@ -1587,7 +1587,7 @@ class AdminImagesControllerCore extends AdminController {
                 $file = $dir . $language['iso_code'] . '.jpg';
 
                 if (!file_exists($file)) {
-                    $file = _PS_PROD_IMG_DIR_ . Language::getIsoById((int) Configuration::get('PS_LANG_DEFAULT')) . '.jpg';
+                    $file = _EPH_PROD_IMG_DIR_ . Language::getIsoById((int) Configuration::get('EPH_LANG_DEFAULT')) . '.jpg';
                 }
 
                 if (!file_exists($dir . $language['iso_code'] . '-default-' . stripslashes($imageType['name']) . '.jpg')) {
@@ -1696,7 +1696,7 @@ class AdminImagesControllerCore extends AdminController {
 
         $this->context->smarty->assign(
             [
-                'link_ppreferences' => 'index.php?tab=AdminPPreferences&token=' . Tools::getAdminTokenLite('AdminPPreferences') . '#PS_LEGACY_IMAGES_on',
+                'link_ppreferences' => 'index.php?tab=AdminPPreferences&token=' . Tools::getAdminTokenLite('AdminPPreferences') . '#EPH_LEGACY_IMAGES_on',
             ]
         );
     }
@@ -1716,63 +1716,63 @@ class AdminImagesControllerCore extends AdminController {
         try {
             return [
                 'products'      => [
-                    'indexed' => (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                    'indexed' => (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                         (new DbQuery())
                             ->select('COUNT(*)')
                             ->from(bqSQL(Product::$definition['table']))
-                            ->where('`' . bqSQL(Product::$definition['primary']) . '` <= ' . (int) Configuration::get('PS_IMAGES_LAST_UPD_PRODUCTS'))
+                            ->where('`' . bqSQL(Product::$definition['primary']) . '` <= ' . (int) Configuration::get('EPH_IMAGES_LAST_UPD_PRODUCTS'))
                     ),
-                    'total'   => (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                    'total'   => (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                         (new DbQuery())
                             ->select('COUNT(*)')
                             ->from(bqSQL(Product::$definition['table']))
                     ),
                 ],
                 'categories'    => [
-                    'indexed' => (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                    'indexed' => (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                         (new DbQuery())
                             ->select('COUNT(*)')
                             ->from(bqSQL(Category::$definition['table']))
-                            ->where('`' . bqSQL(Category::$definition['primary']) . '` <= ' . (int) Configuration::get('PS_IMAGES_LAST_UPD_CATEGORIES'))
+                            ->where('`' . bqSQL(Category::$definition['primary']) . '` <= ' . (int) Configuration::get('EPH_IMAGES_LAST_UPD_CATEGORIES'))
                     ),
-                    'total'   => (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                    'total'   => (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                         (new DbQuery())
                             ->select('COUNT(*)')
                             ->from(bqSQL(Category::$definition['table']))
                     ),
                 ],
                 'suppliers'     => [
-                    'indexed' => (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                    'indexed' => (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                         (new DbQuery())
                             ->select('COUNT(*)')
                             ->from(bqSQL(Supplier::$definition['table']))
-                            ->where('`' . bqSQL(Supplier::$definition['primary']) . '` <= ' . (int) Configuration::get('PS_IMAGES_LAST_UPD_SUPPLIERS'))
+                            ->where('`' . bqSQL(Supplier::$definition['primary']) . '` <= ' . (int) Configuration::get('EPH_IMAGES_LAST_UPD_SUPPLIERS'))
                     ),
-                    'total'   => (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                    'total'   => (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                         (new DbQuery())
                             ->select('COUNT(*)')
                             ->from(bqSQL(Supplier::$definition['table']))
                     ),
                 ],
                 'manufacturers' => [
-                    'indexed' => (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                    'indexed' => (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                         (new DbQuery())
                             ->select('COUNT(*)')
                             ->from(bqSQL(Manufacturer::$definition['table']))
-                            ->where('`' . bqSQL(Manufacturer::$definition['primary']) . '` <= ' . (int) Configuration::get('PS_IMAGES_LAST_UPD_MANUFACTURERS'))
+                            ->where('`' . bqSQL(Manufacturer::$definition['primary']) . '` <= ' . (int) Configuration::get('EPH_IMAGES_LAST_UPD_MANUFACTURERS'))
                     ),
-                    'total'   => (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                    'total'   => (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                         (new DbQuery())
                             ->select('COUNT(*)')
                             ->from(bqSQL(Manufacturer::$definition['table']))
                     ),
                 ],
                 'scenes'        => [
-                    'indexed' => (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                    'indexed' => (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                         (new DbQuery())
                             ->select('COUNT(*)')
                             ->from('scene_category')
-                            ->where('`id_scene` <= ' . (int) Configuration::get('PS_IMAGES_LAST_UPD_SCENES'))
+                            ->where('`id_scene` <= ' . (int) Configuration::get('EPH_IMAGES_LAST_UPD_SCENES'))
                     ),
                     'total'   => (int) Db::getInstance()->getValue(
                         (new DbQuery())
@@ -1781,11 +1781,11 @@ class AdminImagesControllerCore extends AdminController {
                     ),
                 ],
                 'stores'        => [
-                    'indexed' => (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                    'indexed' => (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                         (new DbQuery())
                             ->select('COUNT(*)')
                             ->from(bqSQL(Store::$definition['table']))
-                            ->where('`' . bqSQL(Store::$definition['primary']) . '` <= ' . (int) Configuration::get('PS_IMAGES_LAST_UPD_STORES'))
+                            ->where('`' . bqSQL(Store::$definition['primary']) . '` <= ' . (int) Configuration::get('EPH_IMAGES_LAST_UPD_STORES'))
                     ),
                     'total'   => (int) Db::getInstance()->getValue(
                         (new DbQuery())
@@ -1795,13 +1795,13 @@ class AdminImagesControllerCore extends AdminController {
                 ],
 
                 'users'         => [
-                    'indexed' => (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                    'indexed' => (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                         (new DbQuery())
                             ->select('COUNT(*)')
                             ->from(bqSQL(Customer::$definition['table']))
-                            ->where('`' . bqSQL(Customer::$definition['primary']) . '` <= ' . (int) Configuration::get('PS_IMAGES_LAST_UPD_MEMBERS'))
+                            ->where('`' . bqSQL(Customer::$definition['primary']) . '` <= ' . (int) Configuration::get('EPH_IMAGES_LAST_UPD_MEMBERS'))
                     ),
-                    'total'   => (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                    'total'   => (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                         (new DbQuery())
                             ->select('COUNT(*)')
                             ->from(bqSQL(Customer::$definition['table']))

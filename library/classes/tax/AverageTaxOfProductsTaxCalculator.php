@@ -62,7 +62,7 @@ class AverageTaxOfProductsTaxCalculatorCore
      * @version 1.8.1.0 Initial version
      * @throws PhenyxShopException
      */
-    public function getTaxesAmount($priceBeforeTax, $priceAfterTax = null, $roundPrecision = _PS_PRICE_DISPLAY_PRECISION_, $roundMode = null)
+    public function getTaxesAmount($priceBeforeTax, $priceAfterTax = null, $roundPrecision = _EPH_PRICE_DISPLAY_PRECISION_, $roundMode = null)
     {
         $amounts = [];
         $totalBase = 0;
@@ -81,7 +81,7 @@ class AverageTaxOfProductsTaxCalculatorCore
 
         $actualTax = 0;
         foreach ($amounts as &$data) {
-            $data = Tools::ps_round(
+            $data = Tools::EPH_round(
                 $priceBeforeTax * ($data['base'] / $totalBase) * $data['rate'] / 100,
                 $roundPrecision,
                 $roundMode

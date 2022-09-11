@@ -51,7 +51,7 @@ class TranslatedConfigurationCore extends Configuration {
         // Otherwise configuration is not set as translated configuration.
 
         if ($id !== null) {
-            $idTranslated = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $idTranslated = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select(bqSQL(static::$definition['primary']))
                     ->from(bqSQL(static::$definition['table']) . '_lang')
@@ -106,7 +106,7 @@ class TranslatedConfigurationCore extends Configuration {
 
         Configuration::updateValue($this->name, $this->value, $ishtml);
 
-        $lastInsert = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $lastInsert = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('`id_configuration` AS `id`')
                 ->from('configuration')
@@ -146,7 +146,7 @@ class TranslatedConfigurationCore extends Configuration {
         ' . ($sqlLimit != '' ? $sqlLimit : '') . '
         ';
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
     }
 
 }

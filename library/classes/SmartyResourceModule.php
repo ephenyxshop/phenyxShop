@@ -26,7 +26,7 @@ class SmartyResourceModuleCore extends Smarty_Resource_Custom {
 
             if (Tools::file_exists_cache($file = $path . $name)) {
 
-                if (_PS_MODE_DEV_) {
+                if (_EPH_MODE_DEV_) {
                     $source = implode('', [
                         '<!-- begin ' . $file . ' -->',
                         file_get_contents($file),

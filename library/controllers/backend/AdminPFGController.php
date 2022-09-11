@@ -47,7 +47,7 @@ class AdminPFGController extends AdminController {
 	public function setMedia($isNewTheme = false) {
 
 		parent::setMedia($isNewTheme);
-		$this->addJS(__PS_BASE_URI__ . _PS_JS_DIR_ . 'pfg.js');
+		$this->addJS(__EPH_BASE_URI__ . _EPH_JS_DIR_ . 'pfg.js');
 		Media::addJsDef([
 			'AjaxLink' . $this->controller_name => $this->context->link->getAdminLink($this->controller_name),
 		]);
@@ -56,8 +56,8 @@ class AdminPFGController extends AdminController {
 	public function setAjaxMedia() {
 
 		return $this->pushJS([
-			__PS_BASE_URI__ . _PS_JS_DIR_ . 'tinymce/tinymce.min.js',
-			_PS_JS_DIR_ . 'admin/tinymce.inc.js',
+			__EPH_BASE_URI__ . _EPH_JS_DIR_ . 'tinymce/tinymce.min.js',
+			_EPH_JS_DIR_ . 'admin/tinymce.inc.js',
 		]);
 	}
 
@@ -81,7 +81,7 @@ class AdminPFGController extends AdminController {
 			'AjaxLink'       => $this->context->link->getAdminLink($this->controller_name),
 			'paragridScript' => $this->generateParaGridScript(),
 			'titleBar'       => $this->TitleBar,
-			'bo_imgdir'      => __PS_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+			'bo_imgdir'      => __EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
 			'idController'   => '',
 		]);
 
@@ -620,8 +620,8 @@ class AdminPFGController extends AdminController {
 
 		$context = Context::getContext();
 		$context->controller->addJS([
-			__PS_BASE_URI__ . _PS_JS_DIR_ . 'tinymce/tinymce.min.js',
-			_PS_JS_DIR_ . 'tinymce.inc.js',
+			__EPH_BASE_URI__ . _EPH_JS_DIR_ . 'tinymce/tinymce.min.js',
+			_EPH_JS_DIR_ . 'tinymce.inc.js',
 		]);
 
 		$actions = [
@@ -888,7 +888,7 @@ class AdminPFGController extends AdminController {
 
 		$this->tpl_form_vars = [
 			'active' => $this->object->active,
-			'PS_ALLOW_ACCENTED_CHARS_URL', (int) Configuration::get('PS_ALLOW_ACCENTED_CHARS_URL'),
+			'EPH_ALLOW_ACCENTED_CHARS_URL', (int) Configuration::get('EPH_ALLOW_ACCENTED_CHARS_URL'),
 		];
 
 		$languages = Language::getLanguages(true);
@@ -1521,7 +1521,7 @@ class AdminPFGController extends AdminController {
 		}
 
 		$fileSave = new Xlsx($spreadsheet);
-		$fileSave->save(_PS_EXPORT_DIR_ . 'formulaire_' . $pfg_model->title[$this->context->language->id] . '.xlsx');
+		$fileSave->save(_EPH_EXPORT_DIR_ . 'formulaire_' . $pfg_model->title[$this->context->language->id] . '.xlsx');
 		$response = [
 			'fileExport' => 'fileExport' . DIRECTORY_SEPARATOR . 'formulaire_' . $pfg_model->title[$this->context->language->id] . '.xlsx',
 		];

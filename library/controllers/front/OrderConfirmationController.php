@@ -132,7 +132,7 @@ class OrderConfirmationControllerCore extends FrontController {
             $this->context->customer->mylogout();
         }
 
-        $this->setTemplate(_PS_THEME_DIR_ . 'order-confirmation.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'order-confirmation.tpl');
     }
 
     /**

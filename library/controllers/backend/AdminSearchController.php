@@ -199,7 +199,7 @@ class AdminSearchControllerCore extends AdminController {
         LEFT JOIN ' . _DB_PREFIX_ . 'access a ON (a.id_tab = t.id_tab AND a.id_profile = ' . (int) $this->context->employee->id_profile . ')
         WHERE active = 1
         ' . ($this->context->employee->id_profile != 1 ? 'AND view = 1' : '') .
-            (defined('_PS_HOST_MODE_') ? ' AND t.`hide_host_mode` = 0' : '')
+            (defined('_EPH_HOST_MODE_') ? ' AND t.`hide_host_mode` = 0' : '')
         );
 
         foreach ($result as $row) {
@@ -328,9 +328,9 @@ class AdminSearchControllerCore extends AdminController {
 
         parent::setMedia($isNewTheme);
         $this->addJqueryPlugin('highlight');
-        $this->addCSS(__PS_BASE_URI__ . _PS_JS_DIR_ . '' . $this->bo_theme . '/css/jquery-ui.css');
+        $this->addCSS(__EPH_BASE_URI__ . _EPH_JS_DIR_ . '' . $this->bo_theme . '/css/jquery-ui.css');
         $this->addJquery('3.4.1');
-        $this->addJS(__PS_BASE_URI__ . _PS_JS_DIR_ . 'jquery-ui/jquery-ui.js');
+        $this->addJS(__EPH_BASE_URI__ . _EPH_JS_DIR_ . 'jquery-ui/jquery-ui.js');
     }
 
     /**

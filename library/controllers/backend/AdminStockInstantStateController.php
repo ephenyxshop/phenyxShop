@@ -323,7 +323,7 @@ class AdminStockInstantStateControllerCore extends AdminController {
                 $query->where('s.id_product = ' . $idProduct . ' AND s.id_product_attribute = ' . $idProductAttribute);
                 $query->where('s.id_warehouse = ' . $idWarehouse);
                 $query->groupBy('s.price_te');
-                $datas = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+                $datas = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
 
                 // puts data
 
@@ -453,7 +453,7 @@ class AdminStockInstantStateControllerCore extends AdminController {
                     $query->where('id_warehouse = ' . (int) $this->getCurrentCoverageWarehouse());
                 }
 
-                $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($query);
+                $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow($query);
 
                 $item['physical_quantity'] = $res['physical_quantity'];
                 $item['usable_quantity'] = $res['usable_quantity'];
@@ -512,7 +512,7 @@ class AdminStockInstantStateControllerCore extends AdminController {
                     $query->where('id_warehouse = ' . (int) $this->getCurrentCoverageWarehouse());
                 }
 
-                $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($query);
+                $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow($query);
 
                 $item['physical_quantity'] = $res['physical_quantity'];
                 $item['usable_quantity'] = $res['usable_quantity'];
@@ -596,8 +596,8 @@ class AdminStockInstantStateControllerCore extends AdminController {
      */
     public function initContent() {
 
-        if (!Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT')) {
-            $this->warnings[md5('PS_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management before using this feature.');
+        if (!Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT')) {
+            $this->warnings[md5('EPH_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management before using this feature.');
 
             return false;
         }
@@ -616,8 +616,8 @@ class AdminStockInstantStateControllerCore extends AdminController {
      */
     public function initProcess() {
 
-        if (!Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT')) {
-            $this->warnings[md5('PS_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management before using this feature.');
+        if (!Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT')) {
+            $this->warnings[md5('EPH_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management before using this feature.');
 
             return false;
         }

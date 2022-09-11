@@ -57,10 +57,10 @@ class AdminEmployeesControllerCore extends AdminController {
                                             check if there are more than one superAdmin
                                             if it's the case then we can delete a superAdmin
         */
-        $superAdmin = Employee::countProfile(_PS_ADMIN_PROFILE_, true);
+        $superAdmin = Employee::countProfile(_EPH_ADMIN_PROFILE_, true);
 
         if ($superAdmin == 1) {
-            $superAdminArray = Employee::getEmployeesByProfile(_PS_ADMIN_PROFILE_, true);
+            $superAdminArray = Employee::getEmployeesByProfile(_EPH_ADMIN_PROFILE_, true);
             $superAdminId = [];
 
             foreach ($superAdminArray as $key => $val) {
@@ -101,7 +101,7 @@ class AdminEmployeesControllerCore extends AdminController {
             'general' => [
                 'title'  => $this->l('Employee options'),
                 'fields' => [
-                    'PS_PASSWD_TIME_BACK'            => [
+                    'EPH_PASSWD_TIME_BACK'            => [
                         'title'      => $this->l('Password regeneration'),
                         'hint'       => $this->l('Security: Minimum time to wait between two password changes.'),
                         'cast'       => 'intval',
@@ -109,7 +109,7 @@ class AdminEmployeesControllerCore extends AdminController {
                         'suffix'     => ' ' . $this->l('minutes'),
                         'visibility' => Shop::CONTEXT_ALL,
                     ],
-                    'PS_BO_ALLOW_EMPLOYEE_FORM_LANG' => [
+                    'EPH_BO_ALLOW_EMPLOYEE_FORM_LANG' => [
                         'title'      => $this->l('Memorize the language used in Admin panel forms'),
                         'hint'       => $this->l('Allow employees to select a specific language for the Admin panel form.'),
                         'cast'       => 'intval',
@@ -127,7 +127,7 @@ class AdminEmployeesControllerCore extends AdminController {
             ],
         ];
         $rtl = $this->context->language->is_rtl ? '_rtl' : '';
-        $path = _PS_ADMIN_DIR_ . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR;
+        $path = _EPH_ADMIN_DIR_ . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR;
 
         foreach (scandir($path) as $theme) {
 
@@ -192,12 +192,12 @@ class AdminEmployeesControllerCore extends AdminController {
     public function setMedia($isNewTheme = false) {
 
         parent::setMedia($isNewTheme);
-        $this->addJS(__PS_BASE_URI__ . $this->admin_webpath . '/' . $this->bo_theme . _PS_JS_DIR_ . 'vendor/jquery-passy.js');
+        $this->addJS(__EPH_BASE_URI__ . $this->admin_webpath . '/' . $this->bo_theme . _EPH_JS_DIR_ . 'vendor/jquery-passy.js');
         $this->addjQueryPlugin('validate');
-        $this->addJS(_PS_JS_DIR_ . 'jquery/plugins/validate/localization/messages_' . $this->context->language->iso_code . '.js');
-        $this->addCSS(__PS_BASE_URI__ . _PS_JS_DIR_ . '' . $this->bo_theme . '/css/jquery-ui.css');
+        $this->addJS(_EPH_JS_DIR_ . 'jquery/plugins/validate/localization/messages_' . $this->context->language->iso_code . '.js');
+        $this->addCSS(__EPH_BASE_URI__ . _EPH_JS_DIR_ . '' . $this->bo_theme . '/css/jquery-ui.css');
         $this->addJquery('3.4.1');
-        $this->addJS(__PS_BASE_URI__ . _PS_JS_DIR_ . 'jquery-ui/jquery-ui.js');
+        $this->addJS(__EPH_BASE_URI__ . _EPH_JS_DIR_ . 'jquery-ui/jquery-ui.js');
     }
 
     /**
@@ -225,7 +225,7 @@ class AdminEmployeesControllerCore extends AdminController {
                 array_pop($this->toolbar_title);
                 $this->toolbar_title[] = sprintf($this->l('Edit: %1$s %2$s'), $obj->lastname, $obj->firstname);
                 $this->page_header_toolbar_title = implode(
-                    ' ' . Configuration::get('PS_NAVIGATION_PIPE') . ' ',
+                    ' ' . Configuration::get('EPH_NAVIGATION_PIPE') . ' ',
                     $this->toolbar_title
                 );
             }
@@ -265,19 +265,19 @@ class AdminEmployeesControllerCore extends AdminController {
 
         $availableProfiles = Profile::getProfiles($this->context->language->id);
 
-        if ($obj->id_profile == _PS_ADMIN_PROFILE_ && $this->context->employee->id_profile != _PS_ADMIN_PROFILE_) {
+        if ($obj->id_profile == _EPH_ADMIN_PROFILE_ && $this->context->employee->id_profile != _EPH_ADMIN_PROFILE_) {
             $this->errors[] = Tools::displayError('You cannot edit the SuperAdmin profile.');
 
             return parent::renderForm();
         }
 
-        $image = _PS_EMPLOYEE_IMG_DIR_ . $obj->id . '.jpg';
+        $image = _EPH_EMPLOYEE_IMG_DIR_ . $obj->id . '.jpg';
 
         if (file_exists($image)) {
             $imageUrl = '<img src="../img/e/' . $obj->id . '.jpg" alt="" width="200">';
             $imageSize = filesize($image);
         } else {
-            $image = _PS_EMPLOYEE_IMG_DIR_ . 'Unknown.png';
+            $image = _EPH_EMPLOYEE_IMG_DIR_ . 'Unknown.png';
             $imageUrl = '<img src="../img/e/Unknown.png" alt="" width="200">';
             $imageSize = filesize($image);
         }
@@ -419,11 +419,11 @@ class AdminEmployeesControllerCore extends AdminController {
 
             // if employee is not SuperAdmin (id_profile = 1), don't make it possible to select the admin profile
 
-            if ($this->context->employee->id_profile != _PS_ADMIN_PROFILE_) {
+            if ($this->context->employee->id_profile != _EPH_ADMIN_PROFILE_) {
 
                 foreach ($availableProfiles as $i => $profile) {
 
-                    if ($availableProfiles[$i]['id_profile'] == _PS_ADMIN_PROFILE_) {
+                    if ($availableProfiles[$i]['id_profile'] == _EPH_ADMIN_PROFILE_) {
                         unset($availableProfiles[$i]);
                         break;
                     }
@@ -449,7 +449,7 @@ class AdminEmployeesControllerCore extends AdminController {
             ];
 
             if (Shop::isFeatureActive()) {
-                $this->context->smarty->assign('_PS_ADMIN_PROFILE_', (int) _PS_ADMIN_PROFILE_);
+                $this->context->smarty->assign('_EPH_ADMIN_PROFILE_', (int) _EPH_ADMIN_PROFILE_);
                 $this->fields_form['input'][] = [
                     'type'  => 'shop',
                     'label' => $this->l('Shop association'),
@@ -606,8 +606,8 @@ class AdminEmployeesControllerCore extends AdminController {
 
         //if profile is super admin, manually fill checkBoxShopAsso_employee because in the form they are disabled.
 
-        if ($_POST['id_profile'] == _PS_ADMIN_PROFILE_) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        if ($_POST['id_profile'] == _EPH_ADMIN_PROFILE_) {
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('`id_shop`')
                     ->from('shop')
@@ -632,7 +632,7 @@ class AdminEmployeesControllerCore extends AdminController {
 
         if ($employee->isLastAdmin()) {
 
-            if (Tools::getValue('id_profile') != (int) _PS_ADMIN_PROFILE_) {
+            if (Tools::getValue('id_profile') != (int) _EPH_ADMIN_PROFILE_) {
                 $this->errors[] = Tools::displayError('You should have at least one employee in the administrator group.');
 
                 return false;
@@ -650,7 +650,7 @@ class AdminEmployeesControllerCore extends AdminController {
             $boTheme = explode('|', Tools::getValue('bo_theme_css'));
             $_POST['bo_theme'] = $boTheme[0];
 
-            if (!in_array($boTheme[0], scandir(_PS_ADMIN_DIR_ . DIRECTORY_SEPARATOR . 'themes'))) {
+            if (!in_array($boTheme[0], scandir(_EPH_ADMIN_DIR_ . DIRECTORY_SEPARATOR . 'themes'))) {
                 $this->errors[] = Tools::displayError('Invalid theme');
 
                 return false;
@@ -666,7 +666,7 @@ class AdminEmployeesControllerCore extends AdminController {
 
         if (!$assos && $this->table = 'employee') {
 
-            if (Shop::isFeatureActive() && _PS_ADMIN_PROFILE_ != $_POST['id_profile']) {
+            if (Shop::isFeatureActive() && _EPH_ADMIN_PROFILE_ != $_POST['id_profile']) {
                 $this->errors[] = Tools::displayError('The employee must be associated with at least one shop.');
             }
 
@@ -707,7 +707,7 @@ class AdminEmployeesControllerCore extends AdminController {
      */
     public function postProcess() {
 
-        if ((Tools::isSubmit('submitBulkdeleteemployee') || Tools::isSubmit('submitBulkdisableSelectionemployee') || Tools::isSubmit('deleteemployee') || Tools::isSubmit('status') || Tools::isSubmit('statusemployee') || Tools::isSubmit('submitAddemployee')) && _PS_MODE_DEMO_) {
+        if ((Tools::isSubmit('submitBulkdeleteemployee') || Tools::isSubmit('submitBulkdisableSelectionemployee') || Tools::isSubmit('deleteemployee') || Tools::isSubmit('status') || Tools::isSubmit('statusemployee') || Tools::isSubmit('submitAddemployee')) && _EPH_MODE_DEMO_) {
             $this->errors[] = Tools::displayError('This functionality has been disabled.');
 
             return false;
@@ -803,7 +803,7 @@ class AdminEmployeesControllerCore extends AdminController {
             return false;
         }
 
-        if (Tools::getValue('id_profile') == _PS_ADMIN_PROFILE_ && $this->context->employee->id_profile != _PS_ADMIN_PROFILE_) {
+        if (Tools::getValue('id_profile') == _EPH_ADMIN_PROFILE_ && $this->context->employee->id_profile != _EPH_ADMIN_PROFILE_) {
             $this->errors[] = Tools::displayError('The provided profile is invalid');
         }
 
@@ -861,7 +861,7 @@ class AdminEmployeesControllerCore extends AdminController {
             $this->context->cookie->passwd = $this->context->employee->passwd = $object->passwd;
 
             if (Tools::getValue('passwd_send_email')) {
-                $tpl = $context->smarty->createTemplate(_PS_MAIL_DIR_ . '/fr/employee_password.tpl');
+                $tpl = $context->smarty->createTemplate(_EPH_MAIL_DIR_ . '/fr/employee_password.tpl');
                 $tpl->assign([
                     'email'     => $object->email,
                     'lastname'  => $object->lastname,
@@ -871,8 +871,8 @@ class AdminEmployeesControllerCore extends AdminController {
                 ]);
                 $postfields = [
                     'sender'      => [
-                        'name'  => "Service  Administratif " . Configuration::get('PS_SHOP_NAME'),
-                        'email' => 'no-reply@' . Configuration::get('PS_SHOP_URL'),
+                        'name'  => "Service  Administratif " . Configuration::get('EPH_SHOP_NAME'),
+                        'email' => 'no-reply@' . Configuration::get('EPH_SHOP_URL'),
                     ],
                     'to'          => [
                         [
@@ -946,8 +946,8 @@ class AdminEmployeesControllerCore extends AdminController {
         parent::afterImageUpload();
 
         if (($id_employee = (int) Tools::getValue('id_employy')) &&
-            isset($_FILES) && count($_FILES) && file_exists(_PS_EMPLOYEE_IMG_DIR_ . $id_employee . '.jpg')) {
-            $current_file = _PS_TMP_IMG_DIR_ . 'emplyee_mini_' . $id_employee . '_' . $this->context->shop->id . '.jpg';
+            isset($_FILES) && count($_FILES) && file_exists(_EPH_EMPLOYEE_IMG_DIR_ . $id_employee . '.jpg')) {
+            $current_file = _EPH_TMP_IMG_DIR_ . 'emplyee_mini_' . $id_employee . '_' . $this->context->shop->id . '.jpg';
 
             if (file_exists($current_file)) {
                 unlink($current_file);

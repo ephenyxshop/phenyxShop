@@ -57,11 +57,11 @@ class SitemapControllerCore extends FrontController {
             $this->context->smarty->assign('display_supplier_link', 0);
         }
 
-        $this->context->smarty->assign('PS_DISPLAY_SUPPLIERS', Configuration::get('PS_DISPLAY_SUPPLIERS'));
-        $this->context->smarty->assign('PS_DISPLAY_BEST_SELLERS', Configuration::get('PS_DISPLAY_BEST_SELLERS'));
-        $this->context->smarty->assign('display_store', Configuration::get('PS_STORES_DISPLAY_SITEMAP'));
+        $this->context->smarty->assign('EPH_DISPLAY_SUPPLIERS', Configuration::get('EPH_DISPLAY_SUPPLIERS'));
+        $this->context->smarty->assign('EPH_DISPLAY_BEST_SELLERS', Configuration::get('EPH_DISPLAY_BEST_SELLERS'));
+        $this->context->smarty->assign('display_store', Configuration::get('EPH_STORES_DISPLAY_SITEMAP'));
 
-        $this->setTemplate(_PS_THEME_DIR_ . 'sitemap.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'sitemap.tpl');
     }
 
 }

@@ -20,8 +20,8 @@ class HelperCore {
     public $token;
     /** @var array $toolbar_btn */
     public $toolbar_btn;
-    /** @var mixed $ps_help_context */
-    public $ps_help_context;
+    /** @var mixed $EPH_help_context */
+    public $EPH_help_context;
     /** @var string $title */
     public $title;
     /** @var bool $show_toolbar */
@@ -137,14 +137,14 @@ class HelperCore {
             $idShop = Context::getContext()->shop->id;
         } else
         if (!Shop::isFeatureActive()) {
-            $idShop = Configuration::get('PS_SHOP_DEFAULT');
+            $idShop = Configuration::get('EPH_SHOP_DEFAULT');
         } else {
             $idShop = 0;
         }
 
         $shop = new Shop($idShop);
         $rootCategory = Category::getRootCategory(null, $shop);
-        $disabledCategories[] = (int) Configuration::get('PS_ROOT_CATEGORY');
+        $disabledCategories[] = (int) Configuration::get('EPH_ROOT_CATEGORY');
 
         if (!$root) {
             $root = ['name' => $rootCategory->name, 'id_category' => $rootCategory->id];
@@ -155,7 +155,7 @@ class HelperCore {
         }
 
         if ($useSearch) {
-            $this->context->controller->addJs(_PS_JS_DIR_ . 'jquery/plugins/autocomplete/jquery.autocomplete.js');
+            $this->context->controller->addJs(_EPH_JS_DIR_ . 'jquery/plugins/autocomplete/jquery.autocomplete.js');
         }
 
         $html = '
@@ -227,7 +227,7 @@ class HelperCore {
 
         $rootInput = '';
 
-        if ($root['id_category'] != (int) Configuration::get('PS_ROOT_CATEGORY') || (Tools::isSubmit('ajax') && Tools::getValue('action') == 'getCategoriesFromRootCategory')) {
+        if ($root['id_category'] != (int) Configuration::get('EPH_ROOT_CATEGORY') || (Tools::isSubmit('ajax') && Tools::getValue('action') == 'getCategoriesFromRootCategory')) {
             $rootInput = '
                 <p class="checkbox"><i class="icon-folder-open"></i><label>
                     <input type="' . (!$useRadio ? 'checkbox' : 'radio') . '" name="'
@@ -356,7 +356,7 @@ class HelperCore {
                 $overrideTplPath = $this->context->controller->getTemplatePath($tplName) . $this->override_folder . $this->base_folder . $tplName;
             } else
             if ($this->module) {
-                $overrideTplPath = _PS_MODULE_DIR_ . $this->module->name . '/views/templates/admin/_configure/' . $this->override_folder . $this->base_folder . $tplName;
+                $overrideTplPath = _EPH_MODULE_DIR_ . $this->module->name . '/views/templates/admin/_configure/' . $this->override_folder . $this->base_folder . $tplName;
             } else {
 				
                 if (file_exists($this->context->smarty->getTemplateDir(1) . $this->override_folder . $this->base_folder . $tplName)) {
@@ -371,7 +371,7 @@ class HelperCore {
         } else
         if ($this->module) {
 			
-            $overrideTplPath = _PS_MODULE_DIR_ . $this->module->name . '/views/templates/admin/_configure/' . $this->base_folder . $tplName;
+            $overrideTplPath = _EPH_MODULE_DIR_ . $this->module->name . '/views/templates/admin/_configure/' . $this->base_folder . $tplName;
         }
 
         if (isset($overrideTplPath) && file_exists($overrideTplPath)) {
@@ -462,7 +462,7 @@ class HelperCore {
 
         $this->tpl_vars = [
             'modules_list' => $modulesList,
-            'modules_uri'  => __PS_BASE_URI__ . basename(_PS_MODULE_DIR_),
+            'modules_uri'  => __EPH_BASE_URI__ . basename(_EPH_MODULE_DIR_),
         ];
         // The translations for this are defined by AdminModules, so override the context for the translations
         $overrideControllerNameForTranslations = Context::getContext()->override_controller_name_for_translations;

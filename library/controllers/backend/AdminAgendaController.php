@@ -517,11 +517,11 @@ class AdminAgendaControllerCore extends AdminController {
 
         $this->extracss = $this->pushCSS([
             _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/calendar/bootstrap/css/bootstrap.min.css',
-            _PS_JS_DIR_ . 'trumbowyg/ui/trumbowyg.min.css',
-            _PS_JS_DIR_ . 'select2/select2.min.css',
+            _EPH_JS_DIR_ . 'trumbowyg/ui/trumbowyg.min.css',
+            _EPH_JS_DIR_ . 'select2/select2.min.css',
             _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/calendar/backend.min.css',
             _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/calendar/general.css',
-            _PS_JS_DIR_ . 'jquery-fullcalendar/fullcalendar.min.css',
+            _EPH_JS_DIR_ . 'jquery-fullcalendar/fullcalendar.min.css',
         ]);
     }
 
@@ -529,30 +529,30 @@ class AdminAgendaControllerCore extends AdminController {
 
         return $this->pushJS([
             _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/calendar/bootstrap/js/bootstrap.bundle.min.js',
-            _PS_JS_DIR_ . 'popper/popper.min.js',
-            _PS_JS_DIR_ . 'tippy/tippy-bundle.umd.min.js',
-            _PS_JS_DIR_ . 'jquery-ui/jquery-ui.touch-punch.min.js',
-            _PS_JS_DIR_ . 'moment/moment.min.js',
-            _PS_JS_DIR_ . 'moment/moment-timezone-with-data.min.js',
-            _PS_JS_DIR_ . 'datejs/date.min.js',
-            _PS_JS_DIR_ . 'trumbowyg/trumbowyg.min.js',
-            _PS_JS_DIR_ . 'select2/select2.min.js',
-            _PS_JS_DIR_ . 'fontawesome/js/fontawesome.min.js',
-            _PS_JS_DIR_ . 'fontawesome/js/solid.min.js',
-            _PS_JS_DIR_ . 'jquery-fullcalendar/fullcalendar.min.js',
-            _PS_JS_DIR_ . 'jquery-jeditable/jquery.jeditable.min.js',
-            _PS_JS_DIR_ . 'jquery-ui/jquery-ui-timepicker-addon.min.js',
-            _PS_JS_DIR_ . 'calendar/working_plan_exceptions_modal.min.js',
-            _PS_JS_DIR_ . 'calendar/backend_calendar.min.js',
-            _PS_JS_DIR_ . 'calendar/backend_calendar_default_view.min.js',
-            _PS_JS_DIR_ . 'calendar/backend_calendar_table_view.min.js',
-            _PS_JS_DIR_ . 'calendar/backend_calendar_google_sync.min.js',
-            _PS_JS_DIR_ . 'calendar/backend_calendar_appointments_modal.min.js',
-            _PS_JS_DIR_ . 'calendar/backend_calendar_unavailability_events_modal.min.js',
-            _PS_JS_DIR_ . 'calendar/backend_calendar_api.min.js',
-            _PS_JS_DIR_ . 'calendar/backend.min.js',
-            _PS_JS_DIR_ . 'calendar/polyfill.min.js',
-            _PS_JS_DIR_ . 'calendar/general_functions.min.js',
+            _EPH_JS_DIR_ . 'popper/popper.min.js',
+            _EPH_JS_DIR_ . 'tippy/tippy-bundle.umd.min.js',
+            _EPH_JS_DIR_ . 'jquery-ui/jquery-ui.touch-punch.min.js',
+            _EPH_JS_DIR_ . 'moment/moment.min.js',
+            _EPH_JS_DIR_ . 'moment/moment-timezone-with-data.min.js',
+            _EPH_JS_DIR_ . 'datejs/date.min.js',
+            _EPH_JS_DIR_ . 'trumbowyg/trumbowyg.min.js',
+            _EPH_JS_DIR_ . 'select2/select2.min.js',
+            _EPH_JS_DIR_ . 'fontawesome/js/fontawesome.min.js',
+            _EPH_JS_DIR_ . 'fontawesome/js/solid.min.js',
+            _EPH_JS_DIR_ . 'jquery-fullcalendar/fullcalendar.min.js',
+            _EPH_JS_DIR_ . 'jquery-jeditable/jquery.jeditable.min.js',
+            _EPH_JS_DIR_ . 'jquery-ui/jquery-ui-timepicker-addon.min.js',
+            _EPH_JS_DIR_ . 'calendar/working_plan_exceptions_modal.min.js',
+            _EPH_JS_DIR_ . 'calendar/backend_calendar.min.js',
+            _EPH_JS_DIR_ . 'calendar/backend_calendar_default_view.min.js',
+            _EPH_JS_DIR_ . 'calendar/backend_calendar_table_view.min.js',
+            _EPH_JS_DIR_ . 'calendar/backend_calendar_google_sync.min.js',
+            _EPH_JS_DIR_ . 'calendar/backend_calendar_appointments_modal.min.js',
+            _EPH_JS_DIR_ . 'calendar/backend_calendar_unavailability_events_modal.min.js',
+            _EPH_JS_DIR_ . 'calendar/backend_calendar_api.min.js',
+            _EPH_JS_DIR_ . 'calendar/backend.min.js',
+            _EPH_JS_DIR_ . 'calendar/polyfill.min.js',
+            _EPH_JS_DIR_ . 'calendar/general_functions.min.js',
         ]);
     }
 
@@ -763,15 +763,15 @@ class AdminAgendaControllerCore extends AdminController {
                 $address->phone_mobile = Tools::getValue('phone_mobile');
                 $result = $address->add();
 
-                $tpl = $this->context->smarty->createTemplate(_PS_MAIL_DIR_ . '/admin_account.tpl');
+                $tpl = $this->context->smarty->createTemplate(_EPH_MAIL_DIR_ . '/admin_account.tpl');
                 $tpl->assign([
                     'customer' => $customer,
                     'passwd'   => $password,
                 ]);
                 $postfields = [
                     'sender'      => [
-                        'name'  => "Service  Administratif " . Configuration::get('PS_SHOP_NAME'),
-                        'email' => 'no-reply@' . Configuration::get('PS_SHOP_URL'),
+                        'name'  => "Service  Administratif " . Configuration::get('EPH_SHOP_NAME'),
+                        'email' => 'no-reply@' . Configuration::get('EPH_SHOP_URL'),
                     ],
                     'to'          => [
                         [
@@ -779,7 +779,7 @@ class AdminAgendaControllerCore extends AdminController {
                             'email' => $customer->email,
                         ],
                     ],
-                    'subject'     => $customer->firstname . ' ! Bienvenue sur ' . Configuration::get('PS_SHOP_NAME'),
+                    'subject'     => $customer->firstname . ' ! Bienvenue sur ' . Configuration::get('EPH_SHOP_NAME'),
                     "htmlContent" => $tpl->fetch(),
                 ];
                 $result = Tools::sendEmail($postfields);
@@ -838,7 +838,7 @@ class AdminAgendaControllerCore extends AdminController {
 
             fwrite($file, $query . PHP_EOL);
 
-            $response['appointments'] = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+            $response['appointments'] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
 
             foreach ($response['appointments'] as &$appointment) {
 
@@ -870,12 +870,12 @@ class AdminAgendaControllerCore extends AdminController {
                 or (start_datetime <= ' . $start_date . ' AND end_datetime >= ' . $end_date . ') AND is_unavailable = 1');
                 fwrite($file, $query . PHP_EOL);
 
-                $response['unavailables'] = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+                $response['unavailables'] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
             }
 
             foreach ($response['unavailables'] as &$unavailable) {
 
-                $unavailable['provider'] = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow((new DbQuery())
+                $unavailable['provider'] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow((new DbQuery())
                         ->select('*')
                         ->from('coach')
                         ->where('`id_coach` = ' . $unavailable['id_coach']));

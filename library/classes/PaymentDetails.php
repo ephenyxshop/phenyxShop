@@ -62,7 +62,7 @@ class PaymentDetailsCore extends ObjectModel {
 
         return ObjectModel::hydrateCollection(
             'PaymentDetails',
-            Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('*')
                     ->from('payment_details')

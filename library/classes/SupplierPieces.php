@@ -185,7 +185,7 @@ class SupplierPiecesCore extends ObjectModel {
     public function getFields() {
 
         if (!$this->id_lang) {
-            $this->id_lang = Configuration::get('PS_LANG_DEFAULT', null, null, $this->id_shop);
+            $this->id_lang = Configuration::get('EPH_LANG_DEFAULT', null, null, $this->id_shop);
         }
 
         return parent::getFields();
@@ -231,7 +231,7 @@ class SupplierPiecesCore extends ObjectModel {
 	
 	public function getPieceDetail() {
 		
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 				(new DbQuery())
 				->select('*')
 				->from('supplier_piece_detail')
@@ -259,7 +259,7 @@ class SupplierPiecesCore extends ObjectModel {
 		}
         $query->orderBy('a.`date_add` DESC');
 		
-		$orders = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+		$orders = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
 		
 		return $orders;
        
@@ -271,7 +271,7 @@ class SupplierPiecesCore extends ObjectModel {
 		
 		if(empty($this->piece_number)) {
 			$year = date('Y');
-			$lastValue = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+			$lastValue = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 				(new DbQuery())
 				->select('`piece_number`')
 				->from('supplier_pieces')
@@ -300,7 +300,7 @@ class SupplierPiecesCore extends ObjectModel {
         foreach (static::$definition['fields'] as $fieldName => $field) {
 
             if ($field['type'] === static::TYPE_FLOAT && isset($this->$fieldName)) {
-                $this->$fieldName = Tools::ps_round($this->$fieldName, _EPH_PRICE_DATABASE_PRECISION_);
+                $this->$fieldName = Tools::EPH_round($this->$fieldName, _EPH_PRICE_DATABASE_PRECISION_);
             }
 
         }
@@ -343,7 +343,7 @@ class SupplierPiecesCore extends ObjectModel {
 	
     public function getProductsDetail() {
 		
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('supplier_piece_detail', 'od')
@@ -404,7 +404,7 @@ class SupplierPiecesCore extends ObjectModel {
 
     public function getVirtualProducts() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_product`, `id_product_attribute`, `download_hash`, `download_deadline`')
                 ->from('supplier_piece_detail', 'od')
@@ -473,7 +473,7 @@ class SupplierPiecesCore extends ObjectModel {
 	public static function getLastInvoiceNumber() {
 		
 		$sql = 'SELECT `AUTO_INCREMENT` FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = \''._DB_NAME_.'\' AND   TABLE_NAME   = \''._DB_PREFIX_.'supplier_pieces\'';
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->execute($sql);
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->execute($sql);
 	}
 	
 	public static function mergeCartTable(Order $order, $pieceNumber, $valid = null) {
@@ -541,7 +541,7 @@ class SupplierPiecesCore extends ObjectModel {
 		
 		
 		$year = date('Y');
-		$lastValue = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		$lastValue = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
             ->select('`piece_number`')
             ->from('supplier_pieces')

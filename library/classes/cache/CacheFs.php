@@ -19,7 +19,7 @@ class CacheFsCore extends Cache {
      */
     protected function __construct() {
 
-        $this->depth = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('SELECT value FROM ' . _DB_PREFIX_ . 'configuration WHERE name= \'PS_CACHEFS_DIRECTORY_DEPTH\'', false);
+        $this->depth = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue('SELECT value FROM ' . _DB_PREFIX_ . 'configuration WHERE name= \'EPH_CACHEFS_DIRECTORY_DEPTH\'', false);
 
         $keysFilename = $this->getFilename(static::KEYS_NAME);
 
@@ -127,7 +127,7 @@ class CacheFsCore extends Cache {
      */
     public static function deleteCacheDirectory() {
 
-        Tools::deleteDirectory(_PS_CACHEFS_DIRECTORY_, false);
+        Tools::deleteDirectory(_EPH_CACHEFS_DIRECTORY_, false);
     }
 
     /**
@@ -139,7 +139,7 @@ class CacheFsCore extends Cache {
     public static function createCacheDirectories($levelDepth, $directory = false) {
 
         if (!$directory) {
-            $directory = _PS_CACHEFS_DIRECTORY_;
+            $directory = _EPH_CACHEFS_DIRECTORY_;
         }
 
         $chars = '0123456789abcdef';
@@ -172,7 +172,7 @@ class CacheFsCore extends Cache {
     protected function getFilename($key) {
 
         $key = md5($key);
-        $path = _PS_CACHEFS_DIRECTORY_;
+        $path = _EPH_CACHEFS_DIRECTORY_;
 
         for ($i = 0; $i < $this->depth; $i++) {
             $path .= $key[$i] . '/';

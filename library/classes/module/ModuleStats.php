@@ -327,7 +327,7 @@ abstract class ModuleStatsCore extends Module
      */
     public function createGraph($render, $type, $width, $height, $layers)
     {
-        if (!file_exists($file = _PS_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php')) {
+        if (!file_exists($file = _EPH_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php')) {
             $render = 'ModuleGraphEngine';
         } else {
             require_once($file);
@@ -344,7 +344,7 @@ abstract class ModuleStatsCore extends Module
 
     public function createGrid($render, $type, $width, $height, $start, $limit, $sort, $dir)
     {
-        if (!file_exists($file = _PS_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php')) {
+        if (!file_exists($file = _EPH_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php')) {
             $render = 'ModuleGridEngine';
         } else {
             require_once($file);
@@ -396,7 +396,7 @@ abstract class ModuleStatsCore extends Module
     public function engineGraph($params)
     {
         $context = Context::getContext();
-        $render = Configuration::get('PS_STATS_RENDER');
+        $render = Configuration::get('EPH_STATS_RENDER');
         $idEmployee = (int) $context->employee->id;
         $idLang = (int) $context->language->id;
 
@@ -421,8 +421,8 @@ abstract class ModuleStatsCore extends Module
         $urlParams['id_lang'] = $idLang;
         $drawer = 'drawer.php?'.http_build_query(array_map('Tools::safeOutput', $urlParams), '', '&');
 
-        if (file_exists(_PS_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php')) {
-            require_once(_PS_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php');
+        if (file_exists(_EPH_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php')) {
+            require_once(_EPH_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php');
 
             return call_user_func([$render, 'hookGraphEngine'], $params, $drawer);
         } else {
@@ -432,7 +432,7 @@ abstract class ModuleStatsCore extends Module
 
     public function engineGrid($params)
     {
-        $render = Configuration::get('PS_STATS_GRID_RENDER');
+        $render = Configuration::get('EPH_STATS_GRID_RENDER');
         $grider = 'grider.php?render='.$render.'&engine=grid&module='.Tools::safeOutput(Tools::getValue('module'));
 
         $context = Context::getContext();
@@ -473,8 +473,8 @@ abstract class ModuleStatsCore extends Module
             $grider .= '&dir='.$params['dir'];
         }
 
-        if (file_exists(_PS_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php')) {
-            require_once(_PS_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php');
+        if (file_exists(_EPH_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php')) {
+            require_once(_EPH_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php');
 
             return call_user_func([$render, 'hookGridEngine'], $params, $grider);
         } else {

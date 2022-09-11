@@ -80,7 +80,7 @@ class OrderMessageCore extends ObjectModel
      */
     public static function getOrderMessages($idLang)
     {
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS('
 		SELECT om.id_order_message, oml.name, oml.message
 		FROM '._DB_PREFIX_.'order_message om
 		LEFT JOIN '._DB_PREFIX_.'order_message_lang oml ON (oml.id_order_message = om.id_order_message)

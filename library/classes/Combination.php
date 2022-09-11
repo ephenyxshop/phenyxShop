@@ -100,7 +100,7 @@ class CombinationCore extends ObjectModel {
 	public function getImages() {
 
         $return = [];
-        $images = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $images = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_image`')
                 ->from('product_attribute_image')
@@ -119,7 +119,7 @@ class CombinationCore extends ObjectModel {
         static $featureActive = null;
 
         if ($featureActive === null) {
-            $featureActive = Configuration::get('PS_COMBINATION_FEATURE_ACTIVE');
+            $featureActive = Configuration::get('EPH_COMBINATION_FEATURE_ACTIVE');
         }
 
         return $featureActive;
@@ -160,7 +160,7 @@ class CombinationCore extends ObjectModel {
             return 0;
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('pa.id_product_attribute')
                 ->from('product_attribute', 'pa')
@@ -182,7 +182,7 @@ class CombinationCore extends ObjectModel {
      */
     public static function getPrice($idProductAttribute) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('product_attribute_shop.`price`')
                 ->from('product_attribute', 'pa')
@@ -381,7 +381,7 @@ class CombinationCore extends ObjectModel {
      */
     public function getWsProductOptionValues() {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('a.`id_attribute` AS `id`')
                 ->from('product_attribute_combination', 'a')
@@ -402,7 +402,7 @@ class CombinationCore extends ObjectModel {
      */
     public function getWsImages() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('a.`id_image` AS `id`')
                 ->from('product_attribute_image', 'a')
@@ -478,7 +478,7 @@ class CombinationCore extends ObjectModel {
      */
     public function getAttributesName($idLang) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('al.*')
                 ->from('product_attribute_combination', 'pac')
@@ -498,7 +498,7 @@ class CombinationCore extends ObjectModel {
      */
     public function getColorsAttributes() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('a.`id_attribute`')
                 ->from('product_attribute_combination', 'pac')

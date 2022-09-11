@@ -385,7 +385,7 @@ class AdminModulePaymentControllerCore extends AdminController {
             'modules_list'         => $this->renderModulesList(),
             'display_restrictions' => $displayRestrictions,
             'lists'                => $lists,
-            'ps_base_uri'          => __PS_BASE_URI__,
+            'EPH_base_uri'          => __EPH_BASE_URI__,
             'payment_modules'      => $this->payment_modules,
             'url_submit'           => static::$currentIndex . '&token=' . $this->token,
             'shop_context'         => $shopContext,

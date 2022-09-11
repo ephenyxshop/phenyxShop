@@ -130,7 +130,7 @@ class PageCacheKeyCore {
         }
 
         // this page can be cached -- let's compute cache key
-        $protocol = Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://';
+        $protocol = Configuration::get('EPH_SSL_ENABLED') ? 'https://' : 'http://';
         $url = explode('?', $_SERVER['REQUEST_URI']);
         $uri = $url[0];
         $queryString = isset($url[1]) ? $url[1] : '';

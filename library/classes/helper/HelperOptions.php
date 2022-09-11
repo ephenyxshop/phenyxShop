@@ -119,17 +119,17 @@ class HelperOptionsCore extends Helper {
                         [
                             'iso'      => $iso,
                             'path_css' => _THEME_CSS_DIR_,
-                            'ad'       => __PS_BASE_URI__ . basename(_PS_ROOT_DIR_),
+                            'ad'       => __EPH_BASE_URI__ . basename(_EPH_ROOT_DIR_),
                         ]
                     );
 
                 }
 
                 if ($field['type'] === 'code') {
-                    $this->context->controller->addJS(_PS_JS_DIR_.'ace/ace.js');
-                    $this->context->controller->addJS(_PS_JS_DIR_.'ace/ext-language_tools.js');
-                    $this->context->controller->addJS(_PS_JS_DIR_.'ace/snippets/' . $field['mode'] . '.js');
-                    $this->context->controller->addCSS(_PS_JS_DIR_.'ace/aceinput.css');
+                    $this->context->controller->addJS(_EPH_JS_DIR_.'ace/ace.js');
+                    $this->context->controller->addJS(_EPH_JS_DIR_.'ace/ext-language_tools.js');
+                    $this->context->controller->addJS(_EPH_JS_DIR_.'ace/snippets/' . $field['mode'] . '.js');
+                    $this->context->controller->addCSS(_EPH_JS_DIR_.'ace/aceinput.css');
                 }
 
                 if ($field['type'] == 'tags') {
@@ -239,11 +239,11 @@ class HelperOptionsCore extends Helper {
                         <script type="text/javascript">
                             function addRemoteAddr()
                             {
-                                var length = $(\'input[name=PS_MAINTENANCE_IP]\').attr(\'value\').length;
+                                var length = $(\'input[name=EPH_MAINTENANCE_IP]\').attr(\'value\').length;
                                 if (length > 0)
-                                    $(\'input[name=PS_MAINTENANCE_IP]\').attr(\'value\',$(\'input[name=PS_MAINTENANCE_IP]\').attr(\'value\') +\',' . Tools::getRemoteAddr() . '\');
+                                    $(\'input[name=EPH_MAINTENANCE_IP]\').attr(\'value\',$(\'input[name=EPH_MAINTENANCE_IP]\').attr(\'value\') +\',' . Tools::getRemoteAddr() . '\');
                                 else
-                                    $(\'input[name=PS_MAINTENANCE_IP]\').attr(\'value\',\'' . Tools::getRemoteAddr() . '\');
+                                    $(\'input[name=EPH_MAINTENANCE_IP]\').attr(\'value\',\'' . Tools::getRemoteAddr() . '\');
                             }
                         </script>';
                     $field['link_remove_ip'] = '<button type="button" class="btn btn-default" onclick="addRemoteAddr();"><i class="icon-plus"></i> ' . $this->l('Add my IP', 'Helper') . '</button>';

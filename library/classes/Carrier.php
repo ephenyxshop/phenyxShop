@@ -10,10 +10,10 @@ class CarrierCore extends ObjectModel {
     /**
      * getCarriers method filter
      */
-    const PS_CARRIERS_ONLY = 1;
+    const EPH_CARRIERS_ONLY = 1;
     const CARRIERS_MODULE = 2;
     const CARRIERS_MODULE_NEED_RANGE = 3;
-    const PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE = 4;
+    const EPH_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE = 4;
     const ALL_CARRIERS = 5;
 
     const SHIPPING_METHOD_DEFAULT = 0;
@@ -157,7 +157,7 @@ class CarrierCore extends ObjectModel {
          */
 
         if ($this->shipping_method == static::SHIPPING_METHOD_DEFAULT) {
-            $this->shipping_method = ((int) Configuration::get('PS_SHIPPING_METHOD') ? static::SHIPPING_METHOD_WEIGHT : static::SHIPPING_METHOD_PRICE);
+            $this->shipping_method = ((int) Configuration::get('EPH_SHIPPING_METHOD') ? static::SHIPPING_METHOD_WEIGHT : static::SHIPPING_METHOD_PRICE);
         }
 
         /**
@@ -174,7 +174,7 @@ class CarrierCore extends ObjectModel {
             $this->name = static::getCarrierNameFromShopName();
         }
 
-        $this->image_dir = _PS_SHIP_IMG_DIR_;
+        $this->image_dir = _EPH_SHIP_IMG_DIR_;
     }
 
     /**
@@ -277,7 +277,7 @@ class CarrierCore extends ObjectModel {
         $key = 'carrier_id_tax_rules_group_' . (int) $idCarrier . '_' . (int) $context->shop->id;
 
         if (!Cache::isStored($key)) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`id_tax_rules_group`')
                     ->from('carrier_tax_rules_group_shop')
@@ -305,7 +305,7 @@ class CarrierCore extends ObjectModel {
         return str_replace(
             ['#', ';'],
             '',
-            Configuration::get('PS_SHOP_NAME')
+            Configuration::get('EPH_SHOP_NAME')
         );
     }
 
@@ -324,7 +324,7 @@ class CarrierCore extends ObjectModel {
      */
     public static function getDeliveryPriceByRanges($rangeTable, $idCarrier) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('d.`id_' . bqSQL($rangeTable) . '`, d.`id_carrier`, d.`id_zone`, d.`price`')
                 ->from('delivery', 'd')
@@ -383,7 +383,7 @@ class CarrierCore extends ObjectModel {
      */
     public static function getIdTaxRulesGroupMostUsed() {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('COUNT(*) AS `n`, c.`id_tax_rules_group`')
                 ->from('carrier', 'c')
@@ -414,14 +414,14 @@ class CarrierCore extends ObjectModel {
             die(Tools::displayError());
         }
 
-        $states = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $states = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('s.*')
                 ->from('state', 's')
                 ->orderBy('s.`name` ASC')
         );
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('cl.*, c.*, cl.`name` as `country`, z.`name` as `zone`')
                 ->from('country', 'c')
@@ -491,7 +491,7 @@ class CarrierCore extends ObjectModel {
 
         foreach ($carriers as $carrier) {
 
-            if ($carrier['id_carrier'] == (int) Configuration::get('PS_CARRIER_DEFAULT')) {
+            if ($carrier['id_carrier'] == (int) Configuration::get('EPH_CARRIER_DEFAULT')) {
                 return (int) $carrier['id_carrier'];
             }
 
@@ -511,7 +511,7 @@ class CarrierCore extends ObjectModel {
      */
     public static function getCarrierByReference($idReference) {
 
-        $carrierData = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $carrierData = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('carrier', 'c')
@@ -556,7 +556,7 @@ class CarrierCore extends ObjectModel {
         static $psCountryDefault = null;
 
         if ($psCountryDefault === null) {
-            $psCountryDefault = Configuration::get('PS_COUNTRY_DEFAULT');
+            $psCountryDefault = Configuration::get('EPH_COUNTRY_DEFAULT');
         }
 
         if (is_null($idShop)) {
@@ -602,7 +602,7 @@ class CarrierCore extends ObjectModel {
             $query->where('pc.`id_product` = ' . (int) $product->id);
             $query->where('pc.`id_shop` = ' . (int) $idShop);
 
-            $carriersForProduct = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+            $carriersForProduct = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
             Cache::store($cacheId, $carriersForProduct);
         } else {
             $carriersForProduct = Cache::retrieve($cacheId);
@@ -727,7 +727,7 @@ class CarrierCore extends ObjectModel {
         $cacheId = 'Carrier::checkCarrierZone_' . (int) $idCarrier . '-' . (int) $idZone;
 
         if (!Cache::isStored($cacheId)) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('c.`id_carrier`')
                     ->from('carrier', 'c')
@@ -772,9 +772,9 @@ class CarrierCore extends ObjectModel {
         }
 
         if (is_array($groups) && !empty($groups)) {
-            $result = static::getCarriers($idLang, true, false, (int) $idZone, $groups, static::PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE);
+            $result = static::getCarriers($idLang, true, false, (int) $idZone, $groups, static::EPH_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE);
         } else {
-            $result = static::getCarriers($idLang, true, false, (int) $idZone, [Configuration::get('PS_UNIDENTIFIED_GROUP')], static::PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE);
+            $result = static::getCarriers($idLang, true, false, (int) $idZone, [Configuration::get('EPH_UNIDENTIFIED_GROUP')], static::EPH_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE);
         }
 
         $resultsArray = [];
@@ -832,7 +832,7 @@ class CarrierCore extends ObjectModel {
             $row['name'] = (strval($row['name']) != '0' ? $row['name'] : static::getCarrierNameFromShopName());
             $row['price'] = (($shippingMethod === static::SHIPPING_METHOD_FREE) ? 0 : $cart->getPackageShippingCost((int) $row['id_carrier'], true, null, null, $idZone));
             $row['price_tax_exc'] = (($shippingMethod === static::SHIPPING_METHOD_FREE) ? 0 : $cart->getPackageShippingCost((int) $row['id_carrier'], false, null, null, $idZone));
-            $row['img'] = file_exists(_PS_SHIP_IMG_DIR_ . (int) $row['id_carrier'] . '.jpg') ? _THEME_SHIP_DIR_ . (int) $row['id_carrier'] . '.jpg' : '';
+            $row['img'] = file_exists(_EPH_SHIP_IMG_DIR_ . (int) $row['id_carrier'] . '.jpg') ? _THEME_SHIP_DIR_ . (int) $row['id_carrier'] . '.jpg' : '';
 
             // If price is false, then the carrier is unavailable (carrier module)
 
@@ -847,13 +847,13 @@ class CarrierCore extends ObjectModel {
         // if we have to sort carriers by price
         $prices = [];
 
-        if (Configuration::get('PS_CARRIER_DEFAULT_SORT') === static::SORT_BY_PRICE) {
+        if (Configuration::get('EPH_CARRIER_DEFAULT_SORT') === static::SORT_BY_PRICE) {
 
             foreach ($resultsArray as $r) {
                 $prices[] = $r['price'];
             }
 
-            if (Configuration::get('PS_CARRIER_DEFAULT_ORDER') === static::SORT_BY_ASC) {
+            if (Configuration::get('EPH_CARRIER_DEFAULT_ORDER') === static::SORT_BY_ASC) {
                 array_multisort($prices, SORT_ASC, SORT_NUMERIC, $resultsArray);
             } else {
                 array_multisort($prices, SORT_DESC, SORT_NUMERIC, $resultsArray);
@@ -876,10 +876,10 @@ class CarrierCore extends ObjectModel {
      * @param bool $idZone
      * @param null $idsGroup
      * @param int  $modulesFilters Possible values:
-     *                             PS_CARRIERS_ONLY
+     *                             EPH_CARRIERS_ONLY
      *                             CARRIERS_MODULE
      *                             CARRIERS_MODULE_NEED_RANGE
-     *                             PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE
+     *                             EPH_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE
      *                             ALL_CARRIERS
      *
      * @return array Carriers
@@ -891,7 +891,7 @@ class CarrierCore extends ObjectModel {
      *
      * @todo    Check if the query has been fixed and remove the EXISTS subquery ^MD
      */
-    public static function getCarriers($idLang, $active = false, $delete = false, $idZone = false, $idsGroup = null, $modulesFilters = self::PS_CARRIERS_ONLY) {
+    public static function getCarriers($idLang, $active = false, $delete = false, $idZone = false, $idsGroup = null, $modulesFilters = self::EPH_CARRIERS_ONLY) {
 
         // Filter by groups and no groups => return empty array
 
@@ -924,7 +924,7 @@ class CarrierCore extends ObjectModel {
         }
 
         switch ($modulesFilters) {
-        case static::PS_CARRIERS_ONLY:
+        case static::EPH_CARRIERS_ONLY:
             $sql->where('c.`is_module` = 0');
             break;
         case static::CARRIERS_MODULE:
@@ -933,7 +933,7 @@ class CarrierCore extends ObjectModel {
         case static::CARRIERS_MODULE_NEED_RANGE:
             $sql->where('c.`is_module` = 1 AND c.`need_range` = 1');
             break;
-        case static::PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE:
+        case static::EPH_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE:
             $sql->where('c.`is_module` = 0 OR c.`need_range` = 1');
             break;
         }
@@ -944,7 +944,7 @@ class CarrierCore extends ObjectModel {
         $cacheId = 'Carrier::getCarriers_' . md5($sql->build());
 
         if (!Cache::isStored($cacheId)) {
-            $carriers = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+            $carriers = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
             Cache::store($cacheId, $carriers);
         } else {
             $carriers = Cache::retrieve($cacheId);
@@ -979,7 +979,7 @@ class CarrierCore extends ObjectModel {
         if ($this->shipping_method === static::SHIPPING_METHOD_DEFAULT) {
             // backward compatibility
 
-            if ((int) Configuration::get('PS_SHIPPING_METHOD')) {
+            if ((int) Configuration::get('EPH_SHIPPING_METHOD')) {
                 $method = static::SHIPPING_METHOD_WEIGHT;
             } else {
                 $method = static::SHIPPING_METHOD_PRICE;
@@ -1004,7 +1004,7 @@ class CarrierCore extends ObjectModel {
         $cacheId = 'Carrier::getMaxDeliveryPriceByWeight_' . (int) $this->id . '-' . (int) $idZone;
 
         if (!Cache::isStored($cacheId)) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('d.`price`')
                     ->from('delivery', 'd')
@@ -1035,7 +1035,7 @@ class CarrierCore extends ObjectModel {
         $cacheId = 'Carrier::getMaxDeliveryPriceByPrice_' . (int) $this->id . '-' . (int) $idZone;
 
         if (!Cache::isStored($cacheId)) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('d.`price`')
                     ->from('delivery', 'd')
@@ -1070,7 +1070,7 @@ class CarrierCore extends ObjectModel {
 
         if (!isset(static::$price_by_weight2[$cacheKey])) {
             // @codingStandardsIgnoreEnd
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('d.`price`')
                     ->from('delivery', 'd')
@@ -1124,7 +1124,7 @@ class CarrierCore extends ObjectModel {
                 $orderTotal = Tools::convertPrice($orderTotal, $idCurrency, false);
             }
 
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('d.`price`')
                     ->from('delivery', 'd')
@@ -1176,7 +1176,7 @@ class CarrierCore extends ObjectModel {
             '`id_group` IN (' . join(',', $idGroupList) . ')'
         );
 
-        $carrierList = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $carrierList = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_carrier`')
                 ->from('carrier')
@@ -1229,7 +1229,7 @@ class CarrierCore extends ObjectModel {
         }
 
         if ($count == 1) {
-            Configuration::updateValue('PS_CARRIER_DEFAULT', (int) $this->id);
+            Configuration::updateValue('EPH_CARRIER_DEFAULT', (int) $this->id);
         }
 
         // Register reference
@@ -1250,7 +1250,7 @@ class CarrierCore extends ObjectModel {
      */
     public static function getHigherPosition() {
 
-        $position = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $position = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('MAX(`position`)')
                 ->from('carrier')
@@ -1386,7 +1386,7 @@ class CarrierCore extends ObjectModel {
 
         if (!isset(static::$price_by_weight[$cacheKey])) {
             // @codingStandardsIgnoreEnd
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('d.`price`')
                     ->from('delivery', 'd')
@@ -1450,7 +1450,7 @@ class CarrierCore extends ObjectModel {
                 $orderTotal = Tools::convertPrice($orderTotal, $idCurrency, false);
             }
 
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('d.`price`')
                     ->from('delivery', 'd')
@@ -1499,7 +1499,7 @@ class CarrierCore extends ObjectModel {
      */
     public function getZones() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('carrier_zone', 'cz')
@@ -1522,7 +1522,7 @@ class CarrierCore extends ObjectModel {
      */
     public function getZone($idZone) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('carrier_zone')
@@ -1555,7 +1555,7 @@ class CarrierCore extends ObjectModel {
             // Get all ranges for this carrier
             $rangePrices = RangePrice::getRanges($this->id);
             $rangeWeights = RangeWeight::getRanges($this->id);
-            // Create row in ps_delivery table
+            // Create row in EPH_delivery table
 
             if (count($rangePrices) || count($rangeWeights)) {
                 $insert = [];
@@ -1636,7 +1636,7 @@ class CarrierCore extends ObjectModel {
      */
     public function getGroups() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_group`')
                 ->from('carrier_group')
@@ -1765,18 +1765,18 @@ class CarrierCore extends ObjectModel {
             return;
         }
 
-        $oldLogo = _PS_SHIP_IMG_DIR_ . '/' . (int) $oldId . '.jpg';
+        $oldLogo = _EPH_SHIP_IMG_DIR_ . '/' . (int) $oldId . '.jpg';
 
         if (file_exists($oldLogo)) {
-            copy($oldLogo, _PS_SHIP_IMG_DIR_ . '/' . (int) $this->id . '.jpg');
+            copy($oldLogo, _EPH_SHIP_IMG_DIR_ . '/' . (int) $this->id . '.jpg');
         }
 
-        $oldTmpLogo = _PS_TMP_IMG_DIR_ . '/carrier_mini_' . (int) $oldId . '.jpg';
+        $oldTmpLogo = _EPH_TMP_IMG_DIR_ . '/carrier_mini_' . (int) $oldId . '.jpg';
 
         if (file_exists($oldTmpLogo)) {
 
             if (!isset($_FILES['logo'])) {
-                copy($oldTmpLogo, _PS_TMP_IMG_DIR_ . '/carrier_mini_' . $this->id . '.jpg');
+                copy($oldTmpLogo, _EPH_TMP_IMG_DIR_ . '/carrier_mini_' . $this->id . '.jpg');
             }
 
             unlink($oldTmpLogo);
@@ -1785,7 +1785,7 @@ class CarrierCore extends ObjectModel {
         // Copy existing ranges price
 
         foreach (['range_price', 'range_weight'] as $range) {
-            $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('`id_' . $range . '` as `id_range`, `delimiter1`, `delimiter2`')
                     ->from($range)
@@ -1825,7 +1825,7 @@ class CarrierCore extends ObjectModel {
         }
 
         // Copy existing zones
-        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('carrier_zone')
@@ -1844,12 +1844,12 @@ class CarrierCore extends ObjectModel {
 
         //Copy default carrier
 
-        if (Configuration::get('PS_CARRIER_DEFAULT') == $oldId) {
-            Configuration::updateValue('PS_CARRIER_DEFAULT', (int) $this->id);
+        if (Configuration::get('EPH_CARRIER_DEFAULT') == $oldId) {
+            Configuration::updateValue('EPH_CARRIER_DEFAULT', (int) $this->id);
         }
 
         // Copy reference
-        $idReference = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $idReference = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_reference`')
                 ->from(bqSQL(static::$definition['table']))
@@ -1885,7 +1885,7 @@ class CarrierCore extends ObjectModel {
      */
     public function isUsed() {
 
-        $row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(`id_carrier`) as `total`')
                 ->from('orders')
@@ -1954,7 +1954,7 @@ class CarrierCore extends ObjectModel {
             $currency = Context::getContext()->currency;
         }
 
-        $suffix = Configuration::get('PS_WEIGHT_UNIT');
+        $suffix = Configuration::get('EPH_WEIGHT_UNIT');
 
         if ($this->getShippingMethod() === static::SHIPPING_METHOD_PRICE) {
             $suffix = $currency->sign;
@@ -2062,7 +2062,7 @@ class CarrierCore extends ObjectModel {
      */
     public function updatePosition($way, $position) {
 
-        if (!$res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        if (!$res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
             ->select('`id_carrier`, `position`')
             ->from('carrier')

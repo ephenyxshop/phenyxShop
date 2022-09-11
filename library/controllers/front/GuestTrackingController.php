@@ -162,15 +162,15 @@ class GuestTrackingControllerCore extends FrontController {
 
         $this->context->smarty->assign(
             [
-                'shop_name'           => Configuration::get('PS_SHOP_NAME'),
+                'shop_name'           => Configuration::get('EPH_SHOP_NAME'),
                 'order_collection'    => $orderList,
                 'return_allowed'      => false,
-                'invoiceAllowed'      => (int) Configuration::get('PS_INVOICE'),
+                'invoiceAllowed'      => (int) Configuration::get('EPH_INVOICE'),
                 'is_guest'            => true,
-                'group_use_tax'       => (Group::getPriceDisplayMethod($customer->id_default_group) == PS_TAX_INC),
+                'group_use_tax'       => (Group::getPriceDisplayMethod($customer->id_default_group) == EPH_TAX_INC),
                 'CUSTOMIZE_FILE'      => Product::CUSTOMIZE_FILE,
                 'CUSTOMIZE_TEXTFIELD' => Product::CUSTOMIZE_TEXTFIELD,
-                'use_tax'             => Configuration::get('PS_TAX'),
+                'use_tax'             => Configuration::get('EPH_TAX'),
             ]
         );
     }
@@ -198,7 +198,7 @@ class GuestTrackingControllerCore extends FrontController {
                 'errors' => $this->errors,
             ]
         );
-        $this->setTemplate(_PS_THEME_DIR_ . 'guest-tracking.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'guest-tracking.tpl');
     }
 
     /**

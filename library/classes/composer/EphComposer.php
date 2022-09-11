@@ -305,7 +305,7 @@ class EphComposerCore extends ObjectModel {
 
         $context = Context::getContext();
 		
-        $seetings = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $seetings = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('cm.*, cml.*, ccl.`name` as `category`')
                 ->from('composer_map', 'cm')
@@ -322,7 +322,7 @@ class EphComposerCore extends ObjectModel {
 
         }
 
-        $params = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $params = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('cpt.`value`as `type`, cml.heading, cmp.*, cml.description, cml.param_group as `group` ')
                 ->from('composer_map_params', 'cmp')
@@ -345,7 +345,7 @@ class EphComposerCore extends ObjectModel {
 			if($param['param_name'] == 'img_size') {
 				$param['values'] = EphComposer::getComposerImageTypes();
 			} else {
-				$values = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+				$values = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 					(new DbQuery())
 					->select('cv.`value_key`, cvl.`name`')
 					->from('composer_value', 'cv')
@@ -394,7 +394,7 @@ class EphComposerCore extends ObjectModel {
 	
 	public static function getComposerImageTypes() {
 		
-		 $images_types = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		 $images_types = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('vc_image_type')
@@ -419,7 +419,7 @@ class EphComposerCore extends ObjectModel {
 
     public static function getMapsbaseItems() {
 
-        $db_results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $db_results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`base`')
                 ->from('composer_map')
@@ -436,7 +436,7 @@ class EphComposerCore extends ObjectModel {
 
     public static function getDefaultTemplates($idLang) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('ct.`image_path`, ct.`content`, ctl.`name`')
                 ->from('composer_template', 'ct')
@@ -447,7 +447,7 @@ class EphComposerCore extends ObjectModel {
 
     public static function getMapsItems($idLang) {
 
-        $db_results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $db_results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('c.`base`, c.`icon`, c.`is_container`, cml.`name`, ccl.`name` as `category`, cml.`description`')
                 ->from('composer_map', 'c')
@@ -1137,7 +1137,7 @@ class EphComposerCore extends ObjectModel {
 
         $map_seeting = [];
 		
-        $seetings = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $seetings = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('cml.name, c.*, ccl.`name` as `category`, cml.`description`')
                 ->from('composer_map', 'c')
@@ -1197,7 +1197,7 @@ class EphComposerCore extends ObjectModel {
         foreach ($seetings as &$seeting) {
 			
 			
-            $params = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $params = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('cpt.`value`as `type`, cmpl.heading, cmp.*, cmpl.description, cmpl.param_group as `group`')
                     ->from('composer_map_params', 'cmp')
@@ -1223,7 +1223,7 @@ class EphComposerCore extends ObjectModel {
 				if($param['param_name'] == 'img_size') {
 					$param['values'] = EphComposer::getComposerImageTypes();
 				} else {
-					$values = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+					$values = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 						(new DbQuery())
 						->select('cv.`value_key`, cvl.`name`')
 						->from('composer_value', 'cv')
@@ -1328,7 +1328,7 @@ class EphComposerCore extends ObjectModel {
 
         $GetAllmodules_list = [];
 
-        if (defined('_PS_ROOT_DIR_')) {
+        if (defined('_EPH_ROOT_DIR_')) {
             $GetAllmodules_list = $this->getAllFilterModules();
         } else {
             $GetAllmodules_list = $this->getAllModules();
@@ -1345,7 +1345,7 @@ class EphComposerCore extends ObjectModel {
                 EphComposer::addShortcode('vc_' . $value['id'], [$this, 'vcallmodcode']);
 
                 if ($this->is_admin()) {
-                    $this->vcmaps_init('vc_' . $value['id'], $value['name']);
+                    $this->vcmaEPH_init('vc_' . $value['id'], $value['name']);
                 }
 
             }
@@ -1354,7 +1354,7 @@ class EphComposerCore extends ObjectModel {
 
     }
 
-    public function vcmaps_init($base = '', $module_name = null) {
+    public function vcmaEPH_init($base = '', $module_name = null) {
 
         $hooks = [];
 
@@ -2047,7 +2047,7 @@ class EphComposerCore extends ObjectModel {
 
     public function is_admin() {
 
-        if (defined('_PS_ROOT_DIR_')) {
+        if (defined('_EPH_ROOT_DIR_')) {
             return true;
         }
 
@@ -2137,7 +2137,7 @@ class EphComposerCore extends ObjectModel {
     public static function getVccontentanywhereLink($id, $alias = null, $ssl = null, $id_lang = null, $id_shop = null) {
 
         $link = new Link;
-        $url = $link->getModuleLink('jscomposer', 'vc_contentanywhere', ['val_identifier' => Tools::getValue('val_identifier'), 'frontend_module_name' => Tools::getValue('frontend_module_name'), Configuration::get('PS_SSL_ENABLED')]);
+        $url = $link->getModuleLink('jscomposer', 'vc_contentanywhere', ['val_identifier' => Tools::getValue('val_identifier'), 'frontend_module_name' => Tools::getValue('frontend_module_name'), Configuration::get('EPH_SSL_ENABLED')]);
 
         return $url;
 
@@ -2432,7 +2432,7 @@ class EphComposerCore extends ObjectModel {
 
         $hash = vc_manager()->secure_key;
 
-        $url = '//' . Tools::getHttpHost(false) . __PS_BASE_URI__ . Context::getContext()->controller->admin_webpath . '/';
+        $url = '//' . Tools::getHttpHost(false) . __EPH_BASE_URI__ . Context::getContext()->controller->admin_webpath . '/';
         $url .= Context::getContext()->link->getAdminLink('VC_upload') . '&security_key=' . $hash;
 
         if ($link != '') {
@@ -2455,7 +2455,7 @@ class EphComposerCore extends ObjectModel {
 
         $tablename = _DB_PREFIX_ . 'vc_media';
 
-        $imgdir = _PS_COMPOSER_IMG_DIR_;
+        $imgdir = _EPH_COMPOSER_IMG_DIR_;
 
         $data = $_POST;
 
@@ -2527,7 +2527,7 @@ class EphComposerCore extends ObjectModel {
             ->where($subdir)
             ->orderBy('`id_vc_media` DESC')
             ->limit($start, $per_page);
-        $db_results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        $db_results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
         $results = [];
 
         if (!empty($db_results)) {
@@ -2539,7 +2539,7 @@ class EphComposerCore extends ObjectModel {
                     $dres->subdir = '';
                 }
 
-                if (isset($dres->file_name) && !empty($dres->file_name) && file_exists(_PS_COMPOSER_IMG_DIR_ . $dres->subdir . $dres->file_name)
+                if (isset($dres->file_name) && !empty($dres->file_name) && file_exists(_EPH_COMPOSER_IMG_DIR_ . $dres->subdir . $dres->file_name)
                 ) {
 
                     $results["{$dres->id_vc_media}"] = $dres->file_name;
@@ -2554,7 +2554,7 @@ class EphComposerCore extends ObjectModel {
 
     public static function get_uploaded_files_markup($results = [], $path = '') {
 
-        $upload_dir = _PS_COMPOSER_IMG_DIR_;
+        $upload_dir = _EPH_COMPOSER_IMG_DIR_;
         $current_path = vc_manager()->composer_settings['UPLOADS_DIR'];
 
         if (!empty($path)) {
@@ -2902,16 +2902,16 @@ class EphComposerCore extends ObjectModel {
 
     public static function getTPLPath($template = '', $module_name = 'jscomposer') {
 
-        if (Tools::file_exists_cache(_PS_THEME_DIR_ . 'plugins/' . $module_name . '/' . $template)) {
-            return _PS_THEME_DIR_ . 'plugins/' . $module_name . '/' . $template;
+        if (Tools::file_exists_cache(_EPH_THEME_DIR_ . 'plugins/' . $module_name . '/' . $template)) {
+            return _EPH_THEME_DIR_ . 'plugins/' . $module_name . '/' . $template;
         } else
 
-        if (Tools::file_exists_cache(_PS_THEME_DIR_ . 'plugins/' . $module_name . '/views/templates/front/' . $template)) {
-            return _PS_THEME_DIR_ . 'plugins/' . $module_name . '/views/templates/front/' . $template;
+        if (Tools::file_exists_cache(_EPH_THEME_DIR_ . 'plugins/' . $module_name . '/views/templates/front/' . $template)) {
+            return _EPH_THEME_DIR_ . 'plugins/' . $module_name . '/views/templates/front/' . $template;
         } else
 
-        if (Tools::file_exists_cache(_PS_MODULE_DIR_ . $module_name . '/views/templates/front/' . $template)) {
-            return _PS_MODULE_DIR_ . $module_name . '/views/templates/front/' . $template;
+        if (Tools::file_exists_cache(_EPH_MODULE_DIR_ . $module_name . '/views/templates/front/' . $template)) {
+            return _EPH_MODULE_DIR_ . $module_name . '/views/templates/front/' . $template;
         }
 
         return false;
@@ -2997,18 +2997,18 @@ class EphComposerCore extends ObjectModel {
         smartyRegisterFunction($smarty, 'modifier', 'boolval', ['Tools', 'boolval']);
         $compared_products = [];
 
-        if (Configuration::get('PS_COMPARATOR_MAX_ITEM') && isset(Context::getcontext()->cookie->id_compare)) {
+        if (Configuration::get('EPH_COMPARATOR_MAX_ITEM') && isset(Context::getcontext()->cookie->id_compare)) {
             $compared_products = CompareProduct::getCompareProducts(Context::getcontext()->cookie->id_compare);
         }
 
-        if (Configuration::get('PS_SSL_ENABLED') && Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
+        if (Configuration::get('EPH_SSL_ENABLED') && Configuration::get('EPH_SSL_ENABLED_EVERYWHERE')) {
             $link_ssl = true;
         } else {
             $link_ssl = false;
         }
 
-        $protocol_link = (Configuration::get('PS_SSL_ENABLED') || Tools::usingSecureMode()) ? 'https://' : 'http://';
-        $useSSL = ((isset($link_ssl) && $link_ssl && Configuration::get('PS_SSL_ENABLED')) || Tools::usingSecureMode()) ? true : false;
+        $protocol_link = (Configuration::get('EPH_SSL_ENABLED') || Tools::usingSecureMode()) ? 'https://' : 'http://';
+        $useSSL = ((isset($link_ssl) && $link_ssl && Configuration::get('EPH_SSL_ENABLED')) || Tools::usingSecureMode()) ? true : false;
         $protocol_content = ($useSSL) ? 'https://' : 'http://';
         $link = new Link($protocol_link, $protocol_content);
         $currency = Tools::setCurrency(Context::getcontext()->cookie);
@@ -3021,9 +3021,9 @@ class EphComposerCore extends ObjectModel {
                 Context::getcontext()->cookie->check_cgv = false;
             } else
 
-            if (intval(Configuration::get('PS_GEOLOCATION_ENABLED')) &&
-                !in_array(strtoupper(Context::getcontext()->cookie->iso_code_country), explode(';', Configuration::get('PS_ALLOWED_COUNTRIES'))) &&
-                $cart->nbProducts() && intval(Configuration::get('PS_GEOLOCATION_NA_BEHAVIOR')) != -1 &&
+            if (intval(Configuration::get('EPH_GEOLOCATION_ENABLED')) &&
+                !in_array(strtoupper(Context::getcontext()->cookie->iso_code_country), explode(';', Configuration::get('EPH_ALLOWED_COUNTRIES'))) &&
+                $cart->nbProducts() && intval(Configuration::get('EPH_GEOLOCATION_NA_BEHAVIOR')) != -1 &&
                 !in_array($_SERVER['SERVER_NAME'], ['localhost', '127.0.0.1'])) {
                 unset(Context::getcontext()->cookie->id_cart, $cart);
             } else
@@ -3087,17 +3087,17 @@ class EphComposerCore extends ObjectModel {
         $smarty->assign(
             [
                 'page_name'           => Context::getcontext()->controller->php_self,
-                'add_prod_display'    => (int) Configuration::get('PS_ATTRIBUTE_CATEGORY_DISPLAY'),
+                'add_prod_display'    => (int) Configuration::get('EPH_ATTRIBUTE_CATEGORY_DISPLAY'),
                 'link'                => $link,
                 'cart'                => $cart,
                 'currency'            => $currency,
                 'cookie'              => Context::getcontext()->cookie,
-                'tpl_dir'             => _PS_THEME_DIR_,
-                'PS_CATALOG_MODE'     => Configuration::get('PS_CATALOG_MODE'),
-                'PS_STOCK_MANAGEMENT' => Configuration::get('PS_STOCK_MANAGEMENT'),
+                'tpl_dir'             => _EPH_THEME_DIR_,
+                'EPH_CATALOG_MODE'     => Configuration::get('EPH_CATALOG_MODE'),
+                'EPH_STOCK_MANAGEMENT' => Configuration::get('EPH_STOCK_MANAGEMENT'),
                 'priceDisplay'        => Product::getTaxCalculationMethod((int) Context::getcontext()->cookie->id_customer),
                 'compared_products'   => is_array($compared_products) ? $compared_products : [],
-                'comparator_max_item' => (int) Configuration::get('PS_COMPARATOR_MAX_ITEM'),
+                'comparator_max_item' => (int) Configuration::get('EPH_COMPARATOR_MAX_ITEM'),
             ]
         );
     }
@@ -3443,7 +3443,7 @@ class EphComposerCore extends ObjectModel {
                 WHERE pl.`id_lang` = ' . (int) $id_lang . '
                 ' . ($front ? ' AND product_shop.`visibility` IN ("both", "catalog")' : '') . '
                 ORDER BY pl.`name`';
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
     }
 
     public function GetAllProductS() {
@@ -3636,8 +3636,8 @@ class EphComposerCore extends ObjectModel {
             $useSSL = false;
         }
 
-        $protocol_link = (Configuration::get('PS_SSL_ENABLED')) ? 'https://' : 'http://';
-        $protocol_content = (isset($useSSL) AND $useSSL AND Configuration::get('PS_SSL_ENABLED')) ? 'https://' : 'http://';
+        $protocol_link = (Configuration::get('EPH_SSL_ENABLED')) ? 'https://' : 'http://';
+        $protocol_content = (isset($useSSL) AND $useSSL AND Configuration::get('EPH_SSL_ENABLED')) ? 'https://' : 'http://';
         $link = new Link($protocol_link, $protocol_content);
         return $link;
     }
@@ -4159,7 +4159,7 @@ class EphComposerCore extends ObjectModel {
 
         foreach ($att_ids as $th_id) {
 
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('*')
                     ->from('vc_media')
@@ -4184,7 +4184,7 @@ class EphComposerCore extends ObjectModel {
                 }
 				if(Tools::isImagickCompatible() && empty($result['base_64'])) {
 					$extension = pathinfo($thumb_src, PATHINFO_EXTENSION);
-					$img = new Imagick(_PS_ROOT_ADMIN_DIR_.$thumb_src);
+					$img = new Imagick(_EPH_ROOT_ADMIN_DIR_.$thumb_src);
 					$imgBuff = $img->getimageblob();
 					$img->clear(); 
 					$img = base64_encode($imgBuff);

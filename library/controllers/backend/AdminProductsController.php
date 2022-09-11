@@ -145,8 +145,8 @@ class AdminProductsControllerCore extends AdminController {
 
 		$this->imageType = 'jpg';
 		$this->_defaultOrderBy = 'position';
-		$this->max_file_size = (int) (Configuration::get('PS_LIMIT_UPLOAD_FILE_VALUE') * 1000000);
-		$this->max_image_size = (int) Configuration::get('PS_PRODUCT_PICTURE_MAX_SIZE');
+		$this->max_file_size = (int) (Configuration::get('EPH_LIMIT_UPLOAD_FILE_VALUE') * 1000000);
+		$this->max_image_size = (int) Configuration::get('EPH_PRODUCT_PICTURE_MAX_SIZE');
 		$this->allow_export = true;
 
 		// @since 1.5 : translations for tabs
@@ -228,8 +228,8 @@ class AdminProductsControllerCore extends AdminController {
 	public function setAjaxMedia() {
 
 		return $this->pushJS([
-			_PS_JS_DIR_ . 'gridproduct.js',
-			_PS_JS_DIR_ . 'jquery/ui/jquery.ui.progressbar.min.js',
+			_EPH_JS_DIR_ . 'gridproduct.js',
+			_EPH_JS_DIR_ . 'jquery/ui/jquery.ui.progressbar.min.js',
 		]);
 	}
 
@@ -251,7 +251,7 @@ class AdminProductsControllerCore extends AdminController {
 			'categories'         => $this->gridCategoriesSelector(),
 			'manageHeaderFields' => $this->manageHeaderFields,
 			'customHeaderFields' => $this->manageFieldsVisibility($controller->configurationField),
-			'id_lang_default'    => Configuration::get('PS_LANG_DEFAULT'),
+			'id_lang_default'    => Configuration::get('EPH_LANG_DEFAULT'),
 			'controller'         => $this->controller_name,
 			'tableName'          => $this->table,
 			'className'          => $this->className,
@@ -738,7 +738,7 @@ class AdminProductsControllerCore extends AdminController {
 		}
 
 		fwrite($file, $query . PHP_EOL);
-		$products = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+		$products = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
 
 		if ($hasFilter && is_array($products) && count($products)) {
 			$nbRecords = count($products);
@@ -1589,7 +1589,7 @@ class AdminProductsControllerCore extends AdminController {
 				$this->updatePackItems($product);
 				$this->updateDownloadProduct($product);
 
-				if (Configuration::get('PS_FORCE_ASM_NEW_PRODUCT') && Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT') && $product->getType() != Product::PTYPE_VIRTUAL) {
+				if (Configuration::get('EPH_FORCE_ASM_NEW_PRODUCT') && Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT') && $product->getType() != Product::PTYPE_VIRTUAL) {
 					$product->advanced_stock_management = 1;
 					$product->save();
 					$idShops = Shop::getContextListShopID();
@@ -1607,17 +1607,17 @@ class AdminProductsControllerCore extends AdminController {
 					} else {
 						Hook::exec('actionProductAdd', ['id_product' => (int) $product->id, 'product' => $product]);
 
-						if (in_array($product->visibility, ['both', 'search']) && Configuration::get('PS_SEARCH_INDEXATION')) {
+						if (in_array($product->visibility, ['both', 'search']) && Configuration::get('EPH_SEARCH_INDEXATION')) {
 							Search::indexation(false, $product->id);
 						}
 
 					}
 
-					if (Configuration::get('PS_DEFAULT_WAREHOUSE_NEW_PRODUCT') != 0 && Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT')) {
+					if (Configuration::get('EPH_DEFAULT_WAREHOUSE_NEW_PRODUCT') != 0 && Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT')) {
 						$warehouseLocationEntity = new WarehouseProductLocation();
 						$warehouseLocationEntity->id_product = $product->id;
 						$warehouseLocationEntity->id_product_attribute = 0;
-						$warehouseLocationEntity->id_warehouse = Configuration::get('PS_DEFAULT_WAREHOUSE_NEW_PRODUCT');
+						$warehouseLocationEntity->id_warehouse = Configuration::get('EPH_DEFAULT_WAREHOUSE_NEW_PRODUCT');
 						$warehouseLocationEntity->location = pSQL('');
 						$warehouseLocationEntity->save();
 					}
@@ -1845,7 +1845,7 @@ class AdminProductsControllerCore extends AdminController {
 			$idProduct = Tools::getValue('idObject');
 			$this->object = new Product($idProduct, true);
 
-			$iso = (file_exists(_PS_ROOT_ADMIN_DIR_ . '/js/tinymce/langs/' . $this->context->language->iso_code . '.js') ? $iso : 'en');
+			$iso = (file_exists(_EPH_ROOT_ADMIN_DIR_ . '/js/tinymce/langs/' . $this->context->language->iso_code . '.js') ? $iso : 'en');
 
 			$data = $this->createTemplate('controllers/products/editProduct.tpl');
 
@@ -1860,27 +1860,27 @@ class AdminProductsControllerCore extends AdminController {
 			$_GET['updateproduct'] = 1;
 
 			$pusjJs = $this->pushJS([
-				_PS_JS_DIR_ . 'products.js',
-				_PS_JS_DIR_ . 'attributes.js',
-				_PS_JS_DIR_ . 'price.js',
-				_PS_JS_DIR_ . 'tinymce/tinymce.min.js',
-				_PS_JS_DIR_ . 'tinymce.inc.js',
-				_PS_JS_DIR_ . 'imageuploadify.min.js',
-				_PS_JS_DIR_ . 'colorpicker/colorpicker.js',
-				_PS_JS_DIR_ . 'jquery/plugins/jquery.typewatch.js',
-				_PS_JS_DIR_ . 'pdfuploadify.min.js',
-				_PS_JS_DIR_ . 'multiaccessories/admin_product_setting.js',
-				_PS_JS_DIR_ . 'multiaccessories/admin_multi_accessories.js',
-				_PS_JS_DIR_ . 'multiaccessories/jquery-confirm.min.js',
-				_PS_JS_DIR_ . 'multiaccessories/ma_sidebar_closed.js',
-				_PS_JS_DIR_ . 'jquery/plugins/jquery.tablednd.js',
+				_EPH_JS_DIR_ . 'products.js',
+				_EPH_JS_DIR_ . 'attributes.js',
+				_EPH_JS_DIR_ . 'price.js',
+				_EPH_JS_DIR_ . 'tinymce/tinymce.min.js',
+				_EPH_JS_DIR_ . 'tinymce.inc.js',
+				_EPH_JS_DIR_ . 'imageuploadify.min.js',
+				_EPH_JS_DIR_ . 'colorpicker/colorpicker.js',
+				_EPH_JS_DIR_ . 'jquery/plugins/jquery.typewatch.js',
+				_EPH_JS_DIR_ . 'pdfuploadify.min.js',
+				_EPH_JS_DIR_ . 'multiaccessories/admin_product_setting.js',
+				_EPH_JS_DIR_ . 'multiaccessories/admin_multi_accessories.js',
+				_EPH_JS_DIR_ . 'multiaccessories/jquery-confirm.min.js',
+				_EPH_JS_DIR_ . 'multiaccessories/ma_sidebar_closed.js',
+				_EPH_JS_DIR_ . 'jquery/plugins/jquery.tablednd.js',
 			]);
 
 			$scripHeader = Hook::exec('displayBackOfficeHeader', []);
 			$scriptFooter = Hook::exec('displayBackOfficeFooter', []);
 
 			$productTabs = [];
-			$advancedStockManagementActive = Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT');
+			$advancedStockManagementActive = Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT');
 
 			foreach ($this->available_tabs as $productTab => $value) {
 
@@ -1916,17 +1916,17 @@ class AdminProductsControllerCore extends AdminController {
 				'id_lang'                   => $this->context->language->id,
 				'allowEmployeeFormLang'     => $this->allow_employee_form_lang,
 				'id_product'                => $this->object->id,
-				'id_lang_default'           => Configuration::get('PS_LANG_DEFAULT'),
+				'id_lang_default'           => Configuration::get('EPH_LANG_DEFAULT'),
 				'has_declinaisons'          => $this->object->hasAttributes(),
 				'post_data'                 => json_encode($_POST),
 				'save_error'                => !empty($this->errors),
 				'mod_evasive'               => Tools::apacheModExists('evasive'),
 				'mod_security'              => Tools::apacheModExists('security'),
-				'ps_force_friendly_product' => Configuration::get('PS_FORCE_FRIENDLY_PRODUCT'),
+				'EPH_force_friendly_product' => Configuration::get('EPH_FORCE_FRIENDLY_PRODUCT'),
 				'tinymce'                   => true,
 				'iso'                       => $iso,
 				'path_css'                  => _THEME_CSS_DIR_,
-				'ad'                        => __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_),
+				'ad'                        => __EPH_BASE_URI__ . basename(_EPH_ADMIN_DIR_),
 				'product_type'              => (int) Tools::getValue('type_product', $this->object->getType()),
 			]);
 
@@ -1964,22 +1964,22 @@ class AdminProductsControllerCore extends AdminController {
 		$_GET['addproduct'] = '';
 
 		$pusjJs = $this->pushJS([
-			_PS_JS_DIR_ . 'jquery.tablednd.js',
-			_PS_JS_DIR_ . 'products.js',
-			_PS_JS_DIR_ . 'attributes.js',
-			_PS_JS_DIR_ . 'price.js',
-			_PS_JS_DIR_ . 'tinymce/tinymce.min.js',
-			_PS_JS_DIR_ . 'tinymce.inc.js',
-			_PS_JS_DIR_ . 'imageuploadify.min.js',
-			_PS_JS_DIR_ . 'colorpicker/colorpicker.js',
-			_PS_JS_DIR_ . 'jquery/plugins/jquery.typewatch.js',
+			_EPH_JS_DIR_ . 'jquery.tablednd.js',
+			_EPH_JS_DIR_ . 'products.js',
+			_EPH_JS_DIR_ . 'attributes.js',
+			_EPH_JS_DIR_ . 'price.js',
+			_EPH_JS_DIR_ . 'tinymce/tinymce.min.js',
+			_EPH_JS_DIR_ . 'tinymce.inc.js',
+			_EPH_JS_DIR_ . 'imageuploadify.min.js',
+			_EPH_JS_DIR_ . 'colorpicker/colorpicker.js',
+			_EPH_JS_DIR_ . 'jquery/plugins/jquery.typewatch.js',
 
 		]);
 		$scripHeader = Hook::exec('displayBackOfficeHeader', []);
 		$scriptFooter = Hook::exec('displayBackOfficeFooter', []);
 
 		$productTabs = [];
-		$advancedStockManagementActive = Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT');
+		$advancedStockManagementActive = Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT');
 
 		foreach ($this->available_tabs as $productTab => $value) {
 
@@ -2016,17 +2016,17 @@ class AdminProductsControllerCore extends AdminController {
 			'languages'                 => $this->_languages,
 			'allowEmployeeFormLang'     => $this->allow_employee_form_lang,
 			'id_product'                => $this->object->id,
-			'id_lang_default'           => Configuration::get('PS_LANG_DEFAULT'),
+			'id_lang_default'           => Configuration::get('EPH_LANG_DEFAULT'),
 			'has_declinaisons'          => $this->object->hasAttributes(),
 			'post_data'                 => json_encode($_POST),
 			'save_error'                => !empty($this->errors),
 			'mod_evasive'               => Tools::apacheModExists('evasive'),
 			'mod_security'              => Tools::apacheModExists('security'),
-			'ps_force_friendly_product' => Configuration::get('PS_FORCE_FRIENDLY_PRODUCT'),
+			'EPH_force_friendly_product' => Configuration::get('EPH_FORCE_FRIENDLY_PRODUCT'),
 			'tinymce'                   => true,
 			'iso'                       => file_exists('/js/tinymce/langs/' . $iso . '.js') ? $iso : 'en',
 			'path_css'                  => _THEME_CSS_DIR_,
-			'ad'                        => __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_),
+			'ad'                        => __EPH_BASE_URI__ . basename(_EPH_ADMIN_DIR_),
 			'product_type'              => (int) Tools::getValue('type_product', $this->object->getType()),
 		]);
 
@@ -2093,7 +2093,7 @@ class AdminProductsControllerCore extends AdminController {
 	public function ajaxProcessCleanPositions() {
 
 		$idCategory = Tools::getValue('idCategory');
-		$products = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$products = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('`id_product`, `position`')
 				->from('category_product')
@@ -2110,7 +2110,7 @@ class AdminProductsControllerCore extends AdminController {
 
 		}
 
-		$products = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$products = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('`id_product`, `position`')
 				->from('category_product')
@@ -2257,7 +2257,7 @@ class AdminProductsControllerCore extends AdminController {
 				$attachment = new Attachment();
 				$ext = pathinfo($image['name'], PATHINFO_EXTENSION);
 				$uniqid = sha1(microtime());
-				$destinationFile = _PS_DOWNLOAD_DIR_ . $uniqid;
+				$destinationFile = _EPH_DOWNLOAD_DIR_ . $uniqid;
 				copy($image['save_path'], $destinationFile);
 				$attachment->file = $uniqid;
 				$attachment->mime = $image['type'];
@@ -2338,7 +2338,7 @@ class AdminProductsControllerCore extends AdminController {
 					Product::updateDefaultAttribute($product->id);
 				} else {
 					// Set stock quantity
-					$quantityAttributeOld = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+					$quantityAttributeOld = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 						(new DbQuery())
 							->select('`quantity`')
 							->from('stock_available')
@@ -2350,7 +2350,7 @@ class AdminProductsControllerCore extends AdminController {
 
 				Hook::exec('actionProductAdd', ['id_product' => (int) $product->id, 'product' => $product]);
 
-				if (in_array($product->visibility, ['both', 'search']) && Configuration::get('PS_SEARCH_INDEXATION')) {
+				if (in_array($product->visibility, ['both', 'search']) && Configuration::get('EPH_SEARCH_INDEXATION')) {
 					Search::indexation(false, $product->id);
 				}
 
@@ -2420,7 +2420,7 @@ class AdminProductsControllerCore extends AdminController {
 					Product::updateDefaultAttribute($product->id);
 				} else {
 					// Set stock quantity
-					$quantityAttributeOld = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+					$quantityAttributeOld = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 						(new DbQuery())
 							->select('`quantity`')
 							->from('stock_available')
@@ -2435,7 +2435,7 @@ class AdminProductsControllerCore extends AdminController {
 				} else {
 					Hook::exec('actionProductAdd', ['id_product' => (int) $product->id, 'product' => $product]);
 
-					if (in_array($product->visibility, ['both', 'search']) && Configuration::get('PS_SEARCH_INDEXATION')) {
+					if (in_array($product->visibility, ['both', 'search']) && Configuration::get('EPH_SEARCH_INDEXATION')) {
 						Search::indexation(false, $product->id);
 					}
 
@@ -2466,7 +2466,7 @@ class AdminProductsControllerCore extends AdminController {
 					                                     * - supply order(s) for this product
 				*/
 
-				if (Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT') && $object->advanced_stock_management) {
+				if (Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT') && $object->advanced_stock_management) {
 					$stockManager = StockManagerFactory::getManager();
 					$physicalQuantity = $stockManager->getProductPhysicalQuantities($object->id, 0);
 					$realQuantity = $stockManager->getProductRealQuantities($object->id, 0);
@@ -2876,7 +2876,7 @@ class AdminProductsControllerCore extends AdminController {
 					'languages'             => $this->_languages,
 					'default_form_language' => $this->default_form_language,
 					'id_lang'               => $this->context->language->id,
-					'bo_imgdir'             => __PS_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+					'bo_imgdir'             => __EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
 				]
 			);
 
@@ -3044,7 +3044,7 @@ class AdminProductsControllerCore extends AdminController {
 		$allCategory = Tools::getValue('allCategory');
 
 		if ($allCategory == 1) {
-			$request = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('SELECT `id_product` FROM `' . _DB_PREFIX_ . 'category_product` WHERE `id_category` = ' . (int) $category);
+			$request = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS('SELECT `id_product` FROM `' . _DB_PREFIX_ . 'category_product` WHERE `id_category` = ' . (int) $category);
 			$products = [];
 
 			foreach ($request as $result) {
@@ -3239,7 +3239,7 @@ class AdminProductsControllerCore extends AdminController {
 					continue;
 				} else {
 					$imagesTypes = ImageType::getImagesTypes('products');
-					$generateHighDpiImages = (bool) Configuration::get('PS_HIGHT_DPI');
+					$generateHighDpiImages = (bool) Configuration::get('EPH_HIGHT_DPI');
 
 					foreach ($imagesTypes as $imageType) {
 
@@ -3308,12 +3308,12 @@ class AdminProductsControllerCore extends AdminController {
 			);
 		}
 
-		if (file_exists(_PS_TMP_IMG_DIR_ . 'product_' . $image->id_product . '.jpg')) {
-			$res &= @unlink(_PS_TMP_IMG_DIR_ . 'product_' . $image->id_product . '.jpg');
+		if (file_exists(_EPH_TMP_IMG_DIR_ . 'product_' . $image->id_product . '.jpg')) {
+			$res &= @unlink(_EPH_TMP_IMG_DIR_ . 'product_' . $image->id_product . '.jpg');
 		}
 
-		if (file_exists(_PS_TMP_IMG_DIR_ . 'product_mini_' . $image->id_product . '_' . $this->context->shop->id . '.jpg')) {
-			$res &= @unlink(_PS_TMP_IMG_DIR_ . 'product_mini_' . $image->id_product . '_' . $this->context->shop->id . '.jpg');
+		if (file_exists(_EPH_TMP_IMG_DIR_ . 'product_mini_' . $image->id_product . '_' . $this->context->shop->id . '.jpg')) {
+			$res &= @unlink(_EPH_TMP_IMG_DIR_ . 'product_mini_' . $image->id_product . '_' . $this->context->shop->id . '.jpg');
 		}
 
 		if ($res) {
@@ -3448,7 +3448,7 @@ class AdminProductsControllerCore extends AdminController {
 		if ($error = ImageManager::validateUpload($_FILES['image_product'])) {
 			$this->errors[] = $error;
 		} else {
-			$highDpi = (bool) Configuration::get('PS_HIGHT_DPI');
+			$highDpi = (bool) Configuration::get('EPH_HIGHT_DPI');
 
 			$image = new Image($idImage);
 
@@ -3456,7 +3456,7 @@ class AdminProductsControllerCore extends AdminController {
 				$this->errors[] = Tools::displayError('An error occurred while attempting to create a new folder.');
 			}
 
-			if (!($tmpName = tempnam(_PS_TMP_IMG_DIR_, 'PS')) || !move_uploaded_file($_FILES['image_product']['tmp_name'], $tmpName)) {
+			if (!($tmpName = tempnam(_EPH_TMP_IMG_DIR_, 'PS')) || !move_uploaded_file($_FILES['image_product']['tmp_name'], $tmpName)) {
 				$this->errors[] = Tools::displayError('An error occurred during the image upload process.');
 			} else
 
@@ -3534,7 +3534,7 @@ class AdminProductsControllerCore extends AdminController {
 		$className = 'Product';
 		// @todo : the call_user_func seems to contains only statics values (className = 'Product')
 		$rules = call_user_func([$this->className, 'getValidationRules'], $this->className);
-		$defaultLanguage = new Language((int) Configuration::get('PS_LANG_DEFAULT'));
+		$defaultLanguage = new Language((int) Configuration::get('EPH_LANG_DEFAULT'));
 		$languages = Language::getLanguages(false);
 
 		// Check required fields
@@ -3593,7 +3593,7 @@ class AdminProductsControllerCore extends AdminController {
 		}
 
 		// Check description short size without html
-		$limit = (int) Configuration::get('PS_PRODUCT_SHORT_DESC_LIMIT');
+		$limit = (int) Configuration::get('EPH_PRODUCT_SHORT_DESC_LIMIT');
 
 		if ($limit <= 0) {
 			$limit = 400;
@@ -3649,7 +3649,7 @@ class AdminProductsControllerCore extends AdminController {
 
 				if (mb_strtolower($function) == 'iscleanhtml') {
 
-					if (!Validate::$function($value, (int) Configuration::get('PS_ALLOW_HTML_IFRAME'))) {
+					if (!Validate::$function($value, (int) Configuration::get('EPH_ALLOW_HTML_IFRAME'))) {
 						$res = false;
 					}
 
@@ -3678,7 +3678,7 @@ class AdminProductsControllerCore extends AdminController {
 
 				if ($this->isProductFieldUpdated($fieldLang, $language['id_lang']) && ($value = Tools::getValue($fieldLang . '_' . $language['id_lang']))) {
 
-					if (!Validate::$function($value, (int) Configuration::get('PS_ALLOW_HTML_IFRAME'))) {
+					if (!Validate::$function($value, (int) Configuration::get('EPH_ALLOW_HTML_IFRAME'))) {
 						$this->errors[] = sprintf(
 							Tools::displayError('The %1$s field (%2$s) is invalid.'),
 							call_user_func([$className, 'displayFieldName'], $fieldLang, $className),
@@ -3765,7 +3765,7 @@ class AdminProductsControllerCore extends AdminController {
 	protected function _removeTaxFromEcotax() {
 
 		if ($ecotax = Tools::getValue('ecotax')) {
-			$_POST['ecotax'] = Tools::ps_round($ecotax / (1 + Tax::getProductEcotaxRate() / 100), 6);
+			$_POST['ecotax'] = Tools::EPH_round($ecotax / (1 + Tax::getProductEcotaxRate() / 100), 6);
 		}
 
 	}
@@ -3891,7 +3891,7 @@ class AdminProductsControllerCore extends AdminController {
 				$filename = ProductDownload::getNewFilename();
 				$helper = new HelperUploader('virtual_product_file_uploader');
 				$helper->setPostMaxSize(Tools::getOctets(ini_get('upload_max_filesize')))
-					->setSavePath(_PS_DOWNLOAD_DIR_)->upload($_FILES['virtual_product_file_uploader'], $filename);
+					->setSavePath(_EPH_DOWNLOAD_DIR_)->upload($_FILES['virtual_product_file_uploader'], $filename);
 			} else {
 				$filename = Tools::getValue('virtual_product_filename', ProductDownload::getNewFilename());
 			}
@@ -3990,7 +3990,7 @@ class AdminProductsControllerCore extends AdminController {
 	 */
 	public function getPreviewUrl(Product $product) {
 
-		$idLang = Configuration::get('PS_LANG_DEFAULT', null, null, $this->context->shop->id);
+		$idLang = Configuration::get('EPH_LANG_DEFAULT', null, null, $this->context->shop->id);
 
 		if (!Validate::isLoadedObject($product) || !$product->id_category_default) {
 			return $this->l('Unable to determine the preview URL. This product has not been linked with a category, yet.');
@@ -4000,7 +4000,7 @@ class AdminProductsControllerCore extends AdminController {
 			return false;
 		}
 
-		$isRewriteActive = (bool) Configuration::get('PS_REWRITING_SETTINGS');
+		$isRewriteActive = (bool) Configuration::get('EPH_REWRITING_SETTINGS');
 		$previewUrl = $this->context->link->getProductLink(
 			$product,
 			$this->getFieldValue($product, 'link_rewrite', $this->context->language->id),
@@ -4135,7 +4135,7 @@ class AdminProductsControllerCore extends AdminController {
 					if ($this->context->currency->id) {
 						$productSupplier->id_currency = (int) $this->context->currency->id;
 					} else {
-						$productSupplier->id_currency = (int) Configuration::get('PS_CURRENCY_DEFAULT');
+						$productSupplier->id_currency = (int) Configuration::get('EPH_CURRENCY_DEFAULT');
 					}
 
 					$productSupplier->save();
@@ -4185,7 +4185,7 @@ class AdminProductsControllerCore extends AdminController {
 							)
 						);
 
-						$price = Tools::ps_round($price, 6);
+						$price = Tools::EPH_round($price, 6);
 
 						$idCurrency = (int) Tools::getValue(
 							'product_price_currency_' . $product->id . '_' . $attribute['id_product_attribute'] . '_' . $supplier->id_supplier,
@@ -4325,7 +4325,7 @@ class AdminProductsControllerCore extends AdminController {
 	protected function checkFeatures($languages, $featureId) {
 
 		$rules = call_user_func(['FeatureValue', 'getValidationRules'], 'FeatureValue');
-		$feature = Feature::getFeature((int) Configuration::get('PS_LANG_DEFAULT'), $featureId);
+		$feature = Feature::getFeature((int) Configuration::get('EPH_LANG_DEFAULT'), $featureId);
 
 		foreach ($languages as $language) {
 
@@ -4354,7 +4354,7 @@ class AdminProductsControllerCore extends AdminController {
 
 				// Getting default language
 
-				if ($language['id_lang'] == Configuration::get('PS_LANG_DEFAULT')) {
+				if ($language['id_lang'] == Configuration::get('EPH_LANG_DEFAULT')) {
 					return $val;
 				}
 
@@ -4978,7 +4978,7 @@ class AdminProductsControllerCore extends AdminController {
 
 				// adding button for preview this product statistics
 
-				if (file_exists(_PS_MODULE_DIR_ . 'statsproduct/statsproduct.php')) {
+				if (file_exists(_EPH_MODULE_DIR_ . 'statsproduct/statsproduct.php')) {
 					$this->page_header_toolbar_btn['stats'] = [
 						'short' => $this->l('Statistics', null, null, false),
 						'href'  => $this->context->link->getAdminLink('AdminStats') . '&module=statsproduct&id_product=' . (int) $product->id,
@@ -5082,7 +5082,7 @@ class AdminProductsControllerCore extends AdminController {
 
 		$this->getLanguages();
 
-		$this->tpl_form_vars['id_lang_default'] = Configuration::get('PS_LANG_DEFAULT');
+		$this->tpl_form_vars['id_lang_default'] = Configuration::get('EPH_LANG_DEFAULT');
 
 		$this->tpl_form_vars['currentIndex'] = static::$currentIndex;
 		$this->tpl_form_vars['display_multishop_checkboxes'] = (Shop::isFeatureActive() && Shop::getContext() != Shop::CONTEXT_SHOP && $this->display == 'edit');
@@ -5090,19 +5090,19 @@ class AdminProductsControllerCore extends AdminController {
 
 		$this->tpl_form_vars['token'] = $this->token;
 		$this->tpl_form_vars['combinationImagesJs'] = $this->getCombinationImagesJs();
-		$this->tpl_form_vars['PS_ALLOW_ACCENTED_CHARS_URL'] = (int) Configuration::get('PS_ALLOW_ACCENTED_CHARS_URL');
+		$this->tpl_form_vars['EPH_ALLOW_ACCENTED_CHARS_URL'] = (int) Configuration::get('EPH_ALLOW_ACCENTED_CHARS_URL');
 		$this->tpl_form_vars['post_data'] = json_encode($_POST);
 		$this->tpl_form_vars['save_error'] = !empty($this->errors);
 		$this->tpl_form_vars['mod_evasive'] = Tools::apacheModExists('evasive');
 		$this->tpl_form_vars['mod_security'] = Tools::apacheModExists('security');
-		$this->tpl_form_vars['ps_force_friendly_product'] = Configuration::get('PS_FORCE_FRIENDLY_PRODUCT');
+		$this->tpl_form_vars['EPH_force_friendly_product'] = Configuration::get('EPH_FORCE_FRIENDLY_PRODUCT');
 
 		// autoload rich text editor (tiny mce)
 		$this->tpl_form_vars['tinymce'] = true;
 		$iso = $this->context->language->iso_code;
-		$this->tpl_form_vars['iso'] = file_exists(_PS_JS_DIR_ . 'tinymce/langs/' . $iso . '.js') ? $iso : 'en';
+		$this->tpl_form_vars['iso'] = file_exists(_EPH_JS_DIR_ . 'tinymce/langs/' . $iso . '.js') ? $iso : 'en';
 		$this->tpl_form_vars['path_css'] = _THEME_CSS_DIR_;
-		$this->tpl_form_vars['ad'] = __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_);
+		$this->tpl_form_vars['ad'] = __EPH_BASE_URI__ . basename(_EPH_ADMIN_DIR_);
 
 		if (Validate::isLoadedObject(($this->object))) {
 			$idProduct = (int) $this->object->id;
@@ -5443,7 +5443,7 @@ class AdminProductsControllerCore extends AdminController {
 			$Upload['content'] = Tools::file_get_contents($_FILES['productFile']['tmp_name']);
 			$Upload['name'] = $_FILES['productFile']['name'];
 			$Upload['mime'] = $_FILES['productFile']['type'];
-			$dir = _PS_ADMIN_DIR_ . DIRECTORY_SEPARATOR . 'fileimport' . DIRECTORY_SEPARATOR;
+			$dir = _EPH_ADMIN_DIR_ . DIRECTORY_SEPARATOR . 'fileimport' . DIRECTORY_SEPARATOR;
 			$fileName = $_FILES['productFile']['name'];
 			$uploadfile = $dir . basename($fileName);
 			$sourcePath = $_FILES['productFile']['tmp_name'];
@@ -5602,19 +5602,19 @@ class AdminProductsControllerCore extends AdminController {
 				'taxesRatesByGroup'       => $taxRates,
 				'ecotaxTaxRate'           => Tax::getProductEcotaxRate(),
 				'tax_exclude_taxe_option' => Tax::excludeTaxeOption(),
-				'ps_use_ecotax'           => Configuration::get('PS_USE_ECOTAX'),
+				'EPH_use_ecotax'           => Configuration::get('EPH_USE_ECOTAX'),
 			]
 		);
 
 		$product->price = Tools::convertPrice($product->price, $this->context->currency, true, $this->context);
 
 		if ($product->unit_price_ratio != 0) {
-			$data->assign('unit_price', Tools::ps_round($product->price / $product->unit_price_ratio, 6));
+			$data->assign('unit_price', Tools::EPH_round($product->price / $product->unit_price_ratio, 6));
 		} else {
 			$data->assign('unit_price', 0);
 		}
 
-		$data->assign('ps_tax', Configuration::get('PS_TAX'));
+		$data->assign('EPH_tax', Configuration::get('EPH_TAX'));
 
 		$data->assign('country_display_tax_label', $this->context->country->display_tax_label);
 		$data->assign(
@@ -5702,7 +5702,7 @@ class AdminProductsControllerCore extends AdminController {
 				$specificPrice['impact'] = '- ' . ($specificPrice['reduction'] * 100) . ' %';
 			} else
 			if ($specificPrice['reduction'] > 0) {
-				$specificPrice['impact'] = '- ' . Tools::displayPrice(Tools::ps_round($specificPrice['reduction'], 2), $currentSpecificCurrency) . ' ';
+				$specificPrice['impact'] = '- ' . Tools::displayPrice(Tools::EPH_round($specificPrice['reduction'], 2), $currentSpecificCurrency) . ' ';
 
 				if ($specificPrice['reduction_tax']) {
 					$specificPrice['impact'] .= '(' . $this->l('Tax incl.') . ')';
@@ -6117,7 +6117,7 @@ class AdminProductsControllerCore extends AdminController {
 	protected function _applyTaxToEcotax($product) {
 
 		if ($product->ecotax) {
-			$product->ecotax = Tools::ps_round($product->ecotax * (1 + Tax::getProductEcotaxRate() / 100), 2);
+			$product->ecotax = Tools::EPH_round($product->ecotax * (1 + Tax::getProductEcotaxRate() / 100), 2);
 		}
 
 	}
@@ -6155,7 +6155,7 @@ class AdminProductsControllerCore extends AdminController {
 				'product'               => $product,
 				'languages'             => $this->_languages,
 				'id_lang'               => $this->context->language->id,
-				'ps_ssl_enabled'        => Configuration::get('PS_SSL_ENABLED'),
+				'EPH_ssl_enabled'        => Configuration::get('EPH_SSL_ENABLED'),
 				'curent_shop_url'       => $this->context->shop->getBaseURL(),
 				'default_form_language' => $this->default_form_language,
 				'rewritten_links'       => $rewrittenLinks,
@@ -6272,7 +6272,7 @@ class AdminProductsControllerCore extends AdminController {
 					$cover = $packItem->id_pack_product_attribute ? Product::getCombinationImageById($packItem->id_pack_product_attribute, $this->context->language->id) : Product::getCover($packItem->id);
 					$packItems[$i]['image'] = $this->context->link->getImageLink($packItem->link_rewrite, $cover['id_image'], 'home_default');
 					// @todo: don't rely on 'home_default'
-					//$path_to_image = _PS_IMG_DIR_.'p/'.Image::getImgFolderStatic($cover['id_image']).(int)$cover['id_image'].'.jpg';
+					//$path_to_image = _EPH_IMG_DIR_.'p/'.Image::getImgFolderStatic($cover['id_image']).(int)$cover['id_image'].'.jpg';
 					//$pack_items[$i]['image'] = ImageManager::thumbnail($path_to_image, 'pack_mini_'.$pack_item->id.'_'.$this->context->shop->id.'.jpg', 120);
 					$i++;
 				}
@@ -6314,7 +6314,7 @@ class AdminProductsControllerCore extends AdminController {
 				}
 
 				if (!$productDownload->checkFile()) {
-					$this->errors[] = Tools::displayError('File on the server is missing, should be') . ' ' . _PS_DOWNLOAD_DIR_ . $productDownload->filename . '.';
+					$this->errors[] = Tools::displayError('File on the server is missing, should be') . ' ' . _EPH_DOWNLOAD_DIR_ . $productDownload->filename . '.';
 					$fileNotRight = true;
 				}
 
@@ -6380,9 +6380,9 @@ class AdminProductsControllerCore extends AdminController {
 						'table'               => $this->table,
 						'languages'           => $this->_languages,
 						'has_file_labels'     => $hasFileLabels,
-						'display_file_labels' => $this->_displayLabelFields($obj, $labels, $this->_languages, Configuration::get('PS_LANG_DEFAULT'), Product::CUSTOMIZE_FILE),
+						'display_file_labels' => $this->_displayLabelFields($obj, $labels, $this->_languages, Configuration::get('EPH_LANG_DEFAULT'), Product::CUSTOMIZE_FILE),
 						'has_text_labels'     => $hasTextLabels,
-						'display_text_labels' => $this->_displayLabelFields($obj, $labels, $this->_languages, Configuration::get('PS_LANG_DEFAULT'), Product::CUSTOMIZE_TEXTFIELD),
+						'display_text_labels' => $this->_displayLabelFields($obj, $labels, $this->_languages, Configuration::get('EPH_LANG_DEFAULT'), Product::CUSTOMIZE_TEXTFIELD),
 						'uploadable_files'    => (int) ($this->getFieldValue($obj, 'uploadable_files') ? (int) $this->getFieldValue($obj, 'uploadable_files') : '0'),
 						'text_fields'         => (int) ($this->getFieldValue($obj, 'text_fields') ? (int) $this->getFieldValue($obj, 'text_fields') : '0'),
 					]
@@ -6507,19 +6507,19 @@ class AdminProductsControllerCore extends AdminController {
 				}
 
 				$isoTinyMce = $this->context->language->iso_code;
-				$isoTinyMce = (file_exists(_PS_ROOT_ADMIN_DIR_ . '/js/tinymce/langs/' . $isoTinyMce . '.js') ? $isoTinyMce : 'en');
+				$isoTinyMce = (file_exists(_EPH_ROOT_ADMIN_DIR_ . '/js/tinymce/langs/' . $isoTinyMce . '.js') ? $isoTinyMce : 'en');
 
 				$data->assign(
 					[
 						'obj'                    => $obj,
 						'table'                  => $this->table,
-						'ad'                     => __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_),
+						'ad'                     => __EPH_BASE_URI__ . basename(_EPH_ADMIN_DIR_),
 						'iso_tiny_mce'           => $isoTinyMce,
 						'languages'              => $this->_languages,
 						'id_lang'                => $this->context->language->id,
 						'attach1'                => Attachment::getAttachments($this->context->language->id, $obj->id, true),
 						'attach2'                => Attachment::getAttachments($this->context->language->id, $obj->id, false),
-						'default_form_language'  => (int) Configuration::get('PS_LANG_DEFAULT'),
+						'default_form_language'  => (int) Configuration::get('EPH_LANG_DEFAULT'),
 						'attachment_name'        => $attachmentName,
 						'attachment_description' => $attachmentDescription,
 						'bo_imgdir'              => _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
@@ -6599,7 +6599,7 @@ class AdminProductsControllerCore extends AdminController {
 			'available_date'
 		);
 
-		if (Configuration::get('PS_USE_ECOTAX')) {
+		if (Configuration::get('EPH_USE_ECOTAX')) {
 			array_push($productProps, 'ecotax');
 		}
 
@@ -6609,7 +6609,7 @@ class AdminProductsControllerCore extends AdminController {
 
 		$product->name['class'] = 'updateCurrentText';
 
-		if (!$product->id || Configuration::get('PS_FORCE_FRIENDLY_PRODUCT')) {
+		if (!$product->id || Configuration::get('EPH_FORCE_FRIENDLY_PRODUCT')) {
 			$product->name['class'] .= ' copy2friendlyUrl';
 		}
 
@@ -6639,7 +6639,7 @@ class AdminProductsControllerCore extends AdminController {
 
 		// TinyMCE
 		$isoTinyMce = $this->context->language->iso_code;
-		$isoTinyMce = (file_exists(_PS_ROOT_ADMIN_DIR_ . '/js/tinymce/langs/' . $isoTinyMce . '.js') ? $isoTinyMce : 'en');
+		$isoTinyMce = (file_exists(_EPH_ROOT_ADMIN_DIR_ . '/js/tinymce/langs/' . $isoTinyMce . '.js') ? $isoTinyMce : 'en');
 		$data->assign(
 			[
 				'ad'                             => dirname($_SERVER['PHP_SELF']),
@@ -6650,7 +6650,7 @@ class AdminProductsControllerCore extends AdminController {
 				'token'                          => $this->token,
 				'currency'                       => $currency,
 				'link'                           => $this->context->link,
-				'PS_PRODUCT_SHORT_DESC_LIMIT'    => Configuration::get('PS_PRODUCT_SHORT_DESC_LIMIT') ? Configuration::get('PS_PRODUCT_SHORT_DESC_LIMIT') : 400,
+				'EPH_PRODUCT_SHORT_DESC_LIMIT'    => Configuration::get('EPH_PRODUCT_SHORT_DESC_LIMIT') ? Configuration::get('EPH_PRODUCT_SHORT_DESC_LIMIT') : 400,
 			]
 		);
 		$data->assign($this->tpl_form_vars);
@@ -6665,8 +6665,8 @@ class AdminProductsControllerCore extends AdminController {
 		$data->assign(
 			[
 				'product'                   => $obj,
-				'ps_dimension_unit'         => Configuration::get('PS_DIMENSION_UNIT'),
-				'ps_weight_unit'            => Configuration::get('PS_WEIGHT_UNIT'),
+				'EPH_dimension_unit'         => Configuration::get('EPH_DIMENSION_UNIT'),
+				'EPH_weight_unit'            => Configuration::get('EPH_WEIGHT_UNIT'),
 				'carrier_list'              => $this->getCarrierList(),
 				'currency'                  => $this->context->currency,
 				'country_display_tax_label' => $this->context->country->display_tax_label,
@@ -6765,7 +6765,7 @@ class AdminProductsControllerCore extends AdminController {
 						'currency'            => $this->context->currency,
 						'current_shop_id'     => $currentShopId,
 						'languages'           => $this->_languages,
-						'default_language'    => (int) Configuration::get('PS_LANG_DEFAULT'),
+						'default_language'    => (int) Configuration::get('EPH_LANG_DEFAULT'),
 						'link'                => $this->context->link,
 						'base_link'           => $this->context->link->getBaseFrontLink(),
 						'bo_imgdir'           => _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
@@ -6939,7 +6939,7 @@ class AdminProductsControllerCore extends AdminController {
 
 		if ($field == 'is_cover' && $fieldValue == 'YES') {
 
-			$objects = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+			$objects = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 				(new DbQuery())
 					->select('id_image')
 					->from('image')
@@ -7008,7 +7008,7 @@ class AdminProductsControllerCore extends AdminController {
 		$initPosition = $image->position;
 
 		if ($initPosition > $stopIndex) {
-			$objects = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+			$objects = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 				(new DbQuery())
 					->select('id_image,  `position` ')
 					->from('image')
@@ -7035,7 +7035,7 @@ class AdminProductsControllerCore extends AdminController {
 			}
 
 		} else {
-			$objects = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+			$objects = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 				(new DbQuery())
 					->select('id_image,  `position` ')
 					->from('image')
@@ -7162,7 +7162,7 @@ class AdminProductsControllerCore extends AdminController {
 					continue;
 				} else {
 					$imagesTypes = ImageType::getImagesTypes('products');
-					$generateHighDpiImages = (bool) Configuration::get('PS_HIGHT_DPI');
+					$generateHighDpiImages = (bool) Configuration::get('EPH_HIGHT_DPI');
 
 					foreach ($imagesTypes as $imageType) {
 
@@ -7200,8 +7200,8 @@ class AdminProductsControllerCore extends AdminController {
 				$file['legend'] = $legends;
 				$file['path'] = $image->getExistingImgPath();
 
-				@unlink(_PS_TMP_IMG_DIR_ . 'product_' . (int) $product->id . '.jpg');
-				@unlink(_PS_TMP_IMG_DIR_ . 'product_mini_' . (int) $product->id . '_' . $this->context->shop->id . '.jpg');
+				@unlink(_EPH_TMP_IMG_DIR_ . 'product_' . (int) $product->id . '.jpg');
+				@unlink(_EPH_TMP_IMG_DIR_ . 'product_mini_' . (int) $product->id . '_' . $this->context->shop->id . '.jpg');
 
 				$result = [
 					'success'                 => true,
@@ -7274,9 +7274,9 @@ class AdminProductsControllerCore extends AdminController {
 			$images = Image::getImages($this->context->language->id, $product->id);
 
 			$data->assign('tax_exclude_option', Tax::excludeTaxeOption());
-			$data->assign('ps_weight_unit', Configuration::get('PS_WEIGHT_UNIT'));
+			$data->assign('EPH_weight_unit', Configuration::get('EPH_WEIGHT_UNIT'));
 			$isoTinyMce = $this->context->language->iso_code;
-			$isoTinyMce = (file_exists(_PS_ROOT_ADMIN_DIR_ . '/js/tinymce/langs/' . $isoTinyMce . '.js') ? $isoTinyMce : 'en');
+			$isoTinyMce = (file_exists(_EPH_ROOT_ADMIN_DIR_ . '/js/tinymce/langs/' . $isoTinyMce . '.js') ? $isoTinyMce : 'en');
 			$currency = $this->context->currency;
 
 			$data->assign(
@@ -7381,9 +7381,9 @@ class AdminProductsControllerCore extends AdminController {
 				$images = Image::getImages($this->context->language->id, $product->id);
 
 				$data->assign('tax_exclude_option', Tax::excludeTaxeOption());
-				$data->assign('ps_weight_unit', Configuration::get('PS_WEIGHT_UNIT'));
+				$data->assign('EPH_weight_unit', Configuration::get('EPH_WEIGHT_UNIT'));
 				$isoTinyMce = $this->context->language->iso_code;
-				$isoTinyMce = (file_exists(_PS_ROOT_ADMIN_DIR_ . '/js/tinymce/langs/' . $isoTinyMce . '.js') ? $isoTinyMce : 'en');
+				$isoTinyMce = (file_exists(_EPH_ROOT_ADMIN_DIR_ . '/js/tinymce/langs/' . $isoTinyMce . '.js') ? $isoTinyMce : 'en');
 				$currency = $this->context->currency;
 
 				$data->assign(
@@ -7430,7 +7430,7 @@ class AdminProductsControllerCore extends AdminController {
 						'product'            => $product,
 						'token_generator'    => Tools::getAdminTokenLite('AdminAttributeGenerator'),
 						'combination_exists' => (count(AttributeGroup::getAttributesGroups($this->context->language->id)) > 0 && $product->hasAttributes()),
-						'bo_imgdir'          => __PS_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+						'bo_imgdir'          => __EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
 						'has_declinaisons'   => $product->hasAttributes(),
 					]
 				);
@@ -7579,7 +7579,7 @@ class AdminProductsControllerCore extends AdminController {
 					$combArray[$combination['id_product_attribute']]['attributes'][] = [$combination['group_name'], $combination['attribute_name'], $combination['id_attribute']];
 					$combArray[$combination['id_product_attribute']]['wholesale_price'] = $combination['wholesale_price'];
 					$combArray[$combination['id_product_attribute']]['price'] = $price;
-					$combArray[$combination['id_product_attribute']]['weight'] = $combination['weight'] . Configuration::get('PS_WEIGHT_UNIT');
+					$combArray[$combination['id_product_attribute']]['weight'] = $combination['weight'] . Configuration::get('EPH_WEIGHT_UNIT');
 					$combArray[$combination['id_product_attribute']]['unit_impact'] = $combination['unit_price_impact'];
 					$combArray[$combination['id_product_attribute']]['reference'] = $combination['reference'];
 					$combArray[$combination['id_product_attribute']]['ean13'] = $combination['ean13'];
@@ -7719,12 +7719,12 @@ class AdminProductsControllerCore extends AdminController {
 
 				}
 
-				$data->assign('ps_stock_management', Configuration::get('PS_STOCK_MANAGEMENT'));
+				$data->assign('EPH_stock_management', Configuration::get('EPH_STOCK_MANAGEMENT'));
 				$data->assign('has_attribute', $obj->hasAttributes());
 				// Check if product has combination, to display the available date only for the product or for each combination
 
 				if (Combination::isFeatureActive()) {
-					$data->assign('countAttributes', (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+					$data->assign('countAttributes', (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 						(new DbQuery())
 							->select('COUNT(`id_product`)')
 
@@ -7738,7 +7738,7 @@ class AdminProductsControllerCore extends AdminController {
 				// if advanced stock management is active, checks associations
 				$advanced_stock_management_warning = false;
 
-				if (Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT') && $obj->advanced_stock_management) {
+				if (Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT') && $obj->advanced_stock_management) {
 					$p_attributes = Product::getProductAttributesIds($obj->id);
 					$warehouses = [];
 
@@ -7774,7 +7774,7 @@ class AdminProductsControllerCore extends AdminController {
 				// if product is a pack
 
 				if (Pack::isPack($obj->id)) {
-					$items = Pack::getItems((int) $obj->id, Configuration::get('PS_LANG_DEFAULT'));
+					$items = Pack::getItems((int) $obj->id, Configuration::get('EPH_LANG_DEFAULT'));
 
 					// gets an array of quantities (quantity for the product / quantity in pack)
 					$pack_quantities = [];
@@ -7804,7 +7804,7 @@ class AdminProductsControllerCore extends AdminController {
 
 					}
 
-					if (Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT') && !Warehouse::getPackWarehouses((int) $obj->id)) {
+					if (Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT') && !Warehouse::getPackWarehouses((int) $obj->id)) {
 						$this->displayWarning($this->l('You must have a common warehouse between this pack and its product.'));
 					}
 
@@ -7815,12 +7815,12 @@ class AdminProductsControllerCore extends AdminController {
 						'attributes'              => $attributes,
 						'available_quantity'      => $available_quantity,
 						'pack_quantity'           => $pack_quantity,
-						'stock_management_active' => Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT'),
+						'stock_management_active' => Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT'),
 						'product_designation'     => $product_designation,
 						'product'                 => $obj,
 						'show_quantities'         => $show_quantities,
-						'order_out_of_stock'      => Configuration::get('PS_ORDER_OUT_OF_STOCK'),
-						'pack_stock_type'         => Configuration::get('PS_PACK_STOCK_TYPE'),
+						'order_out_of_stock'      => Configuration::get('EPH_ORDER_OUT_OF_STOCK'),
+						'pack_stock_type'         => Configuration::get('EPH_PACK_STOCK_TYPE'),
 						'token_preferences'       => Tools::getAdminTokenLite('AdminPPreferences'),
 
 						'token'                   => $this->token,
@@ -7911,7 +7911,7 @@ class AdminProductsControllerCore extends AdminController {
 						'product'                         => $obj,
 						'link'                            => $this->context->link,
 						'token'                           => $this->token,
-						'id_default_currency'             => Configuration::get('PS_CURRENCY_DEFAULT'),
+						'id_default_currency'             => Configuration::get('EPH_CURRENCY_DEFAULT'),
 					]
 				);
 			} else {
@@ -8082,9 +8082,9 @@ class AdminProductsControllerCore extends AdminController {
 				$this->ajaxDie(json_encode(['error' => $this->l('Not possible if advanced stock management is disabled. ')]));
 			}
 
-			if (Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT') && (int) Tools::getValue('value') == 1 && (Pack::isPack($product->id) && !Pack::allUsesAdvancedStockManagement($product->id)
+			if (Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT') && (int) Tools::getValue('value') == 1 && (Pack::isPack($product->id) && !Pack::allUsesAdvancedStockManagement($product->id)
 				&& ($product->pack_stock_type == 2 || $product->pack_stock_type == 1 ||
-					($product->pack_stock_type == 3 && (Configuration::get('PS_PACK_STOCK_TYPE') == 1 || Configuration::get('PS_PACK_STOCK_TYPE') == 2))))
+					($product->pack_stock_type == 3 && (Configuration::get('EPH_PACK_STOCK_TYPE') == 1 || Configuration::get('EPH_PACK_STOCK_TYPE') == 2))))
 			) {
 				$this->ajaxDie(
 					json_encode(
@@ -8114,7 +8114,7 @@ class AdminProductsControllerCore extends AdminController {
 			}
 
 			if ($product->depends_on_stock && !Pack::allUsesAdvancedStockManagement($product->id) && ((int) $value == 1
-				|| (int) $value == 2 || ((int) $value == 3 && (Configuration::get('PS_PACK_STOCK_TYPE') == 1 || Configuration::get('PS_PACK_STOCK_TYPE') == 2)))
+				|| (int) $value == 2 || ((int) $value == 3 && (Configuration::get('EPH_PACK_STOCK_TYPE') == 1 || Configuration::get('EPH_PACK_STOCK_TYPE') == 2)))
 			) {
 				$this->ajaxDie(
 					json_encode(
@@ -8175,7 +8175,7 @@ class AdminProductsControllerCore extends AdminController {
 				$this->ajaxDie(json_encode(['error' => $this->l('Incorrect value')]));
 			}
 
-			if (!Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT') && (int) Tools::getValue('value') == 1) {
+			if (!Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT') && (int) Tools::getValue('value') == 1) {
 				$this->ajaxDie(json_encode(['error' => $this->l('Not possible if advanced stock management is disabled. ')]));
 			}
 
@@ -8194,7 +8194,7 @@ class AdminProductsControllerCore extends AdminController {
 
 	public function initFormModules($obj) {
 
-		$idModule = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		$idModule = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 			(new DbQuery())
 				->select('`id_module`')
 				->from('module')
@@ -8366,7 +8366,7 @@ class AdminProductsControllerCore extends AdminController {
 							ini_set('max_execution_time', round($count * 1.5));
 						}
 
-						if (Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT')) {
+						if (Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT')) {
 							$stockManager = StockManagerFactory::getManager();
 						}
 
@@ -8379,7 +8379,7 @@ class AdminProductsControllerCore extends AdminController {
 								                                                             * - supply order(s) for this product
 							*/
 
-							if (Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT') && $product->advanced_stock_management) {
+							if (Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT') && $product->advanced_stock_management) {
 								$physical_quantity = $stockManager->getProductPhysicalQuantities($product->id, 0);
 								$real_quantity = $stockManager->getProductRealQuantities($product->id, 0);
 

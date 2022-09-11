@@ -62,7 +62,7 @@ class AttributeGroupCore extends ObjectModel {
      */
     public static function getAttributes($idLang, $idAttributeGroup) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('attribute', 'a')
@@ -84,7 +84,7 @@ class AttributeGroupCore extends ObjectModel {
      */
     public static function getAttributesGroups($idLang) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('DISTINCT agl.`name`, ag.*, agl.*')
                 ->from('attribute_group', 'ag')
@@ -132,7 +132,7 @@ class AttributeGroupCore extends ObjectModel {
      */
     public static function getHigherPosition() {
 
-        $position = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $position = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('MAX(`position`)')
                 ->from('attribute_group')
@@ -208,7 +208,7 @@ class AttributeGroupCore extends ObjectModel {
 
         if (!$this->hasMultishopEntries() || Shop::getContext() == Shop::CONTEXT_ALL) {
             /* Select children in order to find linked combinations */
-            $attributeIds = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $attributeIds = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('`id_attribute`')
                     ->from('attribute')
@@ -317,7 +317,7 @@ class AttributeGroupCore extends ObjectModel {
     public static function cleanPositions() {
 
         $return = true;
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_attribute_group`')
                 ->from('attribute_group')
@@ -391,7 +391,7 @@ class AttributeGroupCore extends ObjectModel {
      */
     public function getWsProductOptionValues() {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('a.`id_attribute` AS `id`')
                 ->from('attribute', 'a')
@@ -417,7 +417,7 @@ class AttributeGroupCore extends ObjectModel {
      */
     public function updatePosition($way, $position) {
 
-        if (!$res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        if (!$res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
             ->select('ag.`position`, ag.`id_attribute_group`')
             ->from('attribute_group', 'ag')

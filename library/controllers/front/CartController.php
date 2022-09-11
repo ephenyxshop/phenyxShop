@@ -87,7 +87,7 @@ class CartControllerCore extends FrontController {
             if (!$this->errors && !$this->ajax) {
                 $queryString = Tools::safeOutput(Tools::getValue('query', null));
 
-                if ($queryString && !Configuration::get('PS_CART_REDIRECT')) {
+                if ($queryString && !Configuration::get('EPH_CART_REDIRECT')) {
                     Tools::redirect('index.php?controller=search&search=' . $queryString);
                 }
 
@@ -96,7 +96,7 @@ class CartControllerCore extends FrontController {
                 if (isset($_SERVER['HTTP_REFERER'])) {
                     preg_match('!http(s?)://(.*)/(.*)!', $_SERVER['HTTP_REFERER'], $regs);
 
-                    if (isset($regs[3]) && !Configuration::get('PS_CART_REDIRECT')) {
+                    if (isset($regs[3]) && !Configuration::get('EPH_CART_REDIRECT')) {
                         $url = preg_replace('/(\?)+content_only=1/', '', $_SERVER['HTTP_REFERER']);
                         Tools::redirect($url);
                     }
@@ -180,7 +180,7 @@ class CartControllerCore extends FrontController {
             }
 
         } else if ($product->hasAttributes()) {
-            $minimumQuantity = ($product->out_of_stock == 2) ? !Configuration::get('PS_ORDER_OUT_OF_STOCK') : !$product->out_of_stock;
+            $minimumQuantity = ($product->out_of_stock == 2) ? !Configuration::get('EPH_ORDER_OUT_OF_STOCK') : !$product->out_of_stock;
             $this->id_product_attribute = Product::getDefaultAttribute($product->id, $minimumQuantity);
 
             if (!$this->id_product_attribute) {
@@ -301,7 +301,7 @@ class CartControllerCore extends FrontController {
      */
     protected function processDeleteProductInCart() {
 
-        $customizationProduct = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $customizationProduct = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('customization')
@@ -377,7 +377,7 @@ class CartControllerCore extends FrontController {
      */
     protected function processChangeProductAddressDelivery() {
 
-        if (!Configuration::get('PS_ALLOW_MULTISHIPPING')) {
+        if (!Configuration::get('EPH_ALLOW_MULTISHIPPING')) {
             return;
         }
 
@@ -412,7 +412,7 @@ class CartControllerCore extends FrontController {
      */
     protected function processAllowSeperatedPackage() {
 
-        if (!Configuration::get('PS_SHIP_WHEN_AVAILABLE')) {
+        if (!Configuration::get('EPH_SHIP_WHEN_AVAILABLE')) {
             return;
         }
 
@@ -434,7 +434,7 @@ class CartControllerCore extends FrontController {
      */
     protected function processDuplicateProduct() {
 
-        if (!Configuration::get('PS_ALLOW_MULTISHIPPING')) {
+        if (!Configuration::get('EPH_ALLOW_MULTISHIPPING')) {
             return;
         }
 
@@ -455,7 +455,7 @@ class CartControllerCore extends FrontController {
      */
     public function initContent() {
 
-        $this->setTemplate(_PS_THEME_DIR_ . 'errors.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'errors.tpl');
 
         if (!$this->ajax) {
             parent::initContent();
@@ -516,8 +516,8 @@ class CartControllerCore extends FrontController {
             $this->ajaxDie(json_encode(array_merge($result, (array) json_decode($json, true))));
         }
         // @todo create a hook
-        else if (file_exists(_PS_MODULE_DIR_ . '/blockcart/blockcart-ajax.php')) {
-            require_once _PS_MODULE_DIR_ . '/blockcart/blockcart-ajax.php';
+        else if (file_exists(_EPH_MODULE_DIR_ . '/blockcart/blockcart-ajax.php')) {
+            require_once _EPH_MODULE_DIR_ . '/blockcart/blockcart-ajax.php';
         }
 
     }

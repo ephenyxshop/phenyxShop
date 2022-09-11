@@ -156,7 +156,7 @@ class CustomerPieceDetailCore extends ObjectModel {
 	
 	
 	public function createList(CustomerPieces $order, Cart $cart, $productList, $idOrderInvoice = 0, $useTaxes = true, $idWarehouse = 0) {
-        $this->vat_address = new Address((int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
+        $this->vat_address = new Address((int) $order->{Configuration::get('EPH_TAX_ADDRESS_TYPE')});
         $this->customer = new Customer((int) $order->id_customer);
 
         $this->id_customer_piece = $order->id;
@@ -226,7 +226,7 @@ class CustomerPieceDetailCore extends ObjectModel {
 	protected function setDetailProductPrice(CustomerPieces $order, Cart $cart, $product)  {
        
 		$this->setContext((int) $product['id_shop']);
-        Product::getPriceStatic((int) $product['id_product'], true, (int) $product['id_product_attribute'], 6, null, false, true, $product['cart_quantity'], false, (int) $order->id_customer, (int) $order->id_cart, (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')}, $specificPrice, true, true, $this->context);
+        Product::getPriceStatic((int) $product['id_product'], true, (int) $product['id_product_attribute'], 6, null, false, true, $product['cart_quantity'], false, (int) $order->id_customer, (int) $order->id_cart, (int) $order->{Configuration::get('EPH_TAX_ADDRESS_TYPE')}, $specificPrice, true, true, $this->context);
         $this->specificPrice = $specificPrice;
         $this->original_product_price = Product::getPriceStatic($product['id_product'], false, (int) $product['id_product_attribute'], 6, null, false, false, 1, false, null, null, null, $null, true, true, $this->context);
         $this->product_price = $this->original_product_price;
@@ -269,7 +269,7 @@ class CustomerPieceDetailCore extends ObjectModel {
             false,
             (int) $order->id_customer,
             null,
-            (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')},
+            (int) $order->{Configuration::get('EPH_TAX_ADDRESS_TYPE')},
             $null,
             true,
             true,
@@ -278,8 +278,8 @@ class CustomerPieceDetailCore extends ObjectModel {
         $this->product_quantity_discount = 0.00;
         if ($quantityDiscount) {
             $this->product_quantity_discount = $unitPrice;
-            if (Product::getTaxCalculationMethod((int) $order->id_customer) == PS_TAX_EXC) {
-                $this->product_quantity_discount = Tools::ps_round($unitPrice, _EPH_PRICE_DATABASE_PRECISION_);
+            if (Product::getTaxCalculationMethod((int) $order->id_customer) == EPH_TAX_EXC) {
+                $this->product_quantity_discount = Tools::EPH_round($unitPrice, _EPH_PRICE_DATABASE_PRECISION_);
             }
 
             if (isset($this->tax_calculator)) {
@@ -295,12 +295,12 @@ class CustomerPieceDetailCore extends ObjectModel {
 
         $carrier = CustomerPieces::getCarrier((int) $this->id);
         if (isset($carrier) && Validate::isLoadedObject($carrier)) {
-            $taxRate = $carrier->getTaxesRate(new Address((int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')}));
+            $taxRate = $carrier->getTaxesRate(new Address((int) $order->{Configuration::get('EPH_TAX_ADDRESS_TYPE')}));
         }
 
         $this->total_shipping_price_tax_excl = (float) $product['additional_shipping_cost'];
         $this->total_shipping_price_tax_incl = (float) ($this->total_shipping_price_tax_excl * (1 + ($taxRate / 100)));
-        $this->total_shipping_price_tax_incl = Tools::ps_round($this->total_shipping_price_tax_incl, 2);
+        $this->total_shipping_price_tax_incl = Tools::EPH_round($this->total_shipping_price_tax_incl, 2);
     }
 	
 	protected function setProductTax(CustomerPieces $order, $product)  {
@@ -319,7 +319,7 @@ class CustomerPieceDetailCore extends ObjectModel {
 
         $this->ecotax_tax_rate = 0;
         if (!empty($product['ecotax'])) {
-            $this->ecotax_tax_rate = Tax::getProductEcotaxRate($order->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
+            $this->ecotax_tax_rate = Tax::getProductEcotaxRate($order->{Configuration::get('EPH_TAX_ADDRESS_TYPE')});
         }
     }
 	
@@ -348,9 +348,9 @@ class CustomerPieceDetailCore extends ObjectModel {
 
                     if ($this->specificPrice['reduction_tax']) {
                         $this->reduction_amount_tax_incl = $this->reduction_amount;
-                        $this->reduction_amount_tax_excl = Tools::ps_round($this->tax_calculator->removeTaxes($this->reduction_amount), _EPH_PRICE_DATABASE_PRECISION_);
+                        $this->reduction_amount_tax_excl = Tools::EPH_round($this->tax_calculator->removeTaxes($this->reduction_amount), _EPH_PRICE_DATABASE_PRECISION_);
                     } else {
-                        $this->reduction_amount_tax_incl = Tools::ps_round($this->tax_calculator->addTaxes($this->reduction_amount), _EPH_PRICE_DATABASE_PRECISION_);
+                        $this->reduction_amount_tax_incl = Tools::EPH_round($this->tax_calculator->addTaxes($this->reduction_amount), _EPH_PRICE_DATABASE_PRECISION_);
                         $this->reduction_amount_tax_excl = $this->reduction_amount;
                     }
                     break;
@@ -400,14 +400,14 @@ class CustomerPieceDetailCore extends ObjectModel {
         $values = [];
         foreach ($this->tax_calculator->getTaxesAmount($discountedPriceTaxExcl) as $idTax => $amount) {
             $unitAmount = $totalAmount = 0;
-            switch ((int) Configuration::get('PS_ROUND_TYPE')) {
+            switch ((int) Configuration::get('EPH_ROUND_TYPE')) {
                 case CustomerPieces::ROUND_ITEM:
-                    $unitAmount = (float) Tools::ps_round($amount, _PS_PRICE_DISPLAY_PRECISION_);
+                    $unitAmount = (float) Tools::EPH_round($amount, _EPH_PRICE_DISPLAY_PRECISION_);
                     $totalAmount = $unitAmount * $this->product_quantity;
                     break;
                 case CustomerPieces::ROUND_LINE:
                     $unitAmount = $amount;
-                    $totalAmount = Tools::ps_round($unitAmount * $this->product_quantity, _PS_PRICE_DISPLAY_PRECISION_);
+                    $totalAmount = Tools::EPH_round($unitAmount * $this->product_quantity, _EPH_PRICE_DISPLAY_PRECISION_);
                     break;
                 case CustomerPieces::ROUND_TOTAL:
                     $unitAmount = $amount;
@@ -447,7 +447,7 @@ class CustomerPieceDetailCore extends ObjectModel {
             return false;
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('*')
                 ->from('customer_piece_detail', 'od')
@@ -547,7 +547,7 @@ class CustomerPieceDetailCore extends ObjectModel {
 		
 		$computationMethod = 1;
         $taxes = [];
-        if ($results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        if ($results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('customer_piece_detail')
@@ -574,7 +574,7 @@ class CustomerPieceDetailCore extends ObjectModel {
             $front = false;
         }
 
-        $orders = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $orders = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('o.`id_customer_piece`')
                 ->from('customer_pieces', 'o')
@@ -590,7 +590,7 @@ class CustomerPieceDetailCore extends ObjectModel {
             }
             $list = rtrim($list, ',');
 
-            $orderProducts = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $orderProducts = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('DISTINCT od.`id_product` as produc_id, p.`id_product`, pl.`name`, pl.`link_rewrite`, p.`reference`, i.`id_image`, product_shop.`show_price`')
                     ->select('cl.`link_rewrite` AS `category`, p.`ean13`, p.`out_of_stock`, p.`id_category_default`')

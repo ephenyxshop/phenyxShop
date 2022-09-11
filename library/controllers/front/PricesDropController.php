@@ -48,13 +48,13 @@ class PricesDropControllerCore extends FrontController {
         $this->context->smarty->assign(
             [
                 'products'            => $products,
-                'add_prod_display'    => Configuration::get('PS_ATTRIBUTE_CATEGORY_DISPLAY'),
+                'add_prod_display'    => Configuration::get('EPH_ATTRIBUTE_CATEGORY_DISPLAY'),
                 'nbProducts'          => $nbProducts,
                 'homeSize'            => Image::getSize(ImageType::getFormatedName('home')),
-                'comparator_max_item' => Configuration::get('PS_COMPARATOR_MAX_ITEM'),
+                'comparator_max_item' => Configuration::get('EPH_COMPARATOR_MAX_ITEM'),
             ]
         );
 
-        $this->setTemplate(_PS_THEME_DIR_ . 'prices-drop.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'prices-drop.tpl');
     }
 }

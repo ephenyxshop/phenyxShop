@@ -106,7 +106,7 @@ class EncryptorCore {
      */
     private static function getCipherTool() {
 
-        $algo = (int) Configuration::get('PS_CIPHER_ALGORITHM');
+        $algo = (int) Configuration::get('EPH_CIPHER_ALGORITHM');
 
         if ($algo === static::ALGO_PHP_ENCRYPTION && static::supportsPhpEncryption()) {
             return new PhpEncryption(_PHP_ENCRYPTION_KEY_);

@@ -49,10 +49,10 @@ class AdminSearchConfControllerCore extends AdminController {
         ];
 
         // Search options
-        $cronUrl = Tools::getHttpHost(true, true) . __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_) . '/searchcron.php?full=1&token=' . substr(_COOKIE_KEY_, 34, 8) . (Shop::getContext() == Shop::CONTEXT_SHOP ? '&id_shop=' . (int) $this->context->shop->id : '');
+        $cronUrl = Tools::getHttpHost(true, true) . __EPH_BASE_URI__ . basename(_EPH_ADMIN_DIR_) . '/searchcron.php?full=1&token=' . substr(_COOKIE_KEY_, 34, 8) . (Shop::getContext() == Shop::CONTEXT_SHOP ? '&id_shop=' . (int) $this->context->shop->id : '');
 
         try {
-            list($total, $indexed) = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            list($total, $indexed) = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('COUNT(*) as "0", SUM(product_shop.`indexed`) as "1"')
                     ->from('product', 'p')
@@ -94,7 +94,7 @@ class AdminSearchConfControllerCore extends AdminController {
                         </a>
                     </p><br />',
                 'fields' => [
-                    'PS_SEARCH_INDEXATION' => [
+                    'EPH_SEARCH_INDEXATION' => [
                         'title'      => $this->l('Indexing'),
                         'validation' => 'isBool',
                         'type'       => 'bool',
@@ -108,7 +108,7 @@ class AdminSearchConfControllerCore extends AdminController {
                 'title'  => $this->l('Search'),
                 'icon'   => 'icon-search',
                 'fields' => [
-                    'PS_SEARCH_AJAX'       => [
+                    'EPH_SEARCH_AJAX'       => [
                         'title'      => $this->l('Ajax search'),
                         'validation' => 'isBool',
                         'type'       => 'bool',
@@ -118,7 +118,7 @@ class AdminSearchConfControllerCore extends AdminController {
                             $this->l('With ajax search, the first 10 products matching the user query will appear in real time below the input field.'),
                         ],
                     ],
-                    'PS_INSTANT_SEARCH'    => [
+                    'EPH_INSTANT_SEARCH'    => [
                         'title'      => $this->l('Instant search'),
                         'validation' => 'isBool',
                         'cast'       => 'intval',
@@ -128,7 +128,7 @@ class AdminSearchConfControllerCore extends AdminController {
                             $this->l('With instant search, the results will appear immediately as the user writes a query.'),
                         ],
                     ],
-                    'PS_SEARCH_START'      => [
+                    'EPH_SEARCH_START'      => [
                         'title'      => $this->l('Search within word'),
                         'validation' => 'isBool',
                         'cast'       => 'intval',
@@ -140,7 +140,7 @@ class AdminSearchConfControllerCore extends AdminController {
                             $this->l('It checks if the searched term is contained in the indexed word. This may be resource-consuming.'),
                         ],
                     ],
-                    'PS_SEARCH_END'        => [
+                    'EPH_SEARCH_END'        => [
                         'title'      => $this->l('Search exact end match'),
                         'validation' => 'isBool',
                         'cast'       => 'intval',
@@ -152,14 +152,14 @@ class AdminSearchConfControllerCore extends AdminController {
                             $this->l('It checks if the searched term is the exact end of the indexed word.'),
                         ],
                     ],
-                    'PS_SEARCH_MINWORDLEN' => [
+                    'EPH_SEARCH_MINWORDLEN' => [
                         'title'      => $this->l('Minimum word length (in characters)'),
                         'hint'       => $this->l('Only words this size or larger will be indexed.'),
                         'validation' => 'isUnsignedInt',
                         'type'       => 'text',
                         'cast'       => 'intval',
                     ],
-                    'PS_SEARCH_BLACKLIST'  => [
+                    'EPH_SEARCH_BLACKLIST'  => [
                         'title'      => $this->l('Blacklisted words'),
                         'validation' => 'isGenericName',
                         'hint'       => $this->l('Please enter the index words separated by a "|".'),
@@ -177,55 +177,55 @@ class AdminSearchConfControllerCore extends AdminController {
                         ' . $this->l('We advise you to set a greater weight for words which appear in the name or reference of a product. This will allow the search results to be as precise and relevant as possible.') . '<br /><br />
                         ' . $this->l('Setting a weight to 0 will exclude that field from search index. Re-build of the entire index is required when changing to or from 0'),
                 'fields' => [
-                    'PS_SEARCH_WEIGHT_PNAME'     => [
+                    'EPH_SEARCH_WEIGHT_PNAME'     => [
                         'title'      => $this->l('Product name weight'),
                         'validation' => 'isUnsignedInt',
                         'type'       => 'text',
                         'cast'       => 'intval',
                     ],
-                    'PS_SEARCH_WEIGHT_REF'       => [
+                    'EPH_SEARCH_WEIGHT_REF'       => [
                         'title'      => $this->l('Reference weight'),
                         'validation' => 'isUnsignedInt',
                         'type'       => 'text',
                         'cast'       => 'intval',
                     ],
-                    'PS_SEARCH_WEIGHT_SHORTDESC' => [
+                    'EPH_SEARCH_WEIGHT_SHORTDESC' => [
                         'title'      => $this->l('Short description weight'),
                         'validation' => 'isUnsignedInt',
                         'type'       => 'text',
                         'cast'       => 'intval',
                     ],
-                    'PS_SEARCH_WEIGHT_DESC'      => [
+                    'EPH_SEARCH_WEIGHT_DESC'      => [
                         'title'      => $this->l('Description weight'),
                         'validation' => 'isUnsignedInt',
                         'type'       => 'text',
                         'cast'       => 'intval',
                     ],
-                    'PS_SEARCH_WEIGHT_CNAME'     => [
+                    'EPH_SEARCH_WEIGHT_CNAME'     => [
                         'title'      => $this->l('Category weight'),
                         'validation' => 'isUnsignedInt',
                         'type'       => 'text',
                         'cast'       => 'intval',
                     ],
-                    'PS_SEARCH_WEIGHT_MNAME'     => [
+                    'EPH_SEARCH_WEIGHT_MNAME'     => [
                         'title'      => $this->l('Manufacturer weight'),
                         'validation' => 'isUnsignedInt',
                         'type'       => 'text',
                         'cast'       => 'intval',
                     ],
-                    'PS_SEARCH_WEIGHT_TAG'       => [
+                    'EPH_SEARCH_WEIGHT_TAG'       => [
                         'title'      => $this->l('Tags weight'),
                         'validation' => 'isUnsignedInt',
                         'type'       => 'text',
                         'cast'       => 'intval',
                     ],
-                    'PS_SEARCH_WEIGHT_ATTRIBUTE' => [
+                    'EPH_SEARCH_WEIGHT_ATTRIBUTE' => [
                         'title'      => $this->l('Attributes weight'),
                         'validation' => 'isUnsignedInt',
                         'type'       => 'text',
                         'cast'       => 'intval',
                     ],
-                    'PS_SEARCH_WEIGHT_FEATURE'   => [
+                    'EPH_SEARCH_WEIGHT_FEATURE'   => [
                         'title'      => $this->l('Features weight'),
                         'validation' => 'isUnsignedInt',
                         'type'       => 'text',
@@ -287,9 +287,9 @@ class AdminSearchConfControllerCore extends AdminController {
     public function setMedia($isNewTheme = false) {
 
         parent::setMedia($isNewTheme);
-        $this->addCSS(__PS_BASE_URI__ . _PS_JS_DIR_ . '' . $this->bo_theme . '/css/jquery-ui.css');
+        $this->addCSS(__EPH_BASE_URI__ . _EPH_JS_DIR_ . '' . $this->bo_theme . '/css/jquery-ui.css');
         $this->addJquery('3.4.1');
-        $this->addJS(__PS_BASE_URI__ . _PS_JS_DIR_ . 'jquery-ui/jquery-ui.js');
+        $this->addJS(__EPH_BASE_URI__ . _EPH_JS_DIR_ . 'jquery-ui/jquery-ui.js');
 
     }
 

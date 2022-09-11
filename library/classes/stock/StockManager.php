@@ -58,7 +58,7 @@ class StockManagerCore implements StockManagerInterface
         }
 
         if (!StockMvtReason::exists($idStockMvtReason)) {
-            $idStockMvtReason = Configuration::get('PS_STOCK_MVT_INC_REASON_DEFAULT');
+            $idStockMvtReason = Configuration::get('EPH_STOCK_MVT_INC_REASON_DEFAULT');
         }
 
         $context = Context::getContext();
@@ -222,10 +222,10 @@ class StockManagerCore implements StockManagerInterface
                     $product->pack_stock_type == 1 ||
                     $product->pack_stock_type == 2 || (
                         $product->pack_stock_type == 3 &&
-                        Configuration::get('PS_PACK_STOCK_TYPE') > 0
+                        Configuration::get('EPH_PACK_STOCK_TYPE') > 0
                     )
                 ) {
-                    $productsPack = Pack::getItems((int) $idProduct, (int) Configuration::get('PS_LANG_DEFAULT'));
+                    $productsPack = Pack::getItems((int) $idProduct, (int) Configuration::get('EPH_LANG_DEFAULT'));
                     // Foreach item
                     foreach ($productsPack as $productPack) {
                         if ($productPack->advanced_stock_management == 1) {
@@ -257,8 +257,8 @@ class StockManagerCore implements StockManagerInterface
                 if ($product->pack_stock_type == 0 ||
                     $product->pack_stock_type == 2 || (
                         $product->pack_stock_type == 3 && (
-                            Configuration::get('PS_PACK_STOCK_TYPE') == 0 ||
-                            Configuration::get('PS_PACK_STOCK_TYPE') == 2
+                            Configuration::get('EPH_PACK_STOCK_TYPE') == 0 ||
+                            Configuration::get('EPH_PACK_STOCK_TYPE') == 2
                         )
                     )
                 ) {
@@ -342,7 +342,7 @@ class StockManagerCore implements StockManagerInterface
                             continue;
                         }
 
-                        $resource = Db::getInstance(_PS_USE_SQL_SLAVE_)->query(
+                        $resource = Db::getInstance(_EPH_USE_SQL_SLAVE_)->query(
                             '
 							SELECT sm.`id_stock_mvt`, sm.`date_add`, sm.`physical_quantity`,
 								IF ((sm2.`physical_quantity` is null), sm.`physical_quantity`, (sm.`physical_quantity` - SUM(sm2.`physical_quantity`))) as qty
@@ -461,7 +461,7 @@ class StockManagerCore implements StockManagerInterface
                 $packs = Pack::getPacksContainingItem(
                     $idProduct,
                     $idProductAttribute,
-                    (int) Configuration::get('PS_LANG_DEFAULT')
+                    (int) Configuration::get('EPH_LANG_DEFAULT')
                 );
 
                 foreach ($packs as $pack) {
@@ -469,7 +469,7 @@ class StockManagerCore implements StockManagerInterface
                     if (!((int) $pack->pack_stock_type == 2) &&
                         !(
                             (int) $pack->pack_stock_type == 3 &&
-                            (int) Configuration::get('PS_PACK_STOCK_TYPE') == 2
+                            (int) Configuration::get('EPH_PACK_STOCK_TYPE') == 2
                         )
                     ) {
                         continue;
@@ -553,7 +553,7 @@ class StockManagerCore implements StockManagerInterface
             $query->where('s.id_warehouse IN('.implode(', ', $idsWarehouse).')');
         }
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
     }
 
     /**
@@ -670,7 +670,7 @@ class StockManagerCore implements StockManagerInterface
         $clientOrdersQty = 0;
 
         // check if product is present in a pack
-        if (!Pack::isPack($idProduct) && $inPack = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        if (!Pack::isPack($idProduct) && $inPack = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 'SELECT id_product_pack, quantity FROM '._DB_PREFIX_.'pack
 			WHERE id_product_item = '.(int) $idProduct.'
 			AND id_product_attribute_item = '.($idProductAttribute ? (int) $idProductAttribute : '0')
@@ -678,7 +678,7 @@ class StockManagerCore implements StockManagerInterface
         ) {
             foreach ($inPack as $value) {
                 if (Validate::isLoadedObject($product = new Product((int) $value['id_product_pack'])) &&
-                    ($product->pack_stock_type == 1 || $product->pack_stock_type == 2 || ($product->pack_stock_type == 3 && Configuration::get('PS_PACK_STOCK_TYPE') > 0))
+                    ($product->pack_stock_type == 1 || $product->pack_stock_type == 2 || ($product->pack_stock_type == 3 && Configuration::get('EPH_PACK_STOCK_TYPE') > 0))
                 ) {
                     $query = new DbQuery();
                     $query->select('od.product_quantity, od.product_quantity_refunded, pk.quantity');
@@ -690,14 +690,14 @@ class StockManagerCore implements StockManagerInterface
                     $query->leftJoin('pack', 'pk', 'pk.id_product_item = '.(int) $idProduct.' AND pk.id_product_attribute_item = '.($idProductAttribute ? (int) $idProductAttribute : '0').' AND id_product_pack = od.product_id');
                     $query->where('os.shipped != 1');
                     $query->where(
-                        'o.valid = 1 OR (os.id_order_state != '.(int) Configuration::get('PS_OS_ERROR').'
-								   AND os.id_order_state != '.(int) Configuration::get('PS_OS_CANCELED').')'
+                        'o.valid = 1 OR (os.id_order_state != '.(int) Configuration::get('EPH_OS_ERROR').'
+								   AND os.id_order_state != '.(int) Configuration::get('EPH_OS_CANCELED').')'
                     );
                     $query->groupBy('od.id_order_detail');
                     if (count($idsWarehouse)) {
                         $query->where('od.id_warehouse IN('.implode(', ', $idsWarehouse).')');
                     }
-                    $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+                    $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
                     if (count($res)) {
                         foreach ($res as $row) {
                             $clientOrdersQty += ($row['product_quantity'] - $row['product_quantity_refunded']) * $row['quantity'];
@@ -710,7 +710,7 @@ class StockManagerCore implements StockManagerInterface
         // skip if product is a pack without
         if (!Pack::isPack($idProduct) || (Pack::isPack($idProduct) && Validate::isLoadedObject($product = new Product((int) $idProduct))
                 && $product->pack_stock_type == 0 || $product->pack_stock_type == 2 ||
-                ($product->pack_stock_type == 3 && (Configuration::get('PS_PACK_STOCK_TYPE') == 0 || Configuration::get('PS_PACK_STOCK_TYPE') == 2)))
+                ($product->pack_stock_type == 3 && (Configuration::get('EPH_PACK_STOCK_TYPE') == 0 || Configuration::get('EPH_PACK_STOCK_TYPE') == 2)))
         ) {
             // Gets client_orders_qty
             $query = new DbQuery();
@@ -725,14 +725,14 @@ class StockManagerCore implements StockManagerInterface
             $query->leftJoin('order_state', 'os', 'os.id_order_state = oh.id_order_state');
             $query->where('os.shipped != 1');
             $query->where(
-                'o.valid = 1 OR (os.id_order_state != '.(int) Configuration::get('PS_OS_ERROR').'
-						   AND os.id_order_state != '.(int) Configuration::get('PS_OS_CANCELED').')'
+                'o.valid = 1 OR (os.id_order_state != '.(int) Configuration::get('EPH_OS_ERROR').'
+						   AND os.id_order_state != '.(int) Configuration::get('EPH_OS_CANCELED').')'
             );
             $query->groupBy('od.id_order_detail');
             if (count($idsWarehouse)) {
                 $query->where('od.id_warehouse IN('.implode(', ', $idsWarehouse).')');
             }
-            $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+            $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
             if (count($res)) {
                 foreach ($res as $row) {
                     $clientOrdersQty += ($row['product_quantity'] - $row['product_quantity_refunded']);
@@ -752,7 +752,7 @@ class StockManagerCore implements StockManagerInterface
             $query->where('so.id_warehouse IN('.implode(', ', $idsWarehouse).')');
         }
 
-        $supplyOrdersQties = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        $supplyOrdersQties = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
 
         $supplyOrdersQty = 0;
         foreach ($supplyOrdersQties as $qty) {
@@ -807,7 +807,7 @@ class StockManagerCore implements StockManagerInterface
             $idProductAttribute,
             $warehouseFrom,
             $quantity,
-            Configuration::get('PS_STOCK_MVT_TRANSFER_FROM'),
+            Configuration::get('EPH_STOCK_MVT_TRANSFER_FROM'),
             $usableFrom
         );
         if (!count($stocks)) {
@@ -832,7 +832,7 @@ class StockManagerCore implements StockManagerInterface
                 $idProductAttribute,
                 $warehouseTo,
                 $stock['quantity'],
-                Configuration::get('PS_STOCK_MVT_TRANSFER_TO'),
+                Configuration::get('EPH_STOCK_MVT_TRANSFER_TO'),
                 $price,
                 $usableTo
             )
@@ -876,7 +876,7 @@ class StockManagerCore implements StockManagerInterface
 				LEFT JOIN `'._DB_PREFIX_.'product_attribute` pa ON (p.`id_product` = pa.`id_product`)
 				'.Shop::addSqlAssociation('product_attribute', 'pa', false).'
 				WHERE sm.`sign` = -1
-				AND sm.`id_stock_mvt_reason` != '.Configuration::get('PS_STOCK_MVT_TRANSFER_FROM').'
+				AND sm.`id_stock_mvt_reason` != '.Configuration::get('EPH_STOCK_MVT_TRANSFER_FROM').'
 				AND TO_DAYS("'.date('Y-m-d').' 00:00:00") - TO_DAYS(sm.`date_add`) <= '.(int) $coverage.'
 				AND s.`id_product` = '.(int) $idProduct.'
 				AND s.`id_product_attribute` = '.(int) $idProductAttribute.
@@ -884,12 +884,12 @@ class StockManagerCore implements StockManagerInterface
 				GROUP BY sm.`id_stock_mvt`
 			) as view';
 
-        $quantityOut = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        $quantityOut = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
         if (!$quantityOut) {
             return -1;
         }
 
-        $quantityPerDay = Tools::ps_round($quantityOut / $coverage);
+        $quantityPerDay = Tools::EPH_round($quantityOut / $coverage);
         $physicalQuantity = $this->getProductPhysicalQuantities(
             $idProduct,
             $idProductAttribute,
@@ -897,7 +897,7 @@ class StockManagerCore implements StockManagerInterface
             true
         );
 
-        $timeLeft = ($quantityPerDay == 0) ? (-1) : Tools::ps_round($physicalQuantity / $quantityPerDay);
+        $timeLeft = ($quantityPerDay == 0) ? (-1) : Tools::EPH_round($physicalQuantity / $quantityPerDay);
 
         return $timeLeft;
     }
@@ -918,7 +918,7 @@ class StockManagerCore implements StockManagerInterface
      */
     protected function calculateWA(Stock $stock, $quantity, $priceTe)
     {
-        return (float) Tools::ps_round(((($stock->physical_quantity * $stock->price_te) + ($quantity * $priceTe)) / ($stock->physical_quantity + $quantity)), 6);
+        return (float) Tools::EPH_round(((($stock->physical_quantity * $stock->price_te) + ($quantity * $priceTe)) / ($stock->physical_quantity + $quantity)), 6);
     }
 
     /**
@@ -988,7 +988,7 @@ class StockManagerCore implements StockManagerInterface
                 $carriers = $ws->getWsCarriers();
 
                 if (is_array($carriers) && !empty($carriers)) {
-                    $stockQuantity += Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                    $stockQuantity += Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                         'SELECT SUM(s.`usable_quantity`) as quantity
 						FROM '._DB_PREFIX_.'stock s
 						LEFT JOIN '._DB_PREFIX_.'warehouse_carrier wc ON wc.`id_warehouse` = s.`id_warehouse`
@@ -996,7 +996,7 @@ class StockManagerCore implements StockManagerInterface
 						WHERE s.`id_product` = '.(int) $idProduct.' AND s.`id_product_attribute` = '.(int) $idProductAttribute.' AND s.`id_warehouse` = '.$result['id_warehouse'].' AND c.`id_carrier` IN ('.rtrim($deliveryOption[(int) Context::getContext()->cart->id_address_delivery], ',').') GROUP BY s.`id_product`'
                     );
                 } else {
-                    $stockQuantity += Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                    $stockQuantity += Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                         'SELECT SUM(s.`usable_quantity`) as quantity
 						FROM '._DB_PREFIX_.'stock s
 						WHERE s.`id_product` = '.(int) $idProduct.' AND s.`id_product_attribute` = '.(int) $idProductAttribute.' AND s.`id_warehouse` = '.$result['id_warehouse'].' GROUP BY s.`id_product`'
@@ -1037,7 +1037,7 @@ class StockManagerCore implements StockManagerInterface
     protected function ensureStockMovementReasonIsValid($stockMovementReasonId)
     {
         if (!StockMvtReason::exists($stockMovementReasonId)) {
-            $stockMovementReasonId = Configuration::get('PS_STOCK_MVT_DEC_REASON_DEFAULT');
+            $stockMovementReasonId = Configuration::get('EPH_STOCK_MVT_DEC_REASON_DEFAULT');
         }
 
         return $stockMovementReasonId;

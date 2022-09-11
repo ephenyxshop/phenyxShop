@@ -280,7 +280,7 @@ class SupplyOrderCore extends ObjectModel
 
         $query->groupBy('s.id_supply_order_detail');
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
     }
 
     /**
@@ -316,7 +316,7 @@ class SupplyOrderCore extends ObjectModel
         $query->from('supply_order_detail', 's');
         $query->where('s.id_supply_order = '.(int) $this->id);
 
-        return (Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query) > 0);
+        return (Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query) > 0);
     }
 
     /**
@@ -335,7 +335,7 @@ class SupplyOrderCore extends ObjectModel
         $query->from('supply_order_state', 's');
         $query->where('s.id_supply_order_state = '.(int) $this->id_supply_order_state);
 
-        return (Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query) == 1);
+        return (Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query) == 1);
     }
 
     /**
@@ -354,7 +354,7 @@ class SupplyOrderCore extends ObjectModel
         $query->from('supply_order_state', 's');
         $query->where('s.id_supply_order_state = '.(int) $this->id_supply_order_state);
 
-        return (Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query) == 1);
+        return (Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query) == 1);
     }
 
     /**
@@ -373,7 +373,7 @@ class SupplyOrderCore extends ObjectModel
         $query->from('supply_order_state', 's');
         $query->where('s.id_supply_order_state = '.(int) $this->id_supply_order_state);
 
-        return (Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query) == 1);
+        return (Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query) == 1);
     }
 
     /**
@@ -436,7 +436,7 @@ class SupplyOrderCore extends ObjectModel
         $query->where('sos.enclosed != 1');
         $query->where('so.id_warehouse = '.(int) $idWarehouse);
 
-        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
 
         return ($res > 0);
     }
@@ -465,7 +465,7 @@ class SupplyOrderCore extends ObjectModel
         $query->where('sos.enclosed != 1');
         $query->where('so.id_supplier = '.(int) $idSupplier);
 
-        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
 
         return ($res > 0);
     }
@@ -492,7 +492,7 @@ class SupplyOrderCore extends ObjectModel
         $query->from('supply_order', 'so');
         $query->where('so.id_supply_order = '.(int) $match.' OR so.reference = "'.pSQL($match).'"');
 
-        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        $res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
 
         return ((int) $res);
     }
@@ -518,7 +518,7 @@ class SupplyOrderCore extends ObjectModel
         $query->select('id_supply_order');
         $query->from('supply_order', 'so');
         $query->where('so.reference = "'.pSQL($reference).'"');
-        $idSupplyOrder = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        $idSupplyOrder = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
 
         if (!$idSupplyOrder) {
             return false;
@@ -545,7 +545,7 @@ class SupplyOrderCore extends ObjectModel
                 if ($this->def['fields'][$key]['validate'] == 'isFloat' ||
                     $this->def['fields'][$key]['validate'] == 'isPrice'
                 ) {
-                    $value = Tools::ps_round($value, 6);
+                    $value = Tools::EPH_round($value, 6);
                 }
                 $this->$key = $value;
             }
@@ -573,7 +573,7 @@ class SupplyOrderCore extends ObjectModel
         $query->select('so.reference');
         $query->from('supply_order', 'so');
         $query->where('so.id_supply_order = '.(int) $idSupplyOrder);
-        $ref = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        $ref = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
 
         return (pSQL($ref));
     }
@@ -656,6 +656,6 @@ class SupplyOrderCore extends ObjectModel
         $query->from('supply_order_detail', 'sod');
         $query->where('id_supply_order = '.(int) $this->id);
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
     }
 }

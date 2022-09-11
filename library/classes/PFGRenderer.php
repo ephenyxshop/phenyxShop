@@ -159,7 +159,7 @@ class PFGRenderer {
 					foreach ($values as $value) {
 						$value = trim($value);
 
-						if (Tools::substr(_PS_VERSION_, 0, 3) === '1.6') {
+						if (Tools::substr(_EPH_VERSION_, 0, 3) === '1.6') {
 							$element .= '<label class="checkbox">';
 						} else {
 							$element .= '<label class="input">';
@@ -182,7 +182,7 @@ class PFGRenderer {
 			case 'checkbox':
 				$type = $field['type'];
 
-				if (Tools::substr(_PS_VERSION_, 0, 3) === '1.6') {
+				if (Tools::substr(_EPH_VERSION_, 0, 3) === '1.6') {
 					$element = '<label class="checkbox"><input type="checkbox" value="true" ';
 				} else {
 					$element = '<label class="input"><input type="checkbox" value="true" ';
@@ -202,7 +202,7 @@ class PFGRenderer {
 
 				foreach ($values as $key => $value) {
 
-					if (Tools::substr(_PS_VERSION_, 0, 3) === '1.6') {
+					if (Tools::substr(_EPH_VERSION_, 0, 3) === '1.6') {
 						$element .= '<label class="checkbox"><input type="checkbox" value="' . $key . '" ';
 					} else {
 						$element .= '<label class="input"><input type="checkbox" value="' . $key . '" ';
@@ -218,7 +218,7 @@ class PFGRenderer {
 
 				break;
 			case 'captcha':
-				$element = '<label class="checkbox"><img src="' . __PS_BASE_URI__ .
+				$element = '<label class="checkbox"><img src="' . __EPH_BASE_URI__ .
 					'modules/powerfulformgenerator/controllers/front/captcha.php" alt="Captcha value" /></label>';
 				$element .= '<input type="' . $field['type'] . '" ';
 				$element = $this->addAttributes($element, $field);
@@ -277,11 +277,11 @@ class PFGRenderer {
 
 		$template_name = 'form.tpl';
 
-		if (Tools::substr(_PS_VERSION_, 0, 3) === '1.6') {
+		if (Tools::substr(_EPH_VERSION_, 0, 3) === '1.6') {
 			$template_name = 'form-1.6.tpl';
 		}
 
-		return Context::getContext()->smarty->fetch(_PS_THEME_DIR_ . 'formulaire/' . $template_name);
+		return Context::getContext()->smarty->fetch(_EPH_THEME_DIR_ . 'formulaire/' . $template_name);
 	}
 
 	/**
@@ -315,7 +315,7 @@ class PFGRenderer {
 			$element .= 'required ';
 		}
 
-		if (Tools::substr(_PS_VERSION_, 0, 3) === '1.6' && $field['type'] !== 'file') {
+		if (Tools::substr(_EPH_VERSION_, 0, 3) === '1.6' && $field['type'] !== 'file') {
 			$element .= 'class="form-control "';
 		}
 
@@ -410,7 +410,7 @@ class PFGRenderer {
 						'new' => $results[$field['name']][$key],
 					];
 
-					$results[$field['name']][$key] = _PS_BASE_URL_ . __PS_BASE_URI__ . 'upload/pfg/' . $results[$field['name']][$key];
+					$results[$field['name']][$key] = _EPH_BASE_URL_ . __EPH_BASE_URI__ . 'upload/pfg/' . $results[$field['name']][$key];
 				}
 
 			}
@@ -472,7 +472,7 @@ class PFGRenderer {
 		}
 
 		if ($contains_files) {
-			$destination_directory = _PS_ROOT_ADMIN_DIR_ . '/upload/pfg/';
+			$destination_directory = _EPH_ROOT_ADMIN_DIR_ . '/upload/pfg/';
 
 			if (!file_exists($destination_directory)) {
 				mkdir($destination_directory, 0777, true);
@@ -489,7 +489,7 @@ class PFGRenderer {
 
 		if ($news_letter_optin && !empty($senders_email)) {
 
-			if (count(Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('SHOW TABLES LIKE "' . _DB_PREFIX_ . 'newsletter";')) > 0) {
+			if (count(Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS('SHOW TABLES LIKE "' . _DB_PREFIX_ . 'newsletter";')) > 0) {
 				Db::getInstance()->execute('INSERT INTO `' . _DB_PREFIX_ .
 					'newsletter` (`id_shop`, `id_shop_group`, `email`, `newsletter_date_add`, `ip_registration_newsletter`, `active`)
 					VALUES (' . pSQL((int) Context::getContext()->shop->id) . ', ' . pSQL((int) Context::getContext()->shop->id_shop_group) . ', "' .

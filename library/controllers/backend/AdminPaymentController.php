@@ -38,7 +38,7 @@ class AdminPaymentControllerCore extends AdminController {
     public function setAjaxMedia() {
 
         return $this->pushJS([
-            _PS_JS_DIR_ . 'payment.js',
+            _EPH_JS_DIR_ . 'payment.js',
         ]);
     }
 
@@ -107,7 +107,7 @@ class AdminPaymentControllerCore extends AdminController {
             'titleBar'       => $this->TitleBar,
             'rangeMonths'    => $rangeMonths,
             'sessions'       => $sessions,
-            'bo_imgdir'      => __PS_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+            'bo_imgdir'      => __EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
             'idController'   => '',
         ]);
 

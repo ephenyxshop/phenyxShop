@@ -56,7 +56,7 @@ class AdminCartsControllerCore extends AdminController {
 
 		$this->TitleBar = $this->l('Carts management');
 
-		$lostcarts = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$lostcarts = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('*')
 				->from('cart')
@@ -78,7 +78,7 @@ class AdminCartsControllerCore extends AdminController {
 			'AjaxLink'           => $this->context->link->getAdminLink($this->controller_name),
 			'paragridScript'     => $this->generateParaGridScript(),
 			'titleBar'           => $this->TitleBar,
-			'bo_imgdir'          => __PS_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+			'bo_imgdir'          => __EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
 			'idController'       => '',
 			'lostcarts'          => count($lostcarts),
 		]);
@@ -389,7 +389,7 @@ class AdminCartsControllerCore extends AdminController {
 
 	public function ajaxProcessDeleteLostCarts() {
 
-		$lostcarts = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$lostcarts = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('*')
 				->from('cart')
@@ -512,7 +512,7 @@ class AdminCartsControllerCore extends AdminController {
 			$taxCalculationMethod = Group::getPriceDisplayMethod(Group::getCurrent()->id);
 		}
 
-		if ($taxCalculationMethod == PS_TAX_EXC) {
+		if ($taxCalculationMethod == EPH_TAX_EXC) {
 			$totalProducts = $summary['total_products'];
 			$totalDiscounts = $summary['total_discounts_tax_exc'];
 			$totalWrapping = $summary['total_wrapping_tax_exc'];
@@ -528,7 +528,7 @@ class AdminCartsControllerCore extends AdminController {
 
 		foreach ($products as $k => &$product) {
 
-			if ($taxCalculationMethod == PS_TAX_EXC) {
+			if ($taxCalculationMethod == EPH_TAX_EXC) {
 				$product['product_price'] = $product['price'];
 				$product['product_total'] = $product['total'];
 			} else {
@@ -539,7 +539,7 @@ class AdminCartsControllerCore extends AdminController {
 			$image = [];
 
 			if (isset($product['id_product_attribute']) && (int) $product['id_product_attribute']) {
-				$image = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+				$image = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
 					(new DbQuery())
 						->select('`id_image`')
 						->from('product_attribute_image')
@@ -548,7 +548,7 @@ class AdminCartsControllerCore extends AdminController {
 			}
 
 			if (!isset($image['id_image'])) {
-				$image = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+				$image = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
 					(new DbQuery())
 						->select('`id_image`')
 						->from('image')
@@ -560,7 +560,7 @@ class AdminCartsControllerCore extends AdminController {
 			$product['qty_in_stock'] = StockAvailable::getQuantityAvailableByProduct($product['id_product'], isset($product['id_product_attribute']) ? $product['id_product_attribute'] : null, (int) $idShop);
 
 			$imageProduct = new Image($image['id_image']);
-			$product['image'] = (isset($image['id_image']) ? ImageManager::thumbnail(_PS_IMG_DIR_ . 'p/' . $imageProduct->getExistingImgPath() . '.jpg', 'product_mini_' . (int) $product['id_product'] . (isset($product['id_product_attribute']) ? '_' . (int) $product['id_product_attribute'] : '') . '.jpg', 45, 'jpg') : '--');
+			$product['image'] = (isset($image['id_image']) ? ImageManager::thumbnail(_EPH_IMG_DIR_ . 'p/' . $imageProduct->getExistingImgPath() . '.jpg', 'product_mini_' . (int) $product['id_product'] . (isset($product['id_product_attribute']) ? '_' . (int) $product['id_product_attribute'] : '') . '.jpg', 45, 'jpg') : '--');
 		}
 
 		$helper = new HelperKpi();
@@ -633,11 +633,11 @@ class AdminCartsControllerCore extends AdminController {
 			}
 
 			if (!$this->context->cart->id_lang) {
-				$this->context->cart->id_lang = (($idLang = (int) Tools::getValue('id_lang')) ? $idLang : Configuration::get('PS_LANG_DEFAULT'));
+				$this->context->cart->id_lang = (($idLang = (int) Tools::getValue('id_lang')) ? $idLang : Configuration::get('EPH_LANG_DEFAULT'));
 			}
 
 			if (!$this->context->cart->id_currency) {
-				$this->context->cart->id_currency = (($idCurrency = (int) Tools::getValue('id_currency')) ? $idCurrency : Configuration::get('PS_CURRENCY_DEFAULT'));
+				$this->context->cart->id_currency = (($idCurrency = (int) Tools::getValue('id_currency')) ? $idCurrency : Configuration::get('EPH_CURRENCY_DEFAULT'));
 			}
 
 			$addresses = $customer->getAddresses((int) $this->context->cart->id_lang);
@@ -816,7 +816,7 @@ class AdminCartsControllerCore extends AdminController {
 			return [];
 		}
 
-		$idDefaultCarrier = (int) Configuration::get('PS_CARRIER_DEFAULT');
+		$idDefaultCarrier = (int) Configuration::get('EPH_CARRIER_DEFAULT');
 
 		foreach (current($deliveryOptionList) as $key => $deliveryOption) {
 			$name = '';
@@ -911,23 +911,23 @@ class AdminCartsControllerCore extends AdminController {
 							continue;
 						}
 
-						if ($error = ImageManager::validateUpload($_FILES[$fieldId], (int) Configuration::get('PS_PRODUCT_PICTURE_MAX_SIZE'))) {
+						if ($error = ImageManager::validateUpload($_FILES[$fieldId], (int) Configuration::get('EPH_PRODUCT_PICTURE_MAX_SIZE'))) {
 							$errors[] = $error;
 						}
 
-						if (!($tmpName = tempnam(_PS_TMP_IMG_DIR_, 'PS')) || !move_uploaded_file($_FILES[$fieldId]['tmp_name'], $tmpName)) {
+						if (!($tmpName = tempnam(_EPH_TMP_IMG_DIR_, 'PS')) || !move_uploaded_file($_FILES[$fieldId]['tmp_name'], $tmpName)) {
 							$errors[] = Tools::displayError('An error occurred during the image upload process.');
 						}
 
 						$fileName = md5(uniqid(rand(), true));
 
-						if (!ImageManager::resize($tmpName, _PS_UPLOAD_DIR_ . $fileName)) {
+						if (!ImageManager::resize($tmpName, _EPH_UPLOAD_DIR_ . $fileName)) {
 							continue;
 						} else
-						if (!ImageManager::resize($tmpName, _PS_UPLOAD_DIR_ . $fileName . '_small', (int) Configuration::get('PS_PRODUCT_PICTURE_WIDTH'), (int) Configuration::get('PS_PRODUCT_PICTURE_HEIGHT'))) {
+						if (!ImageManager::resize($tmpName, _EPH_UPLOAD_DIR_ . $fileName . '_small', (int) Configuration::get('EPH_PRODUCT_PICTURE_WIDTH'), (int) Configuration::get('EPH_PRODUCT_PICTURE_HEIGHT'))) {
 							$errors[] = Tools::displayError('An error occurred during the image upload process.');
 						} else
-						if (!chmod(_PS_UPLOAD_DIR_ . $fileName, 0777) || !chmod(_PS_UPLOAD_DIR_ . $fileName . '_small', 0777)) {
+						if (!chmod(_EPH_UPLOAD_DIR_ . $fileName, 0777) || !chmod(_EPH_UPLOAD_DIR_ . $fileName . '_small', 0777)) {
 							$errors[] = Tools::displayError('An error occurred during the image upload process.');
 						} else {
 							$this->context->cart->addPictureToProduct((int) $product->id, (int) $customizationField['id_customization_field'], Product::CUSTOMIZE_FILE, $fileName);
@@ -1178,7 +1178,7 @@ class AdminCartsControllerCore extends AdminController {
 			if (!$idCartRule = CartRule::getIdByCode(CartRule::BO_ORDER_CODE_PREFIX . (int) $this->context->cart->id)) {
 				$cartRule = new CartRule();
 				$cartRule->code = CartRule::BO_ORDER_CODE_PREFIX . (int) $this->context->cart->id;
-				$cartRule->name = [Configuration::get('PS_LANG_DEFAULT') => $this->l('Free Shipping', 'AdminTab', false, false)];
+				$cartRule->name = [Configuration::get('EPH_LANG_DEFAULT') => $this->l('Free Shipping', 'AdminTab', false, false)];
 				$cartRule->id_customer = (int) $this->context->cart->id_customer;
 				$cartRule->free_shipping = true;
 				$cartRule->quantity = 1;

@@ -118,12 +118,12 @@ class PhenyxShopLoggerCore extends ObjectModel {
      */
     public static function sendByMail($log) {
 
-        if ((int) Configuration::get('PS_LOGS_BY_EMAIL') <= (int) $log->severity) {
-            $tpl = $context->smarty->createTemplate(_PS_MAIL_DIR_ . '/fr/log_alert.tpl');
+        if ((int) Configuration::get('EPH_LOGS_BY_EMAIL') <= (int) $log->severity) {
+            $tpl = $context->smarty->createTemplate(_EPH_MAIL_DIR_ . '/fr/log_alert.tpl');
             $postfields = [
                 'sender'      => [
-                    'name'  => "Service  Administratif ".Configuration::get('PS_SHOP_NAME'),
-                    'email' => 'no-reply@'.Configuration::get('PS_SHOP_URL'),
+                    'name'  => "Service  Administratif ".Configuration::get('EPH_SHOP_NAME'),
+                    'email' => 'no-reply@'.Configuration::get('EPH_SHOP_URL'),
                 ],
                 'to'          => [
                     [

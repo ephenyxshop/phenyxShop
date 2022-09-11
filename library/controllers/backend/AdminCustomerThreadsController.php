@@ -26,12 +26,12 @@ class AdminCustomerThreadsControllerCore extends AdminController {
             'contact' => [
                 'title'  => $this->l('Contact options'),
                 'fields' => [
-                    'PS_CUSTOMER_SERVICE_FILE_UPLOAD' => [
+                    'EPH_CUSTOMER_SERVICE_FILE_UPLOAD' => [
                         'title' => $this->l('Allow file uploading'),
                         'hint'  => $this->l('Allow customers to upload files using the contact page.'),
                         'type'  => 'bool',
                     ],
-                    'PS_CUSTOMER_SERVICE_SIGNATURE'   => [
+                    'EPH_CUSTOMER_SERVICE_SIGNATURE'   => [
                         'title' => $this->l('Default message'),
                         'hint'  => $this->l('Please fill out the message fields that appear by default when you answer a thread on the customer service page.'),
                         'type'  => 'textareaLang',
@@ -43,63 +43,63 @@ class AdminCustomerThreadsControllerCore extends AdminController {
             'general' => [
                 'title'  => $this->l('Customer service options'),
                 'fields' => [
-                    'PS_SAV_IMAP_URL'                 => [
+                    'EPH_SAV_IMAP_URL'                 => [
                         'title' => $this->l('IMAP URL'),
                         'hint'  => $this->l('URL for your IMAP server (ie.: mail.server.com).'),
                         'type'  => 'text',
                     ],
-                    'PS_SAV_IMAP_PORT'                => [
+                    'EPH_SAV_IMAP_PORT'                => [
                         'title'        => $this->l('IMAP port'),
                         'hint'         => $this->l('Port to use to connect to your IMAP server.'),
                         'type'         => 'text',
                         'defaultValue' => 143,
                     ],
-                    'PS_SAV_IMAP_USER'                => [
+                    'EPH_SAV_IMAP_USER'                => [
                         'title' => $this->l('IMAP user'),
                         'hint'  => $this->l('User to use to connect to your IMAP server.'),
                         'type'  => 'text',
                     ],
-                    'PS_SAV_IMAP_PWD'                 => [
+                    'EPH_SAV_IMAP_PWD'                 => [
                         'title' => $this->l('IMAP password'),
                         'hint'  => $this->l('Password to use to connect your IMAP server.'),
                         'type'  => 'text',
                     ],
-                    'PS_SAV_IMAP_DELETE_MSG'          => [
+                    'EPH_SAV_IMAP_DELETE_MSG'          => [
                         'title' => $this->l('Delete messages'),
                         'hint'  => $this->l('Delete messages after synchronization. If you do not enable this option, the synchronization will take more time.'),
                         'type'  => 'bool',
                     ],
-                    'PS_SAV_IMAP_CREATE_THREADS'      => [
+                    'EPH_SAV_IMAP_CREATE_THREADS'      => [
                         'title' => $this->l('Create new threads'),
                         'hint'  => $this->l('Create new threads for unrecognized emails.'),
                         'type'  => 'bool',
                     ],
-                    'PS_SAV_IMAP_OPT_NORSH'           => [
+                    'EPH_SAV_IMAP_OPT_NORSH'           => [
                         'title' => $this->l('IMAP options') . ' (/norsh)',
                         'type'  => 'bool',
                         'hint'  => $this->l('Do not use RSH or SSH to establish a preauthenticated IMAP sessions.'),
                     ],
-                    'PS_SAV_IMAP_OPT_SSL'             => [
+                    'EPH_SAV_IMAP_OPT_SSL'             => [
                         'title' => $this->l('IMAP options') . ' (/ssl)',
                         'type'  => 'bool',
                         'hint'  => $this->l('Use the Secure Socket Layer (TLS/SSL) to encrypt the session.'),
                     ],
-                    'PS_SAV_IMAP_OPT_VALIDATE-CERT'   => [
+                    'EPH_SAV_IMAP_OPT_VALIDATE-CERT'   => [
                         'title' => $this->l('IMAP options') . ' (/validate-cert)',
                         'type'  => 'bool',
                         'hint'  => $this->l('Validate certificates from the TLS/SSL server.'),
                     ],
-                    'PS_SAV_IMAP_OPT_NOVALIDATE-CERT' => [
+                    'EPH_SAV_IMAP_OPT_NOVALIDATE-CERT' => [
                         'title' => $this->l('IMAP options') . ' (/novalidate-cert)',
                         'type'  => 'bool',
                         'hint'  => $this->l('Do not validate certificates from the TLS/SSL server. This is only needed if a server uses self-signed certificates.'),
                     ],
-                    'PS_SAV_IMAP_OPT_TLS'             => [
+                    'EPH_SAV_IMAP_OPT_TLS'             => [
                         'title' => $this->l('IMAP options') . ' (/tls)',
                         'type'  => 'bool',
                         'hint'  => $this->l('Force use of start-TLS to encrypt the session, and reject connection to servers that do not support it.'),
                     ],
-                    'PS_SAV_IMAP_OPT_NOTLS'           => [
+                    'EPH_SAV_IMAP_OPT_NOTLS'           => [
                         'title' => $this->l('IMAP options') . ' (/notls)',
                         'type'  => 'bool',
                         'hint'  => $this->l('Do not use start-TLS to encrypt the session, even with servers that support it.'),
@@ -156,10 +156,10 @@ class AdminCustomerThreadsControllerCore extends AdminController {
             $this->tpl_option_vars['controller'] = $this->controller_name;
             $this->tpl_option_vars['link'] = $this->context->link;
 
-            if (Configuration::get('PS_SAV_IMAP_URL')
-                && Configuration::get('PS_SAV_IMAP_PORT')
-                && Configuration::get('PS_SAV_IMAP_USER')
-                && Configuration::get('PS_SAV_IMAP_PWD')
+            if (Configuration::get('EPH_SAV_IMAP_URL')
+                && Configuration::get('EPH_SAV_IMAP_PORT')
+                && Configuration::get('EPH_SAV_IMAP_USER')
+                && Configuration::get('EPH_SAV_IMAP_PWD')
             ) {
                 $this->tpl_option_vars['use_sync'] = true;
             } else {
@@ -834,10 +834,10 @@ class AdminCustomerThreadsControllerCore extends AdminController {
         // To avoid an error if the IMAP isn't configured, we check the configuration here, like during
         // the synchronization. All parameters will exists.
 
-        if (!(Configuration::get('PS_SAV_IMAP_URL')
-            || Configuration::get('PS_SAV_IMAP_PORT')
-            || Configuration::get('PS_SAV_IMAP_USER')
-            || Configuration::get('PS_SAV_IMAP_PWD'))
+        if (!(Configuration::get('EPH_SAV_IMAP_URL')
+            || Configuration::get('EPH_SAV_IMAP_PORT')
+            || Configuration::get('EPH_SAV_IMAP_USER')
+            || Configuration::get('EPH_SAV_IMAP_PWD'))
         ) {
             return;
         }
@@ -868,48 +868,48 @@ class AdminCustomerThreadsControllerCore extends AdminController {
      */
     public function syncImap() {
 
-        if (!($url = Configuration::get('PS_SAV_IMAP_URL'))
-            || !($port = Configuration::get('PS_SAV_IMAP_PORT'))
-            || !($user = Configuration::get('PS_SAV_IMAP_USER'))
-            || !($password = Configuration::get('PS_SAV_IMAP_PWD'))
+        if (!($url = Configuration::get('EPH_SAV_IMAP_URL'))
+            || !($port = Configuration::get('EPH_SAV_IMAP_PORT'))
+            || !($user = Configuration::get('EPH_SAV_IMAP_USER'))
+            || !($password = Configuration::get('EPH_SAV_IMAP_PWD'))
         ) {
             return ['hasError' => true, 'errors' => ['IMAP configuration is not correct']];
         }
 
         $conf = Configuration::getMultiple(
             [
-                'PS_SAV_IMAP_OPT_NORSH',
-                'PS_SAV_IMAP_OPT_SSL',
-                'PS_SAV_IMAP_OPT_VALIDATE-CERT',
-                'PS_SAV_IMAP_OPT_NOVALIDATE-CERT',
-                'PS_SAV_IMAP_OPT_TLS',
-                'PS_SAV_IMAP_OPT_NOTLS',
+                'EPH_SAV_IMAP_OPT_NORSH',
+                'EPH_SAV_IMAP_OPT_SSL',
+                'EPH_SAV_IMAP_OPT_VALIDATE-CERT',
+                'EPH_SAV_IMAP_OPT_NOVALIDATE-CERT',
+                'EPH_SAV_IMAP_OPT_TLS',
+                'EPH_SAV_IMAP_OPT_NOTLS',
             ]
         );
 
         $confStr = '';
 
-        if ($conf['PS_SAV_IMAP_OPT_NORSH']) {
+        if ($conf['EPH_SAV_IMAP_OPT_NORSH']) {
             $confStr .= '/norsh';
         }
 
-        if ($conf['PS_SAV_IMAP_OPT_SSL']) {
+        if ($conf['EPH_SAV_IMAP_OPT_SSL']) {
             $confStr .= '/ssl';
         }
 
-        if ($conf['PS_SAV_IMAP_OPT_VALIDATE-CERT']) {
+        if ($conf['EPH_SAV_IMAP_OPT_VALIDATE-CERT']) {
             $confStr .= '/validate-cert';
         }
 
-        if ($conf['PS_SAV_IMAP_OPT_NOVALIDATE-CERT']) {
+        if ($conf['EPH_SAV_IMAP_OPT_NOVALIDATE-CERT']) {
             $confStr .= '/novalidate-cert';
         }
 
-        if ($conf['PS_SAV_IMAP_OPT_TLS']) {
+        if ($conf['EPH_SAV_IMAP_OPT_TLS']) {
             $confStr .= '/tls';
         }
 
-        if ($conf['PS_SAV_IMAP_OPT_NOTLS']) {
+        if ($conf['EPH_SAV_IMAP_OPT_NOTLS']) {
             $confStr .= '/notls';
         }
 
@@ -978,7 +978,7 @@ class AdminCustomerThreadsControllerCore extends AdminController {
 
             if ($exist) {
 
-                if (Configuration::get('PS_SAV_IMAP_DELETE_MSG')) {
+                if (Configuration::get('EPH_SAV_IMAP_DELETE_MSG')) {
 
                     if (!imap_delete($mbox, $overview->msgno)) {
                         $strErrorDelete = ', Fail to delete message';
@@ -996,7 +996,7 @@ class AdminCustomerThreadsControllerCore extends AdminController {
                     $matchFound = true;
                 }
 
-                $newCt = (Configuration::get('PS_SAV_IMAP_CREATE_THREADS') && !$matchFound && (strpos($subject, '[no_sync]') == false));
+                $newCt = (Configuration::get('EPH_SAV_IMAP_CREATE_THREADS') && !$matchFound && (strpos($subject, '[no_sync]') == false));
 
                 if ($matchFound || $newCt) {
 
@@ -1039,7 +1039,7 @@ class AdminCustomerThreadsControllerCore extends AdminController {
 
                         $ct->email = $from;
                         $ct->id_contact = $idContact;
-                        $ct->id_lang = (int) Configuration::get('PS_LANG_DEFAULT');
+                        $ct->id_lang = (int) Configuration::get('EPH_LANG_DEFAULT');
                         $ct->id_shop = $this->context->shop->id; //new customer threads for unrecognized mails are not shown without shop id
                         $ct->status = 'open';
                         $ct->token = Tools::passwdGen(12);
@@ -1193,7 +1193,7 @@ class AdminCustomerThreadsControllerCore extends AdminController {
                         $currentEmployee->firstname . ' ' . $currentEmployee->lastname,
                         null,
                         null,
-                        _PS_MAIL_DIR_,
+                        _EPH_MAIL_DIR_,
                         true
                     )) {
                         $cm->private = 1;
@@ -1223,7 +1223,7 @@ class AdminCustomerThreadsControllerCore extends AdminController {
                         $currentEmployee->firstname . ' ' . $currentEmployee->lastname,
                         null,
                         null,
-                        _PS_MAIL_DIR_,
+                        _EPH_MAIL_DIR_,
                         true
                     )) {
                         $cm->message = $this->l('Message forwarded to') . ' ' . Tools::convertEmailFromIdn($email) . "\n" . $this->l('Comment:') . ' ' . $message;
@@ -1296,7 +1296,7 @@ class AdminCustomerThreadsControllerCore extends AdminController {
                         $fromName,
                         $fileAttachment,
                         null,
-                        _PS_MAIL_DIR_,
+                        _EPH_MAIL_DIR_,
                         true,
                         $ct->id_shop
                     )) {
@@ -1369,7 +1369,7 @@ class AdminCustomerThreadsControllerCore extends AdminController {
 
         $tpl->assign(
             [
-                'thread_url'        => Tools::getAdminUrl(basename(_PS_ADMIN_DIR_) . '/' . $this->context->link->getAdminLink('AdminCustomerThreads') . '&amp;id_customer_thread=' . (int) $message['id_customer_thread'] . '&amp;viewcustomer_thread=1'),
+                'thread_url'        => Tools::getAdminUrl(basename(_EPH_ADMIN_DIR_) . '/' . $this->context->link->getAdminLink('AdminCustomerThreads') . '&amp;id_customer_thread=' . (int) $message['id_customer_thread'] . '&amp;viewcustomer_thread=1'),
                 'link'              => $this->context->link,
                 'current'           => static::$currentIndex,
                 'token'             => $this->token,
@@ -1377,8 +1377,8 @@ class AdminCustomerThreadsControllerCore extends AdminController {
                 'id_order_product'  => isset($idOrderProduct) ? $idOrderProduct : null,
                 'email'             => Tools::convertEmailFromIdn($email),
                 'id_employee'       => $idEmployee,
-                'PS_SHOP_NAME'      => Configuration::get('PS_SHOP_NAME'),
-                'file_name'         => file_exists(_PS_UPLOAD_DIR_ . $message['file_name']),
+                'EPH_SHOP_NAME'      => Configuration::get('EPH_SHOP_NAME'),
+                'file_name'         => file_exists(_EPH_UPLOAD_DIR_ . $message['file_name']),
                 'contacts'          => $contacts,
                 'is_valid_order_id' => $isValidOrderId,
             ]
@@ -1422,8 +1422,8 @@ class AdminCustomerThreadsControllerCore extends AdminController {
 
             if (isset($mess['file_name']) && $mess['file_name'] != '') {
 
-                if (file_exists(_PS_UPLOAD_DIR_ . $mess['file_name'])) {
-                    $ext = pathinfo(_PS_UPLOAD_DIR_ . $mess['file_name'], PATHINFO_EXTENSION);
+                if (file_exists(_EPH_UPLOAD_DIR_ . $mess['file_name'])) {
+                    $ext = pathinfo(_EPH_UPLOAD_DIR_ . $mess['file_name'], PATHINFO_EXTENSION);
 
                     if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) {
                         $mess['image'] = $this->context->link->getBaseFrontLink() . 'upload/' . $mess['file_name'];
@@ -1575,7 +1575,7 @@ class AdminCustomerThreadsControllerCore extends AdminController {
             'total_ok'                      => isset($totalOk) ? Tools::displayPrice($totalOk, $this->context->currency) : false,
             'orders_ok'                     => isset($ordersOk) ? $ordersOk : false,
             'count_ok'                      => isset($ordersOk) ? count($ordersOk) : false,
-            'PS_CUSTOMER_SERVICE_SIGNATURE' => str_replace('\r\n', "\n", Configuration::get('PS_CUSTOMER_SERVICE_SIGNATURE', (int) $thread->id_lang)),
+            'EPH_CUSTOMER_SERVICE_SIGNATURE' => str_replace('\r\n', "\n", Configuration::get('EPH_CUSTOMER_SERVICE_SIGNATURE', (int) $thread->id_lang)),
             'timeline_items'                => $timelineItems,
             'AjaxBackLink'                  => $this->context->link->getAdminLink($this->controller_name),
         ];
@@ -1669,7 +1669,7 @@ class AdminCustomerThreadsControllerCore extends AdminController {
         }
 
         if (!$this->errors && $value) {
-            Configuration::updateValue('PS_SAV_IMAP_OPT', implode('', $value));
+            Configuration::updateValue('EPH_SAV_IMAP_OPT', implode('', $value));
         }
 
     }
@@ -1751,7 +1751,7 @@ class AdminCustomerThreadsControllerCore extends AdminController {
 
         header('Content-Type: ' . $extension);
         header('Content-Disposition:attachment;filename="' . $filename . '"');
-        readfile(_PS_UPLOAD_DIR_ . $filename);
+        readfile(_EPH_UPLOAD_DIR_ . $filename);
         die;
     }
 

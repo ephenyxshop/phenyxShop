@@ -105,7 +105,7 @@ class AddressesControllerCore extends FrontController {
             ]
         );
 
-        $this->setTemplate(_PS_THEME_DIR_ . 'addresses.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'addresses.tpl');
     }
 
 }

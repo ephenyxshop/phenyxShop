@@ -29,11 +29,11 @@ class AdminTrackingControllerCore extends AdminController {
     public function setMedia($isNewTheme = false) {
 
         parent::setMedia($isNewTheme);
-        $this->addCSS(__PS_BASE_URI__ . $this->admin_webpath . '/js/default/css/black-tie/jquery-ui.css');
-        $this->addCSS(__PS_BASE_URI__ . $this->admin_webpath . '/js/default/css/overflowtabs.css');
+        $this->addCSS(__EPH_BASE_URI__ . $this->admin_webpath . '/js/default/css/black-tie/jquery-ui.css');
+        $this->addCSS(__EPH_BASE_URI__ . $this->admin_webpath . '/js/default/css/overflowtabs.css');
         $this->addJquery('3.4.1');
-        $this->addJS(__PS_BASE_URI__ . $this->admin_webpath . '/js/jquery-ui/jquery-ui.js');
-        $this->addJS(__PS_BASE_URI__ . $this->admin_webpath . '/js/jquery-ui/jquery.overflowtabs.js');
+        $this->addJS(__EPH_BASE_URI__ . $this->admin_webpath . '/js/jquery-ui/jquery-ui.js');
+        $this->addJS(__EPH_BASE_URI__ . $this->admin_webpath . '/js/jquery-ui/jquery.overflowtabs.js');
 
     }
 
@@ -81,7 +81,7 @@ class AdminTrackingControllerCore extends AdminController {
 
         $this->_helper_list = new HelperList();
 
-        if (!Configuration::get('PS_STOCK_MANAGEMENT')) {
+        if (!Configuration::get('EPH_STOCK_MANAGEMENT')) {
             $this->warnings[] = $this->l('List of products without available quantities for sale are not displayed because stock management is disabled.');
         }
 
@@ -106,7 +106,7 @@ class AdminTrackingControllerCore extends AdminController {
                 'show_page_header_toolbar'  => $this->show_page_header_toolbar,
                 'page_header_toolbar_title' => $this->page_header_toolbar_title,
                 'page_header_toolbar_btn'   => $this->page_header_toolbar_btn,
-                'bo_imgdir'                 => __PS_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+                'bo_imgdir'                 => __EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
             ]
         );
     }
@@ -151,8 +151,8 @@ class AdminTrackingControllerCore extends AdminController {
         $this->addRowAction('edit');
         $this->addRowAction('view');
         $this->addRowAction('delete');
-        $this->addRowActionSkipList('delete', [(int) Configuration::get('PS_ROOT_CATEGORY')]);
-        $this->addRowActionSkipList('edit', [(int) Configuration::get('PS_ROOT_CATEGORY')]);
+        $this->addRowActionSkipList('delete', [(int) Configuration::get('EPH_ROOT_CATEGORY')]);
+        $this->addRowActionSkipList('edit', [(int) Configuration::get('EPH_ROOT_CATEGORY')]);
 
         $this->fields_list = ([
             'id_category' => ['title' => $this->l('ID'), 'class' => 'fixed-width-xs', 'align' => 'center'],
@@ -168,7 +168,7 @@ class AdminTrackingControllerCore extends AdminController {
             FROM `' . _DB_PREFIX_ . 'category_product` cp
             WHERE a.`id_category` = cp.id_category
         )
-        AND a.`id_category` != ' . (int) Configuration::get('PS_ROOT_CATEGORY');
+        AND a.`id_category` != ' . (int) Configuration::get('EPH_ROOT_CATEGORY');
         $this->toolbar_title = $this->l('List of empty categories:');
 
         $this->content[$this->toolbar_title] = $this->renderList();
@@ -269,7 +269,7 @@ class AdminTrackingControllerCore extends AdminController {
      */
     public function getCustomListProductsAttributesNoStock() {
 
-        if (!Configuration::get('PS_STOCK_MANAGEMENT')) {
+        if (!Configuration::get('EPH_STOCK_MANAGEMENT')) {
             return '';
         }
 
@@ -319,7 +319,7 @@ class AdminTrackingControllerCore extends AdminController {
      */
     public function getCustomListProductsNoStock() {
 
-        if (!Configuration::get('PS_STOCK_MANAGEMENT')) {
+        if (!Configuration::get('EPH_STOCK_MANAGEMENT')) {
             return '';
         }
 

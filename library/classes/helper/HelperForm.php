@@ -261,11 +261,11 @@ class HelperFormCore extends Helper {
                             	$iso = $this->context->language->iso_code;
                             	$this->tpl_vars['iso'] = $iso;
                             	$this->tpl_vars['path_css'] = _THEME_CSS_DIR_;
-                            	$this->tpl_vars['ad'] = __PS_BASE_URI__ . basename(_PS_ROOT_DIR_);
+                            	$this->tpl_vars['ad'] = __EPH_BASE_URI__ . basename(_EPH_ROOT_DIR_);
                             	$this->tpl_vars['tinymce'] = true;
 
-                            	$this->context->controller->addJS(_PS_JS_DIR_.'tinymce/tinymce.min.js');
-                            	$this->context->controller->addJS(_PS_JS_DIR_.'tinymce.inc.js');
+                            	$this->context->controller->addJS(_EPH_JS_DIR_.'tinymce/tinymce.min.js');
+                            	$this->context->controller->addJS(_EPH_JS_DIR_.'tinymce.inc.js');
                             	$tinymce = false;
                         	}
 
@@ -1200,7 +1200,7 @@ class HelperFormCore extends Helper {
                 'fields'                => $this->fields_form,
                 'fields_value'          => $this->fields_value,
                 'required_fields'       => $this->getFieldsRequired(),
-                'vat_number'            => Module::isInstalled('vatnumber') && file_exists(_PS_MODULE_DIR_ . 'vatnumber/ajax.php'),
+                'vat_number'            => Module::isInstalled('vatnumber') && file_exists(_EPH_MODULE_DIR_ . 'vatnumber/ajax.php'),
                 'module_dir'            => _MODULE_DIR_,
                 'base_url'              => $this->context->shop->getBaseURL(),
                 'contains_states'       => (isset($this->fields_value['id_country']) && isset($this->fields_value['id_state'])) ? Country::containsStates($this->fields_value['id_country']) : null,

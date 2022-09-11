@@ -54,7 +54,7 @@ class FeatureValueCore extends ObjectModel {
      */
     public static function getFeatureValues($idFeature) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('feature_value')
@@ -78,7 +78,7 @@ class FeatureValueCore extends ObjectModel {
      */
     public static function getFeatureValuesWithLang($idLang, $idFeature, $custom = false) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('feature_value', 'v')
@@ -103,7 +103,7 @@ class FeatureValueCore extends ObjectModel {
      */
     public static function getFeatureValueLang($idFeatureValue) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('feature_value_lang')
@@ -154,7 +154,7 @@ class FeatureValueCore extends ObjectModel {
         $idFeatureValue = false;
 
         if (!is_null($idProduct) && $idProduct) {
-            $idFeatureValue = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $idFeatureValue = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('fp.`id_feature_value`')
                     ->from('feature_product', 'fp')
@@ -177,7 +177,7 @@ class FeatureValueCore extends ObjectModel {
         }
 
         if (!$custom) {
-            $idFeatureValue = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $idFeatureValue = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('fv.`id_feature_value`')
                     ->from('feature_value', 'fv')

@@ -111,7 +111,7 @@ class CurrencyCore extends ObjectModel {
      */
     public static function getCurrenciesByIdShop($idShop = 0) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('currency', 'c')
@@ -138,7 +138,7 @@ class CurrencyCore extends ObjectModel {
             $idShop = Context::getContext()->shop->id;
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('*')
                 ->from('module_currency')
@@ -164,7 +164,7 @@ class CurrencyCore extends ObjectModel {
             $idShop = Context::getContext()->shop->id;
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('c.*')
                 ->from('module_currency', 'mc')
@@ -198,7 +198,7 @@ class CurrencyCore extends ObjectModel {
             $idShop = Context::getContext()->shop->id;
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('module_currency')
@@ -219,7 +219,7 @@ class CurrencyCore extends ObjectModel {
      */
     public static function getCurrency($idCurrency) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('*')
                 ->from('currency')
@@ -297,7 +297,7 @@ class CurrencyCore extends ObjectModel {
      */
     public static function getDefaultCurrency() {
 
-        $idCurrency = (int) Configuration::get('PS_CURRENCY_DEFAULT');
+        $idCurrency = (int) Configuration::get('EPH_CURRENCY_DEFAULT');
 
         if ($idCurrency == 0) {
             return false;
@@ -322,7 +322,7 @@ class CurrencyCore extends ObjectModel {
      */
     public static function getCurrencies($object = false, $active = true, $groupBy = false) {
 
-        $tab = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $tab = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('currency', 'c')
@@ -467,7 +467,7 @@ class CurrencyCore extends ObjectModel {
         }
 
         if (!isset(static::$countActiveCurrencies[$idShop])) {
-            static::$countActiveCurrencies[$idShop] = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            static::$countActiveCurrencies[$idShop] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('COUNT(DISTINCT c.`id_currency`)')
                     ->from('currency', 'c')
@@ -548,7 +548,7 @@ class CurrencyCore extends ObjectModel {
         $query = Currency::getIdByQuery($idShop);
         $query->where('iso_code_num = \'' . pSQL($isoCodeNum) . '\'');
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query->build());
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query->build());
     }
 
     /**
@@ -592,7 +592,7 @@ class CurrencyCore extends ObjectModel {
             $query = Currency::getIdByQuery($idShop);
             $query->where('iso_code = \'' . pSQL($isoCode) . '\'');
 
-            $result = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query->build());
+            $result = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query->build());
             Cache::store($cacheId, $result);
 
             return $result;
@@ -644,8 +644,8 @@ class CurrencyCore extends ObjectModel {
      */
     public function delete() {
 
-        if ($this->id == Configuration::get('PS_CURRENCY_DEFAULT')) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        if ($this->id == Configuration::get('EPH_CURRENCY_DEFAULT')) {
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('`id_currency`')
                     ->from('currency')
@@ -657,7 +657,7 @@ class CurrencyCore extends ObjectModel {
                 return false;
             }
 
-            Configuration::updateValue('PS_CURRENCY_DEFAULT', $result['id_currency']);
+            Configuration::updateValue('EPH_CURRENCY_DEFAULT', $result['id_currency']);
         }
 
         $this->deleted = 1;
@@ -732,7 +732,7 @@ class CurrencyCore extends ObjectModel {
      */
     public function getConversationRate() {
 
-        return $this->id != (int) Configuration::get('PS_CURRENCY_DEFAULT') ? $this->conversion_rate : 1;
+        return $this->id != (int) Configuration::get('EPH_CURRENCY_DEFAULT') ? $this->conversion_rate : 1;
     }
 
     /**

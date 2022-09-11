@@ -90,10 +90,10 @@ class SupplierControllerCore extends FrontController {
         if (Validate::isLoadedObject($this->supplier) && $this->supplier->active && $this->supplier->isAssociatedToShop()) {
             $this->productSort(); // productSort must be called before assignOne
             $this->assignOne();
-            $this->setTemplate(_PS_THEME_DIR_ . 'supplier.tpl');
+            $this->setTemplate(_EPH_THEME_DIR_ . 'supplier.tpl');
         } else {
             $this->assignAll();
-            $this->setTemplate(_PS_THEME_DIR_ . 'supplier-list.tpl');
+            $this->setTemplate(_EPH_THEME_DIR_ . 'supplier-list.tpl');
         }
 
     }
@@ -119,7 +119,7 @@ class SupplierControllerCore extends FrontController {
      */
     protected function assignOne() {
 
-        if (Configuration::get('PS_DISPLAY_SUPPLIERS')) {
+        if (Configuration::get('EPH_DISPLAY_SUPPLIERS')) {
             $this->supplier->description = Tools::nl2br(trim($this->supplier->description));
             $nbProducts = $this->supplier->getProducts($this->supplier->id, null, null, null, $this->orderBy, $this->orderWay, true);
             $this->pagination((int) $nbProducts);
@@ -133,7 +133,7 @@ class SupplierControllerCore extends FrontController {
                     'products'            => $products,
                     'path'                => ($this->supplier->active ? Tools::safeOutput($this->supplier->name) : ''),
                     'supplier'            => $this->supplier,
-                    'comparator_max_item' => Configuration::get('PS_COMPARATOR_MAX_ITEM'),
+                    'comparator_max_item' => Configuration::get('EPH_COMPARATOR_MAX_ITEM'),
                     'body_classes'        => [
                         $this->php_self . '-' . $this->supplier->id,
                         $this->php_self . '-' . $this->supplier->link_rewrite,
@@ -155,7 +155,7 @@ class SupplierControllerCore extends FrontController {
      */
     protected function assignAll() {
 
-        if (Configuration::get('PS_DISPLAY_SUPPLIERS')) {
+        if (Configuration::get('EPH_DISPLAY_SUPPLIERS')) {
             $result = Supplier::getSuppliers(true, $this->context->language->id, true);
             $nbProducts = count($result);
             $this->pagination($nbProducts);
@@ -163,7 +163,7 @@ class SupplierControllerCore extends FrontController {
             $suppliers = Supplier::getSuppliers(true, $this->context->language->id, true, $this->p, $this->n);
 
             foreach ($suppliers as &$row) {
-                $row['image'] = (!file_exists(_PS_SUPP_IMG_DIR_ . '/' . $row['id_supplier'] . '-' . ImageType::getFormatedName('medium') . '.jpg')) ? $this->context->language->iso_code . '-default' : $row['id_supplier'];
+                $row['image'] = (!file_exists(_EPH_SUPP_IMG_DIR_ . '/' . $row['id_supplier'] . '-' . ImageType::getFormatedName('medium') . '.jpg')) ? $this->context->language->iso_code . '-default' : $row['id_supplier'];
             }
 
             $this->context->smarty->assign(
@@ -172,7 +172,7 @@ class SupplierControllerCore extends FrontController {
                     'nbSuppliers'      => $nbProducts,
                     'mediumSize'       => Image::getSize(ImageType::getFormatedName('medium')),
                     'suppliers_list'   => $suppliers,
-                    'add_prod_display' => Configuration::get('PS_ATTRIBUTE_CATEGORY_DISPLAY'),
+                    'add_prod_display' => Configuration::get('EPH_ATTRIBUTE_CATEGORY_DISPLAY'),
                 ]
             );
         } else {

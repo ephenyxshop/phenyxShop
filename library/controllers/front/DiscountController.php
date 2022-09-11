@@ -106,7 +106,7 @@ class DiscountControllerCore extends FrontController {
                 'nbDiscounts'   => (int) $nbCartRules, // retro compat
             ]
         );
-        $this->setTemplate(_PS_THEME_DIR_ . 'discount.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'discount.tpl');
     }
 
 }

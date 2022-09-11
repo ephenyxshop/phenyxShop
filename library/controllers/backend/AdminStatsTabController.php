@@ -144,7 +144,7 @@ abstract class AdminStatsTabControllerCore extends AdminPreferencesControllerCor
     protected function getModules() {
 
         try {
-            $modules = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $modules = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('h.`name` AS hook, m.`name`')
                     ->from('module', 'm')
@@ -341,9 +341,9 @@ abstract class AdminStatsTabControllerCore extends AdminPreferencesControllerCor
 
             if ($this->tabAccess['edit'] === '1') {
                 static::$currentIndex .= '&module=' . Tools::getValue('module');
-                Configuration::updateValue('PS_STATS_RENDER', Tools::getValue('PS_STATS_RENDER', Configuration::get('PS_STATS_RENDER')));
-                Configuration::updateValue('PS_STATS_GRID_RENDER', Tools::getValue('PS_STATS_GRID_RENDER', Configuration::get('PS_STATS_GRID_RENDER')));
-                Configuration::updateValue('PS_STATS_OLD_CONNECT_AUTO_CLEAN', Tools::getValue('PS_STATS_OLD_CONNECT_AUTO_CLEAN', Configuration::get('PS_STATS_OLD_CONNECT_AUTO_CLEAN')));
+                Configuration::updateValue('EPH_STATS_RENDER', Tools::getValue('EPH_STATS_RENDER', Configuration::get('EPH_STATS_RENDER')));
+                Configuration::updateValue('EPH_STATS_GRID_RENDER', Tools::getValue('EPH_STATS_GRID_RENDER', Configuration::get('EPH_STATS_GRID_RENDER')));
+                Configuration::updateValue('EPH_STATS_OLD_CONNECT_AUTO_CLEAN', Tools::getValue('EPH_STATS_OLD_CONNECT_AUTO_CLEAN', Configuration::get('EPH_STATS_OLD_CONNECT_AUTO_CLEAN')));
             } else {
                 $this->errors[] = Tools::displayError('You do not have permission to edit this.');
             }
@@ -474,9 +474,9 @@ abstract class AdminStatsTabControllerCore extends AdminPreferencesControllerCor
             [
                 'current'             => static::$currentIndex,
                 'token'               => $this->token,
-                'graph_engine'        => Configuration::get('PS_STATS_RENDER'),
-                'grid_engine'         => Configuration::get('PS_STATS_GRID_RENDER'),
-                'auto_clean'          => Configuration::get('PS_STATS_OLD_CONNECT_AUTO_CLEAN'),
+                'graph_engine'        => Configuration::get('EPH_STATS_RENDER'),
+                'grid_engine'         => Configuration::get('EPH_STATS_GRID_RENDER'),
+                'auto_clean'          => Configuration::get('EPH_STATS_OLD_CONNECT_AUTO_CLEAN'),
                 'array_graph_engines' => ModuleGraphEngine::getGraphEngines(),
                 'array_grid_engines'  => ModuleGridEngine::getGridEngines(),
                 'array_auto_clean'    => $autocleanPeriod,

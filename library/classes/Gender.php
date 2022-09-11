@@ -39,7 +39,7 @@ class GenderCore extends ObjectModel {
 
         parent::__construct($id, $idLang, $idShop);
 
-        $this->image_dir = _PS_GENDERS_DIR_;
+        $this->image_dir = _EPH_GENDERS_DIR_;
     }
 
     /**
@@ -71,7 +71,7 @@ class GenderCore extends ObjectModel {
      */
     public function getImage($useUnknown = false) {
 
-        if (!isset($this->id) || empty($this->id) || !file_exists(_PS_GENDERS_DIR_ . $this->id . '.jpg')) {
+        if (!isset($this->id) || empty($this->id) || !file_exists(_EPH_GENDERS_DIR_ . $this->id . '.jpg')) {
             return _THEME_GENDERS_DIR_ . 'Unknown.jpg';
         }
 

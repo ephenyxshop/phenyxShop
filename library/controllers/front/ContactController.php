@@ -47,7 +47,7 @@ class ContactControllerCore extends FrontController {
 
             if (!((
                 ($idCustomerThread = (int) Tools::getValue('id_customer_thread'))
-                && (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                && (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                     (new DbQuery())
                     ->select('ct.`id_customer_thread`')
                     ->from('customer_thread', 'ct')
@@ -59,7 +59,7 @@ class ContactControllerCore extends FrontController {
                 $idCustomerThread = CustomerThread::getIdCustomerThreadByEmailAndIdOrder($from, $idOrder)
             ))
             ) {
-                $fields = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+                $fields = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                     (new DbQuery())
                         ->select('ct.`id_customer_thread`, ct.`id_contact`, ct.`id_customer`, ct.`id_order`, ct.`id_product`, ct.`email`')
                         ->from('customer_thread', 'ct')
@@ -101,7 +101,7 @@ class ContactControllerCore extends FrontController {
 
             }
 
-            $oldMessage = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $oldMessage = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('cm.`message`')
                     ->from('customer_message', 'cm')
@@ -158,7 +158,7 @@ class ContactControllerCore extends FrontController {
 
                 		foreach ($files as $file) {
                     		$ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-                    		$destinationFile = _PS_UPLOAD_DIR_ . 'message_' . $ct->id . '.' . $ext;
+                    		$destinationFile = _EPH_UPLOAD_DIR_ . 'message_' . $ct->id . '.' . $ext;
                     		copy($file['save_path'], $destinationFile);
 						}
 
@@ -227,7 +227,7 @@ class ContactControllerCore extends FrontController {
                 if (empty($contact->email)) {
 					
 					
-                    $tpl = $this->context->smarty->createTemplate(_PS_MAIL_DIR_ . '/contact_form.tpl');
+                    $tpl = $this->context->smarty->createTemplate(_EPH_MAIL_DIR_ . '/contact_form.tpl');
                     $tpl->assign([
                         'order_name'    => $order_name,
                         'id_order'      => $id_order,
@@ -239,8 +239,8 @@ class ContactControllerCore extends FrontController {
                     $subject = ((isset($ct) && Validate::isLoadedObject($ct)) ? sprintf($this->l('Your message has been correctly sent #ct%1$s #tc%2$s'), $ct->id, $ct->token) : $this->l('Your message has been correctly sent'));
                     $postfields = [
                         'sender'      => [
-                            'name'  => "Service Administratif " . Configuration::get('PS_SHOP_NAME'),
-                            'email' => Configuration::get('PS_SHOP_EMAIL'),
+                            'name'  => "Service Administratif " . Configuration::get('EPH_SHOP_NAME'),
+                            'email' => Configuration::get('EPH_SHOP_EMAIL'),
                         ],
                         'to'          => [
                             [
@@ -255,7 +255,7 @@ class ContactControllerCore extends FrontController {
 
                 } else {
 					
-                    $tpl = $this->context->smarty->createTemplate(_PS_MAIL_DIR_ . '/contact.tpl');
+                    $tpl = $this->context->smarty->createTemplate(_EPH_MAIL_DIR_ . '/contact.tpl');
                     $tpl->assign([
                         'order_name'    => $order_name,
                         'id_order'      => $id_order,
@@ -266,8 +266,8 @@ class ContactControllerCore extends FrontController {
                     ]);
                     $postfields = [
                         'sender'      => [
-                            'name'  => "Service Administratif " . Configuration::get('PS_SHOP_NAME'),
-                            'email' => Configuration::get('PS_SHOP_EMAIL'),
+                            'name'  => "Service Administratif " . Configuration::get('EPH_SHOP_NAME'),
+                            'email' => Configuration::get('EPH_SHOP_EMAIL'),
                         ],
                         'to'          => [
                             [
@@ -366,13 +366,13 @@ class ContactControllerCore extends FrontController {
             [
                 'errors'          => $this->errors,
                 'email'           => $email,
-                'fileupload'      => Configuration::get('PS_CUSTOMER_SERVICE_FILE_UPLOAD'),
+                'fileupload'      => Configuration::get('EPH_CUSTOMER_SERVICE_FILE_UPLOAD'),
                 'max_upload_size' => (int) Tools::getMaxUploadSize(),
             ]
         );
 
         if (($idCustomerThread = (int) Tools::getValue('id_customer_thread')) && $token = Tools::getValue('token')) {
-            $customerThread = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $customerThread = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('cm.*')
                     ->from('customer_thread', 'cm')
@@ -397,7 +397,7 @@ class ContactControllerCore extends FrontController {
             ]
         );
 
-        $this->setTemplate(_PS_THEME_DIR_ . 'contact-form.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'contact-form.tpl');
     }
 
     /**
@@ -413,7 +413,7 @@ class ContactControllerCore extends FrontController {
             $this->context->smarty->assign('isLogged', 1);
 
             $products = [];
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('`id_customer_piece`')
                     ->from('customer_pieces')

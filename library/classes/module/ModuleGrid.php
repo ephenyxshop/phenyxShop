@@ -104,7 +104,7 @@ abstract class ModuleGridCore extends Module
         if (!Validate::isModuleName($render)) {
             die(Tools::displayError());
         }
-        if (!file_exists($file = _PS_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php')) {
+        if (!file_exists($file = _EPH_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php')) {
             die(Tools::displayError());
         }
         require_once($file);
@@ -143,13 +143,13 @@ abstract class ModuleGridCore extends Module
      */
     public function engine($params)
     {
-        if (!($render = Configuration::get('PS_STATS_GRID_RENDER'))) {
+        if (!($render = Configuration::get('EPH_STATS_GRID_RENDER'))) {
             return Tools::displayError('No grid engine selected');
         }
         if (!Validate::isModuleName($render)) {
             die(Tools::displayError());
         }
-        if (!file_exists(_PS_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php')) {
+        if (!file_exists(_EPH_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php')) {
             return Tools::displayError('Grid engine selected is unavailable.');
         }
 
@@ -193,7 +193,7 @@ abstract class ModuleGridCore extends Module
             $grider .= '&dir='.$params['dir'];
         }
 
-        require_once(_PS_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php');
+        require_once(_EPH_ROOT_DIR_.'/modules/'.$render.'/'.$render.'.php');
 
         return call_user_func([$render, 'hookGridEngine'], $params, $grider);
     }

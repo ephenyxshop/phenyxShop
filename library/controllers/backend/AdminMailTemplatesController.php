@@ -261,12 +261,12 @@ class AdminMailTemplatesControllerCore extends AdminController {
 
         $iterator = new AppendIterator();
 
-        $iterator->append(new DirectoryIterator(_PS_ROOT_ADMIN_DIR_ . '/mails/fr'));
+        $iterator->append(new DirectoryIterator(_EPH_ROOT_ADMIN_DIR_ . '/mails/fr'));
 
         foreach ($iterator as $file) {
 
             $filePath = $file->getFilename();
-            $filePath = str_replace(_PS_ROOT_ADMIN_DIR_, '', $filePath);
+            $filePath = str_replace(_EPH_ROOT_ADMIN_DIR_, '', $filePath);
 
             if (in_array($file->getFilename(), ['.', '..', 'index.php', '.htaccess', 'dwsync.xml'])) {
                 continue;
@@ -305,8 +305,8 @@ class AdminMailTemplatesControllerCore extends AdminController {
         $mailTemplate = new MailTemplate($idMailTemplate);
 
         $pushjJs = $this->pushJS([
-            __PS_BASE_URI__ . _PS_JS_DIR_ . 'tinymce/tinymce.min.js',
-            _PS_JS_DIR_ . 'admin/tinymce.inc.js',
+            __EPH_BASE_URI__ . _EPH_JS_DIR_ . 'tinymce/tinymce.min.js',
+            _EPH_JS_DIR_ . 'admin/tinymce.inc.js',
 
         ]);
         $data = $this->createTemplate('controllers/mail_templates/editTemplate.tpl');
@@ -314,9 +314,9 @@ class AdminMailTemplatesControllerCore extends AdminController {
             [
                 'mailTemplate' => $mailTemplate,
                 'tinymce'      => true,
-                'iso'          => file_exists(_SHOP_CORE_DIR_ . _PS_JS_DIR_ . 'tiny_mce/langs/' . $iso . '.js') ? $iso : 'en',
+                'iso'          => file_exists(_SHOP_CORE_DIR_ . _EPH_JS_DIR_ . 'tiny_mce/langs/' . $iso . '.js') ? $iso : 'en',
                 'path_css'     => _THEME_CSS_DIR_,
-                'ad'           => __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_),
+                'ad'           => __EPH_BASE_URI__ . basename(_EPH_ADMIN_DIR_),
                 'pushjJs'      => $pushjJs,
             ]
         );
@@ -333,7 +333,7 @@ class AdminMailTemplatesControllerCore extends AdminController {
 
         $idMailTemplate = Tools::getValue('idMailTemplate');
         $template = new MailTemplate($idMailTemplate);
-        $filePath = _PS_ROOT_ADMIN_DIR_ . '/mails/fr/' . $template->template;
+        $filePath = _EPH_ROOT_ADMIN_DIR_ . '/mails/fr/' . $template->template;
 
         if (unlink($filePath)) {
             $template->delete();
@@ -372,7 +372,7 @@ class AdminMailTemplatesControllerCore extends AdminController {
         $content = str_replace('&gt;', '>', $mailTemplate->content);
         $output = $formatter->format($content);
 
-        $file = fopen(_PS_ROOT_ADMIN_DIR_ . "/mails/fr/" . $mailTemplate->template, "w");
+        $file = fopen(_EPH_ROOT_ADMIN_DIR_ . "/mails/fr/" . $mailTemplate->template, "w");
         fwrite($file, $output);
 
         $result = $mailTemplate->update();

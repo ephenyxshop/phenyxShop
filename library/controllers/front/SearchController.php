@@ -72,7 +72,7 @@ class SearchControllerCore extends FrontController {
         //Only controller content initialization when the user use the normal search
         parent::initContent();
 
-        $productPerPage = isset($this->context->cookie->nb_item_per_page) ? (int) $this->context->cookie->nb_item_per_page : Configuration::get('PS_PRODUCTS_PER_PAGE');
+        $productPerPage = isset($this->context->cookie->nb_item_per_page) ? (int) $this->context->cookie->nb_item_per_page : Configuration::get('EPH_PRODUCTS_PER_PAGE');
 
         if ($this->instant_search && !is_array($query)) {
             $this->productSort();
@@ -154,9 +154,9 @@ class SearchControllerCore extends FrontController {
             );
         }
 
-        $this->context->smarty->assign(['add_prod_display' => Configuration::get('PS_ATTRIBUTE_CATEGORY_DISPLAY'), 'comparator_max_item' => Configuration::get('PS_COMPARATOR_MAX_ITEM')]);
+        $this->context->smarty->assign(['add_prod_display' => Configuration::get('EPH_ATTRIBUTE_CATEGORY_DISPLAY'), 'comparator_max_item' => Configuration::get('EPH_COMPARATOR_MAX_ITEM')]);
 
-        $this->setTemplate(_PS_THEME_DIR_ . 'search.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'search.tpl');
     }
 
     /**

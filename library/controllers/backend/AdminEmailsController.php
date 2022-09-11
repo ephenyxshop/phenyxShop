@@ -16,7 +16,7 @@ class AdminEmailsControllerCore extends AdminController {
 
         $this->bootstrap = true;
 
-        if (Configuration::get('PS_LOG_EMAILS')) {
+        if (Configuration::get('EPH_LOG_EMAILS')) {
             $this->table = 'mail';
             $this->className = 'Mail';
 
@@ -77,7 +77,7 @@ class AdminEmailsControllerCore extends AdminController {
                 'title'  => $this->l('Email'),
                 'icon'   => 'icon-envelope',
                 'fields' => [
-                    'PS_MAIL_EMAIL_MESSAGE'     => [
+                    'EPH_MAIL_EMAIL_MESSAGE'     => [
                         'title'      => $this->l('Send email to'),
                         'desc'       => $this->l('Where customers send messages from the order page.'),
                         'validation' => 'isUnsignedId',
@@ -86,7 +86,7 @@ class AdminEmailsControllerCore extends AdminController {
                         'identifier' => 'email_message',
                         'list'       => $arr,
                     ],
-                    'PS_MAIL_METHOD'            => [
+                    'EPH_MAIL_METHOD'            => [
                         'title'      => '',
                         'validation' => 'isGenericName',
                         'type'       => 'radio',
@@ -102,7 +102,7 @@ class AdminEmailsControllerCore extends AdminController {
                         'validation' => 'isString',
                         'type'       => 'text',
                     ],
-                    'PS_MAIL_TYPE'              => [
+                    'EPH_MAIL_TYPE'              => [
                         'title'      => '',
                         'validation' => 'isGenericName',
                         'type'       => 'radio',
@@ -113,7 +113,7 @@ class AdminEmailsControllerCore extends AdminController {
                             Mail::TYPE_BOTH => $this->l('Both'),
                         ],
                     ],
-                    'PS_LOG_EMAILS'             => [
+                    'EPH_LOG_EMAILS'             => [
                         'title'      => $this->l('Log Emails'),
                         'validation' => 'isBool',
                         'cast'       => 'intval',
@@ -132,33 +132,33 @@ class AdminEmailsControllerCore extends AdminController {
                 'title'  => $this->l('Email'),
                 'class'  => 'smtpParams',
                 'fields' => [
-                    'PS_MAIL_DOMAIN'          => [
+                    'EPH_MAIL_DOMAIN'          => [
                         'title' => $this->l('Mail domain name'),
                         'hint'  => $this->l('Fully qualified domain name (keep this field empty if you don\'t know).'),
                         'empty' => true, 'validation' =>
                         'isUrl',
                         'type'  => 'text',
                     ],
-                    'PS_MAIL_SERVER'          => [
+                    'EPH_MAIL_SERVER'          => [
                         'title'      => $this->l('SMTP server'),
                         'hint'       => $this->l('IP address or server name (e.g. smtp.mydomain.com).'),
                         'validation' => 'isGenericName',
                         'type'       => 'text',
                     ],
-                    'PS_MAIL_USER'            => [
+                    'EPH_MAIL_USER'            => [
                         'title'      => $this->l('SMTP username'),
                         'hint'       => $this->l('Leave blank if not applicable.'),
                         'validation' => 'isGenericName',
                         'type'       => 'text',
                     ],
-                    'PS_MAIL_PASSWD'          => [
+                    'EPH_MAIL_PASSWD'          => [
                         'title'        => $this->l('SMTP password'),
                         'hint'         => $this->l('Leave blank if not applicable.'),
                         'validation'   => 'isAnything',
                         'type'         => 'password',
                         'autocomplete' => false,
                     ],
-                    'PS_MAIL_SMTP_ENCRYPTION' => [
+                    'EPH_MAIL_SMTP_ENCRYPTION' => [
                         'title'      => $this->l('Encryption'),
                         'hint'       => $this->l('Use an encrypt protocol'),
                         'desc'       => extension_loaded('openssl') ? '' : '/!\\ ' . $this->l('SSL does not seem to be available on your server.'),
@@ -180,7 +180,7 @@ class AdminEmailsControllerCore extends AdminController {
                             ],
                         ],
                     ],
-                    'PS_MAIL_SMTP_PORT'       => [
+                    'EPH_MAIL_SMTP_PORT'       => [
                         'title'      => $this->l('Port'),
                         'hint'       => $this->l('Port number to use.'),
                         'validation' => 'isInt',
@@ -195,7 +195,7 @@ class AdminEmailsControllerCore extends AdminController {
                 'title'                   => $this->l('Test your email configuration'),
                 'hide_multishop_checkbox' => true,
                 'fields'                  => [
-                    'PS_SHOP_EMAIL' => [
+                    'EPH_SHOP_EMAIL' => [
                         'title'                 => $this->l('Send a test email to'),
                         'type'                  => 'text',
                         'id'                    => 'testEmail',
@@ -217,12 +217,12 @@ class AdminEmailsControllerCore extends AdminController {
             ],
         ];
 
-        if (!defined('_PS_HOST_MODE_')) {
-            $this->fields_options['email']['fields']['PS_MAIL_METHOD']['choices'][1] =
+        if (!defined('_EPH_HOST_MODE_')) {
+            $this->fields_options['email']['fields']['EPH_MAIL_METHOD']['choices'][1] =
             $this->l('Use PHP\'s mail() function (recommended; works in most cases)');
         }
 
-        ksort($this->fields_options['email']['fields']['PS_MAIL_METHOD']['choices']);
+        ksort($this->fields_options['email']['fields']['EPH_MAIL_METHOD']['choices']);
     }
 
     /**
@@ -236,7 +236,7 @@ class AdminEmailsControllerCore extends AdminController {
 
         parent::setMedia($isNewTheme);
 
-        $this->addJs(__PS_BASE_URI__ . _PS_JS_DIR_ . 'email.js');
+        $this->addJs(__EPH_BASE_URI__ . _EPH_JS_DIR_ . 'email.js');
 
         Media::addJsDefL('textMsg', $this->l('This is a test message. Your server is now configured to send email.', null, true, false));
         Media::addJsDefL('textSubject', $this->l('Test message -- ephenyx', null, true, false));
@@ -273,10 +273,10 @@ class AdminEmailsControllerCore extends AdminController {
      */
     public function updateOptionPsMailPasswd($value) {
 
-        if (Tools::getValue('PS_MAIL_PASSWD') == '' && Configuration::get('PS_MAIL_PASSWD')) {
+        if (Tools::getValue('EPH_MAIL_PASSWD') == '' && Configuration::get('EPH_MAIL_PASSWD')) {
             return true;
         } else {
-            Configuration::updateValue('PS_MAIL_PASSWD', Tools::getValue('PS_MAIL_PASSWD'));
+            Configuration::updateValue('EPH_MAIL_PASSWD', Tools::getValue('EPH_MAIL_PASSWD'));
         }
 
         return false;
@@ -325,7 +325,7 @@ class AdminEmailsControllerCore extends AdminController {
 
         /* ephenyx demo mode */
 
-        if (_PS_MODE_DEMO_) {
+        if (_EPH_MODE_DEMO_) {
             $this->errors[] = Tools::displayError('This functionality has been disabled.');
 
             return;
@@ -335,12 +335,12 @@ class AdminEmailsControllerCore extends AdminController {
 
         // We don't want to update the shop e-mail when sending test e-mails
 
-        if (isset($_POST['PS_SHOP_EMAIL'])) {
-            $_POST['PS_SHOP_EMAIL'] = Configuration::get('PS_SHOP_EMAIL');
+        if (isset($_POST['EPH_SHOP_EMAIL'])) {
+            $_POST['EPH_SHOP_EMAIL'] = Configuration::get('EPH_SHOP_EMAIL');
         }
 
-        if (isset($_POST['PS_MAIL_METHOD']) && $_POST['PS_MAIL_METHOD'] == 2
-            && (empty($_POST['PS_MAIL_SERVER']) || empty($_POST['PS_MAIL_SMTP_PORT']))
+        if (isset($_POST['EPH_MAIL_METHOD']) && $_POST['EPH_MAIL_METHOD'] == 2
+            && (empty($_POST['EPH_MAIL_SERVER']) || empty($_POST['EPH_MAIL_SMTP_PORT']))
         ) {
             $this->errors[] = Tools::displayError('You must define an SMTP server and an SMTP port. If you do not know it, use the PHP mail() function instead.');
         }
@@ -360,7 +360,7 @@ class AdminEmailsControllerCore extends AdminController {
 
         /* PhenyxShop demo mode */
 
-        if (_PS_MODE_DEMO_) {
+        if (_EPH_MODE_DEMO_) {
             die(Tools::displayError('This functionality has been disabled.'));
         }
 
@@ -373,10 +373,10 @@ class AdminEmailsControllerCore extends AdminController {
             $subject = html_entity_decode(urldecode(Tools::getValue('testSubject')));
             $type = 'text/html';
             $to = Tools::getValue('testEmail');
-            $from = Configuration::get('PS_SHOP_EMAIL');
+            $from = Configuration::get('EPH_SHOP_EMAIL');
             $smtpLogin = Tools::getValue('smtpLogin');
             $smtpPassword = Tools::getValue('smtpPassword');
-            $smtpPassword = (!empty($smtpPassword)) ? urldecode($smtpPassword) : Configuration::get('PS_MAIL_PASSWD');
+            $smtpPassword = (!empty($smtpPassword)) ? urldecode($smtpPassword) : Configuration::get('EPH_MAIL_PASSWD');
             $smtpPassword = str_replace(
                 ['&lt;', '&gt;', '&quot;', '&amp;'],
                 ['<', '>', '"', '&'],

@@ -147,7 +147,7 @@ class BankAccountCore extends ObjectModel {
 
 	public static function getBankIdBySupplierId($idSupplier) {
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 			(new DbQuery())
 				->select('id_bank_account')
 				->from('bank_account')

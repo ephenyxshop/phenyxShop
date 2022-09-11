@@ -35,7 +35,7 @@ class DateRangeCore extends ObjectModel {
      */
     public static function getCurrentRange() {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('`id_date_range`, `time_end`')
                 ->from('date_range')

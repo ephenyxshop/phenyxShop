@@ -66,8 +66,8 @@ class AdminCustomersControllerCore extends AdminController {
 	public function setAjaxMedia() {
 
 		return $this->pushJS([
-			_PS_JS_DIR_ . 'customer.js',
-			_PS_JS_DIR_ . 'bank.js',
+			_EPH_JS_DIR_ . 'customer.js',
+			_EPH_JS_DIR_ . 'bank.js',
 		]);
 	}
 
@@ -520,7 +520,7 @@ class AdminCustomersControllerCore extends AdminController {
 			$query->orderBy('a.`id_customer` DESC');
 		}
 
-		$customers = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+		$customers = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
 
 		if ($hasFilter && is_array($customers) && count($customers)) {
 			$nbRecords = count($customers);
@@ -965,7 +965,7 @@ class AdminCustomersControllerCore extends AdminController {
 			'taxModes'        => TaxMode::getTaxModes(),
 			'currency'        => $this->context->currency,
 			'countries'       => Country::getCountries($this->context->language->id, false),
-			'default_country' => Configuration::get('PS_COUNTRY_DEFAULT'),
+			'default_country' => Configuration::get('EPH_COUNTRY_DEFAULT'),
 			'taxes'           => Tax::getRulesTaxes($this->context->language->id),
 			'tarifs'          => Customer::getTarifs(),
 			'genders'         => Gender::getGenders(),
@@ -1006,7 +1006,7 @@ class AdminCustomersControllerCore extends AdminController {
 				$address = new Address((int) $id_address);
 			}
 
-			$pusjJs = $this->pushJS([_PS_JS_DIR_ . 'bank.js',
+			$pusjJs = $this->pushJS([_EPH_JS_DIR_ . 'bank.js',
 			]);
 
 			$genders = Gender::getGenders();
@@ -1019,14 +1019,14 @@ class AdminCustomersControllerCore extends AdminController {
 
 			$customerStats = $this->object->getStats();
 
-			if ($total_customer = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+			if ($total_customer = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 				(new DbQuery())
 				->select('SUM(`total_paid`)')
 				->from('customer_pieces')
 				->where('`id_customer` = ' . (int) $this->object->id)
 				->where('`validate` = 1')
 			)) {
-				Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+				Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 					(new DbQuery())
 						->select('SQL_CALC_FOUND_ROWS COUNT(*)')
 						->from('customer_pieces')
@@ -1035,7 +1035,7 @@ class AdminCustomersControllerCore extends AdminController {
 						->groupBy('id_customer')
 						->having('SUM(`total_paid`) > ' . (int) $total_customer)
 				);
-				$countBetterCustomers = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('SELECT FOUND_ROWS()') + 1;
+				$countBetterCustomers = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue('SELECT FOUND_ROWS()') + 1;
 			} else {
 				$countBetterCustomers = '-';
 			}
@@ -1070,7 +1070,7 @@ class AdminCustomersControllerCore extends AdminController {
 			if ($this->object->is_admin) {
 				$employee = new Employee($this->object->id_employee);
 				$availableProfiles = Profile::getProfiles($this->context->language->id);
-				$image = _PS_EMPLOYEE_IMG_DIR_ . $employee->id . '.jpg';
+				$image = _EPH_EMPLOYEE_IMG_DIR_ . $employee->id . '.jpg';
 
 				if (file_exists($image)) {
 					$imageUrl = $this->context->link->getBaseFrontLink() . 'img/e/' . $employee->id . '.jpg';
@@ -1107,7 +1107,7 @@ class AdminCustomersControllerCore extends AdminController {
 				'taxModes'               => TaxMode::getTaxModes(),
 				'currency'               => $context->currency,
 				'countries'              => Country::getCountries($this->context->language->id, false),
-				'default_country'        => Configuration::get('PS_COUNTRY_DEFAULT'),
+				'default_country'        => Configuration::get('EPH_COUNTRY_DEFAULT'),
 				'taxes'                  => Tax::getRulesTaxes($this->context->language->id),
 				'tarifs'                 => Customer::getTarifs(),
 				'genders'                => Gender::getGenders(),
@@ -1253,7 +1253,7 @@ class AdminCustomersControllerCore extends AdminController {
 		}
 
 		if ($result) {
-			$tpl = $this->context->smarty->createTemplate(_PS_MAIL_DIR_ . '/admin_account.tpl');
+			$tpl = $this->context->smarty->createTemplate(_EPH_MAIL_DIR_ . '/admin_account.tpl');
 			$address = new Address();
 			$address->id_customer = $customer->id;
 			$address->id_country = Tools::getValue('id_country');
@@ -1292,8 +1292,8 @@ class AdminCustomersControllerCore extends AdminController {
 			]);
 			$postfields = [
 				'sender'      => [
-					'name'  => "Service  Administratif " . Configuration::get('PS_SHOP_NAME'),
-					'email' => 'no-reply@' . Configuration::get('PS_SHOP_URL'),
+					'name'  => "Service  Administratif " . Configuration::get('EPH_SHOP_NAME'),
+					'email' => 'no-reply@' . Configuration::get('EPH_SHOP_URL'),
 				],
 				'to'          => [
 					[
@@ -1301,7 +1301,7 @@ class AdminCustomersControllerCore extends AdminController {
 						'email' => $customer->email,
 					],
 				],
-				'subject'     => $customer->firstname . ' ! Bienvenue sur ' . Configuration::get('PS_SHOP_NAME'),
+				'subject'     => $customer->firstname . ' ! Bienvenue sur ' . Configuration::get('EPH_SHOP_NAME'),
 				"htmlContent" => $tpl->fetch(),
 			];
 			$result = Tools::sendEmail($postfields);
@@ -1462,7 +1462,7 @@ class AdminCustomersControllerCore extends AdminController {
 				if (is_array($files) && count($files)) {
 
 					foreach ($files as $image) {
-						$destinationFile = _PS_EMPLOYEE_IMG_DIR_ . $object->id . '.jpg';
+						$destinationFile = _EPH_EMPLOYEE_IMG_DIR_ . $object->id . '.jpg';
 						$fileName = $object->id . '.jpg';
 						copy($image['save_path'], $destinationFile);
 					}
@@ -1499,7 +1499,7 @@ class AdminCustomersControllerCore extends AdminController {
 
 		$data->assign([
 			'countries'       => Country::getCountries($this->context->language->id, false),
-			'default_country' => Configuration::get('PS_COUNTRY_DEFAULT'),
+			'default_country' => Configuration::get('EPH_COUNTRY_DEFAULT'),
 			'address'         => new Address($idAddress),
 
 		]);
@@ -1654,19 +1654,19 @@ class AdminCustomersControllerCore extends AdminController {
 		$customer = new Customer($id_customer);
 		$availableProfiles = Profile::getProfiles($this->context->language->id);
 		$extracss = $this->pushCSS([
-			_PS_JS_DIR_ . 'trumbowyg/ui/trumbowyg.min.css',
-			_PS_JS_DIR_ . 'jquery-ui/general.min.css',
+			_EPH_JS_DIR_ . 'trumbowyg/ui/trumbowyg.min.css',
+			_EPH_JS_DIR_ . 'jquery-ui/general.min.css',
 
 		]);
 		$pusjJs = $this->pushJS([
-			_PS_JS_DIR_ . 'employee.js',
-			_PS_JS_DIR_ . 'trumbowyg/trumbowyg.min.js',
-			_PS_JS_DIR_ . 'jquery-jeditable/jquery.jeditable.min.js',
-			_PS_JS_DIR_ . 'jquery-ui/jquery-ui-timepicker-addon.min.js',
-			_PS_JS_DIR_ . 'moment/moment.min.js',
-			_PS_JS_DIR_ . 'moment/moment-timezone-with-data.min.js',
-			_PS_JS_DIR_ . 'calendar/working_plan_exceptions_modal.min.js',
-			_PS_JS_DIR_ . 'datejs/date.min.js',
+			_EPH_JS_DIR_ . 'employee.js',
+			_EPH_JS_DIR_ . 'trumbowyg/trumbowyg.min.js',
+			_EPH_JS_DIR_ . 'jquery-jeditable/jquery.jeditable.min.js',
+			_EPH_JS_DIR_ . 'jquery-ui/jquery-ui-timepicker-addon.min.js',
+			_EPH_JS_DIR_ . 'moment/moment.min.js',
+			_EPH_JS_DIR_ . 'moment/moment-timezone-with-data.min.js',
+			_EPH_JS_DIR_ . 'calendar/working_plan_exceptions_modal.min.js',
+			_EPH_JS_DIR_ . 'datejs/date.min.js',
 
 		]);
 		$themes = [];

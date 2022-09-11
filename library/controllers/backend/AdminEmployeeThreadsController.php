@@ -30,7 +30,7 @@ class AdminEmployeeThreadsControllerCore extends AdminController {
     public function setAjaxMedia() {
 
         return $this->pushJS([
-            _PS_JS_DIR_ . 'tickets_crm.js',
+            _EPH_JS_DIR_ . 'tickets_crm.js',
         ]);
     }
 
@@ -390,7 +390,7 @@ class AdminEmployeeThreadsControllerCore extends AdminController {
         }
 
         $thread = EmployeeThread::getEmployeeThreadDetails($id_employee_thread);
-        $extraJs = [_PS_JS_DIR_ . 'tinymce/tinymce.min.js', _PS_JS_DIR_ . 'tinymce.inc.js',
+        $extraJs = [_EPH_JS_DIR_ . 'tinymce/tinymce.min.js', _EPH_JS_DIR_ . 'tinymce.inc.js',
         ];
 
         $this->tpl_view_vars = [
@@ -399,7 +399,7 @@ class AdminEmployeeThreadsControllerCore extends AdminController {
             'extraJs'  => $extraJs,
             'iso'      => $this->context->language->iso_code,
             'path_css' => _THEME_CSS_DIR_,
-            'ad'       => __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_),
+            'ad'       => __EPH_BASE_URI__ . basename(_EPH_ADMIN_DIR_),
         ];
 
         return parent::renderView();
@@ -518,7 +518,7 @@ class AdminEmployeeThreadsControllerCore extends AdminController {
         $this->fields_value['id_employee'] = $this->context->employee->id;
         $this->form_action = 'openTicket';
         $this->form_ajax = 1;
-        $this->extraJs = [_PS_JS_DIR_ . 'tinymce/tinymce.min.js', _PS_JS_DIR_ . 'tinymce.inc.js',
+        $this->extraJs = [_EPH_JS_DIR_ . 'tinymce/tinymce.min.js', _EPH_JS_DIR_ . 'tinymce.inc.js',
         ];
 
         return parent::renderForm();
@@ -542,16 +542,16 @@ class AdminEmployeeThreadsControllerCore extends AdminController {
         $result = $thread->add();
 
         if ($result) {
-            $tpl = $this->context->smarty->createTemplate(_PS_MAIL_DIR_ . '/pdf/ticket.tpl');
+            $tpl = $this->context->smarty->createTemplate(_EPH_MAIL_DIR_ . '/pdf/ticket.tpl');
             $tpl->assign([
                 'thread'   => $thread,
                 'employee' => $this->context->employee,
-                'website'  => Configuration::get('PS_SHOP_NAME'),
+                'website'  => Configuration::get('EPH_SHOP_NAME'),
             ]);
             $postfields = [
                 'sender'      => [
                     'name'  => $this->context->employee->firstname . ' ' . $this->context->employee->lastname,
-                    'email' => Configuration::get('PS_SHOP_EMAIL'),
+                    'email' => Configuration::get('EPH_SHOP_EMAIL'),
                 ],
                 'to'          => [
                     [
@@ -565,22 +565,22 @@ class AdminEmployeeThreadsControllerCore extends AdminController {
                         'email' => 'alexandre.cayzac@ephenyx.com',
                     ],
                 ],
-                'subject'     => 'Demande d‘assistance pour  ' . Configuration::get('PS_SHOP_NAME'),
+                'subject'     => 'Demande d‘assistance pour  ' . Configuration::get('EPH_SHOP_NAME'),
                 "htmlContent" => $tpl->fetch(),
             ];
             Tools::sendEmail($postfields);
 
-            $tpl = $this->context->smarty->createTemplate(_PS_MAIL_DIR_ . '/pdf/ticket_confirmation.tpl');
+            $tpl = $this->context->smarty->createTemplate(_EPH_MAIL_DIR_ . '/pdf/ticket_confirmation.tpl');
 
             $tpl->assign([
                 'thread'   => $thread,
                 'employee' => $this->context->employee,
-                'website'  => Configuration::get('PS_SHOP_NAME'),
+                'website'  => Configuration::get('EPH_SHOP_NAME'),
             ]);
             $postfields = [
                 'sender'      => [
                     'name'  => $this->context->employee->firstname . ' ' . $this->context->employee->lastname,
-                    'email' => Configuration::get('PS_SHOP_EMAIL'),
+                    'email' => Configuration::get('EPH_SHOP_EMAIL'),
                 ],
                 'to'          => [
                     [
@@ -588,7 +588,7 @@ class AdminEmployeeThreadsControllerCore extends AdminController {
                         'email' => $this->context->employee->email,
                     ],
                 ],
-                'subject'     => 'Votre demande d‘assistance pour  ' . Configuration::get('PS_SHOP_NAME'),
+                'subject'     => 'Votre demande d‘assistance pour  ' . Configuration::get('EPH_SHOP_NAME'),
                 "htmlContent" => $tpl->fetch(),
             ];
             Tools::sendEmail($postfields);
@@ -623,17 +623,17 @@ class AdminEmployeeThreadsControllerCore extends AdminController {
         $result = $message->add();
 
         if ($result) {
-            $tpl = $this->context->smarty->createTemplate(_PS_MAIL_DIR_ . '/pdf/answer.tpl');
+            $tpl = $this->context->smarty->createTemplate(_EPH_MAIL_DIR_ . '/pdf/answer.tpl');
             $tpl->assign([
                 'thread'   => $thread,
                 'employee' => $this->context->employee,
                 'message'  => $message,
-                'website'  => Configuration::get('PS_SHOP_NAME'),
+                'website'  => Configuration::get('EPH_SHOP_NAME'),
             ]);
             $postfields = [
                 'sender'      => [
                     'name'  => $this->context->employee->firstname . ' ' . $this->context->employee->lastname,
-                    'email' => Configuration::get('PS_SHOP_EMAIL'),
+                    'email' => Configuration::get('EPH_SHOP_EMAIL'),
                 ],
                 'to'          => [
                     [
@@ -647,7 +647,7 @@ class AdminEmployeeThreadsControllerCore extends AdminController {
                         'email' => 'alexandre.cayzac@ephenyx.com',
                     ],
                 ],
-                'subject'     => 'Réponse posté pour un problème de SAV ' . Configuration::get('PS_SHOP_NAME'),
+                'subject'     => 'Réponse posté pour un problème de SAV ' . Configuration::get('EPH_SHOP_NAME'),
                 "htmlContent" => $tpl->fetch(),
             ];
             Tools::sendEmail($postfields);
@@ -670,7 +670,7 @@ class AdminEmployeeThreadsControllerCore extends AdminController {
 
         $idObject = Tools::getValue('idObject');
         $url = 'https://ephenyx.io/ticket';
-        $string = Configuration::get('_EPHENYX_LICENSE_KEY_') . '/' . Configuration::get('PS_SHOP_DOMAIN');
+        $string = Configuration::get('_EPHENYX_LICENSE_KEY_') . '/' . Configuration::get('EPH_SHOP_DOMAIN');
         $crypto_key = Tools::encrypt_decrypt('encrypt', $string, _PHP_ENCRYPTION_KEY_, _COOKIE_KEY_);
 
         $data_array = [

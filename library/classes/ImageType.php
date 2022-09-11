@@ -35,13 +35,13 @@ class ImageTypeCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     const SINGULAR_DIR = [
-        'img'          => ['dir' => _PS_IMG_DIR_, 'iterate' => false],
-        'module'       => ['dir' => _PS_MODULE_DIR_, 'iterate' => true],
-        'category'     => ['dir' => _PS_CAT_IMG_DIR_, 'iterate' => false],
-        'manufacturer' => ['dir' => _PS_MANU_IMG_DIR_, 'iterate' => false],
-        'supplier'     => ['dir' => _PS_SUPP_IMG_DIR_, 'iterate' => false],
-        'product'      => ['dir' => _PS_PROD_IMG_DIR_, 'iterate' => true],
-        'store'        => ['dir' => _PS_STORE_IMG_DIR_, 'iterate' => false],
+        'img'          => ['dir' => _EPH_IMG_DIR_, 'iterate' => false],
+        'module'       => ['dir' => _EPH_MODULE_DIR_, 'iterate' => true],
+        'category'     => ['dir' => _EPH_CAT_IMG_DIR_, 'iterate' => false],
+        'manufacturer' => ['dir' => _EPH_MANU_IMG_DIR_, 'iterate' => false],
+        'supplier'     => ['dir' => _EPH_SUPP_IMG_DIR_, 'iterate' => false],
+        'product'      => ['dir' => _EPH_PROD_IMG_DIR_, 'iterate' => true],
+        'store'        => ['dir' => _EPH_STORE_IMG_DIR_, 'iterate' => false],
 
     ];
 
@@ -98,7 +98,7 @@ class ImageTypeCore extends ObjectModel {
                 $query->orderBy('`name` ASC');
             }
 
-            static::$images_types_cache[$type] = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+            static::$images_types_cache[$type] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
         }
 
         return static::$images_types_cache[$type];
@@ -200,7 +200,7 @@ class ImageTypeCore extends ObjectModel {
             die(Tools::displayError());
         }
 
-        Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_image_type`')
                 ->from('image_type')
@@ -260,7 +260,7 @@ class ImageTypeCore extends ObjectModel {
         // @codingStandardsIgnoreStart
 
         if (!isset(static::$images_types_name_cache[$name . '_' . $type . '_' . $order]) && !$isPassed) {
-            $results = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('SELECT * FROM `' . _DB_PREFIX_ . 'image_type`');
+            $results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS('SELECT * FROM `' . _DB_PREFIX_ . 'image_type`');
 
             $types = ['products', 'categories', 'manufacturers', 'suppliers', 'scenes', 'stores'];
             $total = count($types);

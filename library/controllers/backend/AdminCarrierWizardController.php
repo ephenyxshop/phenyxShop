@@ -64,7 +64,7 @@ class AdminCarrierWizardControllerCore extends AdminController {
         parent::setMedia($isNewTheme);
         $this->addJqueryPlugin('smartWizard');
         $this->addJqueryPlugin('typewatch');
-        $this->addJs(__PS_BASE_URI__ . _PS_JS_DIR_ . 'carrier_wizard.js');
+        $this->addJs(__EPH_BASE_URI__ . _EPH_JS_DIR_ . 'carrier_wizard.js');
     }
 
     /**
@@ -99,7 +99,7 @@ class AdminCarrierWizardControllerCore extends AdminController {
         $this->tpl_view_vars = [
             'currency_sign'     => $currency->sign,
             'currency_iso_code' => $currency->iso_code,
-            'PS_WEIGHT_UNIT'    => Configuration::get('PS_WEIGHT_UNIT'),
+            'EPH_WEIGHT_UNIT'    => Configuration::get('EPH_WEIGHT_UNIT'),
             'enableAllSteps'    => Validate::isLoadedObject($carrier),
             'wizard_steps'      => $this->wizard_steps,
             'validate_url'      => $this->context->link->getAdminLink('AdminCarrierWizard'),
@@ -122,7 +122,7 @@ class AdminCarrierWizardControllerCore extends AdminController {
 
         $this->context->smarty->assign(
             [
-                'carrier_logo' => (Validate::isLoadedObject($carrier) && file_exists(_PS_SHIP_IMG_DIR_ . $carrier->id . '.jpg') ? _THEME_SHIP_DIR_ . $carrier->id . '.jpg' : false),
+                'carrier_logo' => (Validate::isLoadedObject($carrier) && file_exists(_EPH_SHIP_IMG_DIR_ . $carrier->id . '.jpg') ? _THEME_SHIP_DIR_ . $carrier->id . '.jpg' : false),
             ]
         );
 
@@ -192,7 +192,7 @@ class AdminCarrierWizardControllerCore extends AdminController {
                 Shop::setContext($this->type_context, $this->old_context->shop->id_shop_group);
             }
 
-            $currency = new Currency(Configuration::get('PS_CURRENCY_DEFAULT'));
+            $currency = new Currency(Configuration::get('EPH_CURRENCY_DEFAULT'));
 
             Shop::setContext(Shop::CONTEXT_ALL);
         } catch (Exception $e) {
@@ -261,7 +261,7 @@ class AdminCarrierWizardControllerCore extends AdminController {
             ],
         ];
 
-        $tplVars = ['max_image_size' => (int) Configuration::get('PS_PRODUCT_PICTURE_MAX_SIZE') / 1024 / 1024];
+        $tplVars = ['max_image_size' => (int) Configuration::get('EPH_PRODUCT_PICTURE_MAX_SIZE') / 1024 / 1024];
         $fieldsValue = $this->getStepOneFieldsValues($carrier);
 
         return $this->renderGenericForm(['form' => $this->fields_form], $fieldsValue, $tplVars);
@@ -299,9 +299,9 @@ class AdminCarrierWizardControllerCore extends AdminController {
         $helper = new HelperForm();
         $helper->show_toolbar = false;
         $helper->table = $this->table;
-        $lang = new Language((int) Configuration::get('PS_LANG_DEFAULT'));
+        $lang = new Language((int) Configuration::get('EPH_LANG_DEFAULT'));
         $helper->default_form_language = $lang->id;
-        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
+        $helper->allow_employee_form_lang = Configuration::get('EPH_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('EPH_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
         $this->fields_form = [];
         $helper->id = (int) Tools::getValue('id_carrier');
         $helper->identifier = $this->identifier;
@@ -433,12 +433,12 @@ class AdminCarrierWizardControllerCore extends AdminController {
             ],
         ];
 
-        if (Configuration::get('PS_ATCP_SHIPWRAP')) {
+        if (Configuration::get('EPH_ATCP_SHIPWRAP')) {
             unset($this->fields_form['form']['input']['id_tax_rules_group']);
         }
 
         $tplVars = [];
-        $tplVars['PS_WEIGHT_UNIT'] = Configuration::get('PS_WEIGHT_UNIT');
+        $tplVars['EPH_WEIGHT_UNIT'] = Configuration::get('EPH_WEIGHT_UNIT');
 
         $currency = $this->getActualCurrency();
 
@@ -551,28 +551,28 @@ class AdminCarrierWizardControllerCore extends AdminController {
                 'input'   => [
                     [
                         'type'     => 'text',
-                        'label'    => sprintf($this->l('Maximum package width (%s)'), Configuration::get('PS_DIMENSION_UNIT')),
+                        'label'    => sprintf($this->l('Maximum package width (%s)'), Configuration::get('EPH_DIMENSION_UNIT')),
                         'name'     => 'max_width',
                         'required' => false,
                         'hint'     => $this->l('Maximum width managed by this carrier. Set the value to "0", or leave this field blank to ignore.') . ' ' . $this->l('The value must be an integer.'),
                     ],
                     [
                         'type'     => 'text',
-                        'label'    => sprintf($this->l('Maximum package height (%s)'), Configuration::get('PS_DIMENSION_UNIT')),
+                        'label'    => sprintf($this->l('Maximum package height (%s)'), Configuration::get('EPH_DIMENSION_UNIT')),
                         'name'     => 'max_height',
                         'required' => false,
                         'hint'     => $this->l('Maximum height managed by this carrier. Set the value to "0", or leave this field blank to ignore.') . ' ' . $this->l('The value must be an integer.'),
                     ],
                     [
                         'type'     => 'text',
-                        'label'    => sprintf($this->l('Maximum package depth (%s)'), Configuration::get('PS_DIMENSION_UNIT')),
+                        'label'    => sprintf($this->l('Maximum package depth (%s)'), Configuration::get('EPH_DIMENSION_UNIT')),
                         'name'     => 'max_depth',
                         'required' => false,
                         'hint'     => $this->l('Maximum depth managed by this carrier. Set the value to "0", or leave this field blank to ignore.') . ' ' . $this->l('The value must be an integer.'),
                     ],
                     [
                         'type'     => 'text',
-                        'label'    => sprintf($this->l('Maximum package weight (%s)'), Configuration::get('PS_WEIGHT_UNIT')),
+                        'label'    => sprintf($this->l('Maximum package weight (%s)'), Configuration::get('EPH_WEIGHT_UNIT')),
                         'name'     => 'max_weight',
                         'required' => false,
                         'hint'     => $this->l('Maximum weight managed by this carrier. Set the value to "0", or leave this field blank to ignore.'),
@@ -756,7 +756,7 @@ class AdminCarrierWizardControllerCore extends AdminController {
         $currency = $this->getActualCurrency();
 
         $template->assign('currency_sign', $currency->sign);
-        $template->assign('PS_WEIGHT_UNIT', Configuration::get('PS_WEIGHT_UNIT'));
+        $template->assign('EPH_WEIGHT_UNIT', Configuration::get('EPH_WEIGHT_UNIT'));
 
         die($template->fetch());
     }
@@ -828,14 +828,14 @@ class AdminCarrierWizardControllerCore extends AdminController {
 
             do {
                 $tmpName = uniqid() . '.jpg';
-            } while (file_exists(_PS_TMP_IMG_DIR_ . $tmpName));
+            } while (file_exists(_EPH_TMP_IMG_DIR_ . $tmpName));
 
-            if (!ImageManager::resize($file, _PS_TMP_IMG_DIR_ . $tmpName)) {
-                die('<return result="error" message="Impossible to resize the image into ' . Tools::safeOutput(_PS_TMP_IMG_DIR_) . '" />');
+            if (!ImageManager::resize($file, _EPH_TMP_IMG_DIR_ . $tmpName)) {
+                die('<return result="error" message="Impossible to resize the image into ' . Tools::safeOutput(_EPH_TMP_IMG_DIR_) . '" />');
             }
 
             @unlink($file);
-            die('<return result="success" message="' . Tools::safeOutput(_PS_TMP_IMG_ . $tmpName) . '" />');
+            die('<return result="success" message="' . Tools::safeOutput(_EPH_TMP_IMG_ . $tmpName) . '" />');
         } else {
             die('<return result="error" message="Cannot upload file" />');
         }
@@ -880,8 +880,8 @@ class AdminCarrierWizardControllerCore extends AdminController {
 
                     //Copy default carrier
 
-                    if (Configuration::get('PS_CARRIER_DEFAULT') == $currentCarrier->id) {
-                        Configuration::updateValue('PS_CARRIER_DEFAULT', (int) $newCarrier->id);
+                    if (Configuration::get('EPH_CARRIER_DEFAULT') == $currentCarrier->id) {
+                        Configuration::updateValue('EPH_CARRIER_DEFAULT', (int) $newCarrier->id);
                     }
 
                     // Call of hooks
@@ -947,12 +947,12 @@ class AdminCarrierWizardControllerCore extends AdminController {
 
                 if (Tools::getValue('logo')) {
 
-                    if (Tools::getValue('logo') == 'null' && file_exists(_PS_SHIP_IMG_DIR_ . $carrier->id . '.jpg')) {
-                        unlink(_PS_SHIP_IMG_DIR_ . $carrier->id . '.jpg');
+                    if (Tools::getValue('logo') == 'null' && file_exists(_EPH_SHIP_IMG_DIR_ . $carrier->id . '.jpg')) {
+                        unlink(_EPH_SHIP_IMG_DIR_ . $carrier->id . '.jpg');
                     } else {
                         $logo = basename(Tools::getValue('logo'));
 
-                        if (!file_exists(_PS_TMP_IMG_DIR_ . $logo) || !@copy(_PS_TMP_IMG_DIR_ . $logo, _PS_SHIP_IMG_DIR_ . $carrier->id . '.jpg')) {
+                        if (!file_exists(_EPH_TMP_IMG_DIR_ . $logo) || !@copy(_EPH_TMP_IMG_DIR_ . $logo, _EPH_SHIP_IMG_DIR_ . $carrier->id . '.jpg')) {
                             $return['has_error'] = true;
                             $return['errors'][] = $this->l('An error occurred while saving carrier logo.');
                         }
@@ -977,18 +977,18 @@ class AdminCarrierWizardControllerCore extends AdminController {
      */
     public function duplicateLogo($newId, $oldId) {
 
-        $oldLogo = _PS_SHIP_IMG_DIR_ . '/' . (int) $oldId . '.jpg';
+        $oldLogo = _EPH_SHIP_IMG_DIR_ . '/' . (int) $oldId . '.jpg';
 
         if (file_exists($oldLogo)) {
-            @copy($oldLogo, _PS_SHIP_IMG_DIR_ . '/' . (int) $newId . '.jpg');
+            @copy($oldLogo, _EPH_SHIP_IMG_DIR_ . '/' . (int) $newId . '.jpg');
         }
 
-        $oldTmpLogo = _PS_TMP_IMG_DIR_ . '/carrier_mini_' . (int) $oldId . '.jpg';
+        $oldTmpLogo = _EPH_TMP_IMG_DIR_ . '/carrier_mini_' . (int) $oldId . '.jpg';
 
         if (file_exists($oldTmpLogo)) {
 
             if (!isset($_FILES['logo'])) {
-                @copy($oldTmpLogo, _PS_TMP_IMG_DIR_ . '/carrier_mini_' . $newId . '.jpg');
+                @copy($oldTmpLogo, _EPH_TMP_IMG_DIR_ . '/carrier_mini_' . $newId . '.jpg');
             }
 
             unlink($oldTmpLogo);

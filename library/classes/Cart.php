@@ -94,7 +94,7 @@ class CartCore extends ObjectModel {
     /** @var bool Allow to seperate order in multiple package in order to recieve as soon as possible the available products */
     public $allow_seperated_package = false;
     protected $_products = null;
-    protected $_taxCalculationMethod = PS_TAX_EXC;
+    protected $_taxCalculationMethod = EPH_TAX_EXC;
     protected $webserviceParameters = [
         'fields'       => [
             'id_address_delivery' => ['xlink_resource' => 'addresses'],
@@ -132,7 +132,7 @@ class CartCore extends ObjectModel {
         parent::__construct($id);
 
         if (!is_null($idLang)) {
-            $this->id_lang = (int) (Language::getLanguage($idLang) !== false) ? $idLang : Configuration::get('PS_LANG_DEFAULT');
+            $this->id_lang = (int) (Language::getLanguage($idLang) !== false) ? $idLang : Configuration::get('EPH_LANG_DEFAULT');
         }
 
         if ($this->id_customer) {
@@ -183,7 +183,7 @@ class CartCore extends ObjectModel {
             die(Tools::displayError());
         }
 
-        if (!Configuration::get('PS_TAX')) {
+        if (!Configuration::get('EPH_TAX')) {
             return 0;
         }
 
@@ -198,7 +198,7 @@ class CartCore extends ObjectModel {
         foreach ($products as $product) {
             // products refer to the cart details
 
-            if (Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_invoice') {
+            if (Configuration::get('EPH_TAX_ADDRESS_TYPE') == 'id_address_invoice') {
                 $addressId = (int) $cart->id_address_invoice;
             } else {
                 $addressId = (int) $product['id_address_delivery'];
@@ -401,8 +401,8 @@ class CartCore extends ObjectModel {
             return [];
         }
 
-        $ecotaxRate = (float) Tax::getProductEcotaxRate($this->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
-        $applyEcoTax = Product::$_taxCalculationMethod == PS_TAX_INC && (int) Configuration::get('PS_TAX');
+        $ecotaxRate = (float) Tax::getProductEcotaxRate($this->{Configuration::get('EPH_TAX_ADDRESS_TYPE')});
+        $applyEcoTax = Product::$_taxCalculationMethod == EPH_TAX_INC && (int) Configuration::get('EPH_TAX');
         $cartShopContext = Context::getContext()->cloneContext();
 
         foreach ($result as &$row) {
@@ -418,7 +418,7 @@ class CartCore extends ObjectModel {
                 $row['weight'] = (float) $row['weight_attribute'];
             }
 
-            if (Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_invoice') {
+            if (Configuration::get('EPH_TAX_ADDRESS_TYPE') == 'id_address_invoice') {
                 $addressId = (int) $this->id_address_invoice;
             } else {
                 $addressId = (int) $row['id_address_delivery'];
@@ -574,16 +574,16 @@ class CartCore extends ObjectModel {
 
             if (Currency::getCurrencyInstance($this->id_currency)->decimals) {
                 $displayPrecision =
-                Configuration::get('PS_PRICE_DISPLAY_PRECISION');
+                Configuration::get('EPH_PRICE_DISPLAY_PRECISION');
             }
 
         }
 
-        $roundType = (int) Configuration::get('PS_ROUND_TYPE');
+        $roundType = (int) Configuration::get('EPH_ROUND_TYPE');
 
         $price = $priceWithoutTax;
 
-        if ($this->_taxCalculationMethod === PS_TAX_INC) {
+        if ($this->_taxCalculationMethod === EPH_TAX_INC) {
             $price = $priceWithTax;
         }
 
@@ -591,7 +591,7 @@ class CartCore extends ObjectModel {
 
         switch ($roundType) {
         case CustomerPieces::ROUND_ITEM:
-            $price = Tools::ps_round($price, $displayPrecision);
+            $price = Tools::EPH_round($price, $displayPrecision);
         // Intentionally fall through.
         case CustomerPieces::ROUND_LINE:
         case CustomerPieces::ROUND_TOTAL:
@@ -602,7 +602,7 @@ class CartCore extends ObjectModel {
         // precision limitation, please, it should be negligible.
 
         if ($priceWithTax
-            && $this->_taxCalculationMethod === PS_TAX_INC
+            && $this->_taxCalculationMethod === EPH_TAX_INC
             && !$withTax) {
             // Remove taxes.
             $total = round(
@@ -610,7 +610,7 @@ class CartCore extends ObjectModel {
                 6
             );
         } else if ($priceWithoutTax
-            && $this->_taxCalculationMethod === PS_TAX_EXC
+            && $this->_taxCalculationMethod === EPH_TAX_EXC
             && $withTax) {
             // Add taxes.
             $total = round(
@@ -621,7 +621,7 @@ class CartCore extends ObjectModel {
         // else nothing to change.
 
         if ($roundType === CustomerPieces::ROUND_LINE) {
-            $total = Tools::ps_round($total, $displayPrecision);
+            $total = Tools::EPH_round($total, $displayPrecision);
         }
 
         return $total;
@@ -657,7 +657,7 @@ class CartCore extends ObjectModel {
             return;
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('pac.`id_product_attribute`, agl.`public_name` AS `public_group_name`, al.`name` AS `attribute_name`')
                 ->from('product_attribute_combination', 'pac')
@@ -719,7 +719,7 @@ class CartCore extends ObjectModel {
             die(Tools::displayError());
         }
 
-        $withTaxes = $useTaxDisplay ? $cart->_taxCalculationMethod !== PS_TAX_EXC : true;
+        $withTaxes = $useTaxDisplay ? $cart->_taxCalculationMethod !== EPH_TAX_EXC : true;
 
         return Tools::displayPrice($cart->getOrderTotal($withTaxes, $type), Currency::getCurrencyInstance((int) $cart->id_currency), false);
     }
@@ -760,7 +760,7 @@ class CartCore extends ObjectModel {
 
             if (Currency::getCurrencyInstance($this->id_currency)->decimals) {
                 $displayPrecision =
-                Configuration::get('PS_PRICE_DISPLAY_PRECISION');
+                Configuration::get('EPH_PRICE_DISPLAY_PRECISION');
             }
 
         }
@@ -773,8 +773,8 @@ class CartCore extends ObjectModel {
         /** @var Core_Business_ConfigurationInterface $configuration */
         $configuration = Adapter_ServiceLocator::get('Core_Business_ConfigurationInterface');
 
-        $psTaxAddressType = $configuration->get('PS_TAX_ADDRESS_TYPE');
-        $psUseEcotax = $configuration->get('PS_USE_ECOTAX');
+        $psTaxAddressType = $configuration->get('EPH_TAX_ADDRESS_TYPE');
+        $psUseEcotax = $configuration->get('EPH_USE_ECOTAX');
 
         if (!$this->id) {
             return 0;
@@ -934,7 +934,7 @@ class CartCore extends ObjectModel {
 
             $index = $idTaxRulesGroup;
 
-            if (Configuration::get('PS_ROUND_TYPE') == CustomerPieces::ROUND_TOTAL) {
+            if (Configuration::get('EPH_ROUND_TYPE') == CustomerPieces::ROUND_TOTAL) {
                 $index = $idTaxRulesGroup . '_' . $idAddress;
             }
 
@@ -964,10 +964,10 @@ class CartCore extends ObjectModel {
         $wrappingFees = 0;
 
         // With useProportionateTax on the gift wrapping cost computation calls getOrderTotal with $type === static::ONLY_PRODUCTS, so the flag below prevents an infinite recursion.
-        $includeGiftWrapping = (!$configuration->get('PS_ATCP_SHIPWRAP') || $type !== Cart::ONLY_PRODUCTS);
+        $includeGiftWrapping = (!$configuration->get('EPH_ATCP_SHIPWRAP') || $type !== Cart::ONLY_PRODUCTS);
 
         if ($this->gift && $includeGiftWrapping) {
-            $wrappingFees = Tools::ps_round(
+            $wrappingFees = Tools::EPH_round(
                 Tools::convertPrice(
                     $this->getGiftWrappingPrice($withTaxes),
                     Currency::getCurrencyInstance((int) $this->id_currency)
@@ -1081,7 +1081,7 @@ class CartCore extends ObjectModel {
             return $orderTotalDiscount;
         }
 
-        return Tools::ps_round((float) $orderTotal, $displayPrecision);
+        return Tools::EPH_round((float) $orderTotal, $displayPrecision);
     }
 
     /**
@@ -1232,13 +1232,13 @@ class CartCore extends ObjectModel {
 
             foreach ($options as $key => $option) {
 
-                if (Configuration::get('PS_CARRIER_DEFAULT') == -1 && $option['is_best_price']) {
+                if (Configuration::get('EPH_CARRIER_DEFAULT') == -1 && $option['is_best_price']) {
                     $deliveryOption[$idAddress] = $key;
                     break;
-                } else if (Configuration::get('PS_CARRIER_DEFAULT') == -2 && $option['is_best_grade']) {
+                } else if (Configuration::get('EPH_CARRIER_DEFAULT') == -2 && $option['is_best_grade']) {
                     $deliveryOption[$idAddress] = $key;
                     break;
-                } else if ($option['unique_carrier'] && in_array(Configuration::get('PS_CARRIER_DEFAULT'), array_keys($option['carrier_list']))) {
+                } else if ($option['unique_carrier'] && in_array(Configuration::get('EPH_CARRIER_DEFAULT'), array_keys($option['carrier_list']))) {
                     $deliveryOption[$idAddress] = $key;
                     break;
                 }
@@ -1567,7 +1567,7 @@ class CartCore extends ObjectModel {
         $result = false;
 
         if ($this->id) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('*')
                     ->from('cart_cart_rule')
@@ -1652,7 +1652,7 @@ class CartCore extends ObjectModel {
 
                     $deliveryOptionList[$idAddress][$key]['carrier_list'][$idCarrier]['instance'] = $carrierCollection[$idCarrier];
 
-                    if (file_exists(_PS_SHIP_IMG_DIR_ . $idCarrier . '.jpg')) {
+                    if (file_exists(_EPH_SHIP_IMG_DIR_ . $idCarrier . '.jpg')) {
                         $deliveryOptionList[$idAddress][$key]['carrier_list'][$idCarrier]['logo'] = _THEME_SHIP_DIR_ . $idCarrier . '.jpg';
                     } else {
                         $deliveryOptionList[$idAddress][$key]['carrier_list'][$idCarrier]['logo'] = false;
@@ -1715,7 +1715,7 @@ class CartCore extends ObjectModel {
         // For that we count the number of time we can use a warehouse for a specific delivery address
         $warehouseCountByAddress = [];
 
-        $stockManagementActive = Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT');
+        $stockManagementActive = Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT');
 
         foreach ($productList as &$product) {
 
@@ -2054,7 +2054,7 @@ class CartCore extends ObjectModel {
             $products = $productList;
         }
 
-        if (Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_invoice') {
+        if (Configuration::get('EPH_TAX_ADDRESS_TYPE') == 'id_address_invoice') {
             $addressId = (int) $this->id_address_invoice;
         } else if (is_array($productList) && count($productList)) {
             $prod = current($productList);
@@ -2113,7 +2113,7 @@ class CartCore extends ObjectModel {
             } else {
 
                 if (!Validate::isLoadedObject($defaultCountry)) {
-                    $defaultCountry = new Country(Configuration::get('PS_COUNTRY_DEFAULT'), Configuration::get('PS_LANG_DEFAULT'));
+                    $defaultCountry = new Country(Configuration::get('EPH_COUNTRY_DEFAULT'), Configuration::get('EPH_LANG_DEFAULT'));
                 }
 
                 $idZone = (int) $defaultCountry->id_zone;
@@ -2125,8 +2125,8 @@ class CartCore extends ObjectModel {
             $idCarrier = '';
         }
 
-        if (empty($idCarrier) && $this->isCarrierInRange((int) Configuration::get('PS_CARRIER_DEFAULT'), (int) $idZone)) {
-            $idCarrier = (int) Configuration::get('PS_CARRIER_DEFAULT');
+        if (empty($idCarrier) && $this->isCarrierInRange((int) Configuration::get('EPH_CARRIER_DEFAULT'), (int) $idZone)) {
+            $idCarrier = (int) Configuration::get('EPH_CARRIER_DEFAULT');
         }
 
         $totalPackageWithoutShippingTaxInc = $this->getOrderTotal(true, static::BOTH_WITHOUT_SHIPPING, $productList);
@@ -2135,15 +2135,15 @@ class CartCore extends ObjectModel {
 
             if ((int) $this->id_customer) {
                 $customer = new Customer((int) $this->id_customer);
-                $result = Carrier::getCarriers((int) Configuration::get('PS_LANG_DEFAULT'), true, false, (int) $idZone, $customer->getGroups());
+                $result = Carrier::getCarriers((int) Configuration::get('EPH_LANG_DEFAULT'), true, false, (int) $idZone, $customer->getGroups());
                 unset($customer);
             } else {
-                $result = Carrier::getCarriers((int) Configuration::get('PS_LANG_DEFAULT'), true, false, (int) $idZone);
+                $result = Carrier::getCarriers((int) Configuration::get('EPH_LANG_DEFAULT'), true, false, (int) $idZone);
             }
 
             foreach ($result as $k => $row) {
 
-                if ($row['id_carrier'] == Configuration::get('PS_CARRIER_DEFAULT')) {
+                if ($row['id_carrier'] == Configuration::get('EPH_CARRIER_DEFAULT')) {
                     continue;
                 }
 
@@ -2203,11 +2203,11 @@ class CartCore extends ObjectModel {
         }
 
         if (empty($idCarrier)) {
-            $idCarrier = Configuration::get('PS_CARRIER_DEFAULT');
+            $idCarrier = Configuration::get('EPH_CARRIER_DEFAULT');
         }
 
         if (!isset(static::$_carriers[$idCarrier])) {
-            static::$_carriers[$idCarrier] = new Carrier((int) $idCarrier, Configuration::get('PS_LANG_DEFAULT'));
+            static::$_carriers[$idCarrier] = new Carrier((int) $idCarrier, Configuration::get('EPH_LANG_DEFAULT'));
         }
 
         $carrier = static::$_carriers[$idCarrier];
@@ -2242,7 +2242,7 @@ class CartCore extends ObjectModel {
             $carrierTax = 0.0;
         } else {
 
-            if (Configuration::get('PS_ATCP_SHIPWRAP')) {
+            if (Configuration::get('EPH_ATCP_SHIPWRAP')) {
                 $carrier_tax = 0;
             } else {
                 $address = Address::initialize((int) $addressId);
@@ -2253,18 +2253,18 @@ class CartCore extends ObjectModel {
 
         $configuration = Configuration::getMultiple(
             [
-                'PS_SHIPPING_FREE_PRICE',
-                'PS_SHIPPING_HANDLING',
-                'PS_SHIPPING_METHOD',
-                'PS_SHIPPING_FREE_WEIGHT',
+                'EPH_SHIPPING_FREE_PRICE',
+                'EPH_SHIPPING_HANDLING',
+                'EPH_SHIPPING_METHOD',
+                'EPH_SHIPPING_FREE_WEIGHT',
             ]
         );
 
         // Free fees
         $freeFeesPrice = 0;
 
-        if (isset($configuration['PS_SHIPPING_FREE_PRICE'])) {
-            $freeFeesPrice = Tools::convertPrice((float) $configuration['PS_SHIPPING_FREE_PRICE'], Currency::getCurrencyInstance((int) $this->id_currency));
+        if (isset($configuration['EPH_SHIPPING_FREE_PRICE'])) {
+            $freeFeesPrice = Tools::convertPrice((float) $configuration['EPH_SHIPPING_FREE_PRICE'], Currency::getCurrencyInstance((int) $this->id_currency));
         }
 
         $orderTotalWithDiscounts = $this->getOrderTotal(true, static::BOTH_WITHOUT_SHIPPING, null, null, false);
@@ -2275,9 +2275,9 @@ class CartCore extends ObjectModel {
             return $shippingCost;
         }
 
-        if (isset($configuration['PS_SHIPPING_FREE_WEIGHT'])
-            && $this->getTotalWeight() >= (float) $configuration['PS_SHIPPING_FREE_WEIGHT']
-            && (float) $configuration['PS_SHIPPING_FREE_WEIGHT'] > 0
+        if (isset($configuration['EPH_SHIPPING_FREE_WEIGHT'])
+            && $this->getTotalWeight() >= (float) $configuration['EPH_SHIPPING_FREE_WEIGHT']
+            && (float) $configuration['EPH_SHIPPING_FREE_WEIGHT'] > 0
         ) {
             Cache::store($cacheId, $shippingCost);
 
@@ -2330,8 +2330,8 @@ class CartCore extends ObjectModel {
 
         // Adding handling charges
 
-        if (isset($configuration['PS_SHIPPING_HANDLING']) && $carrier->shipping_handling) {
-            $shippingCost += (float) $configuration['PS_SHIPPING_HANDLING'];
+        if (isset($configuration['EPH_SHIPPING_HANDLING']) && $carrier->shipping_handling) {
+            $shippingCost += (float) $configuration['EPH_SHIPPING_HANDLING'];
         }
 
         // Additional Shipping Cost per product
@@ -2478,7 +2478,7 @@ class CartCore extends ObjectModel {
      */
     public function isCarrierInRange($idCarrier, $idZone) {
 
-        $carrier = new Carrier((int) $idCarrier, Configuration::get('PS_LANG_DEFAULT'));
+        $carrier = new Carrier((int) $idCarrier, Configuration::get('EPH_LANG_DEFAULT'));
         $shippingMethod = $carrier->getShippingMethod();
 
         if (!$carrier->range_behavior) {
@@ -2549,7 +2549,7 @@ class CartCore extends ObjectModel {
         if (!isset(static::$_totalWeight[$this->id])) {
 
             if (Combination::isFeatureActive()) {
-                $weightProductWithAttribute = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                $weightProductWithAttribute = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                     (new DbQuery())
                         ->select('SUM((p.`weight` + pa.`weight`) * cp.`quantity`) AS `nb`')
                         ->from('cart_product', 'cp')
@@ -2563,7 +2563,7 @@ class CartCore extends ObjectModel {
                 $weightProductWithAttribute = 0;
             }
 
-            $weightProductWithoutAttribute = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $weightProductWithoutAttribute = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('SUM(p.`weight` * cp.`quantity`) AS `nb`')
                     ->from('cart_product', 'cp')
@@ -2626,7 +2626,7 @@ class CartCore extends ObjectModel {
 
         static $address = [];
 
-        $wrappingFees = (float) Configuration::get('PS_GIFT_WRAPPING_PRICE');
+        $wrappingFees = (float) Configuration::get('EPH_GIFT_WRAPPING_PRICE');
 
         if ($wrappingFees <= 0) {
             return $wrappingFees;
@@ -2634,26 +2634,26 @@ class CartCore extends ObjectModel {
 
         if ($withTaxes) {
 
-            if (Configuration::get('PS_ATCP_SHIPWRAP')) {
+            if (Configuration::get('EPH_ATCP_SHIPWRAP')) {
                 
             } else {
 
                 if (!isset($address[$this->id])) {
 
                     if ($idAddress === null) {
-                        $idAddress = (int) $this->{Configuration::get('PS_TAX_ADDRESS_TYPE')};
+                        $idAddress = (int) $this->{Configuration::get('EPH_TAX_ADDRESS_TYPE')};
                     }
 
                     try {
                         $address[$this->id] = Address::initialize($idAddress);
                     } catch (Exception $e) {
                         $address[$this->id] = new Address();
-                        $address[$this->id]->id_country = Configuration::get('PS_COUNTRY_DEFAULT');
+                        $address[$this->id]->id_country = Configuration::get('EPH_COUNTRY_DEFAULT');
                     }
 
                 }
 
-                $taxManager = TaxManagerFactory::getManager($address[$this->id], (int) Configuration::get('PS_GIFT_WRAPPING_TAX_RULES_GROUP'));
+                $taxManager = TaxManagerFactory::getManager($address[$this->id], (int) Configuration::get('EPH_GIFT_WRAPPING_TAX_RULES_GROUP'));
                 $taxCalculator = $taxManager->getTaxCalculator();
                 $wrappingFees = $taxCalculator->addTaxes($wrappingFees);
             }
@@ -2684,7 +2684,7 @@ class CartCore extends ObjectModel {
         $cacheKey = 'static::getCartRules_' . $this->id . '-' . $filter;
 
         if (!Cache::isStored($cacheKey)) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('cr.*, crl.`id_lang`, crl.`name`, cd.`id_cart`')
                     ->from('cart_cart_rule', 'cd')
@@ -2773,11 +2773,11 @@ class CartCore extends ObjectModel {
         static $orderWay = null;
 
         if (is_null($orderByPrice)) {
-            $orderByPrice = !Configuration::get('PS_CARRIER_DEFAULT_SORT');
+            $orderByPrice = !Configuration::get('EPH_CARRIER_DEFAULT_SORT');
         }
 
         if (is_null($orderWay)) {
-            $orderWay = Configuration::get('PS_CARRIER_DEFAULT_ORDER');
+            $orderWay = Configuration::get('EPH_CARRIER_DEFAULT_ORDER');
         }
 
         if ($orderByPrice) {
@@ -2833,7 +2833,7 @@ class CartCore extends ObjectModel {
      */
     public static function lastNoneOrderedCart($idCustomer) {
 
-        if (!$idCart = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        if (!$idCart = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
             ->select('c.`id_cart`')
             ->from('cart', 'c')
@@ -2880,7 +2880,7 @@ class CartCore extends ObjectModel {
      */
     public static function getCartIdByOrderId($idOrder) {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('`id_cart`')
                 ->from('customer_pieces')
@@ -2908,7 +2908,7 @@ class CartCore extends ObjectModel {
      */
     public static function getCustomerCarts($idCustomer, $dontRejectOrdered = true) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('cart', 'c')
@@ -2950,7 +2950,7 @@ class CartCore extends ObjectModel {
             return false;
         }
 
-        return (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`is_guest`')
                 ->from('customer', 'cu')
@@ -3119,7 +3119,7 @@ class CartCore extends ObjectModel {
             return false;
         }
 
-        $uploadedFiles = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $uploadedFiles = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('cd.`value`')
                 ->from('customized_data', 'cd')
@@ -3129,8 +3129,8 @@ class CartCore extends ObjectModel {
         );
 
         foreach ($uploadedFiles as $mustUnlink) {
-            unlink(_PS_UPLOAD_DIR_ . $mustUnlink['value'] . '_small');
-            unlink(_PS_UPLOAD_DIR_ . $mustUnlink['value']);
+            unlink(_EPH_UPLOAD_DIR_ . $mustUnlink['value'] . '_small');
+            unlink(_EPH_UPLOAD_DIR_ . $mustUnlink['value']);
         }
 
         Db::getInstance()->delete(
@@ -3166,7 +3166,7 @@ class CartCore extends ObjectModel {
         $cacheId = 'static::orderExists_' . (int) $this->id;
 
         if (!Cache::isStored($cacheId)) {
-            $result = (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $result = (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('COUNT(*)')
                     ->from('customer_pieces')
@@ -3252,7 +3252,7 @@ class CartCore extends ObjectModel {
         $cacheId = 'static::getDiscountsCustomer_' . (int) $this->id . '-' . (int) $idCartRule;
 
         if (!Cache::isStored($cacheId)) {
-            $result = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $result = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('COUNT(*)')
                     ->from('cart_cart_rule')
@@ -3277,7 +3277,7 @@ class CartCore extends ObjectModel {
      */
     public function getLastProduct() {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('`id_product`, `id_product_attribute`, `id_shop`')
                 ->from('cart_product', 'cp')
@@ -3342,7 +3342,7 @@ class CartCore extends ObjectModel {
             return static::$_nbProducts[$id];
         }
 
-        static::$_nbProducts[$id] = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        static::$_nbProducts[$id] = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('SUM(`quantity`)')
                 ->from('cart_product')
@@ -3385,7 +3385,7 @@ class CartCore extends ObjectModel {
             return false;
         }
 
-        if (Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        if (Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
             ->select('`id_cart_rule`')
             ->from('cart_cart_rule')
@@ -3474,7 +3474,7 @@ class CartCore extends ObjectModel {
         $quantity = (int) $quantity;
         $idProduct = (int) $idProduct;
         $idProductAttribute = (int) $idProductAttribute;
-        $product = new Product($idProduct, false, Configuration::get('PS_LANG_DEFAULT'), $shop->id);
+        $product = new Product($idProduct, false, Configuration::get('EPH_LANG_DEFAULT'), $shop->id);
 
         if ($idProductAttribute) {
             $combination = new Combination((int) $idProductAttribute);
@@ -3522,7 +3522,7 @@ class CartCore extends ObjectModel {
 
         if ((int) $quantity <= 0) {
             return $this->deleteProduct($idProduct, $idProductAttribute, (int) $idCustomization, 0, $autoAddCartRule);
-        } else if (!$product->available_for_order || (Configuration::get('PS_CATALOG_MODE') && !defined('_PS_ROOT_DIR_'))) {
+        } else if (!$product->available_for_order || (Configuration::get('EPH_CATALOG_MODE') && !defined('_EPH_ROOT_DIR_'))) {
             return false;
         } else {
             /* Check if the product is already in the cart */
@@ -3533,7 +3533,7 @@ class CartCore extends ObjectModel {
             if ($result) {
 
                 if ($operator == 'up') {
-                    $result2 = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+                    $result2 = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                         (new DbQuery())
                             ->select('stock.`out_of_stock`, IFNULL(stock.`quantity`, 0) AS `quantity`')
                             ->from('product', 'p')
@@ -3583,14 +3583,14 @@ class CartCore extends ObjectModel {
                             'quantity' => ['type' => 'sql', 'value' => '`quantity` ' . $qty],
                             'date_add' => ['type' => 'sql', 'value' => 'NOW()'],
                         ],
-                        '`id_product` = ' . (int) $idProduct . (!empty($idProductAttribute) ? ' AND `id_product_attribute` = ' . (int) $idProductAttribute : '') . ' AND `id_cart` = ' . (int) $this->id . (Configuration::get('PS_ALLOW_MULTISHIPPING') && $this->isMultiAddressDelivery() ? ' AND `id_address_delivery` = ' . (int) $idAddressDelivery : ''),
+                        '`id_product` = ' . (int) $idProduct . (!empty($idProductAttribute) ? ' AND `id_product_attribute` = ' . (int) $idProductAttribute : '') . ' AND `id_cart` = ' . (int) $this->id . (Configuration::get('EPH_ALLOW_MULTISHIPPING') && $this->isMultiAddressDelivery() ? ' AND `id_address_delivery` = ' . (int) $idAddressDelivery : ''),
                         1
                     );
                 }
 
             } else if ($operator == 'up') {
                 /* Add product to the cart */
-                $result2 = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+                $result2 = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                     (new DbQuery())
                         ->select('stock.`out_of_stock`, IFNULL(stock.`quantity`, 0) AS `quantity`')
                         ->from('product', 'p')
@@ -3681,7 +3681,7 @@ class CartCore extends ObjectModel {
         }
 
         if ((int) $idCustomization) {
-            $productTotalQuantity = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $productTotalQuantity = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`quantity`')
                     ->from('cart_product')
@@ -3690,7 +3690,7 @@ class CartCore extends ObjectModel {
                     ->where('`id_product_attribute` = ' . (int) $idProductAttribute)
             );
 
-            $customizationQuantity = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $customizationQuantity = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`quantity`')
                     ->from('customization')
@@ -3711,7 +3711,7 @@ class CartCore extends ObjectModel {
         }
 
         /* Get customization quantity */
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('SUM(`quantity`)')
                 ->from('customization')
@@ -3779,7 +3779,7 @@ class CartCore extends ObjectModel {
 
         // @codingStandardsIgnoreEnd
         $result = true;
-        $customization = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $customization = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('*')
                 ->from('customization')
@@ -3787,7 +3787,7 @@ class CartCore extends ObjectModel {
         );
 
         if ($customization) {
-            $custData = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $custData = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('*')
                     ->from('customized_data')
@@ -3797,7 +3797,7 @@ class CartCore extends ObjectModel {
             // Delete customization picture if necessary
 
             if (isset($custData['type']) && $custData['type'] == 0) {
-                $result &= (@unlink(_PS_UPLOAD_DIR_ . $custData['value']) && @unlink(_PS_UPLOAD_DIR_ . $custData['value'] . '_small'));
+                $result &= (@unlink(_EPH_UPLOAD_DIR_ . $custData['value']) && @unlink(_EPH_UPLOAD_DIR_ . $custData['value'] . '_small'));
             }
 
             $result &= Db::getInstance()->delete('customized_data', '`id_customization` = ' . (int) $idCustomization);
@@ -3850,7 +3850,7 @@ class CartCore extends ObjectModel {
         $sql->where('cp.`id_product_attribute` = ' . (int) $idProductAttribute);
         $sql->where('cp.`id_cart` = ' . (int) $this->id);
 
-        if (Configuration::get('PS_ALLOW_MULTISHIPPING') && $this->isMultiAddressDelivery()) {
+        if (Configuration::get('EPH_ALLOW_MULTISHIPPING') && $this->isMultiAddressDelivery()) {
             $sql->where('cp.`id_address_delivery` = ' . (int) $idAddressDelivery);
         }
 
@@ -3858,7 +3858,7 @@ class CartCore extends ObjectModel {
             $sql->where('c.`id_customization` = ' . (int) $idCustomization);
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow($sql);
     }
 
     /**
@@ -3905,7 +3905,7 @@ class CartCore extends ObjectModel {
         /* Quantity update */
 
         if (!empty($idCustomization)) {
-            $result = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $result = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`quantity`')
                     ->from('customization')
@@ -3954,7 +3954,7 @@ class CartCore extends ObjectModel {
             return [];
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('cu.`id_customization`, cd.`index`, cd.`value`, cd.`type`, cu.`in_cart`, cu.`quantity`')
                 ->from('customization', 'cu')
@@ -4009,7 +4009,7 @@ class CartCore extends ObjectModel {
 
         $result = Db::getInstance()->delete('cart_cart_rule', '`id_cart_rule` = ' . (int) $idCartRule . ' AND `id_cart` = ' . (int) $this->id, 1);
 
-        $cartRule = new CartRule($idCartRule, Configuration::get('PS_LANG_DEFAULT'));
+        $cartRule = new CartRule($idCartRule, Configuration::get('EPH_LANG_DEFAULT'));
 
         if ((int) $cartRule->gift_product) {
             $this->updateQty(1, $cartRule->gift_product, $cartRule->gift_product_attribute, null, 'down', 0, null, false);
@@ -4148,7 +4148,7 @@ class CartCore extends ObjectModel {
                     $name = $carrier['instance']->name;
                     $delay = $carrier['instance']->delay;
                     $delay = isset($delay[Context::getContext()->language->id]) ?
-                    $delay[Context::getContext()->language->id] : $delay[(int) Configuration::get('PS_LANG_DEFAULT')];
+                    $delay[Context::getContext()->language->id] : $delay[(int) Configuration::get('EPH_LANG_DEFAULT')];
                 }
 
                 if (isset($carrier['logo'])) {
@@ -4387,7 +4387,7 @@ class CartCore extends ObjectModel {
         $decimals = 0;
 
         if ($currency->decimals) {
-            $decimals = Configuration::get('PS_PRICE_DISPLAY_PRECISION');
+            $decimals = Configuration::get('EPH_PRICE_DISPLAY_PRECISION');
         }
 
         foreach ($cartRules as &$cartRule) {
@@ -4396,11 +4396,11 @@ class CartCore extends ObjectModel {
             if ($cartRule['free_shipping'] && (empty($cartRule['code']) || preg_match('/^' . CartRule::BO_ORDER_CODE_PREFIX . '[0-9]+/', $cartRule['code']))) {
                 $cartRule['value_real'] -= $totalShipping;
                 $cartRule['value_tax_exc'] -= $totalShippingTaxExc;
-                $cartRule['value_real'] = Tools::ps_round(
+                $cartRule['value_real'] = Tools::EPH_round(
                     $cartRule['value_real'],
                     $decimals
                 );
-                $cartRule['value_tax_exc'] = Tools::ps_round(
+                $cartRule['value_tax_exc'] = Tools::EPH_round(
                     $cartRule['value_tax_exc'],
                     $decimals
                 );
@@ -4424,11 +4424,11 @@ class CartCore extends ObjectModel {
 
                     if (empty($product['gift']) && $product['id_product'] == $cartRule['gift_product'] && $product['id_product_attribute'] == $cartRule['gift_product_attribute']) {
                         // Update total products
-                        $totalProductsWt = Tools::ps_round(
+                        $totalProductsWt = Tools::EPH_round(
                             $totalProductsWt - $product['price_wt'],
                             $decimals
                         );
-                        $totalProducts = Tools::ps_round(
+                        $totalProducts = Tools::EPH_round(
                             $totalProducts - $product['price'],
                             $decimals
                         );
@@ -4438,21 +4438,21 @@ class CartCore extends ObjectModel {
                         $totalDiscountsTaxExc = $totalDiscountsTaxExc - $product['price'];
 
                         // Update cart rule value
-                        $cartRule['value_real'] = Tools::ps_round(
+                        $cartRule['value_real'] = Tools::EPH_round(
                             $cartRule['value_real'] - $product['price_wt'],
                             $decimals
                         );
-                        $cartRule['value_tax_exc'] = Tools::ps_round(
+                        $cartRule['value_tax_exc'] = Tools::EPH_round(
                             $cartRule['value_tax_exc'] - $product['price'],
                             $decimals
                         );
 
                         // Update product quantity
-                        $product['total_wt'] = Tools::ps_round(
+                        $product['total_wt'] = Tools::EPH_round(
                             $product['total_wt'] - $product['price_wt'],
                             $decimals
                         );
-                        $product['total'] = Tools::ps_round(
+                        $product['total'] = Tools::EPH_round(
                             $product['total'] - $product['price'],
                             $decimals
                         );
@@ -4603,7 +4603,7 @@ class CartCore extends ObjectModel {
      */
     public function checkQuantities($returnProduct = false) {
 
-        if (Configuration::get('PS_CATALOG_MODE') && !defined('_PS_ROOT_DIR_')) {
+        if (Configuration::get('EPH_CATALOG_MODE') && !defined('_EPH_ROOT_DIR_')) {
             return false;
         }
 
@@ -4635,7 +4635,7 @@ class CartCore extends ObjectModel {
      */
     public function checkProductsAccess() {
 
-        if (Configuration::get('PS_CATALOG_MODE')) {
+        if (Configuration::get('EPH_CATALOG_MODE')) {
             return true;
         }
 
@@ -4690,7 +4690,7 @@ class CartCore extends ObjectModel {
     public function _addCustomization($idProduct, $idProductAttribute, $index, $type, $field, $quantity) {
 
         // @codingStandardsIgnoreEnd
-        $exisingCustomization = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $exisingCustomization = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('cu.`id_customization`, cd.`index`, cd.`value`, cd.`type`')
                 ->from('customization', 'cu')
@@ -4713,8 +4713,8 @@ class CartCore extends ObjectModel {
                     );
 
                     if ($type == Product::CUSTOMIZE_FILE) {
-                        @unlink(_PS_UPLOAD_DIR_ . $customization['value']);
-                        @unlink(_PS_UPLOAD_DIR_ . $customization['value'] . '_small');
+                        @unlink(_EPH_UPLOAD_DIR_ . $customization['value']);
+                        @unlink(_EPH_UPLOAD_DIR_ . $customization['value'] . '_small');
                     }
 
                     break;
@@ -4801,7 +4801,7 @@ class CartCore extends ObjectModel {
 
         $result = true;
 
-        $custData = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $custData = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('cu.`id_customization`, cd.`index`, cd.`value`, cd.`type`')
                 ->from('customization', 'cu')
@@ -4815,7 +4815,7 @@ class CartCore extends ObjectModel {
         // Delete customization picture if necessary
 
         if ($custData['type'] == 0) {
-            $result &= (@unlink(_PS_UPLOAD_DIR_ . $custData['value']) && @unlink(_PS_UPLOAD_DIR_ . $custData['value'] . '_small'));
+            $result &= (@unlink(_EPH_UPLOAD_DIR_ . $custData['value']) && @unlink(_EPH_UPLOAD_DIR_ . $custData['value'] . '_small'));
         }
 
         $result &= Db::getInstance()->delete('customized_data', '`id_customization` = ' . (int) $custData['id_customization'] . ' AND `index` = ' . (int) $index);
@@ -4861,14 +4861,14 @@ class CartCore extends ObjectModel {
         }
 
         $success = true;
-        $products = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $products = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('cart_product')
                 ->where('`id_cart` = ' . (int) $this->id)
         );
 
-        $productGift = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $productGift = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('cr.`gift_product`, cr.`gift_product_attribute`')
                 ->from('cart_rule', 'cr')
@@ -4876,7 +4876,7 @@ class CartCore extends ObjectModel {
                 ->where('ocr.`id_order` = ' . (int) $this->id)
         );
 
-        $idAddressDelivery = Configuration::get('PS_ALLOW_MULTISHIPPING') ? $cart->id_address_delivery : 0;
+        $idAddressDelivery = Configuration::get('EPH_ALLOW_MULTISHIPPING') ? $cart->id_address_delivery : 0;
 
         foreach ($products as $product) {
 
@@ -4909,7 +4909,7 @@ class CartCore extends ObjectModel {
         }
 
         // Customized products
-        $customs = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $customs = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('customization', 'c')
@@ -4949,7 +4949,7 @@ class CartCore extends ObjectModel {
                     'in_cart'              => 1,
                 ]
             );
-            $customIds[$customizationId] = Db::getInstance(_PS_USE_SQL_SLAVE_)->Insert_ID();
+            $customIds[$customizationId] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->Insert_ID();
         }
 
         // Insert customized_data
@@ -4962,8 +4962,8 @@ class CartCore extends ObjectModel {
 
                 if ((int) $custom['type'] == 0) {
                     $customizedValue = md5(uniqid(rand(), true));
-                    copy(_PS_UPLOAD_DIR_ . $custom['value'], _PS_UPLOAD_DIR_ . $customizedValue);
-                    copy(_PS_UPLOAD_DIR_ . $custom['value'] . '_small', _PS_UPLOAD_DIR_ . $customizedValue . '_small');
+                    copy(_EPH_UPLOAD_DIR_ . $custom['value'], _EPH_UPLOAD_DIR_ . $customizedValue);
+                    copy(_EPH_UPLOAD_DIR_ . $custom['value'] . '_small', _EPH_UPLOAD_DIR_ . $customizedValue . '_small');
                 }
 
                 $insert[] = [
@@ -4993,7 +4993,7 @@ class CartCore extends ObjectModel {
     public function add($autoDate = true, $nullValues = false) {
 
         if (!$this->id_lang) {
-            $this->id_lang = Configuration::get('PS_LANG_DEFAULT');
+            $this->id_lang = Configuration::get('EPH_LANG_DEFAULT');
         }
 
         if (!$this->id_shop) {
@@ -5016,7 +5016,7 @@ class CartCore extends ObjectModel {
      */
     public function getWsCartRows() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_product`, `id_product_attribute`, `quantity`, `id_address_delivery`')
                 ->from('cart_product')
@@ -5103,7 +5103,7 @@ class CartCore extends ObjectModel {
         $sql->where('id_product_attribute = ' . (int) $idProductAttribute);
         $sql->where('id_address_delivery = ' . (int) $oldIdAddressDelivery);
         $sql->where('id_cart = ' . (int) $this->id);
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($sql);
 
         if ($result == 0) {
             return false;
@@ -5117,7 +5117,7 @@ class CartCore extends ObjectModel {
         $sql->where('id_product_attribute = ' . (int) $idProductAttribute);
         $sql->where('id_address_delivery = ' . (int) $newIdAddressDelivery);
         $sql->where('id_cart = ' . (int) $this->id);
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($sql);
 
         // Removing similar products with this new address delivery
         Db::getInstance()->delete(
@@ -5171,7 +5171,7 @@ class CartCore extends ObjectModel {
         }
 
         // Checking the product do not exist with the new address
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(*)')
                 ->from('cart_product', 'c')
@@ -5199,7 +5199,7 @@ class CartCore extends ObjectModel {
         );
 
         if (!$keepQuantity) {
-            $duplicatedQuantity = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $duplicatedQuantity = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('quantity')
                     ->from('cart_product', 'c')
@@ -5254,7 +5254,7 @@ class CartCore extends ObjectModel {
             $lastId = (int) Db::getInstance()->Insert_ID();
 
             // Get data from duplicated customizations
-            $lastRow = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $lastRow = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('`type`, `index`, `value`')
                     ->from('customized_data')
@@ -5291,9 +5291,9 @@ class CartCore extends ObjectModel {
 
         $emptyCache = false;
 
-        if (Configuration::get('PS_ALLOW_MULTISHIPPING')) {
+        if (Configuration::get('EPH_ALLOW_MULTISHIPPING')) {
             // Upgrading quantities
-            $products = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $products = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('SUM(`quantity`) AS `quantity`, `id_product`, `id_product_attribute`, COUNT(*) AS `count`')
                     ->from('cart_product')
@@ -5345,7 +5345,7 @@ class CartCore extends ObjectModel {
                 [
                     'id_address_delivery' => ['type' => 'sql', 'value' => '(SELECT `id_address_delivery` FROM `' . _DB_PREFIX_ . 'cart` WHERE `id_cart` = ' . (int) $this->id . ' AND `id_shop` = ' . (int) $this->id_shop . ' LIMIT 1)'],
                 ],
-                '`id_cart` = ' . (int) $this->id . ' ' . (Configuration::get('PS_ALLOW_MULTISHIPPING') ? ' AND `id_shop` = ' . (int) $this->id_shop : '')
+                '`id_cart` = ' . (int) $this->id . ' ' . (Configuration::get('EPH_ALLOW_MULTISHIPPING') ? ' AND `id_shop` = ' . (int) $this->id_shop : '')
             )) {
                 $emptyCache = true;
             }

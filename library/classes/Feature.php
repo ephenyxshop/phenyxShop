@@ -50,7 +50,7 @@ class FeatureCore extends ObjectModel {
      */
     public static function getFeature($idLang, $idFeature) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('*')
                 ->from('feature', 'f')
@@ -74,7 +74,7 @@ class FeatureCore extends ObjectModel {
      */
     public static function getFeatures($idLang, $withShop = true) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('DISTINCT f.`id_feature`, f.*, fl.*')
                 ->from('feature', 'f')
@@ -97,7 +97,7 @@ class FeatureCore extends ObjectModel {
      */
     public static function nbFeatures($idLang) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(*) as `nb`')
                 ->from('feature', 'ag')
@@ -119,7 +119,7 @@ class FeatureCore extends ObjectModel {
      */
     public static function addFeatureImport($name, $position = false) {
 
-        $rq = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $rq = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('`id_feature`')
                 ->from('feature_lang')
@@ -170,7 +170,7 @@ class FeatureCore extends ObjectModel {
      */
     public static function getHigherPosition() {
 
-        $position = DB::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $position = DB::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('MAX(`position`)')
                 ->from('feature')
@@ -227,7 +227,7 @@ class FeatureCore extends ObjectModel {
 
             }
 
-            $mode = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $mode = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('`id_lang`')
                     ->from(bqSQL(static::$definition['table']) . '_lang')
@@ -283,7 +283,7 @@ class FeatureCore extends ObjectModel {
             return false;
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('f.*, fl.*')
                 ->from('feature', 'f')
@@ -306,7 +306,7 @@ class FeatureCore extends ObjectModel {
      */
     public static function isFeatureActive() {
 
-        return Configuration::get('PS_FEATURE_FEATURE_ACTIVE');
+        return Configuration::get('EPH_FEATURE_FEATURE_ACTIVE');
     }
 
     /**
@@ -411,7 +411,7 @@ class FeatureCore extends ObjectModel {
      */
     public function updatePosition($way, $position, $idFeature = null) {
 
-        if (!$res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        if (!$res = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
             ->select('`position`, `id_feature`')
             ->from('feature')

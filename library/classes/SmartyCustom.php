@@ -129,9 +129,9 @@ class SmartyCustomCore extends Smarty {
 
         if (is_array($tpl_var)) {
 			$context = Context::getContext();
-            $this->assign('shopName', Configuration::get('PS_SHOP_NAME'));
-			$this->assign('shop_url', 'https://'.Configuration::get('PS_SHOP_URL'));
-			$this->assign('shop_mail', Configuration::get('PS_SHOP_EMAIL'));
+            $this->assign('shopName', Configuration::get('EPH_SHOP_NAME'));
+			$this->assign('shop_url', 'https://'.Configuration::get('EPH_SHOP_URL'));
+			$this->assign('shop_mail', Configuration::get('EPH_SHOP_EMAIL'));
 			$this->assign('company', new Company(Configuration::get('EPH_COMPANY_ID')));
 			$this->assign('today', date("Y-m-d"));
 			$this->assign('my_account_url', $context->link->getFrontPageLink('my-account', true, Context::getContext()->language->id, null, false));

@@ -190,7 +190,7 @@ class TaxCore extends ObjectModel
             $sql->where('t.`active` = 1');
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
     }
 	
 	public static function getTaxesCollection($idLang = null) {
@@ -213,7 +213,7 @@ class TaxCore extends ObjectModel
      */
     public static function excludeTaxeOption()
     {
-        return !Configuration::get('PS_TAX');
+        return !Configuration::get('EPH_TAX');
     }
 
     /**
@@ -231,7 +231,7 @@ class TaxCore extends ObjectModel
      */
     public static function getTaxIdByName($taxName, $active = 1)
     {
-        $tax = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $tax = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             '
 			SELECT t.`id_tax`
 			FROM `'._DB_PREFIX_.'tax` t
@@ -258,7 +258,7 @@ class TaxCore extends ObjectModel
     {
         $address = Address::initialize($idAddress);
 
-        $taxManager = TaxManagerFactory::getManager($address, (int) Configuration::get('PS_ECOTAX_TAX_RULES_GROUP_ID'));
+        $taxManager = TaxManagerFactory::getManager($address, (int) Configuration::get('EPH_ECOTAX_TAX_RULES_GROUP_ID'));
         $taxCalculator = $taxManager->getTaxCalculator();
 
         return $taxCalculator->getTotalRate();
@@ -346,7 +346,7 @@ class TaxCore extends ObjectModel
         $sql->leftJoin('tax', 't', 't.`id_tax` = trg.`id_tax_rules_group`');
         $sql->where('trg.`active` = 1');
 		
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
     }
 
 }

@@ -81,7 +81,7 @@ class WarehouseProductLocationCore extends ObjectModel
 			AND wpl.id_warehouse = '.(int) $idWarehouse
         );
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
     }
 
     /**
@@ -109,7 +109,7 @@ class WarehouseProductLocationCore extends ObjectModel
 			AND wpl.id_warehouse = '.(int) $idWarehouse
         );
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
     }
 
     /**

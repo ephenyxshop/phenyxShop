@@ -86,7 +86,7 @@ class CountryCore extends ObjectModel {
 
 	public function getCurencyName() {
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 			(new DbQuery())
 				->select('name')
 				->from('country_currency')
@@ -106,7 +106,7 @@ class CountryCore extends ObjectModel {
 	 */
 	public static function getCountriesByIdShop($idShop, $idLang) {
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('*')
 				->from('country', 'c')
@@ -133,7 +133,7 @@ class CountryCore extends ObjectModel {
 			die(Tools::displayError());
 		}
 
-		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+		$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
 			(new DbQuery())
 				->select('`id_country`')
 				->from('country')
@@ -167,7 +167,7 @@ class CountryCore extends ObjectModel {
 			return (int) static::$_idZones[$idCountry];
 		}
 
-		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+		$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
 			(new DbQuery())
 				->select('`id_zone`')
 				->from('country')
@@ -213,7 +213,7 @@ class CountryCore extends ObjectModel {
 		$key = 'country_getNameById_' . $idCountry . '_' . $idLang;
 
 		if (!Cache::isStored($key)) {
-			$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+			$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 				(new DbQuery())
 					->select('`name`')
 					->from('country_lang')
@@ -233,7 +233,7 @@ class CountryCore extends ObjectModel {
 		$key = 'country_getStateNameById_' . $idState;
 
 		if (!Cache::isStored($key)) {
-			$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+			$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 				(new DbQuery())
 					->select('`name`')
 					->from('state')
@@ -262,7 +262,7 @@ class CountryCore extends ObjectModel {
 		// @codingStandardsIgnoreStart
 
 		if (!isset(Country::$cache_iso_by_id[$idCountry])) {
-			Country::$cache_iso_by_id[$idCountry] = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+			Country::$cache_iso_by_id[$idCountry] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 				(new DbQuery())
 					->select('`iso_code`')
 					->from('country')
@@ -293,7 +293,7 @@ class CountryCore extends ObjectModel {
 	 */
 	public static function getIdByName($country, $idLang = null) {
 
-		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+		$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
 			(new DbQuery())
 				->select('`id_country`')
 				->from('country_lang')
@@ -322,7 +322,7 @@ class CountryCore extends ObjectModel {
 			return false;
 		}
 
-		return (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 			(new DbQuery())
 				->select('`need_zip_code`')
 				->from('country')
@@ -344,7 +344,7 @@ class CountryCore extends ObjectModel {
 			return false;
 		}
 
-		$zipCodeFormat = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		$zipCodeFormat = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 			(new DbQuery())
 				->select('`zip_code_format`')
 				->from('country')
@@ -387,7 +387,7 @@ class CountryCore extends ObjectModel {
 			die(Tools::displayError());
 		}
 
-		return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('c.*, cl.*')
 				->from('country', 'c')
@@ -408,7 +408,7 @@ class CountryCore extends ObjectModel {
 	 */
 	public static function containsStates($idCountry) {
 
-		return (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 			(new DbQuery())
 				->select('`contains_states`')
 				->from('country')
@@ -452,7 +452,7 @@ class CountryCore extends ObjectModel {
 	 */
 	public static function isNeedDniByCountryId($idCountry) {
 
-		return (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+		return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
 			(new DbQuery())
 				->select('`need_identification_number`')
 				->from('country')
@@ -590,7 +590,7 @@ class CountryCore extends ObjectModel {
 	public static function getCountries($idLang, $active = false, $containStates = false, $listStates = true) {
 
 		$countries = [];
-		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+		$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('cl.*, c.*, cl.`name` AS `country`, z.`name` AS `zone`')
 				->from('country', 'c')
@@ -606,7 +606,7 @@ class CountryCore extends ObjectModel {
 		}
 
 		if ($listStates) {
-			$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+			$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 				(new DbQuery())
 					->select('*')
 					->from('state')

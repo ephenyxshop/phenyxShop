@@ -28,15 +28,15 @@ class TranslateCore {
 
         if (empty($iso)) {
             try {
-                $iso = Language::getIsoById((int) Configuration::get('PS_LANG_DEFAULT'));
+                $iso = Language::getIsoById((int) Configuration::get('EPH_LANG_DEFAULT'));
             } catch (PhenyxShopException $e) {
                 $iso = 'en';
             }
 
         }
 
-        if (file_exists(_PS_TRANSLATIONS_DIR_ . $iso . '/admin.php')) {
-            include_once _PS_TRANSLATIONS_DIR_ . $iso . '/admin.php';
+        if (file_exists(_EPH_TRANSLATIONS_DIR_ . $iso . '/admin.php')) {
+            include_once _EPH_TRANSLATIONS_DIR_ . $iso . '/admin.php';
         }
 
         //    }
@@ -83,15 +83,15 @@ class TranslateCore {
 
             if (empty($iso)) {
                 try {
-                    $iso = Language::getIsoById((int) Configuration::get('PS_LANG_DEFAULT'));
+                    $iso = Language::getIsoById((int) Configuration::get('EPH_LANG_DEFAULT'));
                 } catch (PhenyxShopException $e) {
                     $iso = 'en';
                 }
 
             }
 
-            if (file_exists(_PS_TRANSLATIONS_DIR_ . $iso . '/front.php')) {
-                include_once _PS_TRANSLATIONS_DIR_ . $iso . '/front.php';
+            if (file_exists(_EPH_TRANSLATIONS_DIR_ . $iso . '/front.php')) {
+                include_once _EPH_TRANSLATIONS_DIR_ . $iso . '/front.php';
             }
 
         }
@@ -127,15 +127,15 @@ class TranslateCore {
 
             if (empty($iso)) {
                 try {
-                    $iso = Language::getIsoById((int) Configuration::get('PS_LANG_DEFAULT'));
+                    $iso = Language::getIsoById((int) Configuration::get('EPH_LANG_DEFAULT'));
                 } catch (PhenyxShopException $e) {
                     $iso = 'en';
                 }
 
             }
 
-            if (file_exists(_PS_TRANSLATIONS_DIR_ . $iso . '/class.php')) {
-                include_once _PS_TRANSLATIONS_DIR_ . $iso . '/class.php';
+            if (file_exists(_EPH_TRANSLATIONS_DIR_ . $iso . '/class.php')) {
+                include_once _EPH_TRANSLATIONS_DIR_ . $iso . '/class.php';
             }
 
         }
@@ -180,12 +180,12 @@ class TranslateCore {
         if (!isset($translationsMerged[$name]) && isset(Context::getContext()->language)) {
             $filesByPriority = [
                 // Translations in theme
-                _PS_THEME_DIR_ . 'plugins/' . $name . '/translations/' . $language->iso_code . '.php',
-                _PS_THEME_DIR_ . 'plugins/' . $name . '/' . $language->iso_code . '.php',
+                _EPH_THEME_DIR_ . 'plugins/' . $name . '/translations/' . $language->iso_code . '.php',
+                _EPH_THEME_DIR_ . 'plugins/' . $name . '/' . $language->iso_code . '.php',
                 // PhenyxShop 1.5 translations
-                _PS_MODULE_DIR_ . $name . '/translations/' . $language->iso_code . '.php',
+                _EPH_MODULE_DIR_ . $name . '/translations/' . $language->iso_code . '.php',
                 // PhenyxShop 1.4 translations
-                _PS_MODULE_DIR_ . $name . '/' . $language->iso_code . '.php',
+                _EPH_MODULE_DIR_ . $name . '/' . $language->iso_code . '.php',
             ];
             
             foreach ($filesByPriority as $file) {
@@ -333,8 +333,8 @@ class TranslateCore {
             Tools::displayError(sprintf('Invalid iso lang (%s)', Tools::safeOutput($iso)));
         }
 
-        $overrideI18NFile = _PS_THEME_DIR_ . 'pdf/lang/' . $iso . '.php';
-        $i18NFile = _PS_TRANSLATIONS_DIR_ . $iso . '/pdf.php';
+        $overrideI18NFile = _EPH_THEME_DIR_ . 'pdf/lang/' . $iso . '.php';
+        $i18NFile = _EPH_TRANSLATIONS_DIR_ . $iso . '/pdf.php';
 
         if (file_exists($overrideI18NFile)) {
             $i18NFile = $overrideI18NFile;
@@ -370,7 +370,7 @@ class TranslateCore {
             Tools::displayError(sprintf('Invalid iso lang (%s)', Tools::safeOutput($iso)));
         }
         
-        $i18NFile = _PS_TRANSLATIONS_DIR_ . $iso . '/mail.php';
+        $i18NFile = _EPH_TRANSLATIONS_DIR_ . $iso . '/mail.php';
         
 
         if (!include ($i18NFile)) {

@@ -106,11 +106,11 @@ class AdminModulesControllerCore extends AdminController {
         $this->iso_default_country = $this->context->country->iso_code;
         $this->filter_configuration = Configuration::getMultiple(
             [
-                'PS_SHOW_TYPE_MODULES_' . (int) $this->id_employee,
-                'PS_SHOW_COUNTRY_MODULES_' . (int) $this->id_employee,
-                'PS_SHOW_INSTALLED_MODULES_' . (int) $this->id_employee,
-                'PS_SHOW_ENABLED_MODULES_' . (int) $this->id_employee,
-                'PS_SHOW_CAT_MODULES_' . (int) $this->id_employee,
+                'EPH_SHOW_TYPE_MODULES_' . (int) $this->id_employee,
+                'EPH_SHOW_COUNTRY_MODULES_' . (int) $this->id_employee,
+                'EPH_SHOW_INSTALLED_MODULES_' . (int) $this->id_employee,
+                'EPH_SHOW_ENABLED_MODULES_' . (int) $this->id_employee,
+                'EPH_SHOW_CAT_MODULES_' . (int) $this->id_employee,
             ]
         );
         EmployeeConfiguration::updateValue('EXPERT_MODULES_SCRIPT', $this->generateParaGridScript(true));
@@ -509,7 +509,7 @@ class AdminModulesControllerCore extends AdminController {
         $file = fopen("testModuleRequest.txt", "w");
         $smarty = $this->context->smarty;
         $categoryFiltered = [];
-        $filterCategories = explode('|', Configuration::get('PS_SHOW_CAT_MODULES_' . (int) $this->id_employee));
+        $filterCategories = explode('|', Configuration::get('EPH_SHOW_CAT_MODULES_' . (int) $this->id_employee));
 
         if (count($filterCategories) > 0) {
 
@@ -534,13 +534,13 @@ class AdminModulesControllerCore extends AdminController {
         // Retrieve Modules Preferences
         $modulesPreferences = [];
         $tabModulesPreferences = [];
-        $modulesPreferencesTmp = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $modulesPreferencesTmp = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('module_preference')
                 ->where('`id_employee` = ' . (int) $this->id_employee)
         );
-        $tabModulesPreferencesTmp = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $tabModulesPreferencesTmp = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('tab_module_preference')
@@ -907,11 +907,11 @@ class AdminModulesControllerCore extends AdminController {
     public function ajaxProcessReloadModulesList() {
 
         if (Tools::getValue('filterCategory')) {
-            Configuration::updateValue('PS_SHOW_CAT_MODULES_' . (int) $this->id_employee, Tools::getValue('filterCategory'));
+            Configuration::updateValue('EPH_SHOW_CAT_MODULES_' . (int) $this->id_employee, Tools::getValue('filterCategory'));
         }
 
         if (Tools::getValue('unfilterCategory')) {
-            Configuration::updateValue('PS_SHOW_CAT_MODULES_' . (int) $this->id_employee, '');
+            Configuration::updateValue('EPH_SHOW_CAT_MODULES_' . (int) $this->id_employee, '');
         }
 
         $this->initContent();
@@ -1041,9 +1041,9 @@ class AdminModulesControllerCore extends AdminController {
 
         // Filter on favorites
 
-        if (Configuration::get('PS_SHOW_CAT_MODULES_' . (int) $this->id_employee) == 'favorites') {
+        if (Configuration::get('EPH_SHOW_CAT_MODULES_' . (int) $this->id_employee) == 'favorites') {
 
-            if ((int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            if ((int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                 ->select('`id_module_preference`')
                 ->from('module_preference')
@@ -1064,7 +1064,7 @@ class AdminModulesControllerCore extends AdminController {
 
             // Filter on module category
             $categoryFiltered = [];
-            $filterCategories = explode('|', Configuration::get('PS_SHOW_CAT_MODULES_' . (int) $this->id_employee));
+            $filterCategories = explode('|', Configuration::get('EPH_SHOW_CAT_MODULES_' . (int) $this->id_employee));
 
             if (count($filterCategories) > 0) {
 
@@ -1085,7 +1085,7 @@ class AdminModulesControllerCore extends AdminController {
         }
 
         // Filter on module type and author
-        $showTypeModules = $this->filter_configuration['PS_SHOW_TYPE_MODULES_' . (int) $this->id_employee];
+        $showTypeModules = $this->filter_configuration['EPH_SHOW_TYPE_MODULES_' . (int) $this->id_employee];
 
         if ($showTypeModules == 'nativeModules' && !in_array($module->name, $this->list_natives_modules)) {
             return true;
@@ -1114,7 +1114,7 @@ class AdminModulesControllerCore extends AdminController {
         }
 
         // Filter on install status
-        $showInstalledModules = $this->filter_configuration['PS_SHOW_INSTALLED_MODULES_' . (int) $this->id_employee];
+        $showInstalledModules = $this->filter_configuration['EPH_SHOW_INSTALLED_MODULES_' . (int) $this->id_employee];
 
         if ($showInstalledModules == 'installed' && !$module->id) {
             return true;
@@ -1125,7 +1125,7 @@ class AdminModulesControllerCore extends AdminController {
         }
 
         // Filter on active status
-        $showEnabledModules = $this->filter_configuration['PS_SHOW_ENABLED_MODULES_' . (int) $this->id_employee];
+        $showEnabledModules = $this->filter_configuration['EPH_SHOW_ENABLED_MODULES_' . (int) $this->id_employee];
 
         if ($showEnabledModules == 'enabled' && !$module->active) {
             return true;
@@ -1136,7 +1136,7 @@ class AdminModulesControllerCore extends AdminController {
         }
 
         // Filter on country
-        $showCountryModules = $this->filter_configuration['PS_SHOW_COUNTRY_MODULES_' . (int) $this->id_employee];
+        $showCountryModules = $this->filter_configuration['EPH_SHOW_COUNTRY_MODULES_' . (int) $this->id_employee];
 
         if ($showCountryModules && (isset($module->limited_countries) && !empty($module->limited_countries)
             && ((is_array($module->limited_countries) && count($module->limited_countries)
@@ -1338,10 +1338,10 @@ class AdminModulesControllerCore extends AdminController {
      */
     protected function setFilterModules($moduleType, $countryModuleValue, $moduleInstall, $moduleStatus) {
 
-        Configuration::updateValue('PS_SHOW_TYPE_MODULES_' . (int) $this->id_employee, $moduleType);
-        Configuration::updateValue('PS_SHOW_COUNTRY_MODULES_' . (int) $this->id_employee, $countryModuleValue);
-        Configuration::updateValue('PS_SHOW_INSTALLED_MODULES_' . (int) $this->id_employee, $moduleInstall);
-        Configuration::updateValue('PS_SHOW_ENABLED_MODULES_' . (int) $this->id_employee, $moduleStatus);
+        Configuration::updateValue('EPH_SHOW_TYPE_MODULES_' . (int) $this->id_employee, $moduleType);
+        Configuration::updateValue('EPH_SHOW_COUNTRY_MODULES_' . (int) $this->id_employee, $countryModuleValue);
+        Configuration::updateValue('EPH_SHOW_INSTALLED_MODULES_' . (int) $this->id_employee, $moduleInstall);
+        Configuration::updateValue('EPH_SHOW_ENABLED_MODULES_' . (int) $this->id_employee, $moduleStatus);
     }
 
     /**
@@ -1459,11 +1459,11 @@ class AdminModulesControllerCore extends AdminController {
      */
     protected function resetFilterModules() {
 
-        Configuration::updateValue('PS_SHOW_TYPE_MODULES_' . (int) $this->id_employee, 'allModules');
-        Configuration::updateValue('PS_SHOW_COUNTRY_MODULES_' . (int) $this->id_employee, 0);
-        Configuration::updateValue('PS_SHOW_INSTALLED_MODULES_' . (int) $this->id_employee, 'installedUninstalled');
-        Configuration::updateValue('PS_SHOW_ENABLED_MODULES_' . (int) $this->id_employee, 'enabledDisabled');
-        Configuration::updateValue('PS_SHOW_CAT_MODULES_' . (int) $this->id_employee, '');
+        Configuration::updateValue('EPH_SHOW_TYPE_MODULES_' . (int) $this->id_employee, 'allModules');
+        Configuration::updateValue('EPH_SHOW_COUNTRY_MODULES_' . (int) $this->id_employee, 0);
+        Configuration::updateValue('EPH_SHOW_INSTALLED_MODULES_' . (int) $this->id_employee, 'installedUninstalled');
+        Configuration::updateValue('EPH_SHOW_ENABLED_MODULES_' . (int) $this->id_employee, 'enabledDisabled');
+        Configuration::updateValue('EPH_SHOW_CAT_MODULES_' . (int) $this->id_employee, '');
     }
 
     /**
@@ -1476,7 +1476,7 @@ class AdminModulesControllerCore extends AdminController {
     public function postProcessFilterCategory() {
 
         // Save configuration and redirect employee
-        Configuration::updateValue('PS_SHOW_CAT_MODULES_' . (int) $this->id_employee, Tools::getValue('filterCategory'));
+        Configuration::updateValue('EPH_SHOW_CAT_MODULES_' . (int) $this->id_employee, Tools::getValue('filterCategory'));
         Tools::redirectAdmin(static::$currentIndex . '&token=' . $this->token);
     }
 
@@ -1490,13 +1490,13 @@ class AdminModulesControllerCore extends AdminController {
     public function postProcessUnfilterCategory() {
 
         // Save configuration and redirect employee
-        Configuration::updateValue('PS_SHOW_CAT_MODULES_' . (int) $this->id_employee, '');
+        Configuration::updateValue('EPH_SHOW_CAT_MODULES_' . (int) $this->id_employee, '');
         Tools::redirectAdmin(static::$currentIndex . '&token=' . $this->token);
     }
 
     public function ajaxProcessDeleteModule() {
 
-        if (_PS_MODE_DEMO_) {
+        if (_EPH_MODE_DEMO_) {
 
             $return = [
                 'success' => false,
@@ -1512,7 +1512,7 @@ class AdminModulesControllerCore extends AdminController {
                 $module->uninstall();
             }
 
-            $moduleDir = _PS_MODULE_DIR_ . str_replace(['.', '/', '\\'], ['', '', ''], Tools::getValue('module_name'));
+            $moduleDir = _EPH_MODULE_DIR_ . str_replace(['.', '/', '\\'], ['', '', ''], Tools::getValue('module_name'));
 
             if (!ConfigurationTest::testDir($moduleDir, true, $report, true)) {
 
@@ -1684,7 +1684,7 @@ class AdminModulesControllerCore extends AdminController {
 
         /* PhenyxShop demo mode */
 
-        if (_PS_MODE_DEMO_ || ($this->context->mode == Context::MODE_HOST)) {
+        if (_EPH_MODE_DEMO_ || ($this->context->mode == Context::MODE_HOST)) {
             $this->errors[] = Tools::displayError('This functionality has been disabled.');
 
             return;
@@ -1728,10 +1728,10 @@ class AdminModulesControllerCore extends AdminController {
             ) {
                 $this->errors[] = Tools::displayError('Unknown archive type.');
             } else
-            if (!move_uploaded_file($_FILES['file']['tmp_name'], _PS_MODULE_DIR_ . $_FILES['file']['name'])) {
+            if (!move_uploaded_file($_FILES['file']['tmp_name'], _EPH_MODULE_DIR_ . $_FILES['file']['name'])) {
                 $this->errors[] = Tools::displayError('An error occurred while copying the archive to the module directory.');
             } else {
-                $this->extractArchive(_PS_MODULE_DIR_ . $_FILES['file']['name']);
+                $this->extractArchive(_EPH_MODULE_DIR_ . $_FILES['file']['name']);
             }
 
         } else {
@@ -1754,7 +1754,7 @@ class AdminModulesControllerCore extends AdminController {
 
         $oldUmask = @umask(0000);
 
-        $tmpFolder = _PS_MODULE_DIR_ . md5(time());
+        $tmpFolder = _EPH_MODULE_DIR_ . md5(time());
 
         $success = false;
 
@@ -1779,7 +1779,7 @@ class AdminModulesControllerCore extends AdminController {
 
                 if (!in_array($zipFolder, ['.', '..', '.svn', '.git', '__MACOSX'])) {
 
-                    if (file_exists(_PS_MODULE_DIR_ . $zipFolder) && !ConfigurationTest::testDir(_PS_MODULE_DIR_ . $zipFolder, true, $report, true)) {
+                    if (file_exists(_EPH_MODULE_DIR_ . $zipFolder) && !ConfigurationTest::testDir(_EPH_MODULE_DIR_ . $zipFolder, true, $report, true)) {
                         $this->errors[] = $this->l('There was an error while extracting the module.') . ' ' . $report;
 
                         return false;
@@ -1791,15 +1791,15 @@ class AdminModulesControllerCore extends AdminController {
 
             // Set permissions to the default 0777
 
-            if (Tools::ZipExtract($file, _PS_MODULE_DIR_)) {
+            if (Tools::ZipExtract($file, _EPH_MODULE_DIR_)) {
                 $success = true;
 
                 for ($i = 0; $i < $zip->numFiles; $i++) {
-                    @chmod(_PS_MODULE_DIR_ . $zip->getNameIndex($i), 0777);
+                    @chmod(_EPH_MODULE_DIR_ . $zip->getNameIndex($i), 0777);
                 }
 
                 foreach ($zipFolders as $zipFolder) {
-                    @chmod(_PS_MODULE_DIR_ . $zipFolder, 0777);
+                    @chmod(_EPH_MODULE_DIR_ . $zipFolder, 0777);
                 }
 
             }
@@ -1824,7 +1824,7 @@ class AdminModulesControllerCore extends AdminController {
 
                 if (!in_array($zipFolder, ['.', '..', '.svn', '.git', '__MACOSX'])) {
 
-                    if (file_exists(_PS_MODULE_DIR_ . $zipFolder) && !ConfigurationTest::testDir(_PS_MODULE_DIR_ . $zipFolder, true, $report, true)) {
+                    if (file_exists(_EPH_MODULE_DIR_ . $zipFolder) && !ConfigurationTest::testDir(_EPH_MODULE_DIR_ . $zipFolder, true, $report, true)) {
                         $this->errors[] = $this->l('There was an error while extracting the module.') . ' ' . $report;
 
                         return false;
@@ -1834,15 +1834,15 @@ class AdminModulesControllerCore extends AdminController {
 
             }
 
-            if ($archive->extract(_PS_MODULE_DIR_)) {
+            if ($archive->extract(_EPH_MODULE_DIR_)) {
                 $success = true;
 
                 for ($i = 0; $i < count($dirs); $i++) {
-                    @chmod(_PS_MODULE_DIR_ . $dirs[$i], 0777);
+                    @chmod(_EPH_MODULE_DIR_ . $dirs[$i], 0777);
                 }
 
                 foreach ($zipFolders as $zipFolder) {
-                    @chmod(_PS_MODULE_DIR_ . $zipFolder, 0777);
+                    @chmod(_EPH_MODULE_DIR_ . $zipFolder, 0777);
                 }
 
             }
@@ -1858,7 +1858,7 @@ class AdminModulesControllerCore extends AdminController {
 
                 if (!in_array($folder, ['.', '..', '.svn', '.git', '__MACOSX']) && !Module::getInstanceByName($folder)) {
                     $this->errors[] = sprintf(Tools::displayError('The module %1$s that you uploaded is not a valid module.'), $folder);
-                    $this->recursiveDeleteOnDisk(_PS_MODULE_DIR_ . $folder);
+                    $this->recursiveDeleteOnDisk(_EPH_MODULE_DIR_ . $folder);
                 }
 
             }
@@ -1888,7 +1888,7 @@ class AdminModulesControllerCore extends AdminController {
      */
     protected function recursiveDeleteOnDisk($dir) {
 
-        if (strpos(realpath($dir), realpath(_PS_MODULE_DIR_)) === false) {
+        if (strpos(realpath($dir), realpath(_EPH_MODULE_DIR_)) === false) {
             return;
         }
 
@@ -2056,7 +2056,7 @@ class AdminModulesControllerCore extends AdminController {
 
         /* PhenyxShop demo mode */
 
-        if (_PS_MODE_DEMO_) {
+        if (_EPH_MODE_DEMO_) {
 
             $return = [
                 'success' => false,
@@ -2079,7 +2079,7 @@ class AdminModulesControllerCore extends AdminController {
                         $module->uninstall();
                     }
 
-                    $moduleDir = _PS_MODULE_DIR_ . str_replace(['.', '/', '\\'], ['', '', ''], Tools::getValue('module_name'));
+                    $moduleDir = _EPH_MODULE_DIR_ . str_replace(['.', '/', '\\'], ['', '', ''], Tools::getValue('module_name'));
 
                     if (!ConfigurationTest::testDir($moduleDir, true, $report, true)) {
                         $this->errors[] = Tools::displayError('Sorry, the module cannot be deleted:') . ' ' . $report;
@@ -2219,7 +2219,7 @@ class AdminModulesControllerCore extends AdminController {
 
             /* PhenyxShop demo mode */
 
-            if (_PS_MODE_DEMO_) {
+            if (_EPH_MODE_DEMO_) {
                 $this->errors[] = Tools::displayError('This functionality has been disabled.');
 
                 return;
@@ -2287,7 +2287,7 @@ class AdminModulesControllerCore extends AdminController {
 
                     // If Addons module, download and unzip it before installing it
 
-                    if (Validate::isLoadedObject($tbupdater) && !file_exists(_PS_MODULE_DIR_ . $name . '/' . $name . '.php') || $key == 'update' || $key == 'updateAll') {
+                    if (Validate::isLoadedObject($tbupdater) && !file_exists(_EPH_MODULE_DIR_ . $name . '/' . $name . '.php') || $key == 'update' || $key == 'updateAll') {
 
                         foreach ($tbupdater->getCachedModulesInfo($this->context->language->language_code) as $moduleInfoName => $moduleInfo) {
 

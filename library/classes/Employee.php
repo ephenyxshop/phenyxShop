@@ -130,12 +130,12 @@ class EmployeeCore extends ObjectModel {
         parent::__construct($id, null, $idShop);
 
         if (!is_null($idLang)) {
-            $this->id_lang = (int) (Language::getLanguage($idLang) !== false) ? $idLang : Configuration::get('PS_LANG_DEFAULT');
+            $this->id_lang = (int) (Language::getLanguage($idLang) !== false) ? $idLang : Configuration::get('EPH_LANG_DEFAULT');
         }
 
         
 
-        $this->image_dir = _PS_EMPLOYEE_IMG_DIR_;
+        $this->image_dir = _EPH_EMPLOYEE_IMG_DIR_;
     }
 
     /**
@@ -162,7 +162,7 @@ class EmployeeCore extends ObjectModel {
 
         $sql->orderBy('`lastname` ASC');
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
     }
 
     /**
@@ -180,7 +180,7 @@ class EmployeeCore extends ObjectModel {
             die(Tools::displayError());
         }
 
-        return (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_employee`')
                 ->from('employee')
@@ -210,7 +210,7 @@ class EmployeeCore extends ObjectModel {
             $sql->where('`active` = 1');
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
     }
 
     /**
@@ -275,7 +275,7 @@ class EmployeeCore extends ObjectModel {
      */
     public function add($autoDate = true, $nullValues = true) {
 
-        $this->last_passwd_gen = date('Y-m-d H:i:s', strtotime('-' . Configuration::get('PS_PASSWD_TIME_BACK') . 'minutes'));
+        $this->last_passwd_gen = date('Y-m-d H:i:s', strtotime('-' . Configuration::get('EPH_PASSWD_TIME_BACK') . 'minutes'));
         $this->saveOptin();
         $this->updateTextDirection();
 
@@ -304,7 +304,7 @@ class EmployeeCore extends ObjectModel {
                 $guzzle = new \GuzzleHttp\Client([
                     'base_uri' => 'https://api.ephenyx.com',
                     'timeout'  => 20,
-                    'verify'   => _PS_TOOL_DIR_ . 'cacert.pem',
+                    'verify'   => _EPH_TOOL_DIR_ . 'cacert.pem',
                 ]);
 
                 try {
@@ -314,7 +314,7 @@ class EmployeeCore extends ObjectModel {
                                 'email'    => $this->email,
                                 'fname'    => $this->firstname,
                                 'lname'    => $this->lastname,
-                                'activity' => Configuration::get('PS_SHOP_ACTIVITY'),
+                                'activity' => Configuration::get('EPH_SHOP_ACTIVITY'),
                                 'country'  => $context->country->iso_code,
                                 'language' => $context->language->iso_code,
                                 'URL'      => $context->shop->getBaseURL(),
@@ -348,14 +348,14 @@ class EmployeeCore extends ObjectModel {
      */
     protected function updateTextDirection() {
 
-        if (defined('_PS_ROOT_DIR_')) {
-            $path = _PS_ROOT_DIR_ . '/themes/' . $this->bo_theme . '/css/';
+        if (defined('_EPH_ROOT_DIR_')) {
+            $path = _EPH_ROOT_DIR_ . '/themes/' . $this->bo_theme . '/css/';
         } else {
             // Probably installation in progress.
-            $path = _PS_ROOT_DIR_ . '/admin/themes/' . $this->bo_theme . '/css/';
+            $path = _EPH_ROOT_DIR_ . '/admin/themes/' . $this->bo_theme . '/css/';
 
             if (!is_dir($path)) {
-                $path = _PS_ROOT_DIR_ . '/admin-dev/themes/' . $this->bo_theme . '/css/';
+                $path = _EPH_ROOT_DIR_ . '/admin-dev/themes/' . $this->bo_theme . '/css/';
 
                 if (!is_dir($path)) {
                     // Give up.
@@ -452,7 +452,7 @@ class EmployeeCore extends ObjectModel {
             $sql->where('`active` = 1');
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql);
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow($sql);
 
         if (!$result) {
             return false;
@@ -519,7 +519,7 @@ class EmployeeCore extends ObjectModel {
      */
     public function isSuperAdmin() {
 
-        return $this->id_profile == _PS_ADMIN_PROFILE_;
+        return $this->id_profile == _EPH_ADMIN_PROFILE_;
     }
 
     /**
@@ -543,7 +543,7 @@ class EmployeeCore extends ObjectModel {
             $sql->where('`active` = 1');
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($sql);
     }
 
     /**
@@ -584,7 +584,7 @@ class EmployeeCore extends ObjectModel {
             /* Employee is valid only if it can be load and if cookie password is the same as database one */
             $result = (
                 $this->id && Validate::isUnsignedId($this->id) && Employee::checkPassword($this->id, Context::getContext()->cookie->passwd)
-                && (!isset(Context::getContext()->cookie->remote_addr) || Context::getContext()->cookie->remote_addr == ip2long(Tools::getRemoteAddr()) || !Configuration::get('PS_COOKIE_CHECKIP'))
+                && (!isset(Context::getContext()->cookie->remote_addr) || Context::getContext()->cookie->remote_addr == ip2long(Tools::getRemoteAddr()) || !Configuration::get('EPH_COOKIE_CHECKIP'))
             );
             Cache::store('isLoggedBack' . $this->id, $result);
 
@@ -619,7 +619,7 @@ class EmployeeCore extends ObjectModel {
         $sql->where('`active` = 1');
         $sql->where('`passwd` = \'' . pSQL($hashedPassword) . '\'');
 
-        return (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+        return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($sql);
     }
 
     /**
@@ -648,7 +648,7 @@ class EmployeeCore extends ObjectModel {
      */
     public function favoriteModulesList() {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('module')
                 ->from('module_preference')
@@ -705,7 +705,7 @@ class EmployeeCore extends ObjectModel {
      */
     public function getImage() {
 
-        $image = _PS_EMPLOYEE_IMG_DIR_ . $this->id . '.jpg';
+        $image = _EPH_EMPLOYEE_IMG_DIR_ . $this->id . '.jpg';
 
         if (file_exists($image)) {
             $imageUrl = '/content/img/e/' . $this->id . '.jpg';
@@ -728,7 +728,7 @@ class EmployeeCore extends ObjectModel {
     public function getLastElementsForNotify($element) {
 
         $element = bqSQL($element);
-        $max = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $max = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('MAX(`id_' . bqSQL($element) . '`) as `id_' . bqSQL($element) . '`')
                 ->from(bqSQL($element) . ($element == 'order' ? 's' : ''))

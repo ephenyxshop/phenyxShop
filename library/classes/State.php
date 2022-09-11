@@ -55,7 +55,7 @@ class StateCore extends ObjectModel {
      */
     public static function getStates($idLang = false, $active = false) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_state`, `id_country`, `id_zone`, `iso_code`, `name`, `active`')
                 ->from('state', 's')
@@ -84,7 +84,7 @@ class StateCore extends ObjectModel {
         $cacheId = 'State::getNameById_' . (int) $idState;
 
         if (!Cache::isStored($cacheId)) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`name`')
                     ->from('state')
@@ -146,7 +146,7 @@ class StateCore extends ObjectModel {
      */
     public static function getIdByIso($isoCode, $idCountry = null) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_state`')
                 ->from('state')
@@ -171,7 +171,7 @@ class StateCore extends ObjectModel {
             die(Tools::displayError());
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('state', 's')
@@ -207,7 +207,7 @@ class StateCore extends ObjectModel {
             die(Tools::displayError());
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_zone`')
                 ->from('state')
@@ -273,7 +273,7 @@ class StateCore extends ObjectModel {
      */
     public function countUsed() {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(*)')
                 ->from('address')

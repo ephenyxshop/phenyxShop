@@ -645,7 +645,7 @@ class AdminBookRecordsControllerCore extends AdminController {
 
         $tag = date("H-i-s");
         $fileSave = new Xlsx($spreadsheet);
-        $fileSave->save(_PS_EXPORT_DIR_ . 'exportEcriture' . $tag . '.xlsx');
+        $fileSave->save(_EPH_EXPORT_DIR_ . 'exportEcriture' . $tag . '.xlsx');
         $response = [
             'fileExport' => 'fileExport' . DIRECTORY_SEPARATOR . 'exportEcriture' . $tag . '.xlsx',
         ];
@@ -723,7 +723,7 @@ class AdminBookRecordsControllerCore extends AdminController {
 
         $tag = date("H-i-s");
         $fileSave = new Xlsx($spreadsheet);
-        $fileSave->save(_PS_EXPORT_DIR_ . 'exportEcriture' . $tag . '.xlsx');
+        $fileSave->save(_EPH_EXPORT_DIR_ . 'exportEcriture' . $tag . '.xlsx');
         $response = [
             'fileExport' => 'fileExport' . DIRECTORY_SEPARATOR . 'exportEcriture' . $tag . '.xlsx',
         ];

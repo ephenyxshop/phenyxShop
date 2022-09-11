@@ -124,7 +124,7 @@ class OrderFollowControllerCore extends FrontController {
 
         $this->context->smarty->assign('ordersReturn', $ordersReturn);
 
-        $this->setTemplate(_PS_THEME_DIR_ . 'order-follow.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'order-follow.tpl');
     }
 
     /**

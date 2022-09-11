@@ -46,7 +46,7 @@ class EmployeeMessageCore extends ObjectModel {
     public function add($autoDate = true, $nullValues = false) {
         
         $url = 'https://ephenyx.io/ticket';
-		$string = Configuration::get('_EPHENYX_LICENSE_KEY_').'/'.Configuration::get('PS_SHOP_DOMAIN');
+		$string = Configuration::get('_EPHENYX_LICENSE_KEY_').'/'.Configuration::get('EPH_SHOP_DOMAIN');
 		$crypto_key = Tools::encrypt_decrypt('encrypt', $string, _PHP_ENCRYPTION_KEY_, _COOKIE_KEY_);
 		
 		$data_array = [
@@ -77,7 +77,7 @@ class EmployeeMessageCore extends ObjectModel {
      */
     public static function getMessagesByOrderId($idOrder, $private = true) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('cm.*')
                 ->select('c.`firstname` AS `cfirstname`')
@@ -109,7 +109,7 @@ class EmployeeMessageCore extends ObjectModel {
     public static function getTotalCustomerMessages($where = null) {
 
         if (is_null($where)) {
-            return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('COUNT(*)')
                     ->from('customer_message')

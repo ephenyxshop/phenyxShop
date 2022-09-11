@@ -35,6 +35,6 @@ class IndexControllerCore extends FrontController {
                 'parallaxImage'         => Configuration::get('EPH_HOME_PARALLAX_FILE'),
             ]
         );
-        $this->setTemplate(_PS_THEME_DIR_ . 'index.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'index.tpl');
     }
 }

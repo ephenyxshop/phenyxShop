@@ -86,7 +86,7 @@ class CMSCategoryCore extends ObjectModel {
             $idLang = Context::getContext()->language->id;
         }
 
-        $category = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $category = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('c.`id_cms_category`, c.`id_parent`, c.`level_depth`, cl.`name`, cl.`link_rewrite`')
                 ->from('cms_category', 'c')
@@ -180,7 +180,7 @@ class CMSCategoryCore extends ObjectModel {
             die(Tools::displayError());
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
         SELECT *
         FROM `' . _DB_PREFIX_ . 'cms_category` c
@@ -215,7 +215,7 @@ class CMSCategoryCore extends ObjectModel {
      */
     public static function getSimpleCategories($idLang) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
         SELECT c.`id_cms_category`, cl.`name`
         FROM `' . _DB_PREFIX_ . 'cms_category` c
@@ -261,7 +261,7 @@ class CMSCategoryCore extends ObjectModel {
             die(Tools::displayError());
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
         SELECT c.`id_cms_category`, cl.`name`, cl.`link_rewrite`
         FROM `' . _DB_PREFIX_ . 'cms_category` c
@@ -488,7 +488,7 @@ class CMSCategoryCore extends ObjectModel {
      */
     public static function getLastPosition($idCategoryParent) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('MAX(`position`)')
                 ->from('cms_category')
@@ -527,7 +527,7 @@ class CMSCategoryCore extends ObjectModel {
      */
     public static function cleanPositions($idCategoryParent) {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_cms_category`')
                 ->from('cms_category')
@@ -653,7 +653,7 @@ class CMSCategoryCore extends ObjectModel {
             die(Tools::displayError());
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             '
         SELECT c.*, cl.id_lang, cl.name, cl.description, cl.link_rewrite, cl.meta_title, cl.meta_keywords, cl.meta_description
         FROM `' . _DB_PREFIX_ . 'cms_category` c
@@ -842,7 +842,7 @@ class CMSCategoryCore extends ObjectModel {
             if (isset($this->name[$context->language->id])) {
                 $idLang = $context->language->id;
             } else {
-                $idLang = (int) Configuration::get('PS_LANG_DEFAULT');
+                $idLang = (int) Configuration::get('EPH_LANG_DEFAULT');
             }
 
         }
@@ -878,7 +878,7 @@ class CMSCategoryCore extends ObjectModel {
                 LEFT JOIN `' . _DB_PREFIX_ . 'cms_category_lang` cl ON (c.`id_cms_category` = cl.`id_cms_category` AND `id_lang` = ' . (int) $idLang . ')
                 WHERE c.`id_cms_category` = ' . (int) $idCurrent . ' AND c.`id_parent` != 0
             ';
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
 
             $categories[] = $result[0];
 

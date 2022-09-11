@@ -1,10 +1,10 @@
 <?php
 
-if (!defined('_PS_VERSION_')) {
+if (!defined('_EPH_VERSION_')) {
     exit;
 }
 
-require_once _PS_MODULE_DIR_ . 'revslider/rev-loader.php';
+require_once _EPH_MODULE_DIR_ . 'revslider/rev-loader.php';
 
 class AdminRevolutionsliderAjaxControllerCore extends AdminController {
 

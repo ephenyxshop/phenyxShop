@@ -70,7 +70,7 @@ class ModuleGraphEngineCore extends Module
             return false;
         }
 
-        return Configuration::updateValue('PS_STATS_RENDER', $this->name);
+        return Configuration::updateValue('EPH_STATS_RENDER', $this->name);
     }
 
     /**
@@ -81,7 +81,7 @@ class ModuleGraphEngineCore extends Module
      */
     public static function getGraphEngines()
     {
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('m.`name`')
                 ->from('module', 'm')

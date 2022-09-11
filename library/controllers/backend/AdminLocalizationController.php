@@ -23,7 +23,7 @@ class AdminLocalizationControllerCore extends AdminController {
             'general'      => [
                 'title'  => $this->l('Configuration'),
                 'fields' => [
-                    'PS_LANG_DEFAULT'     => [
+                    'EPH_LANG_DEFAULT'     => [
                         'title'      => $this->l('Default language'),
                         'hint'       => $this->l('The default language used in your shop.'),
                         'cast'       => 'intval',
@@ -31,7 +31,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'identifier' => 'id_lang',
                         'list'       => Language::getLanguages(false),
                     ],
-                    'PS_DETECT_LANG'      => [
+                    'EPH_DETECT_LANG'      => [
                         'title'      => $this->l('Set language from browser'),
                         'desc'       => $this->l('Set browser language as default language'),
                         'validation' => 'isBool',
@@ -39,7 +39,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'type'       => 'bool',
                         'default'    => '1',
                     ],
-                    'PS_COUNTRY_DEFAULT'  => [
+                    'EPH_COUNTRY_DEFAULT'  => [
                         'title'      => $this->l('Default country'),
                         'hint'       => $this->l('The default country used in your shop.'),
                         'cast'       => 'intval',
@@ -48,7 +48,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'identifier' => 'id_country',
                         'list'       => Country::getCountries($this->context->language->id),
                     ],
-                    'PS_DETECT_COUNTRY'   => [
+                    'EPH_DETECT_COUNTRY'   => [
                         'title'      => $this->l('Set default country from browser language'),
                         'desc'       => $this->l('Set country corresponding to browser language'),
                         'validation' => 'isBool',
@@ -56,7 +56,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'type'       => 'bool',
                         'default'    => '1',
                     ],
-                    'PS_CURRENCY_DEFAULT' => [
+                    'EPH_CURRENCY_DEFAULT' => [
                         'title'      => $this->l('Default currency'),
                         'hint'       =>
                         $this->l('The default currency used in your shop.') . ' - ' . $this->l('If you change the default currency, you will have to manually edit every product price.'),
@@ -65,12 +65,12 @@ class AdminLocalizationControllerCore extends AdminController {
                         'identifier' => 'id_currency',
                         'list'       => Currency::getCurrencies(false, true, true),
                     ],
-                    'PS_TIMEZONE'         => [
+                    'EPH_TIMEZONE'         => [
                         'title'      => $this->l('Time zone'),
                         'validation' => 'isAnything',
                         'type'       => 'select',
                         'class'      => 'chosen',
-                        'list'       => Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS((new DbQuery())->select('`name`')->from('timezone')),
+                        'list'       => Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS((new DbQuery())->select('`name`')->from('timezone')),
                         'identifier' => 'name',
                         'visibility' => Shop::CONTEXT_ALL,
                     ],
@@ -81,7 +81,7 @@ class AdminLocalizationControllerCore extends AdminController {
                 'title'  => $this->l('Local units'),
                 'icon'   => 'icon-globe',
                 'fields' => [
-                    'PS_WEIGHT_UNIT'    => [
+                    'EPH_WEIGHT_UNIT'    => [
                         'title'      => $this->l('Weight unit'),
                         'hint'       => $this->l('The default weight unit for your shop (e.g. "kg" for kilograms, "lbs" for pound-mass, etc.).'),
                         'validation' => 'isWeightUnit',
@@ -89,7 +89,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'type'       => 'text',
                         'class'      => 'fixed-width-sm',
                     ],
-                    'PS_DISTANCE_UNIT'  => [
+                    'EPH_DISTANCE_UNIT'  => [
                         'title'      => $this->l('Distance unit'),
                         'hint'       => $this->l('The default distance unit for your shop (e.g. "km" for kilometer, "mi" for mile, etc.).'),
                         'validation' => 'isDistanceUnit',
@@ -97,7 +97,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'type'       => 'text',
                         'class'      => 'fixed-width-sm',
                     ],
-                    'PS_VOLUME_UNIT'    => [
+                    'EPH_VOLUME_UNIT'    => [
                         'title'      => $this->l('Volume unit'),
                         'hint'       => $this->l('The default volume unit for your shop (e.g. "L" for liter, "gal" for gallon, etc.).'),
                         'validation' => 'isWeightUnit',
@@ -105,7 +105,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'type'       => 'text',
                         'class'      => 'fixed-width-sm',
                     ],
-                    'PS_DIMENSION_UNIT' => [
+                    'EPH_DIMENSION_UNIT' => [
                         'title'      => $this->l('Dimension unit'),
                         'hint'       => $this->l('The default dimension unit for your shop (e.g. "cm" for centimeter, "in" for inch, etc.).'),
                         'validation' => 'isDistanceUnit',
@@ -119,7 +119,7 @@ class AdminLocalizationControllerCore extends AdminController {
             'options'      => [
                 'title'  => $this->l('Advanced'),
                 'fields' => [
-                    'PS_LOCALE_LANGUAGE' => [
+                    'EPH_LOCALE_LANGUAGE' => [
                         'title'      => $this->l('Language identifier'),
                         'hint'       => $this->l('The ISO 639-1 identifier for the language of the country where your web server is located (en, fr, sp, ru, pl, nl, etc.).'),
                         'validation' => 'isLanguageIsoCode',
@@ -127,7 +127,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'visibility' => Shop::CONTEXT_ALL,
                         'class'      => 'fixed-width-sm',
                     ],
-                    'PS_LOCALE_COUNTRY'  => [
+                    'EPH_LOCALE_COUNTRY'  => [
                         'title'      => $this->l('Country identifier'),
                         'hint'       => $this->l('The ISO 3166-1 alpha-2 identifier for the country/region where your web server is located, in lowercase (us, gb, fr, sp, ru, pl, nl, etc.).'),
                         'validation' => 'isLanguageIsoCode',
@@ -179,7 +179,7 @@ class AdminLocalizationControllerCore extends AdminController {
             'general' => [
                 'title'  => $this->l('Configuration'),
                 'fields' => [
-                    'PS_LANG_DEFAULT'     => [
+                    'EPH_LANG_DEFAULT'     => [
                         'title'      => $this->l('Default language'),
                         'hint'       => $this->l('The default language used in your shop.'),
                         'cast'       => 'intval',
@@ -187,7 +187,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'identifier' => 'id_lang',
                         'list'       => Language::getLanguages(false),
                     ],
-                    'PS_DETECT_LANG'      => [
+                    'EPH_DETECT_LANG'      => [
                         'title'      => $this->l('Set language from browser'),
                         'desc'       => $this->l('Set browser language as default language'),
                         'validation' => 'isBool',
@@ -195,7 +195,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'type'       => 'bool',
                         'default'    => '1',
                     ],
-                    'PS_COUNTRY_DEFAULT'  => [
+                    'EPH_COUNTRY_DEFAULT'  => [
                         'title'      => $this->l('Default country'),
                         'hint'       => $this->l('The default country used in your shop.'),
                         'cast'       => 'intval',
@@ -204,7 +204,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'identifier' => 'id_country',
                         'list'       => Country::getCountries($this->context->language->id),
                     ],
-                    'PS_DETECT_COUNTRY'   => [
+                    'EPH_DETECT_COUNTRY'   => [
                         'title'      => $this->l('Set default country from browser language'),
                         'desc'       => $this->l('Set country corresponding to browser language'),
                         'validation' => 'isBool',
@@ -212,7 +212,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'type'       => 'bool',
                         'default'    => '1',
                     ],
-                    'PS_CURRENCY_DEFAULT' => [
+                    'EPH_CURRENCY_DEFAULT' => [
                         'title'      => $this->l('Default currency'),
                         'hint'       =>
                         $this->l('The default currency used in your shop.') . ' - ' . $this->l('If you change the default currency, you will have to manually edit every product price.'),
@@ -221,12 +221,12 @@ class AdminLocalizationControllerCore extends AdminController {
                         'identifier' => 'id_currency',
                         'list'       => Currency::getCurrencies(false, true, true),
                     ],
-                    'PS_TIMEZONE'         => [
+                    'EPH_TIMEZONE'         => [
                         'title'      => $this->l('Time zone'),
                         'validation' => 'isAnything',
                         'type'       => 'select',
                         'class'      => 'chosen',
-                        'list'       => Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS((new DbQuery())->select('`name`')->from('timezone')),
+                        'list'       => Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS((new DbQuery())->select('`name`')->from('timezone')),
                         'identifier' => 'name',
                         'visibility' => Shop::CONTEXT_ALL,
                     ],
@@ -258,7 +258,7 @@ class AdminLocalizationControllerCore extends AdminController {
                 'title'  => $this->l('Local units'),
                 'icon'   => 'icon-globe',
                 'fields' => [
-                    'PS_WEIGHT_UNIT'    => [
+                    'EPH_WEIGHT_UNIT'    => [
                         'title'      => $this->l('Weight unit'),
                         'hint'       => $this->l('The default weight unit for your shop (e.g. "kg" for kilograms, "lbs" for pound-mass, etc.).'),
                         'validation' => 'isWeightUnit',
@@ -266,7 +266,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'type'       => 'text',
                         'class'      => 'fixed-width-sm',
                     ],
-                    'PS_DISTANCE_UNIT'  => [
+                    'EPH_DISTANCE_UNIT'  => [
                         'title'      => $this->l('Distance unit'),
                         'hint'       => $this->l('The default distance unit for your shop (e.g. "km" for kilometer, "mi" for mile, etc.).'),
                         'validation' => 'isDistanceUnit',
@@ -274,7 +274,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'type'       => 'text',
                         'class'      => 'fixed-width-sm',
                     ],
-                    'PS_VOLUME_UNIT'    => [
+                    'EPH_VOLUME_UNIT'    => [
                         'title'      => $this->l('Volume unit'),
                         'hint'       => $this->l('The default volume unit for your shop (e.g. "L" for liter, "gal" for gallon, etc.).'),
                         'validation' => 'isWeightUnit',
@@ -282,7 +282,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'type'       => 'text',
                         'class'      => 'fixed-width-sm',
                     ],
-                    'PS_DIMENSION_UNIT' => [
+                    'EPH_DIMENSION_UNIT' => [
                         'title'      => $this->l('Dimension unit'),
                         'hint'       => $this->l('The default dimension unit for your shop (e.g. "cm" for centimeter, "in" for inch, etc.).'),
                         'validation' => 'isDistanceUnit',
@@ -317,7 +317,7 @@ class AdminLocalizationControllerCore extends AdminController {
             'options' => [
                 'title'  => $this->l('Advanced'),
                 'fields' => [
-                    'PS_LOCALE_LANGUAGE' => [
+                    'EPH_LOCALE_LANGUAGE' => [
                         'title'      => $this->l('Language identifier'),
                         'hint'       => $this->l('The ISO 639-1 identifier for the language of the country where your web server is located (en, fr, sp, ru, pl, nl, etc.).'),
                         'validation' => 'isLanguageIsoCode',
@@ -325,7 +325,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'visibility' => Shop::CONTEXT_ALL,
                         'class'      => 'fixed-width-sm',
                     ],
-                    'PS_LOCALE_COUNTRY'  => [
+                    'EPH_LOCALE_COUNTRY'  => [
                         'title'      => $this->l('Country identifier'),
                         'hint'       => $this->l('The ISO 3166-1 alpha-2 identifier for the country/region where your web server is located, in lowercase (us, gb, fr, sp, ru, pl, nl, etc.).'),
                         'validation' => 'isLanguageIsoCode',
@@ -376,7 +376,7 @@ class AdminLocalizationControllerCore extends AdminController {
         if (Tools::isSubmit('submitLocalizationPack')) {
 
             if (($isoLocalizationPack = Tools::getValue('iso_localization_pack')) && Validate::isFileName($isoLocalizationPack)) {
-                $path = _PS_ROOT_ADMIN_DIR_ . '/localization/' . $isoLocalizationPack . '.xml';
+                $path = _EPH_ROOT_ADMIN_DIR_ . '/localization/' . $isoLocalizationPack . '.xml';
 
                 if (!($pack = @file_get_contents($path))) {
                     $this->errors[] = Tools::displayError('Cannot load the localization pack.');
@@ -424,7 +424,7 @@ class AdminLocalizationControllerCore extends AdminController {
      */
     public function postProcess() {
 
-        if (_PS_MODE_DEMO_) {
+        if (_EPH_MODE_DEMO_) {
             $this->errors[] = Tools::displayError('This functionality has been disabled.');
 
             return;
@@ -437,7 +437,7 @@ class AdminLocalizationControllerCore extends AdminController {
         if (Tools::isSubmit('submitLocalizationPack')) {
 
             if (($isoLocalizationPack = Tools::getValue('iso_localization_pack')) && Validate::isFileName($isoLocalizationPack)) {
-                $path = _PS_ROOT_ADMIN_DIR_ . '/localization/' . $isoLocalizationPack . '.xml';
+                $path = _EPH_ROOT_ADMIN_DIR_ . '/localization/' . $isoLocalizationPack . '.xml';
 
                 if (!($pack = @file_get_contents($path))) {
                     $this->errors[] = Tools::displayError('Cannot load the localization pack.');
@@ -515,7 +515,7 @@ class AdminLocalizationControllerCore extends AdminController {
                 'show_page_header_toolbar'  => $this->show_page_header_toolbar,
                 'page_header_toolbar_title' => $this->page_header_toolbar_title,
                 'page_header_toolbar_btn'   => $this->page_header_toolbar_btn,
-                'bo_imgdir'                 => __PS_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+                'bo_imgdir'                 => __EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
             ]
         );
     }
@@ -530,7 +530,7 @@ class AdminLocalizationControllerCore extends AdminController {
         $localizationsPack = false;
         $this->tpl_option_vars['options_content'] = $this->renderOptions();
 
-        $localizationFile = _PS_ROOT_ADMIN_DIR_ . '/localization/localization.xml';
+        $localizationFile = _EPH_ROOT_ADMIN_DIR_ . '/localization/localization.xml';
 
         if (file_exists($localizationFile)) {
             $xmlLocalization = @simplexml_load_file($localizationFile);
@@ -553,7 +553,7 @@ class AdminLocalizationControllerCore extends AdminController {
 
         // Add local localization .xml files to the list if they are not already there
 
-        foreach (scandir(_PS_ROOT_ADMIN_DIR_ . '/localization/') as $entry) {
+        foreach (scandir(_EPH_ROOT_ADMIN_DIR_ . '/localization/') as $entry) {
             $m = [];
 
             if (preg_match('/^([a-z]{2})\.xml$/', $entry, $m)) {
@@ -562,7 +562,7 @@ class AdminLocalizationControllerCore extends AdminController {
                 if (empty($remoteIsos[$iso])) {
                     // if the pack is only there locally and not on PhenyxShop.com
 
-                    $xmlPack = @simplexml_load_file(_PS_ROOT_ADMIN_DIR_ . '/localization/' . $entry);
+                    $xmlPack = @simplexml_load_file(_EPH_ROOT_ADMIN_DIR_ . '/localization/' . $entry);
 
                     if (!$xmlPack) {
                         return $this->displayWarning($this->l(sprintf('%1s could not be loaded', $entry)));
@@ -689,7 +689,7 @@ class AdminLocalizationControllerCore extends AdminController {
      */
     public function beforeUpdateOptions() {
 
-        $lang = new Language((int) Tools::getValue('PS_LANG_DEFAULT'));
+        $lang = new Language((int) Tools::getValue('EPH_LANG_DEFAULT'));
 
         if (!$lang->active) {
             $lang->active = 1;
@@ -705,11 +705,11 @@ class AdminLocalizationControllerCore extends AdminController {
      */
     public function updateOptionPsCurrencyDefault($value) {
 
-        if ($value == Configuration::get('PS_CURRENCY_DEFAULT')) {
+        if ($value == Configuration::get('EPH_CURRENCY_DEFAULT')) {
             return;
         }
 
-        Configuration::updateValue('PS_CURRENCY_DEFAULT', $value);
+        Configuration::updateValue('EPH_CURRENCY_DEFAULT', $value);
 
         /* Set conversion rate of default currency to 1 */
         ObjectModel::updateMultishopTable('Currency', ['conversion_rate' => 1], 'a.id_currency');

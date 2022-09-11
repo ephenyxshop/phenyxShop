@@ -25,21 +25,21 @@ class AdminMaintenanceControllerCore extends AdminController {
             'general' => [
                 'title'  => $this->l('General'),
                 'fields' => [
-                    'PS_SHOP_ENABLE'      => [
+                    'EPH_SHOP_ENABLE'      => [
                         'title'      => $this->l('Enable Shop'),
                         'desc'       => $this->l('Activate or deactivate your shop (It is a good idea to deactivate your shop while you perform maintenance. Please note that the webservice will not be disabled).'),
                         'validation' => 'isBool',
                         'cast'       => 'intval',
                         'type'       => 'bool',
                     ],
-                    'PS_MAINTENANCE_IP'   => [
+                    'EPH_MAINTENANCE_IP'   => [
                         'title'      => $this->l('Maintenance IP'),
                         'hint'       => $this->l('IP addresses allowed to access the front office even if the shop is disabled. Please use a comma to separate them (e.g. 42.24.4.2,127.0.0.1,99.98.97.96)'),
                         'validation' => 'isGenericName',
                         'type'       => 'maintenance_ip',
                         'default'    => '',
                     ],
-                    'PS_MAINTENANCE_TEXT' => [
+                    'EPH_MAINTENANCE_TEXT' => [
                         'title'      => $this->l('Custom maintenance text'),
                         'hint'       => $this->l('90 of 21844 characters allowed'),
                         'validation' => 'isCleanHtml',
@@ -59,8 +59,8 @@ class AdminMaintenanceControllerCore extends AdminController {
     public function setAjaxMedia() {
 
         return $this->pushJS([
-            _PS_JS_DIR_ . 'tinymce/tinymce.min.js',
-            _PS_JS_DIR_ . 'tinymce.inc.js',
+            _EPH_JS_DIR_ . 'tinymce/tinymce.min.js',
+            _EPH_JS_DIR_ . 'tinymce.inc.js',
         ]);
     }
 
@@ -91,14 +91,14 @@ class AdminMaintenanceControllerCore extends AdminController {
 
         $languages = Language::getLanguages(false);
 
-        Configuration::updateValue('PS_SHOP_ENABLE', Tools::getValue('PS_SHOP_ENABLE'));
-        Configuration::updateValue('PS_MAINTENANCE_IP', Tools::getValue('PS_MAINTENANCE_IP'));
+        Configuration::updateValue('EPH_SHOP_ENABLE', Tools::getValue('EPH_SHOP_ENABLE'));
+        Configuration::updateValue('EPH_MAINTENANCE_IP', Tools::getValue('EPH_MAINTENANCE_IP'));
 
         foreach ($languages as $lang) {
-            $PS_MAINTENANCE_TEXT[$lang['id_lang']] = Tools::getValue('PS_MAINTENANCE_TEXT_' . $lang['id_lang']);
+            $EPH_MAINTENANCE_TEXT[$lang['id_lang']] = Tools::getValue('EPH_MAINTENANCE_TEXT_' . $lang['id_lang']);
         }
 
-        Configuration::updateValue('PS_MAINTENANCE_TEXT', $PS_MAINTENANCE_TEXT, true);
+        Configuration::updateValue('EPH_MAINTENANCE_TEXT', $EPH_MAINTENANCE_TEXT, true);
 
         $result = [
             "success" => true,

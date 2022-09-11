@@ -132,7 +132,7 @@ class LanguageCore extends ObjectModel {
 
         static::$_LANGUAGES = [];
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('l.*, ls.`id_shop`')
                 ->from('lang', 'l')
@@ -182,7 +182,7 @@ class LanguageCore extends ObjectModel {
             die(Tools::displayError('Fatal error: ISO code is not correct') . ' ' . Tools::safeOutput($isoCode));
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`language_code`')
                 ->from('lang')
@@ -216,7 +216,7 @@ class LanguageCore extends ObjectModel {
         // and sort on equality with the exact IETF code wanted.
         // That way using only one query we get either the exact wanted language
         // or a close match.
-        $idLang = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $idLang = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_lang`, IF(language_code = \'' . pSQL($code) . '\', 0, LENGTH(language_code)) as found')
                 ->from('lang')
@@ -246,7 +246,7 @@ class LanguageCore extends ObjectModel {
      */
     public static function getIsoIds($active = true) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_lang`, `iso_code`')
                 ->from('lang')
@@ -266,12 +266,12 @@ class LanguageCore extends ObjectModel {
      */
     public static function copyLanguageData($from, $to) {
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('SHOW TABLES FROM `' . _DB_NAME_ . '`');
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS('SHOW TABLES FROM `' . _DB_NAME_ . '`');
 
         foreach ($result as $row) {
 
             if (preg_match('/_lang/', $row['Tables_in_' . _DB_NAME_]) && $row['Tables_in_' . _DB_NAME_] != _DB_PREFIX_ . 'lang') {
-                $result2 = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+                $result2 = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                     (new DbQuery())
                         ->select('*')
                         ->from(bqSQL($row['Tables_in_' . _DB_NAME_]))
@@ -318,7 +318,7 @@ class LanguageCore extends ObjectModel {
 
         if (static::$_cache_language_installation === null) {
             static::$_cache_language_installation = [];
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('`id_lang`, `iso_code`')
                     ->from('lang')
@@ -363,7 +363,7 @@ class LanguageCore extends ObjectModel {
         }
 
         if (!isset(static::$countActiveLanguages[$idShop])) {
-            static::$countActiveLanguages[$idShop] = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            static::$countActiveLanguages[$idShop] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('COUNT(DISTINCT l.`id_lang`)')
                     ->from('lang', 'l')
@@ -392,7 +392,7 @@ class LanguageCore extends ObjectModel {
             $filesListing = [];
 
             foreach ($modulesList as $moduleName) {
-                $filegz = _PS_TRANSLATIONS_DIR_ . $lang['iso_code'] . '.gzip';
+                $filegz = _EPH_TRANSLATIONS_DIR_ . $lang['iso_code'] . '.gzip';
 
                 clearstatcache();
 
@@ -426,7 +426,7 @@ class LanguageCore extends ObjectModel {
             }
 
             if ($gz) {
-                $gz->extractList($filesListing, _PS_TRANSLATIONS_DIR_ . '../', '');
+                $gz->extractList($filesListing, _EPH_TRANSLATIONS_DIR_ . '../', '');
             }
 
         }
@@ -459,11 +459,11 @@ class LanguageCore extends ObjectModel {
 
         $langPack = false;
         $errors = [];
-        $file = _PS_TRANSLATIONS_DIR_ . (string) $iso . '.gzip';
+        $file = _EPH_TRANSLATIONS_DIR_ . (string) $iso . '.gzip';
         $guzzle = new GuzzleHttp\Client([
             'base_uri' => "https://translations.ephenyx.com/packs/{$version}/",
             'timeout'  => 20,
-            'verify'   => _PS_TOOL_DIR_ . 'cacert.pem',
+            'verify'   => _EPH_TOOL_DIR_ . 'cacert.pem',
         ]);
 
         try {
@@ -516,14 +516,14 @@ class LanguageCore extends ObjectModel {
             foreach ($filePaths as $filePath) {
                 $path = dirname($filePath);
 
-                if (is_dir(_PS_TRANSLATIONS_DIR_ . '../' . $path) && !is_writable(_PS_TRANSLATIONS_DIR_ . '../' . $path) && !in_array($path, $tmpArray)) {
+                if (is_dir(_EPH_TRANSLATIONS_DIR_ . '../' . $path) && !is_writable(_EPH_TRANSLATIONS_DIR_ . '../' . $path) && !in_array($path, $tmpArray)) {
                     $errors[] = (!$i++ ? Tools::displayError('Translation pack cannot be extracted.') . ' ' : '') . Tools::displayError('The server does not have permissions for writing.') . ' ' . sprintf(Tools::displayError('Please check rights for %s'), $path);
                     $tmpArray[] = $path;
                 }
 
             }
 
-            if (!$gz->extractList(AdminTranslationsController::filesListToPaths($fileList), _PS_TRANSLATIONS_DIR_ . '../')) {
+            if (!$gz->extractList(AdminTranslationsController::filesListToPaths($fileList), _EPH_TRANSLATIONS_DIR_ . '../')) {
                 $errors[] = sprintf(Tools::displayError('Cannot decompress the translation file for the following language: %s'), (string) $iso);
             }
 
@@ -602,7 +602,7 @@ class LanguageCore extends ObjectModel {
             $guzzle = new GuzzleHttp\Client([
                 'base_uri' => "https://translations.ephenyx.com/packs/{$version}/",
                 'timeout'  => 20,
-                'verify'   => _PS_TOOL_DIR_ . 'cacert.pem',
+                'verify'   => _EPH_TOOL_DIR_ . 'cacert.pem',
             ]);
 
             try {
@@ -651,7 +651,7 @@ class LanguageCore extends ObjectModel {
         }
 
         if (isset($paramsLang['allow_accented_chars_url']) && in_array($paramsLang['allow_accented_chars_url'], ['1', 'true'])) {
-            Configuration::updateGlobalValue('PS_ALLOW_ACCENTED_CHARS_URL', 1);
+            Configuration::updateGlobalValue('EPH_ALLOW_ACCENTED_CHARS_URL', 1);
         }
 
         Language::_copyNoneFlag((int) $lang->id);
@@ -666,10 +666,10 @@ class LanguageCore extends ObjectModel {
             '/en-default-' . ImageType::getFormatedName('scene') . '.jpg',
         ];
 
-        foreach ([_PS_CAT_IMG_DIR_, _PS_MANU_IMG_DIR_, _PS_PROD_IMG_DIR_, _PS_SUPP_IMG_DIR_] as $to) {
+        foreach ([_EPH_CAT_IMG_DIR_, _EPH_MANU_IMG_DIR_, _EPH_PROD_IMG_DIR_, _EPH_SUPP_IMG_DIR_] as $to) {
 
             foreach ($filesCopy as $file) {
-                @copy(_PS_ROOT_DIR_ . '/img/l' . $file, $to . str_replace('/en', '/' . $isoCode, $file));
+                @copy(_EPH_ROOT_DIR_ . '/img/l' . $file, $to . str_replace('/en', '/' . $isoCode, $file));
             }
 
         }
@@ -698,7 +698,7 @@ class LanguageCore extends ObjectModel {
         $key = 'Language::getIdByIso_' . $isoCode;
 
         if ($noCache || !Cache::isStored($key)) {
-            $idLang = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $idLang = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`id_lang`')
                     ->from('lang')
@@ -762,16 +762,16 @@ class LanguageCore extends ObjectModel {
 
         $isoCode = $newIso ? $newIso : $this->iso_code;
 
-        if (!file_exists(_PS_TRANSLATIONS_DIR_ . $isoCode)) {
+        if (!file_exists(_EPH_TRANSLATIONS_DIR_ . $isoCode)) {
 
-            if (@mkdir(_PS_TRANSLATIONS_DIR_ . $isoCode)) {
-                @chmod(_PS_TRANSLATIONS_DIR_ . $isoCode, 0777);
+            if (@mkdir(_EPH_TRANSLATIONS_DIR_ . $isoCode)) {
+                @chmod(_EPH_TRANSLATIONS_DIR_ . $isoCode, 0777);
             }
 
         }
 
         foreach ($this->translationsFilesAndVars as $file => $var) {
-            $pathFile = _PS_TRANSLATIONS_DIR_ . $isoCode . '/' . $file . '.php';
+            $pathFile = _EPH_TRANSLATIONS_DIR_ . $isoCode . '/' . $file . '.php';
 
             if (!file_exists($pathFile)) {
 
@@ -830,7 +830,7 @@ class LanguageCore extends ObjectModel {
 
         foreach ($shops as $shop) {
             /** @var Shop $shop */
-            $idLangDefault = Configuration::get('PS_LANG_DEFAULT', null, $shop->id_shop_group, $shop->id);
+            $idLangDefault = Configuration::get('EPH_LANG_DEFAULT', null, $shop->id_shop_group, $shop->id);
 
             foreach ($langTables as $name) {
                 preg_match('#^' . preg_quote(_DB_PREFIX_) . '(.+)_lang$#i', $name, $m);
@@ -918,10 +918,10 @@ class LanguageCore extends ObjectModel {
 
         if ($iso) {
 
-            if (file_exists(_PS_ROOT_DIR_ . '/img/flags/' . strtolower($iso) . '.png')) {
+            if (file_exists(_EPH_ROOT_DIR_ . '/img/flags/' . strtolower($iso) . '.png')) {
                 return ImageManager::resize(
-                    _PS_ROOT_DIR_ . '/img/flags/' . strtolower($iso) . '.png',
-                    _PS_ROOT_DIR_ . '/img/l/' . $id . '.jpg',
+                    _EPH_ROOT_DIR_ . '/img/flags/' . strtolower($iso) . '.png',
+                    _EPH_ROOT_DIR_ . '/img/l/' . $id . '.jpg',
                     null,
                     null,
                     'jpg',
@@ -931,7 +931,7 @@ class LanguageCore extends ObjectModel {
 
         }
 
-        return copy(_PS_ROOT_DIR_ . '/img/l/none.jpg', _PS_ROOT_DIR_ . '/img/l/' . $id . '.jpg');
+        return copy(_EPH_ROOT_DIR_ . '/img/l/none.jpg', _EPH_ROOT_DIR_ . '/img/l/' . $id . '.jpg');
     }
 
     /**
@@ -966,24 +966,24 @@ class LanguageCore extends ObjectModel {
             return true;
         }
 
-        if (file_exists(_PS_TRANSLATIONS_DIR_ . $this->iso_code)) {
-            rename(_PS_TRANSLATIONS_DIR_ . $this->iso_code, _PS_TRANSLATIONS_DIR_ . $newIso);
+        if (file_exists(_EPH_TRANSLATIONS_DIR_ . $this->iso_code)) {
+            rename(_EPH_TRANSLATIONS_DIR_ . $this->iso_code, _EPH_TRANSLATIONS_DIR_ . $newIso);
         }
 
-        if (file_exists(_PS_MAIL_DIR_ . $this->iso_code)) {
-            rename(_PS_MAIL_DIR_ . $this->iso_code, _PS_MAIL_DIR_ . $newIso);
+        if (file_exists(_EPH_MAIL_DIR_ . $this->iso_code)) {
+            rename(_EPH_MAIL_DIR_ . $this->iso_code, _EPH_MAIL_DIR_ . $newIso);
         }
 
         $modulesList = Module::getModulesDirOnDisk();
 
         foreach ($modulesList as $moduleDir) {
 
-            if (file_exists(_PS_MODULE_DIR_ . $moduleDir . '/mails/' . $this->iso_code)) {
-                rename(_PS_MODULE_DIR_ . $moduleDir . '/mails/' . $this->iso_code, _PS_MODULE_DIR_ . $moduleDir . '/mails/' . $newIso);
+            if (file_exists(_EPH_MODULE_DIR_ . $moduleDir . '/mails/' . $this->iso_code)) {
+                rename(_EPH_MODULE_DIR_ . $moduleDir . '/mails/' . $this->iso_code, _EPH_MODULE_DIR_ . $moduleDir . '/mails/' . $newIso);
             }
 
-            if (file_exists(_PS_MODULE_DIR_ . $moduleDir . '/' . $this->iso_code . '.php')) {
-                rename(_PS_MODULE_DIR_ . $moduleDir . '/' . $this->iso_code . '.php', _PS_MODULE_DIR_ . $moduleDir . '/' . $newIso . '.php');
+            if (file_exists(_EPH_MODULE_DIR_ . $moduleDir . '/' . $this->iso_code . '.php')) {
+                rename(_EPH_MODULE_DIR_ . $moduleDir . '/' . $this->iso_code . '.php', _EPH_MODULE_DIR_ . $moduleDir . '/' . $newIso . '.php');
             }
 
         }
@@ -992,18 +992,18 @@ class LanguageCore extends ObjectModel {
             /** @var Theme $theme */
             $themeDir = $theme->directory;
 
-            if (file_exists(_PS_ALL_THEMES_DIR_ . $themeDir . '/lang/' . $this->iso_code . '.php')) {
-                rename(_PS_ALL_THEMES_DIR_ . $themeDir . '/lang/' . $this->iso_code . '.php', _PS_ALL_THEMES_DIR_ . $themeDir . '/lang/' . $newIso . '.php');
+            if (file_exists(_EPH_ALL_THEMES_DIR_ . $themeDir . '/lang/' . $this->iso_code . '.php')) {
+                rename(_EPH_ALL_THEMES_DIR_ . $themeDir . '/lang/' . $this->iso_code . '.php', _EPH_ALL_THEMES_DIR_ . $themeDir . '/lang/' . $newIso . '.php');
             }
 
-            if (file_exists(_PS_ALL_THEMES_DIR_ . $themeDir . '/mails/' . $this->iso_code)) {
-                rename(_PS_ALL_THEMES_DIR_ . $themeDir . '/mails/' . $this->iso_code, _PS_ALL_THEMES_DIR_ . $themeDir . '/mails/' . $newIso);
+            if (file_exists(_EPH_ALL_THEMES_DIR_ . $themeDir . '/mails/' . $this->iso_code)) {
+                rename(_EPH_ALL_THEMES_DIR_ . $themeDir . '/mails/' . $this->iso_code, _EPH_ALL_THEMES_DIR_ . $themeDir . '/mails/' . $newIso);
             }
 
             foreach ($modulesList as $module) {
 
-                if (file_exists(_PS_ALL_THEMES_DIR_ . $themeDir . '/plugins/' . $module . '/' . $this->iso_code . '.php')) {
-                    rename(_PS_ALL_THEMES_DIR_ . $themeDir . '/plugins/' . $module . '/' . $this->iso_code . '.php', _PS_ALL_THEMES_DIR_ . $themeDir . '/plugins/' . $module . '/' . $newIso . '.php');
+                if (file_exists(_EPH_ALL_THEMES_DIR_ . $themeDir . '/plugins/' . $module . '/' . $this->iso_code . '.php')) {
+                    rename(_EPH_ALL_THEMES_DIR_ . $themeDir . '/plugins/' . $module . '/' . $this->iso_code . '.php', _EPH_ALL_THEMES_DIR_ . $themeDir . '/plugins/' . $module . '/' . $newIso . '.php');
                 }
 
             }
@@ -1079,16 +1079,16 @@ class LanguageCore extends ObjectModel {
 
         $copy = ($isoTo && $themeTo) ? true : false;
 
-        $lPathFrom = _PS_TRANSLATIONS_DIR_ . (string) $isoFrom . '/';
-        $tPathFrom = _PS_ROOT_DIR_ . _EPH_THEMES_DIR_ . (string) $themeFrom . '/';
-        $pPathFrom = _PS_ROOT_DIR_ . _EPH_THEMES_DIR_ . (string) $themeFrom . '/pdf/';
-        $mPathFrom = _PS_MAIL_DIR_ . (string) $isoFrom . '/';
+        $lPathFrom = _EPH_TRANSLATIONS_DIR_ . (string) $isoFrom . '/';
+        $tPathFrom = _EPH_ROOT_DIR_ . _EPH_THEMES_DIR_ . (string) $themeFrom . '/';
+        $pPathFrom = _EPH_ROOT_DIR_ . _EPH_THEMES_DIR_ . (string) $themeFrom . '/pdf/';
+        $mPathFrom = _EPH_MAIL_DIR_ . (string) $isoFrom . '/';
 
         if ($copy) {
-            $lPathTo = _PS_TRANSLATIONS_DIR_ . (string) $isoTo . '/';
-            $tPathTo = _PS_ROOT_DIR_ . _EPH_THEMES_DIR_ . (string) $themeTo . '/';
-            $pPathTo = _PS_ROOT_DIR_ . _EPH_THEMES_DIR_ . (string) $themeTo . '/pdf/';
-            $mPathTo = _PS_MAIL_DIR_ . (string) $isoTo . '/';
+            $lPathTo = _EPH_TRANSLATIONS_DIR_ . (string) $isoTo . '/';
+            $tPathTo = _EPH_ROOT_DIR_ . _EPH_THEMES_DIR_ . (string) $themeTo . '/';
+            $pPathTo = _EPH_ROOT_DIR_ . _EPH_THEMES_DIR_ . (string) $themeTo . '/pdf/';
+            $mPathTo = _EPH_MAIL_DIR_ . (string) $isoTo . '/';
         }
 
         $lFiles = ['admin.php', 'errors.php', 'fields.php', 'pdf.php', 'tabs.php'];
@@ -1181,7 +1181,7 @@ class LanguageCore extends ObjectModel {
                 $modList = Module::getModulesDirOnDisk();
 
                 foreach ($modList as $mod) {
-                    $modDir = _PS_MODULE_DIR_ . $mod;
+                    $modDir = _EPH_MODULE_DIR_ . $mod;
                     // Lang file
 
                     if (file_exists($modDir . '/translations/' . (string) $isoFrom . '.php')) {
@@ -1326,34 +1326,34 @@ class LanguageCore extends ObjectModel {
 
             }
 
-            $modList = scandir(_PS_MODULE_DIR_);
+            $modList = scandir(_EPH_MODULE_DIR_);
 
             foreach ($modList as $mod) {
-                Language::recurseDeleteDir(_PS_MODULE_DIR_ . $mod . '/mails/' . $this->iso_code);
-                $files = @scandir(_PS_MODULE_DIR_ . $mod . '/mails/');
+                Language::recurseDeleteDir(_EPH_MODULE_DIR_ . $mod . '/mails/' . $this->iso_code);
+                $files = @scandir(_EPH_MODULE_DIR_ . $mod . '/mails/');
 
                 if (count($files) <= 2) {
-                    Language::recurseDeleteDir(_PS_MODULE_DIR_ . $mod . '/mails/');
+                    Language::recurseDeleteDir(_EPH_MODULE_DIR_ . $mod . '/mails/');
                 }
 
-                if (file_exists(_PS_MODULE_DIR_ . $mod . '/' . $this->iso_code . '.php')) {
-                    unlink(_PS_MODULE_DIR_ . $mod . '/' . $this->iso_code . '.php');
-                    $files = @scandir(_PS_MODULE_DIR_ . $mod);
+                if (file_exists(_EPH_MODULE_DIR_ . $mod . '/' . $this->iso_code . '.php')) {
+                    unlink(_EPH_MODULE_DIR_ . $mod . '/' . $this->iso_code . '.php');
+                    $files = @scandir(_EPH_MODULE_DIR_ . $mod);
 
                     if (count($files) <= 2) {
-                        Language::recurseDeleteDir(_PS_MODULE_DIR_ . $mod);
+                        Language::recurseDeleteDir(_EPH_MODULE_DIR_ . $mod);
                     }
 
                 }
 
             }
 
-            if (file_exists(_PS_MAIL_DIR_ . $this->iso_code)) {
-                Language::recurseDeleteDir(_PS_MAIL_DIR_ . $this->iso_code);
+            if (file_exists(_EPH_MAIL_DIR_ . $this->iso_code)) {
+                Language::recurseDeleteDir(_EPH_MAIL_DIR_ . $this->iso_code);
             }
 
-            if (file_exists(_PS_TRANSLATIONS_DIR_ . $this->iso_code)) {
-                Language::recurseDeleteDir(_PS_TRANSLATIONS_DIR_ . $this->iso_code);
+            if (file_exists(_EPH_TRANSLATIONS_DIR_ . $this->iso_code)) {
+                Language::recurseDeleteDir(_EPH_TRANSLATIONS_DIR_ . $this->iso_code);
             }
 
             $images = [
@@ -1364,7 +1364,7 @@ class LanguageCore extends ObjectModel {
                 '-default-' . ImageType::getFormatedName('medium') . '.jpg',
                 '-default-' . ImageType::getFormatedName('small') . '.jpg',
             ];
-            $imagesDirectories = [_PS_CAT_IMG_DIR_, _PS_MANU_IMG_DIR_, _PS_PROD_IMG_DIR_, _PS_SUPP_IMG_DIR_];
+            $imagesDirectories = [_EPH_CAT_IMG_DIR_, _EPH_MANU_IMG_DIR_, _EPH_PROD_IMG_DIR_, _EPH_SUPP_IMG_DIR_];
 
             foreach ($imagesDirectories as $imageDirectory) {
 
@@ -1374,8 +1374,8 @@ class LanguageCore extends ObjectModel {
                         unlink($imageDirectory . $this->iso_code . $image);
                     }
 
-                    if (file_exists(_PS_ROOT_DIR_ . '/img/l/' . $this->id . '.jpg')) {
-                        unlink(_PS_ROOT_DIR_ . '/img/l/' . $this->id . '.jpg');
+                    if (file_exists(_EPH_ROOT_DIR_ . '/img/l/' . $this->id . '.jpg')) {
+                        unlink(_EPH_ROOT_DIR_ . '/img/l/' . $this->id . '.jpg');
                     }
 
                 }

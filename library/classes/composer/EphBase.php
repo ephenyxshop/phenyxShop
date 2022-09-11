@@ -8,7 +8,7 @@ class EphBase {
 	
 	public function init() {
 
-		if (defined('_PS_ROOT_DIR_')) {
+		if (defined('_EPH_ROOT_DIR_')) {
 			$this->initAdmin();
 		} else {
 			$this->addPageCustomCss();
@@ -18,7 +18,7 @@ class EphBase {
 
 	public function is_admin() {
 
-		 if (defined('_PS_ROOT_DIR_')) {
+		 if (defined('_EPH_ROOT_DIR_')) {
 			return true;
 		}
 

@@ -66,10 +66,10 @@ class AdminCategoriesControllerCore extends AdminController {
     public function setAjaxMedia() {
 
         return $this->pushJS([
-            _PS_JS_DIR_ . 'tinymce/tinymce.min.js',
-            _PS_JS_DIR_ . 'tinymce.inc.js',
-            _PS_JS_DIR_ . 'categories.js',
-            _PS_JS_DIR_ . 'tree.js?v=' . _PS_VERSION_,
+            _EPH_JS_DIR_ . 'tinymce/tinymce.min.js',
+            _EPH_JS_DIR_ . 'tinymce.inc.js',
+            _EPH_JS_DIR_ . 'categories.js',
+            _EPH_JS_DIR_ . 'tree.js?v=' . _EPH_VERSION_,
         ]);
     }
 
@@ -492,9 +492,9 @@ class AdminCategoriesControllerCore extends AdminController {
         $selectedCategories = [(isset($obj->id_parent) && $obj->isParentCategoryAvailable($idShop)) ? (int) $obj->id_parent : (int) Tools::getValue('id_parent', Category::getRootCategory()->id)];
         $category_tree = $this->getCategoryTree($selectedCategories, $obj->id);
 
-        $unidentified = new Group(Configuration::get('PS_UNIDENTIFIED_GROUP'));
-        $guest = new Group(Configuration::get('PS_GUEST_GROUP'));
-        $default = new Group(Configuration::get('PS_CUSTOMER_GROUP'));
+        $unidentified = new Group(Configuration::get('EPH_UNIDENTIFIED_GROUP'));
+        $guest = new Group(Configuration::get('EPH_GUEST_GROUP'));
+        $default = new Group(Configuration::get('EPH_CUSTOMER_GROUP'));
 
         $unidentifiedGroupInformation = sprintf($this->l('%s - All people without a valid customer account.'), '<b>' . $unidentified->name[$this->context->language->id] . '</b>');
         $guestGroupInformation = sprintf($this->l('%s - Customer who placed an order with the guest checkout.'), '<b>' . $guest->name[$this->context->language->id] . '</b>');
@@ -504,7 +504,7 @@ class AdminCategoriesControllerCore extends AdminController {
             return;
         }
 
-        $image = _PS_CAT_IMG_DIR_ . $obj->id . '.' . $this->imageType;
+        $image = _EPH_CAT_IMG_DIR_ . $obj->id . '.' . $this->imageType;
 
         if (file_exists($image)) {
             $imageUrl = $this->context->link->getBaseFrontLink() . 'img/c/' . $obj->id . '.jpg';
@@ -527,7 +527,7 @@ class AdminCategoriesControllerCore extends AdminController {
 
             if ($formattedMedium == $imageType['name']) {
                 $format['medium'] = $imageType;
-                $thumb = _PS_CAT_IMG_DIR_ . $obj->id . '-' . $imageType['name'] . '.' . $this->imageType;
+                $thumb = _EPH_CAT_IMG_DIR_ . $obj->id . '-' . $imageType['name'] . '.' . $this->imageType;
 
                 if (is_file($thumb)) {
                     $thumbUrl = ImageManager::thumbnail($thumb, $this->table . '_' . (int) $obj->id . '-thumb.' . $this->imageType, (int) $imageType['width'], $this->imageType, true, true);
@@ -540,7 +540,7 @@ class AdminCategoriesControllerCore extends AdminController {
         if (!is_file($thumb)) {
             $thumb = $image;
             $thumbUrl = ImageManager::thumbnail($image, $this->table . '_' . (int) $obj->id . '-thumb.' . $this->imageType, 125, $this->imageType, true, true);
-            ImageManager::resize(_PS_TMP_IMG_DIR_ . $this->table . '_' . (int) $obj->id . '-thumb.' . $this->imageType, _PS_TMP_IMG_DIR_ . $this->table . '_' . (int) $obj->id . '-thumb.' . $this->imageType, (int) $imageType['width'], (int) $imageType['height']);
+            ImageManager::resize(_EPH_TMP_IMG_DIR_ . $this->table . '_' . (int) $obj->id . '-thumb.' . $this->imageType, _EPH_TMP_IMG_DIR_ . $this->table . '_' . (int) $obj->id . '-thumb.' . $this->imageType, (int) $imageType['width'], (int) $imageType['height']);
         }
 
         $thumbSize = file_exists($thumb) ? filesize($thumb) / 1000 : false;
@@ -691,12 +691,12 @@ class AdminCategoriesControllerCore extends AdminController {
         ];
 
         $this->tpl_form_vars['shared_category'] = Validate::isLoadedObject($obj) && $obj->hasMultishopEntries();
-        $this->tpl_form_vars['PS_ALLOW_ACCENTED_CHARS_URL'] = (int) Configuration::get('PS_ALLOW_ACCENTED_CHARS_URL');
+        $this->tpl_form_vars['EPH_ALLOW_ACCENTED_CHARS_URL'] = (int) Configuration::get('EPH_ALLOW_ACCENTED_CHARS_URL');
         $this->tpl_form_vars['displayBackOfficeCategory'] = Hook::exec('displayBackOfficeCategory');
 
         // Display this field only if multistore option is enabled
 
-        if (Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') && Tools::isSubmit('add' . $this->table . 'root')) {
+        if (Configuration::get('EPH_MULTISHOP_FEATURE_ACTIVE') && Tools::isSubmit('add' . $this->table . 'root')) {
             $this->fields_form['input'][] = [
                 'type'     => 'switch',
                 'label'    => $this->l('Root Category'),
@@ -733,10 +733,10 @@ class AdminCategoriesControllerCore extends AdminController {
         $categoryGroupsIds = $obj->getGroups();
 
         $groups = Group::getGroups($this->context->language->id);
-        // if empty $carrier_groups_ids : object creation : we set the default groups
+        // if empty $carrier_grouEPH_ids : object creation : we set the default groups
 
         if (empty($categoryGroupsIds)) {
-            $preselected = [Configuration::get('PS_UNIDENTIFIED_GROUP'), Configuration::get('PS_GUEST_GROUP'), Configuration::get('PS_CUSTOMER_GROUP')];
+            $preselected = [Configuration::get('EPH_UNIDENTIFIED_GROUP'), Configuration::get('EPH_GUEST_GROUP'), Configuration::get('EPH_CUSTOMER_GROUP')];
             $categoryGroupsIds = array_merge($categoryGroupsIds, $preselected);
         }
 
@@ -855,7 +855,7 @@ class AdminCategoriesControllerCore extends AdminController {
 
             if (is_array($files) && count($files)) {
 
-                copy($image['save_path'], _PS_CAT_IMG_DIR_ . $category->id . '.jpg');
+                copy($image['save_path'], _EPH_CAT_IMG_DIR_ . $category->id . '.jpg');
                 $imagesTypes = ImageType::getImagesTypes('categories');
 
                 foreach ($files as $image) {
@@ -863,16 +863,16 @@ class AdminCategoriesControllerCore extends AdminController {
                     foreach ($imagesTypes as $imageType) {
 
                         $success = ImageManager::resize(
-                            _PS_CAT_IMG_DIR_ . $category->id . '.' . $this->imageType,
-                            _PS_CAT_IMG_DIR_ . $category->id . '-' . stripslashes($imageType['name']) . '.' . $this->imageType,
+                            _EPH_CAT_IMG_DIR_ . $category->id . '.' . $this->imageType,
+                            _EPH_CAT_IMG_DIR_ . $category->id . '-' . stripslashes($imageType['name']) . '.' . $this->imageType,
                             (int) $imageType['width'],
                             (int) $imageType['height']
                         );
 
                         if (ImageManager::webpSupport()) {
                             $success &= ImageManager::resize(
-                                _PS_CAT_IMG_DIR_ . $category->id . '.' . $this->imageType,
-                                _PS_CAT_IMG_DIR_ . $category->id . '-' . stripslashes($imageType['name']) . '.webp',
+                                _EPH_CAT_IMG_DIR_ . $category->id . '.' . $this->imageType,
+                                _EPH_CAT_IMG_DIR_ . $category->id . '-' . stripslashes($imageType['name']) . '.webp',
                                 (int) $imageType['width'],
                                 (int) $imageType['height'],
                                 'webp'
@@ -881,16 +881,16 @@ class AdminCategoriesControllerCore extends AdminController {
 
                         if (ImageManager::retinaSupport()) {
                             $success &= ImageManager::resize(
-                                _PS_CAT_IMG_DIR_ . $category->id . '.' . $this->imageType,
-                                _PS_CAT_IMG_DIR_ . $category->id . '-' . stripslashes($imageType['name']) . '2x.' . $this->imageType,
+                                _EPH_CAT_IMG_DIR_ . $category->id . '.' . $this->imageType,
+                                _EPH_CAT_IMG_DIR_ . $category->id . '-' . stripslashes($imageType['name']) . '2x.' . $this->imageType,
                                 (int) $imageType['width'] * 2,
                                 (int) $imageType['height'] * 2
                             );
 
                             if (ImageManager::webpSupport()) {
                                 $success &= ImageManager::resize(
-                                    _PS_CAT_IMG_DIR_ . $category->id . '.' . $this->imageType,
-                                    _PS_CAT_IMG_DIR_ . $category->id . '-' . stripslashes($imageType['name']) . '2x.webp',
+                                    _EPH_CAT_IMG_DIR_ . $category->id . '.' . $this->imageType,
+                                    _EPH_CAT_IMG_DIR_ . $category->id . '-' . stripslashes($imageType['name']) . '2x.webp',
                                     (int) $imageType['width'] * 2,
                                     (int) $imageType['height'] * 2,
                                     'webp'
@@ -1000,21 +1000,21 @@ class AdminCategoriesControllerCore extends AdminController {
                         $imagesTypes = ImageType::getImagesTypes('categories');
 
                         foreach ($files as $image) {
-                            copy($image['save_path'], _PS_CAT_IMG_DIR_ . $category->id . '.jpg');
+                            copy($image['save_path'], _EPH_CAT_IMG_DIR_ . $category->id . '.jpg');
 
                             foreach ($imagesTypes as $imageType) {
 
                                 $success = ImageManager::resize(
-                                    _PS_CAT_IMG_DIR_ . $category->id . '.' . $this->imageType,
-                                    _PS_CAT_IMG_DIR_ . $category->id . '-' . stripslashes($imageType['name']) . '.' . $this->imageType,
+                                    _EPH_CAT_IMG_DIR_ . $category->id . '.' . $this->imageType,
+                                    _EPH_CAT_IMG_DIR_ . $category->id . '-' . stripslashes($imageType['name']) . '.' . $this->imageType,
                                     (int) $imageType['width'],
                                     (int) $imageType['height']
                                 );
 
                                 if (ImageManager::webpSupport()) {
                                     $success &= ImageManager::resize(
-                                        _PS_CAT_IMG_DIR_ . $category->id . '.' . $this->imageType,
-                                        _PS_CAT_IMG_DIR_ . $category->id . '-' . stripslashes($imageType['name']) . '.webp',
+                                        _EPH_CAT_IMG_DIR_ . $category->id . '.' . $this->imageType,
+                                        _EPH_CAT_IMG_DIR_ . $category->id . '-' . stripslashes($imageType['name']) . '.webp',
                                         (int) $imageType['width'],
                                         (int) $imageType['height'],
                                         'webp'
@@ -1023,16 +1023,16 @@ class AdminCategoriesControllerCore extends AdminController {
 
                                 if (ImageManager::retinaSupport()) {
                                     $success &= ImageManager::resize(
-                                        _PS_CAT_IMG_DIR_ . $category->id . '.' . $this->imageType,
-                                        _PS_CAT_IMG_DIR_ . $category->id . '-' . stripslashes($imageType['name']) . '2x.' . $this->imageType,
+                                        _EPH_CAT_IMG_DIR_ . $category->id . '.' . $this->imageType,
+                                        _EPH_CAT_IMG_DIR_ . $category->id . '-' . stripslashes($imageType['name']) . '2x.' . $this->imageType,
                                         (int) $imageType['width'] * 2,
                                         (int) $imageType['height'] * 2
                                     );
 
                                     if (ImageManager::webpSupport()) {
                                         $success &= ImageManager::resize(
-                                            _PS_CAT_IMG_DIR_ . $category->id . '.' . $this->imageType,
-                                            _PS_CAT_IMG_DIR_ . $category->id . '-' . stripslashes($imageType['name']) . '2x.webp',
+                                            _EPH_CAT_IMG_DIR_ . $category->id . '.' . $this->imageType,
+                                            _EPH_CAT_IMG_DIR_ . $category->id . '-' . stripslashes($imageType['name']) . '2x.webp',
                                             (int) $imageType['width'] * 2,
                                             (int) $imageType['height'] * 2,
                                             'webp'
@@ -1077,7 +1077,7 @@ class AdminCategoriesControllerCore extends AdminController {
         if (($idCategory = (int) Tools::getValue('id_category')) && isset($_FILES) && count($_FILES)) {
             $name = 'image';
 
-            if ($_FILES[$name]['name'] != null && file_exists(_PS_CAT_IMG_DIR_ . $idCategory . '.' . $this->imageType)) {
+            if ($_FILES[$name]['name'] != null && file_exists(_EPH_CAT_IMG_DIR_ . $idCategory . '.' . $this->imageType)) {
                 try {
                     $imagesTypes = ImageType::getImagesTypes('categories');
                 } catch (PhenyxShopException $e) {
@@ -1088,16 +1088,16 @@ class AdminCategoriesControllerCore extends AdminController {
 
                 foreach ($imagesTypes as $k => $imageType) {
                     $success = ImageManager::resize(
-                        _PS_CAT_IMG_DIR_ . $idCategory . '.' . $this->imageType,
-                        _PS_CAT_IMG_DIR_ . $idCategory . '-' . stripslashes($imageType['name']) . '.' . $this->imageType,
+                        _EPH_CAT_IMG_DIR_ . $idCategory . '.' . $this->imageType,
+                        _EPH_CAT_IMG_DIR_ . $idCategory . '-' . stripslashes($imageType['name']) . '.' . $this->imageType,
                         (int) $imageType['width'],
                         (int) $imageType['height']
                     );
 
                     if (ImageManager::webpSupport()) {
                         $success &= ImageManager::resize(
-                            _PS_CAT_IMG_DIR_ . $idCategory . '.' . $this->imageType,
-                            _PS_CAT_IMG_DIR_ . $idCategory . '-' . stripslashes($imageType['name']) . '.webp',
+                            _EPH_CAT_IMG_DIR_ . $idCategory . '.' . $this->imageType,
+                            _EPH_CAT_IMG_DIR_ . $idCategory . '-' . stripslashes($imageType['name']) . '.webp',
                             (int) $imageType['width'],
                             (int) $imageType['height'],
                             'webp'
@@ -1106,16 +1106,16 @@ class AdminCategoriesControllerCore extends AdminController {
 
                     if (ImageManager::retinaSupport()) {
                         $success &= ImageManager::resize(
-                            _PS_CAT_IMG_DIR_ . $idCategory . '.' . $this->imageType,
-                            _PS_CAT_IMG_DIR_ . $idCategory . '-' . stripslashes($imageType['name']) . '2x.' . $this->imageType,
+                            _EPH_CAT_IMG_DIR_ . $idCategory . '.' . $this->imageType,
+                            _EPH_CAT_IMG_DIR_ . $idCategory . '-' . stripslashes($imageType['name']) . '2x.' . $this->imageType,
                             (int) $imageType['width'] * 2,
                             (int) $imageType['height'] * 2
                         );
 
                         if (ImageManager::webpSupport()) {
                             $success &= ImageManager::resize(
-                                _PS_CAT_IMG_DIR_ . $idCategory . '.' . $this->imageType,
-                                _PS_CAT_IMG_DIR_ . $idCategory . '-' . stripslashes($imageType['name']) . '2x.webp',
+                                _EPH_CAT_IMG_DIR_ . $idCategory . '.' . $this->imageType,
+                                _EPH_CAT_IMG_DIR_ . $idCategory . '-' . stripslashes($imageType['name']) . '2x.webp',
                                 (int) $imageType['width'] * 2,
                                 (int) $imageType['height'] * 2,
                                 'webp'
@@ -1169,12 +1169,12 @@ class AdminCategoriesControllerCore extends AdminController {
                             $this->errors[] = $error;
                         } else
 
-                        if (!($tmpName = tempnam(_PS_TMP_IMG_DIR_, 'PS')) || !move_uploaded_file($_FILES[$name]['tmp_name'], $tmpName)) {
+                        if (!($tmpName = tempnam(_EPH_TMP_IMG_DIR_, 'PS')) || !move_uploaded_file($_FILES[$name]['tmp_name'], $tmpName)) {
                             $ret = false;
                         } else {
                             $success = ImageManager::resize(
                                 $tmpName,
-                                _PS_CAT_IMG_DIR_ . $idCategory . '-' . stripslashes($imageType['name']) . '.' . $this->imageType,
+                                _EPH_CAT_IMG_DIR_ . $idCategory . '-' . stripslashes($imageType['name']) . '.' . $this->imageType,
                                 (int) $imageType['width'],
                                 (int) $imageType['height']
                             );
@@ -1182,7 +1182,7 @@ class AdminCategoriesControllerCore extends AdminController {
                             if (ImageManager::webpSupport()) {
                                 ImageManager::resize(
                                     $tmpName,
-                                    _PS_CAT_IMG_DIR_ . $idCategory . '-' . stripslashes($imageType['name']) . '.webp',
+                                    _EPH_CAT_IMG_DIR_ . $idCategory . '-' . stripslashes($imageType['name']) . '.webp',
                                     (int) $imageType['width'],
                                     (int) $imageType['height'],
                                     'webp'
@@ -1192,7 +1192,7 @@ class AdminCategoriesControllerCore extends AdminController {
                             if (ImageManager::retinaSupport()) {
                                 ImageManager::resize(
                                     $tmpName,
-                                    _PS_CAT_IMG_DIR_ . $idCategory . '-' . stripslashes($imageType['name']) . '2x.' . $this->imageType,
+                                    _EPH_CAT_IMG_DIR_ . $idCategory . '-' . stripslashes($imageType['name']) . '2x.' . $this->imageType,
                                     (int) $imageType['width'] * 2,
                                     (int) $imageType['height'] * 2
                                 );
@@ -1200,7 +1200,7 @@ class AdminCategoriesControllerCore extends AdminController {
                                 if (ImageManager::webpSupport()) {
                                     ImageManager::resize(
                                         $tmpName,
-                                        _PS_CAT_IMG_DIR_ . $idCategory . '-' . stripslashes($imageType['name']) . '2x.webp',
+                                        _EPH_CAT_IMG_DIR_ . $idCategory . '-' . stripslashes($imageType['name']) . '2x.webp',
                                         (int) $imageType['width'] * 2,
                                         (int) $imageType['height'] * 2,
                                         'webp'
@@ -1261,14 +1261,14 @@ class AdminCategoriesControllerCore extends AdminController {
 
         if (Validate::isLoadedObject($category)) {
 
-            if (file_exists(_PS_TMP_IMG_DIR_ . $this->table . '_' . $category->id . '-thumb.' . $this->imageType)
-                && !unlink(_PS_TMP_IMG_DIR_ . $this->table . '_' . $category->id . '-thumb.' . $this->imageType)
+            if (file_exists(_EPH_TMP_IMG_DIR_ . $this->table . '_' . $category->id . '-thumb.' . $this->imageType)
+                && !unlink(_EPH_TMP_IMG_DIR_ . $this->table . '_' . $category->id . '-thumb.' . $this->imageType)
             ) {
                 return false;
             }
 
-            if (file_exists(_PS_CAT_IMG_DIR_ . $category->id . '_thumb.' . $this->imageType)
-                && !unlink(_PS_CAT_IMG_DIR_ . $category->id . '_thumb.' . $this->imageType)
+            if (file_exists(_EPH_CAT_IMG_DIR_ . $category->id . '_thumb.' . $this->imageType)
+                && !unlink(_EPH_CAT_IMG_DIR_ . $category->id . '_thumb.' . $this->imageType)
             ) {
                 return false;
             }
@@ -1279,8 +1279,8 @@ class AdminCategoriesControllerCore extends AdminController {
             foreach ($imagesTypes as $k => $imageType) {
 
                 if ($formattedMedium == $imageType['name'] &&
-                    file_exists(_PS_CAT_IMG_DIR_ . $category->id . '-' . $imageType['name'] . '.' . $this->imageType) &&
-                    !unlink(_PS_CAT_IMG_DIR_ . $category->id . '-' . $imageType['name'] . '.' . $this->imageType)
+                    file_exists(_EPH_CAT_IMG_DIR_ . $category->id . '-' . $imageType['name'] . '.' . $this->imageType) &&
+                    !unlink(_EPH_CAT_IMG_DIR_ . $category->id . '-' . $imageType['name'] . '.' . $this->imageType)
                 ) {
                     return false;
                 }
@@ -1318,7 +1318,7 @@ class AdminCategoriesControllerCore extends AdminController {
 
     public function cleanPositions($id_category) {
 
-        $categories = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $categories = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_category`,  `position` ')
                 ->from('category')
@@ -1337,7 +1337,7 @@ class AdminCategoriesControllerCore extends AdminController {
                     return false;
                 } else {
                     $k++;
-                    $childrens = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+                    $childrens = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                         (new DbQuery())
                             ->select('`id_category`, `position`')
                             ->from('category')
@@ -1426,7 +1426,7 @@ class AdminCategoriesControllerCore extends AdminController {
 
             if ($initPosition > $stopIndex) {
 
-                $objects = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+                $objects = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                     (new DbQuery())
                         ->select($this->identifier . ',  `position` ')
                         ->from($this->table)
@@ -1479,7 +1479,7 @@ class AdminCategoriesControllerCore extends AdminController {
 
             if ($initPosition < $stopIndex) {
 
-                $objects = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+                $objects = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                     (new DbQuery())
                         ->select($this->identifier . ',  `position` ')
                         ->from($this->table)

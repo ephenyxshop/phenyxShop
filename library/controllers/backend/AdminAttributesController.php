@@ -184,7 +184,7 @@ class AdminAttributesControllerCore extends AdminController {
         $this->tpl_form_vars = [
             'strAttributesGroups'      => $strAttributesGroups,
             'colorAttributeProperties' => Validate::isLoadedObject($obj) && $obj->isColorAttribute(),
-            'imageTextureExists'       => file_exists(_PS_IMG_DIR_ . $this->fieldImageSettings['dir'] . '/' . (int) $obj->id . '.jpg'),
+            'imageTextureExists'       => file_exists(_EPH_IMG_DIR_ . $this->fieldImageSettings['dir'] . '/' . (int) $obj->id . '.jpg'),
             'imageTexture'             => $image,
             'imageTextureUrl'          => Tools::safeOutput($_SERVER['REQUEST_URI']) . '&deleteImage=1',
         ];

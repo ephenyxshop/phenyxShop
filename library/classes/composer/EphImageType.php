@@ -26,7 +26,7 @@ class EphImageType extends EPHComposer {
 
 	public static function getImageTypeByName($name) {
 		
-		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+		$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('*')
                     ->from('vc_image_type')

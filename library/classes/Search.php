@@ -1,6 +1,6 @@
 <?php
 
-define('PS_SEARCH_MAX_WORD_LENGTH', 15);
+define('EPH_SEARCH_MAX_WORD_LENGTH', 15);
 
 /* Copied from Drupal search module, except for \x{0}-\x{2f} that has been replaced by \x{0}-\x{2c}\x{2e}-\x{2f} in order to keep the char '-' */
 define(
@@ -109,7 +109,7 @@ class SearchCore {
             $context = Context::getContext();
         }
 
-        $db = Db::getInstance(_PS_USE_SQL_SLAVE_);
+        $db = Db::getInstance(_EPH_USE_SQL_SLAVE_);
 
         // TODO : smart page management
 
@@ -131,10 +131,10 @@ class SearchCore {
 
         foreach ($words as $key => $word) {
 
-            if (!empty($word) && strlen($word) >= (int) Configuration::get('PS_SEARCH_MINWORDLEN')) {
+            if (!empty($word) && strlen($word) >= (int) Configuration::get('EPH_SEARCH_MINWORDLEN')) {
                 $word = str_replace(['%', '_'], ['\\%', '\\_'], $word);
-                $startSearch = Configuration::get('PS_SEARCH_START') ? '%' : '';
-                $endSearch = Configuration::get('PS_SEARCH_END') ? '' : '%';
+                $startSearch = Configuration::get('EPH_SEARCH_START') ? '%' : '';
+                $endSearch = Configuration::get('EPH_SEARCH_END') ? '' : '%';
 
                 $intersectArray[] = 'SELECT DISTINCT si.id_product
                     FROM ' . _DB_PREFIX_ . 'search_word sw
@@ -143,12 +143,12 @@ class SearchCore {
                         AND sw.id_shop = ' . $context->shop->id . '
                         AND sw.word LIKE
                     ' . ($word[0] == '-'
-                    ? ' \'' . $startSearch . pSQL(mb_substr($word, 1, PS_SEARCH_MAX_WORD_LENGTH)) . $endSearch . '\''
-                    : ' \'' . $startSearch . pSQL(mb_substr($word, 0, PS_SEARCH_MAX_WORD_LENGTH)) . $endSearch . '\''
+                    ? ' \'' . $startSearch . pSQL(mb_substr($word, 1, EPH_SEARCH_MAX_WORD_LENGTH)) . $endSearch . '\''
+                    : ' \'' . $startSearch . pSQL(mb_substr($word, 0, EPH_SEARCH_MAX_WORD_LENGTH)) . $endSearch . '\''
                 );
 
                 if ($word[0] != '-') {
-                    $scoreArray[] = 'sw.word LIKE \'' . $startSearch . pSQL(mb_substr($word, 0, PS_SEARCH_MAX_WORD_LENGTH)) . $endSearch . '\'';
+                    $scoreArray[] = 'sw.word LIKE \'' . $startSearch . pSQL(mb_substr($word, 0, EPH_SEARCH_MAX_WORD_LENGTH)) . $endSearch . '\'';
                 }
 
             } else {
@@ -274,7 +274,7 @@ class SearchCore {
                     p.`date_add`,
                     DATE_SUB(
                         "' . date('Y-m-d') . ' 00:00:00",
-                        INTERVAL ' . (Validate::isUnsignedInt(Configuration::get('PS_NB_DAYS_NEW_PRODUCT')) ? Configuration::get('PS_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY
+                        INTERVAL ' . (Validate::isUnsignedInt(Configuration::get('EPH_NB_DAYS_NEW_PRODUCT')) ? Configuration::get('EPH_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY
                     )
                 ) > 0 new' . (Combination::isFeatureActive() ? ', product_attribute_shop.minimal_quantity AS product_attribute_minimal_quantity, IFNULL(product_attribute_shop.`id_product_attribute`,0) id_product_attribute' : '') . '
                 FROM ' . _DB_PREFIX_ . 'product p
@@ -368,7 +368,7 @@ class SearchCore {
             $string = preg_replace('/[._-]+/', ' ', $string);
         }
 
-        $blacklist = mb_strtolower(Configuration::get('PS_SEARCH_BLACKLIST', $idLang));
+        $blacklist = mb_strtolower(Configuration::get('EPH_SEARCH_BLACKLIST', $idLang));
 
         if (!empty($blacklist)) {
             $string = preg_replace('/(?<=\s)(' . $blacklist . ')(?=\s)/Su', '', $string);
@@ -400,7 +400,7 @@ class SearchCore {
 
             $string = $letters . $symbols;
         } else if ($indexation) {
-            $minWordLen = (int) Configuration::get('PS_SEARCH_MINWORDLEN');
+            $minWordLen = (int) Configuration::get('EPH_SEARCH_MINWORDLEN');
 
             if ($minWordLen > 1) {
                 $minWordLen -= 1;
@@ -478,22 +478,22 @@ class SearchCore {
 
         // Every fields are weighted according to the configuration in the backend
         $weightArray = [
-            'pname'                 => Configuration::get('PS_SEARCH_WEIGHT_PNAME'),
-            'reference'             => Configuration::get('PS_SEARCH_WEIGHT_REF'),
-            'pa_reference'          => Configuration::get('PS_SEARCH_WEIGHT_REF'),
-            'supplier_reference'    => Configuration::get('PS_SEARCH_WEIGHT_REF'),
-            'pa_supplier_reference' => Configuration::get('PS_SEARCH_WEIGHT_REF'),
-            'ean13'                 => Configuration::get('PS_SEARCH_WEIGHT_REF'),
-            'pa_ean13'              => Configuration::get('PS_SEARCH_WEIGHT_REF'),
-            'upc'                   => Configuration::get('PS_SEARCH_WEIGHT_REF'),
-            'pa_upc'                => Configuration::get('PS_SEARCH_WEIGHT_REF'),
-            'description_short'     => Configuration::get('PS_SEARCH_WEIGHT_SHORTDESC'),
-            'description'           => Configuration::get('PS_SEARCH_WEIGHT_DESC'),
-            'cname'                 => Configuration::get('PS_SEARCH_WEIGHT_CNAME'),
-            'mname'                 => Configuration::get('PS_SEARCH_WEIGHT_MNAME'),
-            'tags'                  => Configuration::get('PS_SEARCH_WEIGHT_TAG'),
-            'attributes'            => Configuration::get('PS_SEARCH_WEIGHT_ATTRIBUTE'),
-            'features'              => Configuration::get('PS_SEARCH_WEIGHT_FEATURE'),
+            'pname'                 => Configuration::get('EPH_SEARCH_WEIGHT_PNAME'),
+            'reference'             => Configuration::get('EPH_SEARCH_WEIGHT_REF'),
+            'pa_reference'          => Configuration::get('EPH_SEARCH_WEIGHT_REF'),
+            'supplier_reference'    => Configuration::get('EPH_SEARCH_WEIGHT_REF'),
+            'pa_supplier_reference' => Configuration::get('EPH_SEARCH_WEIGHT_REF'),
+            'ean13'                 => Configuration::get('EPH_SEARCH_WEIGHT_REF'),
+            'pa_ean13'              => Configuration::get('EPH_SEARCH_WEIGHT_REF'),
+            'upc'                   => Configuration::get('EPH_SEARCH_WEIGHT_REF'),
+            'pa_upc'                => Configuration::get('EPH_SEARCH_WEIGHT_REF'),
+            'description_short'     => Configuration::get('EPH_SEARCH_WEIGHT_SHORTDESC'),
+            'description'           => Configuration::get('EPH_SEARCH_WEIGHT_DESC'),
+            'cname'                 => Configuration::get('EPH_SEARCH_WEIGHT_CNAME'),
+            'mname'                 => Configuration::get('EPH_SEARCH_WEIGHT_MNAME'),
+            'tags'                  => Configuration::get('EPH_SEARCH_WEIGHT_TAG'),
+            'attributes'            => Configuration::get('EPH_SEARCH_WEIGHT_ATTRIBUTE'),
+            'features'              => Configuration::get('EPH_SEARCH_WEIGHT_FEATURE'),
         ];
 
         // Those are kind of global variables required to save the processed data in the database every X occurrences, in order to avoid overloading MySQL
@@ -916,7 +916,7 @@ class SearchCore {
             foreach ($words as $word) {
 
                 if (!empty($word)) {
-                    $word = mb_substr($word, 0, PS_SEARCH_MAX_WORD_LENGTH);
+                    $word = mb_substr($word, 0, EPH_SEARCH_MAX_WORD_LENGTH);
 
                     if (!isset($productArray[$word])) {
                         $productArray[$word] = 0;
@@ -1039,7 +1039,7 @@ class SearchCore {
         }
 
         $id = Context::getContext()->shop->id;
-        $idShop = $id ? $id : Configuration::get('PS_SHOP_DEFAULT');
+        $idShop = $id ? $id : Configuration::get('EPH_SHOP_DEFAULT');
 
         $sqlGroups = '';
 
@@ -1049,7 +1049,7 @@ class SearchCore {
         }
 
         if ($count) {
-            return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 'SELECT COUNT(DISTINCT pt.`id_product`) nb
             FROM
             `' . _DB_PREFIX_ . 'tag` t
@@ -1073,7 +1073,7 @@ class SearchCore {
                         p.`date_add`,
                         DATE_SUB(
                             "' . date('Y-m-d') . ' 00:00:00",
-                            INTERVAL ' . (Validate::isUnsignedInt(Configuration::get('PS_NB_DAYS_NEW_PRODUCT')) ? Configuration::get('PS_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY
+                            INTERVAL ' . (Validate::isUnsignedInt(Configuration::get('EPH_NB_DAYS_NEW_PRODUCT')) ? Configuration::get('EPH_NB_DAYS_NEW_PRODUCT') : 20) . ' DAY
                         )
                     ) > 0 new
                 FROM
@@ -1103,7 +1103,7 @@ class SearchCore {
                 ORDER BY position DESC' . ($orderBy ? ', ' . $orderBy : '') . ($orderWay ? ' ' . $orderWay : '') . '
                 LIMIT ' . (int) (($pageNumber - 1) * $pageSize) . ',' . (int) $pageSize;
 
-        if (!$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql, true, false)) {
+        if (!$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql, true, false)) {
             return false;
         }
 

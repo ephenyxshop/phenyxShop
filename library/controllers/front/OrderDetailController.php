@@ -95,14 +95,14 @@ class OrderDetailControllerCore extends FrontController {
                     $cm->ip_address = (int) ip2long($_SERVER['REMOTE_ADDR']);
                     $cm->add();
 
-                    if (!Configuration::get('PS_MAIL_EMAIL_MESSAGE')) {
-                        $to = strval(Configuration::get('PS_SHOP_EMAIL'));
+                    if (!Configuration::get('EPH_MAIL_EMAIL_MESSAGE')) {
+                        $to = strval(Configuration::get('EPH_SHOP_EMAIL'));
                     } else {
-                        $to = new Contact((int) Configuration::get('PS_MAIL_EMAIL_MESSAGE'));
+                        $to = new Contact((int) Configuration::get('EPH_MAIL_EMAIL_MESSAGE'));
                         $to = strval($to->email);
                     }
 
-                    $toName = strval(Configuration::get('PS_SHOP_NAME'));
+                    $toName = strval(Configuration::get('EPH_SHOP_NAME'));
                     $customer = $this->context->customer;
 
                     $product = new Product($idProduct);
@@ -128,11 +128,11 @@ class OrderDetailControllerCore extends FrontController {
                             ],
                             $to,
                             $toName,
-                            strval(Configuration::get('PS_SHOP_EMAIL')),
+                            strval(Configuration::get('EPH_SHOP_EMAIL')),
                             $customer->firstname . ' ' . $customer->lastname,
                             null,
                             null,
-                            _PS_MAIL_DIR_,
+                            _EPH_MAIL_DIR_,
                             false,
                             null,
                             null,
@@ -210,11 +210,11 @@ class OrderDetailControllerCore extends FrontController {
                 $customer = new Customer($order->id_customer);
                 $this->context->smarty->assign(
                     [
-                        'shop_name'                     => strval(Configuration::get('PS_SHOP_NAME')),
+                        'shop_name'                     => strval(Configuration::get('EPH_SHOP_NAME')),
                         'order'                         => $order,
                         'currency'                      => new Currency($order->id_currency),
                         'order_state'                   => (int) $idOrderState,
-                        'invoiceAllowed'                => (int) Configuration::get('PS_INVOICE'),
+                        'invoiceAllowed'                => (int) Configuration::get('EPH_INVOICE'),
                         'products'                      => $products,
                         'discounts'                     => $order->getCartRules(),
                         'carrier'                       => $carrier,
@@ -229,13 +229,13 @@ class OrderDetailControllerCore extends FrontController {
                         'is_guest'                      => false,
                         'CUSTOMIZE_FILE'                => Product::CUSTOMIZE_FILE,
                         'CUSTOMIZE_TEXTFIELD'           => Product::CUSTOMIZE_TEXTFIELD,
-                        'isRecyclable'                  => Configuration::get('PS_RECYCLABLE_PACK'),
-                        'use_tax'                       => Configuration::get('PS_TAX'),
-                        'group_use_tax'                 => (Group::getPriceDisplayMethod($customer->id_default_group) == PS_TAX_INC),
+                        'isRecyclable'                  => Configuration::get('EPH_RECYCLABLE_PACK'),
+                        'use_tax'                       => Configuration::get('EPH_TAX'),
+                        'group_use_tax'                 => (Group::getPriceDisplayMethod($customer->id_default_group) == EPH_TAX_INC),
                         /* DEPRECATED: customizedDatas @since 1.5 */
                         'customizedDatas'               => $customizedDatas,
                         /* DEPRECATED: customizedDatas @since 1.5 */
-                        'reorderingAllowed'             => !(bool) Configuration::get('PS_DISALLOW_HISTORY_REORDERING'),
+                        'reorderingAllowed'             => !(bool) Configuration::get('EPH_DISALLOW_HISTORY_REORDERING'),
                     ]
                 );
 
@@ -254,7 +254,7 @@ class OrderDetailControllerCore extends FrontController {
             unset($order);
         }
 
-        $this->setTemplate(_PS_THEME_DIR_ . 'order-detail.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'order-detail.tpl');
     }
 
     public function ajaxProcessPrintInvoice() {
@@ -273,7 +273,7 @@ class OrderDetailControllerCore extends FrontController {
 
     public function ajaxProcessShowOrder() {
 
-        $tpl = $this->context->smarty->createTemplate(_PS_THEME_DIR_ . 'order-detail.tpl');
+        $tpl = $this->context->smarty->createTemplate(_EPH_THEME_DIR_ . 'order-detail.tpl');
         $idOrder = (int) Tools::getValue('id_customer_piece');
 
         $order = new CustomerPieces($idOrder);
@@ -303,11 +303,11 @@ class OrderDetailControllerCore extends FrontController {
             $customer = new Customer($order->id_customer);
             $tpl->assign(
                 [
-                    'shop_name'                     => strval(Configuration::get('PS_SHOP_NAME')),
+                    'shop_name'                     => strval(Configuration::get('EPH_SHOP_NAME')),
                     'order'                         => $order,
                     'currency'                      => new Currency($order->id_currency),
                     'order_state'                   => (int) $idOrderState,
-                    'invoiceAllowed'                => (int) Configuration::get('PS_INVOICE'),
+                    'invoiceAllowed'                => (int) Configuration::get('EPH_INVOICE'),
                     'products'                      => $products,
                     'discounts'                     => $order->getCartRules(),
                     'carrier'                       => $carrier,
@@ -322,13 +322,13 @@ class OrderDetailControllerCore extends FrontController {
                     'is_guest'                      => false,
                     'CUSTOMIZE_FILE'                => Product::CUSTOMIZE_FILE,
                     'CUSTOMIZE_TEXTFIELD'           => Product::CUSTOMIZE_TEXTFIELD,
-                    'isRecyclable'                  => Configuration::get('PS_RECYCLABLE_PACK'),
-                    'use_tax'                       => Configuration::get('PS_TAX'),
-                    'group_use_tax'                 => (Group::getPriceDisplayMethod($customer->id_default_group) == PS_TAX_INC),
+                    'isRecyclable'                  => Configuration::get('EPH_RECYCLABLE_PACK'),
+                    'use_tax'                       => Configuration::get('EPH_TAX'),
+                    'group_use_tax'                 => (Group::getPriceDisplayMethod($customer->id_default_group) == EPH_TAX_INC),
                     /* DEPRECATED: customizedDatas @since 1.5 */
                     'customizedDatas'               => $customizedDatas,
                     /* DEPRECATED: customizedDatas @since 1.5 */
-                    'reorderingAllowed'             => !(bool) Configuration::get('PS_DISALLOW_HISTORY_REORDERING'),
+                    'reorderingAllowed'             => !(bool) Configuration::get('EPH_DISALLOW_HISTORY_REORDERING'),
                 ]
             );
 

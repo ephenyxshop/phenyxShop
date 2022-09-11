@@ -57,7 +57,7 @@ class PageCore extends ObjectModel {
             $insertData['id_object'] = (int) $objectId;
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('`id_page`')
                 ->from('page')
@@ -85,7 +85,7 @@ class PageCore extends ObjectModel {
      */
     public static function getPageTypeByName($name) {
 
-        if ($value = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        if ($value = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
             ->select('`id_page_type`')
             ->from('page_type')

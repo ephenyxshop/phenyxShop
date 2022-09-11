@@ -50,8 +50,8 @@ class PhenyxShopAutoload {
     protected function __construct() {
 
         
-		$this->root_dir = _PS_CORE_DIR_ . '/';
-        $file = $this->normalizeDirectory(_PS_ROOT_DIR_) . PhenyxShopAutoload::INDEX_FILE;
+		$this->root_dir = _EPH_CORE_DIR_ . '/';
+        $file = $this->normalizeDirectory(_EPH_ROOT_DIR_) . PhenyxShopAutoload::INDEX_FILE;
 
         if (@filemtime($file) && is_readable($file)) {
             $this->index = include $file;
@@ -93,21 +93,21 @@ class PhenyxShopAutoload {
         if ($this->_include_override_path) {
             $classes = array_merge(
                 $classes,
-                $this->getClassesFromDir('includes/override/classes/', defined('_PS_HOST_MODE_')),
-                $this->getClassesFromDir('includes/override/controllers/', defined('_PS_HOST_MODE_'))
+                $this->getClassesFromDir('includes/override/classes/', defined('_EPH_HOST_MODE_')),
+                $this->getClassesFromDir('includes/override/controllers/', defined('_EPH_HOST_MODE_'))
             );
         }
         
         $classes = array_merge(
             $classes,
-			$this->getClassesFromModules(defined('_PS_HOST_MODE_'))
+			$this->getClassesFromModules(defined('_EPH_HOST_MODE_'))
         );
 
         ksort($classes);
         $content = '<?php return ' . var_export($classes, true) . '; ?>';
 
         // Write classes index on disc to cache it
-        $filename = $this->normalizeDirectory(_PS_ROOT_DIR_) . PhenyxShopAutoload::INDEX_FILE;
+        $filename = $this->normalizeDirectory(_EPH_ROOT_DIR_) . PhenyxShopAutoload::INDEX_FILE;
         $filenameTmp = tempnam(dirname($filename), basename($filename . '.'));
 
         if ($filenameTmp !== false && file_put_contents($filenameTmp, $content) !== false) {
@@ -149,7 +149,7 @@ class PhenyxShopAutoload {
     protected function getClassesFromDir($path, $hostMode = false) {
 
         $classes = [];
-        $rootDir = $hostMode ? $this->normalizeDirectory(_PS_ROOT_DIR_) : $this->root_dir;
+        $rootDir = $hostMode ? $this->normalizeDirectory(_EPH_ROOT_DIR_) : $this->root_dir;
 
         foreach (scandir($rootDir . $path) as $file) {
 
@@ -195,7 +195,7 @@ class PhenyxShopAutoload {
 
 		$fileTest = fopen("testgetClassesFromModules.txt","w");
 		
-		$rootDir = $hostMode ? $this->normalizeDirectory(_PS_ROOT_DIR_) : $this->root_dir;
+		$rootDir = $hostMode ? $this->normalizeDirectory(_EPH_ROOT_DIR_) : $this->root_dir;
 		
         $classes = [];
 		$folder = [];
@@ -239,7 +239,7 @@ class PhenyxShopAutoload {
                         . '(?:\s+extends\s+' . $namespacePattern . '[a-z][a-z0-9_]*)?(?:\s+implements\s+' . $namespacePattern . '[a-z][\\a-z0-9_]*(?:\s*,\s*' . $namespacePattern . '[a-z][\\a-z0-9_]*)*)?\s*\{#i';
 
                     if (preg_match($pattern, $content, $m)) {
-						$file = str_replace(_PS_ROOT_DIR_, '', $file);
+						$file = str_replace(_EPH_ROOT_DIR_, '', $file);
                         $classes[$m['classname']] = [
                             'path'     => $file,
                             'type'     => trim($m[1]),
@@ -315,7 +315,7 @@ class PhenyxShopAutoload {
 
         if (substr($className, -4) != 'Core') {
             $classDir = (isset($this->index[$className]['override'])
-                && $this->index[$className]['override'] === true) ? $this->normalizeDirectory(_PS_ROOT_DIR_) : $this->root_dir;
+                && $this->index[$className]['override'] === true) ? $this->normalizeDirectory(_EPH_ROOT_DIR_) : $this->root_dir;
 
             // If requested class does not exist, load associated core class
 

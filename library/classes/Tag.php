@@ -50,7 +50,7 @@ class TagCore extends ObjectModel {
         if ($id) {
             parent::__construct($id);
         } else if ($name && Validate::isGenericName($name) && $idLang && Validate::isUnsignedId($idLang)) {
-            $row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('*')
                     ->from('tag', 't')
@@ -194,7 +194,7 @@ class TagCore extends ObjectModel {
             if ($result) {
                 $result &= Db::getInstance()->insert('product_tag', $ids);
 
-                if (Configuration::get('PS_SEARCH_INDEXATION')) {
+                if (Configuration::get('EPH_SEARCH_INDEXATION')) {
                     $result &= Search::indexation(false);
                 }
 
@@ -271,7 +271,7 @@ class TagCore extends ObjectModel {
         if (Group::isFeatureActive()) {
             $groups = FrontController::getCurrentCustomerGroups();
 
-            return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('t.`name`, `counter` AS `times`')
                     ->from('tag_count', 'pt')
@@ -283,7 +283,7 @@ class TagCore extends ObjectModel {
                     ->limit((int) $nb)
             );
         } else {
-            return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('t.`name`, `counter` AS `times`')
                     ->from('tag_count', 'pt')
@@ -310,7 +310,7 @@ class TagCore extends ObjectModel {
      */
     public static function getProductTags($idProduct) {
 
-        if (!$tmp = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        if (!$tmp = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
             ->select('t.`id_lang`, t.`name`')
             ->from('tag', 't')
@@ -342,7 +342,7 @@ class TagCore extends ObjectModel {
      */
     public static function deleteTagsForProduct($idProduct) {
 
-        $tagsRemoved = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $tagsRemoved = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_tag`')
                 ->from('product_tag')
@@ -388,7 +388,7 @@ class TagCore extends ObjectModel {
 
         $in = $associated ? 'IN' : 'NOT IN';
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('pl.`name`, pl.`id_product`')
                 ->from('product', 'p')

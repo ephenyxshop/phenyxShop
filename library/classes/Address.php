@@ -125,7 +125,7 @@ class AddressCore extends ObjectModel {
         /* Get and cache address country name */
 
         if ($this->id) {
-            $this->country = Country::getNameById($idLang ? $idLang : Configuration::get('PS_LANG_DEFAULT'), $this->id_country);
+            $this->country = Country::getNameById($idLang ? $idLang : Configuration::get('EPH_LANG_DEFAULT'), $this->id_country);
         }
 
     }
@@ -242,8 +242,8 @@ class AddressCore extends ObjectModel {
 
         if (Module::isInstalled('vatnumber')
             && Module::isEnabled('vatnumber')
-            && file_exists(_PS_MODULE_DIR_ . 'vatnumber/vatnumber.php')) {
-            include_once _PS_MODULE_DIR_ . 'vatnumber/vatnumber.php';
+            && file_exists(_EPH_MODULE_DIR_ . 'vatnumber/vatnumber.php')) {
+            include_once _EPH_MODULE_DIR_ . 'vatnumber/vatnumber.php';
 
             if (method_exists('VatNumber', 'validateNumber')) {
                 /*
@@ -306,7 +306,7 @@ class AddressCore extends ObjectModel {
             return static::$_idZones[$idAddress];
         }
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('s.`id_zone` AS `id_zone_state`, c.`id_zone`')
                 ->from('address', 'a')
@@ -340,7 +340,7 @@ class AddressCore extends ObjectModel {
         $cacheId = 'Address::isCountryActiveById_' . (int) $idAddress;
 
         if (!Cache::isStored($cacheId)) {
-            $result = (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getvalue(
+            $result = (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getvalue(
                 (new DbQuery())
                     ->select('c.`active`')
                     ->from('address', 'a')
@@ -368,7 +368,7 @@ class AddressCore extends ObjectModel {
      */
     public static function isDeleted($idAddress) {
 
-        $row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('a.`deleted`')
                 ->from(bqSQL(Address::$definition['table']), 'a')
@@ -393,7 +393,7 @@ class AddressCore extends ObjectModel {
      */
     public function isUsed() {
 
-        $result = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $result = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(*)')
                 ->from('orders')
@@ -420,7 +420,7 @@ class AddressCore extends ObjectModel {
         }
 
         if ($idAddress) {
-            $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
                     ->select('`id_country`, `id_state`, `vat_number`, `postcode`')
                     ->from('address')
@@ -451,7 +451,7 @@ class AddressCore extends ObjectModel {
         $key = 'address_exists_' . (int) $idAddress;
 
         if (!Cache::isStored($key)) {
-            $idAddress = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $idAddress = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('a.`id_address`')
                     ->from('address', 'a')
@@ -484,7 +484,7 @@ class AddressCore extends ObjectModel {
         $cacheId = 'Address::getFirstCustomerAddressId_' . (int) $idCustomer . '-' . (bool) $active;
 
         if (!Cache::isStored($cacheId)) {
-            $result = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $result = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`id_address`')
                     ->from('address')
@@ -509,7 +509,7 @@ class AddressCore extends ObjectModel {
         $cacheId = 'Address::getFirstAgentAddressId_' . (int) $idAgent . '-' . (bool) $active;
 
         if (!Cache::isStored($cacheId)) {
-            $result = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $result = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`id_address`')
                     ->from('address')
@@ -534,7 +534,7 @@ class AddressCore extends ObjectModel {
         $cacheId = 'Address::getFirstStudentAddressId_' . (int) $idStudent . '-' . (bool) $active;
 
         if (!Cache::isStored($cacheId)) {
-            $result = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+            $result = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('`id_address`')
                     ->from('address')
@@ -625,7 +625,7 @@ class AddressCore extends ObjectModel {
      */
     public static function getAddressIdBySupplierId($idSupplier) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('id_address')
                 ->from('address')
@@ -650,7 +650,7 @@ class AddressCore extends ObjectModel {
      */
     public static function aliasExist($alias, $idAddress, $idCustomer) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('count(*)')
                 ->from('address')
@@ -681,7 +681,7 @@ class AddressCore extends ObjectModel {
 
     public function getAddresRequest($idLang) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('a.`id_country`, a.`company`, a.`address1`, a.`postcode`, a.`city`, cl.`name` AS country, s.name AS state, s.iso_code AS state_iso')
                 ->from('address', 'a')

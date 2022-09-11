@@ -75,32 +75,32 @@ class AdminCompanyControllerCore extends AdminController {
             'general'              => [
                 'title'  => $this->l('Paramètres'),
                 'fields' => [
-                    'PS_STORES_DISPLAY_FOOTER'  => [
+                    'EPH_STORES_DISPLAY_FOOTER'  => [
                         'title' => $this->l('Display in the footer'),
                         'hint'  => $this->l('Display a link to the store locator in the footer.'),
                         'cast'  => 'intval',
                         'type'  => 'bool',
                     ],
-                    'PS_STORES_DISPLAY_SITEMAP' => [
+                    'EPH_STORES_DISPLAY_SITEMAP' => [
                         'title' => $this->l('Display in the sitemap page'),
                         'hint'  => $this->l('Display a link to the store locator in the sitemap page.'),
                         'cast'  => 'intval',
                         'type'  => 'bool',
                     ],
-                    'PS_STORES_SIMPLIFIED'      => [
+                    'EPH_STORES_SIMPLIFIED'      => [
                         'title' => $this->l('Show a simplified store locator'),
                         'hint'  => $this->l('No map, no search, only a store directory.'),
                         'cast'  => 'intval',
                         'type'  => 'bool',
                     ],
-                    'PS_STORES_CENTER_LAT'      => [
+                    'EPH_STORES_CENTER_LAT'      => [
                         'title' => $this->l('Default latitude'),
                         'hint'  => $this->l('Used for the initial position of the map.'),
                         'cast'  => 'floatval',
                         'type'  => 'text',
                         'size'  => '10',
                     ],
-                    'PS_STORES_CENTER_LONG'     => [
+                    'EPH_STORES_CENTER_LONG'     => [
                         'title' => $this->l('Default longitude'),
                         'hint'  => $this->l('Used for the initial position of the map.'),
                         'cast'  => 'floatval',
@@ -114,7 +114,7 @@ class AdminCompanyControllerCore extends AdminController {
                 'title'  => $this->l('Contact details'),
                 'icon'   => 'icon-user',
                 'fields' => [
-                    'PS_SHOP_NAME'       => [
+                    'EPH_SHOP_NAME'       => [
                         'title'      => $this->l('Shop name'),
                         'hint'       => $this->l('Displayed in emails and page titles.'),
                         'validation' => 'isGenericName',
@@ -122,14 +122,14 @@ class AdminCompanyControllerCore extends AdminController {
                         'type'       => 'text',
                         'no_escape'  => true,
                     ],
-                    'PS_SHOP_EMAIL'      => [
+                    'EPH_SHOP_EMAIL'      => [
                         'title'      => $this->l('Shop email'),
                         'hint'       => $this->l('Displayed in emails sent to customers.'),
                         'validation' => 'isEmail',
                         'required'   => true,
                         'type'       => 'text',
                     ],
-                    'PS_SHOP_DETAILS'    => [
+                    'EPH_SHOP_DETAILS'    => [
                         'title'      => $this->l('Registration number'),
                         'hint'       => $this->l('Shop registration information (e.g. SIRET or RCS).'),
                         'validation' => 'isGenericName',
@@ -137,27 +137,27 @@ class AdminCompanyControllerCore extends AdminController {
                         'cols'       => 30,
                         'rows'       => 5,
                     ],
-                    'PS_SHOP_ADDR1'      => [
+                    'EPH_SHOP_ADDR1'      => [
                         'title'      => $this->l('Shop address line 1'),
                         'validation' => 'isAddress',
                         'type'       => 'text',
                     ],
-                    'PS_SHOP_ADDR2'      => [
+                    'EPH_SHOP_ADDR2'      => [
                         'title'      => $this->l('Shop address line 2'),
                         'validation' => 'isAddress',
                         'type'       => 'text',
                     ],
-                    'PS_SHOP_CODE'       => [
+                    'EPH_SHOP_CODE'       => [
                         'title'      => $this->l('Zip/postal code'),
                         'validation' => 'isGenericName',
                         'type'       => 'text',
                     ],
-                    'PS_SHOP_CITY'       => [
+                    'EPH_SHOP_CITY'       => [
                         'title'      => $this->l('City'),
                         'validation' => 'isGenericName',
                         'type'       => 'text',
                     ],
-                    'PS_SHOP_COUNTRY_ID' => [
+                    'EPH_SHOP_COUNTRY_ID' => [
                         'title'        => $this->l('Country'),
                         'validation'   => 'isInt',
                         'type'         => 'select',
@@ -166,7 +166,7 @@ class AdminCompanyControllerCore extends AdminController {
                         'cast'         => 'intval',
                         'defaultValue' => (int) $this->context->country->id,
                     ],
-                    'PS_SHOP_STATE_ID'   => [
+                    'EPH_SHOP_STATE_ID'   => [
                         'title'      => $this->l('State'),
                         'validation' => 'isInt',
                         'type'       => 'select',
@@ -174,12 +174,12 @@ class AdminCompanyControllerCore extends AdminController {
                         'identifier' => 'id',
                         'cast'       => 'intval',
                     ],
-                    'PS_SHOP_PHONE'      => [
+                    'EPH_SHOP_PHONE'      => [
                         'title'      => $this->l('Phone'),
                         'validation' => 'isGenericName',
                         'type'       => 'text',
                     ],
-                    'PS_SHOP_FAX'        => [
+                    'EPH_SHOP_FAX'        => [
                         'title'      => $this->l('Fax'),
                         'validation' => 'isGenericName',
                         'type'       => 'text',
@@ -554,8 +554,8 @@ class AdminCompanyControllerCore extends AdminController {
             $country = new Country($value, $this->context->language->id);
 
             if ($country->id) {
-                Configuration::updateValue('PS_SHOP_COUNTRY_ID', $value);
-                Configuration::updateValue('PS_SHOP_COUNTRY', $country->name);
+                Configuration::updateValue('EPH_SHOP_COUNTRY_ID', $value);
+                Configuration::updateValue('EPH_SHOP_COUNTRY', $country->name);
             }
 
         }
@@ -575,8 +575,8 @@ class AdminCompanyControllerCore extends AdminController {
             $state = new State($value);
 
             if ($state->id) {
-                Configuration::updateValue('PS_SHOP_STATE_ID', $value);
-                Configuration::updateValue('PS_SHOP_STATE', $state->name);
+                Configuration::updateValue('EPH_SHOP_STATE_ID', $value);
+                Configuration::updateValue('EPH_SHOP_STATE', $state->name);
             }
 
         }

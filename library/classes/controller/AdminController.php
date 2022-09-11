@@ -501,7 +501,7 @@ class AdminControllerCore extends EphController {
         // Has to be remove for the next PhenyxShop version
         global $token, $globalShortcodeHandler;
 
-        $messageCachePath = _PS_CACHE_DIR_ . '/' . static::MESSAGE_CACHE_PATH
+        $messageCachePath = _EPH_CACHE_DIR_ . '/' . static::MESSAGE_CACHE_PATH
         . '-' . Tools::getValue('token');
 
         if (is_readable($messageCachePath)) {
@@ -540,23 +540,23 @@ class AdminControllerCore extends EphController {
 
         $defaultThemeName = 'blacktie';
 
-        if (defined('_PS_BO_DEFAULT_THEME_') && _PS_BO_DEFAULT_THEME_
-            && @filemtime(_PS_BO_ALL_THEMES_DIR_ . _PS_BO_DEFAULT_THEME_ . DIRECTORY_SEPARATOR . 'template')
+        if (defined('_EPH_BO_DEFAULT_THEME_') && _EPH_BO_DEFAULT_THEME_
+            && @filemtime(_EPH_BO_ALL_THEMES_DIR_ . _EPH_BO_DEFAULT_THEME_ . DIRECTORY_SEPARATOR . 'template')
         ) {
-            $defaultThemeName = _PS_BO_DEFAULT_THEME_;
+            $defaultThemeName = _EPH_BO_DEFAULT_THEME_;
         }
 
         $this->bo_theme = ((Validate::isLoadedObject($this->context->employee)
             && $this->context->employee->bo_theme) ? $this->context->employee->bo_theme : $defaultThemeName);
 
-        if (!@filemtime(_PS_BO_ALL_THEMES_DIR_ . $this->bo_theme)) {
+        if (!@filemtime(_EPH_BO_ALL_THEMES_DIR_ . $this->bo_theme)) {
             $this->bo_theme = $defaultThemeName;
         }
 
         $this->bo_css = ((Validate::isLoadedObject($this->context->employee)
             && $this->context->employee->bo_css) ? $this->context->employee->bo_css : 'admin-theme.css');
 
-        if (!@filemtime(_PS_BO_ALL_THEMES_DIR_ . $this->bo_theme . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR . $this->bo_css)) {
+        if (!@filemtime(_EPH_BO_ALL_THEMES_DIR_ . $this->bo_theme . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR . $this->bo_css)) {
             $this->bo_css = 'admin-theme.css';
         }
 
@@ -565,8 +565,8 @@ class AdminControllerCore extends EphController {
 		
         $this->context->smarty->setTemplateDir(
             [
-                _PS_ALL_THEMES_DIR_ .  'backend' ,
-                _PS_OVERRIDE_DIR_ . 'controllers' . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'templates',
+                _EPH_ALL_THEMES_DIR_ .  'backend' ,
+                _EPH_OVERRIDE_DIR_ . 'controllers' . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'templates',
             ]
         );
 
@@ -641,7 +641,7 @@ class AdminControllerCore extends EphController {
 
         $this->initShopContext();
 
-        $this->context->currency = new Currency(Configuration::get('PS_CURRENCY_DEFAULT'));
+        $this->context->currency = new Currency(Configuration::get('EPH_CURRENCY_DEFAULT'));
 
         $this->admin_webpath = str_ireplace(_SHOP_CORE_DIR_, '', _SHOP_ROOT_DIR_);
         $this->admin_webpath = preg_replace('/^' . preg_quote(DIRECTORY_SEPARATOR, '/') . '/', '', $this->admin_webpath);
@@ -677,7 +677,7 @@ class AdminControllerCore extends EphController {
             'purchaseKey' => Configuration::get('_EPHENYX_LICENSE_KEY_'),
             'UserIpAddr'  => $this->getUserIpAddr(),
             'ephenyxV'    => _EPH_VERSION_,
-            'v'           => _PS_VERSION_,
+            'v'           => _EPH_VERSION_,
             'lang'        => $this->context->language->iso_code,
         ];
 
@@ -900,11 +900,11 @@ class AdminControllerCore extends EphController {
             'price'                                                                                                                     => $this->l('Price'),
             'min_qty'                                                                                                                   => $this->l('Min qty'),
             'invalid_product'                                                                                                           => $this->l('Invalid product'),
-            'oops_something_goes_wrong'                                                                                                 => $this->l('Oops! Something goes wrong!'),
+            'ooEPH_something_goes_wrong'                                                                                                 => $this->l('Oops! Something goes wrong!'),
             'min_quantity_must_be_less_than_available_quantity'                                                                         => $this->l('Minimum quantity must be less than available quantity.'),
             'default_quantity_should_be_greater_than_or_equal_to_minimum_quantity'                                                      => $this->l('Default quantity should be greater than or equal to minimum quantity.'),
             'quantity_must_be_greater_than_or_equal_to_minimum_quantity'                                                                => $this->l('Quantity must be greater than or equal to {0}.'),
-            'oops_cannot_update_accessory'                                                                                              => $this->l('Oops! Cannot update accessory'),
+            'ooEPH_cannot_update_accessory'                                                                                              => $this->l('Oops! Cannot update accessory'),
             'position'                                                                                                                  => $this->l('Position'),
             'action'                                                                                                                    => $this->l('Action'),
             'item_inside'                                                                                                               => $this->l('%s item inside'),
@@ -1237,7 +1237,7 @@ class AdminControllerCore extends EphController {
         $lang['select_google_calendar'] = 'Choisir un calendrier Google';
         $lang['select_google_calendar_prompt'] = 'Sélectionnez le calendrier souhaité pour synchroniser votre rendez-vous. Si vous ne sélectionnez pas de calendrier spécifique, le calendrier par défaut sera sélectionné pour vous.';
         $lang['google_calendar_selected'] = 'Le calendrier Google a été sélectionné avec succès .';
-        $lang['oops_something_went_wrong'] = 'Oups ! Une erreur s\'est produite .';
+        $lang['ooEPH_something_went_wrong'] = 'Oups ! Une erreur s\'est produite .';
         $lang['could_not_add_to_google_calendar'] = 'Votre rendez-vous ne peux pas être ajouté à votre Calendrier Google.';
         $lang['ea_update_success'] = 'Easy!Appointments à été mis à jour avec succès .';
         $lang['require_captcha'] = 'CAPTCHA obligatoire';
@@ -1342,7 +1342,7 @@ class AdminControllerCore extends EphController {
         } else
 
         if (!Shop::isFeatureActive()) {
-            $this->context->cookie->shopContext = 's-' . (int) Configuration::get('PS_SHOP_DEFAULT');
+            $this->context->cookie->shopContext = 's-' . (int) Configuration::get('EPH_SHOP_DEFAULT');
         } else
 
         if (Shop::getTotalShops(false, null) < 2) {
@@ -1397,7 +1397,7 @@ class AdminControllerCore extends EphController {
         // Replace existing shop if necessary
 
         if (!$idShop) {
-            $this->context->shop = new Shop((int) Configuration::get('PS_SHOP_DEFAULT'));
+            $this->context->shop = new Shop((int) Configuration::get('EPH_SHOP_DEFAULT'));
         } else
 
         if ($this->context->shop->id != $idShop) {
@@ -1409,7 +1409,7 @@ class AdminControllerCore extends EphController {
         }
 
         // Replace current default country
-        $this->context->country = new Country((int) Configuration::get('PS_COUNTRY_DEFAULT'));
+        $this->context->country = new Country((int) Configuration::get('EPH_COUNTRY_DEFAULT'));
     }
 
     /**
@@ -2002,7 +2002,7 @@ class AdminControllerCore extends EphController {
             if ($idLangShop) {
 
                 if (!Shop::isFeatureActive()) {
-                    $langJoin .= ' AND b.`id_shop` = ' . (int) Configuration::get('PS_SHOP_DEFAULT');
+                    $langJoin .= ' AND b.`id_shop` = ' . (int) Configuration::get('EPH_SHOP_DEFAULT');
                 } else
 
                 if (Shop::getContext() == Shop::CONTEXT_SHOP) {
@@ -2165,7 +2165,7 @@ class AdminControllerCore extends EphController {
             $definition = ObjectModel::getDefinition($className);
         }
 
-        $defaultLanguage = new Language((int) Configuration::get('PS_LANG_DEFAULT'));
+        $defaultLanguage = new Language((int) Configuration::get('EPH_LANG_DEFAULT'));
         $languages = Language::getLanguages(false);
 
         foreach ($definition['fields'] as $field => $def) {
@@ -2224,7 +2224,7 @@ class AdminControllerCore extends EphController {
 
                     if (($value = Tools::getValue($fieldLang . '_' . $language['id_lang'])) !== false && !empty($value)) {
 
-                        if (mb_strtolower($function) == 'iscleanhtml' && Configuration::get('PS_ALLOW_HTML_IFRAME')) {
+                        if (mb_strtolower($function) == 'iscleanhtml' && Configuration::get('EPH_ALLOW_HTML_IFRAME')) {
                             $res = Validate::$function($value, true);
                         } else {
                             $res = Validate::$function($value);
@@ -2539,7 +2539,7 @@ class AdminControllerCore extends EphController {
                 $this->errors[] = $error;
             }
 
-            $tmpName = tempnam(_PS_TMP_IMG_DIR_, 'PS');
+            $tmpName = tempnam(_EPH_TMP_IMG_DIR_, 'PS');
 
             if (!$tmpName) {
                 return false;
@@ -2557,7 +2557,7 @@ class AdminControllerCore extends EphController {
 
             // Copy new image
 
-            if (empty($this->errors) && !ImageManager::resize($tmpName, _PS_IMG_DIR_ . $dir . $id . '.' . $this->imageType, (int) $width, (int) $height, ($ext ? $ext : $this->imageType))) {
+            if (empty($this->errors) && !ImageManager::resize($tmpName, _EPH_IMG_DIR_ . $dir . $id . '.' . $this->imageType, (int) $width, (int) $height, ($ext ? $ext : $this->imageType))) {
                 $this->errors[] = Tools::displayError('An error occurred while uploading the image.');
             }
 
@@ -2815,13 +2815,13 @@ class AdminControllerCore extends EphController {
      */
     public function display() {
 		
-		if ((Configuration::get('PS_CSS_BACKOFFICE_CACHE') || Configuration::get('PS_JS_BACKOFFICE_CACHE')) && is_writable(_PS_ALL_THEMES_DIR_ . 'cache')) {
+		if ((Configuration::get('EPH_CSS_BACKOFFICE_CACHE') || Configuration::get('EPH_JS_BACKOFFICE_CACHE')) && is_writable(_EPH_ALL_THEMES_DIR_ . 'cache')) {
             
-            if (Configuration::get('PS_CSS_BACKOFFICE_CACHE')) {
+            if (Configuration::get('EPH_CSS_BACKOFFICE_CACHE')) {
                 $this->css_files = Media::cccCss($this->css_files);
             }
 
-            if (Configuration::get('PS_JS_BACKOFFICE_CACHE')) {
+            if (Configuration::get('EPH_JS_BACKOFFICE_CACHE')) {
                 $this->js_files = Media::cccJs($this->js_files);
             }
 
@@ -2847,7 +2847,7 @@ class AdminControllerCore extends EphController {
         }
 
         if (is_array($this->meta_title)) {
-            $this->meta_title = strip_tags(implode(' ' . Configuration::get('PS_NAVIGATION_PIPE') . ' ', $this->meta_title));
+            $this->meta_title = strip_tags(implode(' ' . Configuration::get('EPH_NAVIGATION_PIPE') . ' ', $this->meta_title));
         }
 
         $this->context->smarty->assign('meta_title', $this->meta_title);
@@ -3059,18 +3059,18 @@ class AdminControllerCore extends EphController {
 		
 		if(is_object($this->module) &&  $this->module->name) {
 			
-			$templatePath = _PS_MODULE_DIR_ . $this->module->name . '/views/templates/admin/';
-			if (file_exists(_PS_THEME_DIR_ . 'plugins/' . $this->module->name . '/views/templates/admin/' . $tplName) && $this->viewAccess()) {
-            	return $this->context->smarty->createTemplate(_PS_THEME_DIR_ . 'plugins/' . $this->module->name . '/views/templates/admin/' . $tplName, $this->context->smarty);
+			$templatePath = _EPH_MODULE_DIR_ . $this->module->name . '/views/templates/admin/';
+			if (file_exists(_EPH_THEME_DIR_ . 'plugins/' . $this->module->name . '/views/templates/admin/' . $tplName) && $this->viewAccess()) {
+            	return $this->context->smarty->createTemplate(_EPH_THEME_DIR_ . 'plugins/' . $this->module->name . '/views/templates/admin/' . $tplName, $this->context->smarty);
         	} else if (file_exists($templatePath . $this->override_folder . $tplName) && $this->viewAccess()) {
            	 	return $this->context->smarty->createTemplate($templatePath . $this->override_folder . $tplName, $this->context->smarty);
         	}
 			
 		} else if ($this->override_folder) {
 			
-            if (!Configuration::get('PS_DISABLE_OVERRIDES') && file_exists($this->context->smarty->getTemplateDir(1) .'controllers' . DIRECTORY_SEPARATOR . $this->override_folder . $tplName)) {
+            if (!Configuration::get('EPH_DISABLE_OVERRIDES') && file_exists($this->context->smarty->getTemplateDir(1) .'controllers' . DIRECTORY_SEPARATOR . $this->override_folder . $tplName)) {
                 return $this->context->smarty->createTemplate($this->context->smarty->getTemplateDir(1) .'controllers' . DIRECTORY_SEPARATOR .$this->override_folder . $tplName, $this->context->smarty);
-            } else if (!Configuration::get('PS_DISABLE_OVERRIDES') && file_exists($this->context->smarty->getTemplateDir(1) . DIRECTORY_SEPARATOR . $this->override_folder . $tplName)) {
+            } else if (!Configuration::get('EPH_DISABLE_OVERRIDES') && file_exists($this->context->smarty->getTemplateDir(1) . DIRECTORY_SEPARATOR . $this->override_folder . $tplName)) {
                 return $this->context->smarty->createTemplate($this->context->smarty->getTemplateDir(1) . DIRECTORY_SEPARATOR .$this->override_folder . $tplName, $this->context->smarty);
             } else
 
@@ -3222,8 +3222,8 @@ class AdminControllerCore extends EphController {
 
             $this->context->smarty->assign(
                 [
-                    'autorefresh_notifications' => Configuration::get('PS_ADMINREFRESH_NOTIFICATION'),
-                    'round_mode'                => Configuration::get('PS_PRICE_ROUND_MODE'),
+                    'autorefresh_notifications' => Configuration::get('EPH_ADMINREFRESH_NOTIFICATION'),
+                    'round_mode'                => Configuration::get('EPH_PRICE_ROUND_MODE'),
                     'employee'                  => $this->context->employee,
                     'multi_shop'                => Shop::isFeatureActive(),
                     'shop_list'                 => $helperShop->getRenderedShopList(),
@@ -3246,26 +3246,26 @@ class AdminControllerCore extends EphController {
 
         $this->context->smarty->assign(
             [
-                'img_dir'            => _PS_IMG_,
+                'img_dir'            => _EPH_IMG_,
                 'themes'             => $this->themes,
 				'page_title'		 => $this->page_title,
-                'bo_img_dir'         =>  __PS_BASE_URI__ . 'content/themes/' . $this->bo_theme . '/img/',
+                'bo_img_dir'         =>  __EPH_BASE_URI__ . 'content/themes/' . $this->bo_theme . '/img/',
                 'iso'                => $this->context->language->iso_code,
                 'class_name'         => $this->className,
                 'iso_user'           => $this->context->language->iso_code,
                 'country_iso_code'   => $this->context->country->iso_code,
-                'version'            => _PS_VERSION_,
+                'version'            => _EPH_VERSION_,
                 'lang_iso'           => $this->context->language->iso_code,
                 'full_language_code' => $this->context->language->language_code,
                 'link'               => $this->context->link,
-                'shop_name'          => Configuration::get('PS_SHOP_NAME'),
+                'shop_name'          => Configuration::get('EPH_SHOP_NAME'),
                 'base_url'           => $this->context->shop->getBaseURL(),
                 'topbars'            => $topbars,
                 'pic_dir'            => _THEME_PROD_PIC_DIR_,
                 'controller_name'    => htmlentities(Tools::getValue('controller')),
                 'currentIndex'       => static::$currentIndex,
                 'bootstrap'          => $this->bootstrap,
-                'default_language'   => (int) Configuration::get('PS_LANG_DEFAULT'),
+                'default_language'   => (int) Configuration::get('EPH_LANG_DEFAULT'),
 				'master_mode'		 => $this->master_mode
             ]
         );
@@ -3390,7 +3390,7 @@ class AdminControllerCore extends EphController {
        	
         $this->context->smarty->assign(
             [
-                'maintenance_mode'          => !(bool) Configuration::get('PS_SHOP_ENABLE'),
+                'maintenance_mode'          => !(bool) Configuration::get('EPH_SHOP_ENABLE'),
                 'content'                   => $this->content,
                 'lite_display'              => $this->lite_display,
                 'url_post'                  => static::$currentIndex . '&token=' . $this->token,
@@ -3400,7 +3400,7 @@ class AdminControllerCore extends EphController {
                 'toolbar_btn'               => $this->page_header_toolbar_btn,
                 'page_header_toolbar_btn'   => $this->page_header_toolbar_btn,
                 'controller'                => Tools::getValue('controller'),
-                'bo_imgdir'                 => __PS_BASE_URI__ . $this->admin_webpath . '/themes/' . $this->bo_theme . '/img/',
+                'bo_imgdir'                 => __EPH_BASE_URI__ . $this->admin_webpath . '/themes/' . $this->bo_theme . '/img/',
                 'link'                      => $this->context->link,
                 'versionTheme'              => Configuration::get('_EPHENYX_THEME_VERSION_'),
             ]
@@ -3441,10 +3441,10 @@ class AdminControllerCore extends EphController {
     public function getLanguages() {
 
         $cookie = $this->context->cookie;
-        $this->allow_employee_form_lang = (int) Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG');
+        $this->allow_employee_form_lang = (int) Configuration::get('EPH_BO_ALLOW_EMPLOYEE_FORM_LANG');
 
         if ($this->allow_employee_form_lang && !$cookie->employee_form_lang) {
-            $cookie->employee_form_lang = (int) Configuration::get('PS_LANG_DEFAULT');
+            $cookie->employee_form_lang = (int) Configuration::get('EPH_LANG_DEFAULT');
         }
 
         $langExists = false;
@@ -3458,7 +3458,7 @@ class AdminControllerCore extends EphController {
 
         }
 
-        $this->default_form_language = $langExists ? (int) $cookie->employee_form_lang : (int) Configuration::get('PS_LANG_DEFAULT');
+        $this->default_form_language = $langExists ? (int) $cookie->employee_form_lang : (int) Configuration::get('EPH_LANG_DEFAULT');
 
         foreach ($this->_languages as $k => $language) {
             $this->_languages[$k]['is_default'] = (int) ($language['id_lang'] == $this->default_form_language);
@@ -3547,7 +3547,7 @@ class AdminControllerCore extends EphController {
      */
     public function isFresh($file, $timeout = 604800) {
 
-        if (($time = @filemtime(_PS_ROOT_DIR_ . $file)) && filesize(_PS_ROOT_DIR_ . $file) > 0) {
+        if (($time = @filemtime(_EPH_ROOT_DIR_ . $file)) && filesize(_EPH_ROOT_DIR_ . $file) > 0) {
             return ((time() - $time) < $timeout);
         }
 
@@ -4173,14 +4173,14 @@ class AdminControllerCore extends EphController {
 
         $guzzle = new GuzzleHttp\Client([
             'timeout' => 5,
-            'verify'  => _PS_TOOL_DIR_ . 'cacert.pem',
+            'verify'  => _EPH_TOOL_DIR_ . 'cacert.pem',
         ]);
 
         if (static::$isEphenyxUp) {
             try {
                 $content = (string) $guzzle->get($externalFile)->getBody();
 
-                return (bool) file_put_contents(_PS_ROOT_DIR_ . $fileToRefresh, $content);
+                return (bool) file_put_contents(_EPH_ROOT_DIR_ . $fileToRefresh, $content);
             } catch (Exception $e) {
                 static::$isEphenyxUp = false;
 
@@ -4212,11 +4212,11 @@ class AdminControllerCore extends EphController {
         // Fill module data
         $module->logo = '../../img/questionmark.png';
 
-        if (@filemtime(_PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . basename(_PS_MODULE_DIR_) . DIRECTORY_SEPARATOR . $module->name . DIRECTORY_SEPARATOR . 'logo.gif')) {
+        if (@filemtime(_EPH_ROOT_DIR_ . DIRECTORY_SEPARATOR . basename(_EPH_MODULE_DIR_) . DIRECTORY_SEPARATOR . $module->name . DIRECTORY_SEPARATOR . 'logo.gif')) {
             $module->logo = 'logo.gif';
         }
 
-        if (@filemtime(_PS_ROOT_DIR_ . DIRECTORY_SEPARATOR . basename(_PS_MODULE_DIR_) . DIRECTORY_SEPARATOR . $module->name . DIRECTORY_SEPARATOR . 'logo.png')) {
+        if (@filemtime(_EPH_ROOT_DIR_ . DIRECTORY_SEPARATOR . basename(_EPH_MODULE_DIR_) . DIRECTORY_SEPARATOR . $module->name . DIRECTORY_SEPARATOR . 'logo.png')) {
             $module->logo = 'logo.png';
         }
 
@@ -4616,8 +4616,8 @@ class AdminControllerCore extends EphController {
         //iso_code.css overrides default fonts for every language (optional)
 
         if ($this->context->language->is_rtl) {
-            $this->addJS(_PS_JS_DIR_ . 'rtl.js');
-            $this->addCSS(__PS_BASE_URI__ . $this->admin_webpath . '/themes/' . $this->bo_theme . '/css/' . $this->context->language->iso_code . '.css', 'all', false);
+            $this->addJS(_EPH_JS_DIR_ . 'rtl.js');
+            $this->addCSS(__EPH_BASE_URI__ . $this->admin_webpath . '/themes/' . $this->bo_theme . '/css/' . $this->context->language->iso_code . '.css', 'all', false);
         }
 
         // We assign js and css files on the last step before display template, because controller can add many js and css files
@@ -4626,7 +4626,7 @@ class AdminControllerCore extends EphController {
 		$this->openajax = !is_null(Tools::getValue('openajax')) ? Tools::getValue('openajax') : '';
         $this->context->smarty->assign(
             [
-                'ps_version'  => _PS_VERSION_,
+                'EPH_version'  => _EPH_VERSION_,
                 'ephversion'  => _EPH_VERSION_,
                 'timer_start' => $this->timer_start,
                 'iso_is_fr'   => strtoupper($this->context->language->iso_code) == 'FR',
@@ -4699,7 +4699,7 @@ class AdminControllerCore extends EphController {
             $jsAttribute[$key] = $attributeToPush;
         }
 
-        $messenger = Configuration::get('PS_MESSENGER_FEATURE_ACTIVE');
+        $messenger = Configuration::get('EPH_MESSENGER_FEATURE_ACTIVE');
 		
 
         $this->addCSS( _EPH_ADMIN_THEME_DIR_.  $this->bo_theme . '/css/' . $this->bo_css, 'all', 0);
@@ -4736,13 +4736,13 @@ class AdminControllerCore extends EphController {
         $this->addjQueryPlugin(['scrollTo', 'alerts', 'chosen', 'autosize', 'fancybox', 'contextMenu', 'ajaxfileupload', 'date', 'tagify', 'select2', 'validate', 'dropdownmenu', 'dmuploader']);
         $this->addjQueryPlugin('growl', null, false);
 
-        $this->addJS(_PS_JS_DIR_.'jquery/plugins/select2/i18n' . $this->context->language->iso_code . '.js');
-        $this->addJS(_PS_JS_DIR_.'jquery/plugins/validate/localization/messages_' . $this->context->language->iso_code . '.js');
+        $this->addJS(_EPH_JS_DIR_.'jquery/plugins/select2/i18n' . $this->context->language->iso_code . '.js');
+        $this->addJS(_EPH_JS_DIR_.'jquery/plugins/validate/localization/messages_' . $this->context->language->iso_code . '.js');
 
 
         $this->addCSS(
             [
-                _PS_JS_DIR_.'jquery/plugins/timepicker/jquery-ui-timepicker-addon.css',
+                _EPH_JS_DIR_.'jquery/plugins/timepicker/jquery-ui-timepicker-addon.css',
             ]
         );
 
@@ -4752,7 +4752,7 @@ class AdminControllerCore extends EphController {
         Media::addJsDef(['currencyModes' => Currency::getModes()]);
 
         Media::addJsDef([
-            'id_lang_default' => Configuration::get('PS_LANG_DEFAULT'),
+            'id_lang_default' => Configuration::get('EPH_LANG_DEFAULT'),
             'jsAttribute'     => $jsAttribute,
             'languages'       => Language::getLanguages(false),
 
@@ -4762,7 +4762,7 @@ class AdminControllerCore extends EphController {
             'currencyModes'        => Currency::getModes(),
             'AjaxAdminLink'        => $this->context->link->getAdminLink('admindashboard'),
 			'AjaxLoginLink'        => $this->context->link->getBaseLink(),
-			'bo_imgdir'            =>  __PS_BASE_URI__ . 'content/themes' . $this->bo_theme . '/img/',
+			'bo_imgdir'            =>  __EPH_BASE_URI__ . 'content/themes' . $this->bo_theme . '/img/',
             'tagFrom'              => $this->l('From: '),
             'tagTo'                => $this->l('To: '),
             'stdAccountTypes'      => StdAccount::getAccountRacineType(),
@@ -4784,9 +4784,9 @@ class AdminControllerCore extends EphController {
         $this->addJS(
             [
 
-                _PS_JS_DIR_.'admin.js?v=' . _PS_VERSION_,
-                _PS_JS_DIR_.'tools.js?v=' . _PS_VERSION_,
-                _PS_JS_DIR_.'menu.js',
+                _EPH_JS_DIR_.'admin.js?v=' . _EPH_VERSION_,
+                _EPH_JS_DIR_.'tools.js?v=' . _EPH_VERSION_,
+                _EPH_JS_DIR_.'menu.js',
             ]
         );
 
@@ -4817,18 +4817,18 @@ class AdminControllerCore extends EphController {
            	'https://cdn.ephenyxapi.com/paramgrid/javascript-detect-element-resize/detect-element-resize.js',
            	'https://cdn.ephenyxapi.com/paramgrid/javascript-detect-element-resize/jquery.resize.js',
            	'https://cdn.ephenyxapi.com/fancybox/fancybox.umd.js',
-           	_PS_JS_DIR_.'jquery.fileupload.js',
-           	_PS_JS_DIR_.'jquery.fileupload-process.js',
-           	_PS_JS_DIR_.'jquery.fileupload-validate.js',
-           	_PS_JS_DIR_.'themeuploadify.min.js',
-           	_PS_JS_DIR_.'pqgrid_custom.js',
-			_PS_JS_DIR_.'underscore-min.js',
-			_PS_JS_DIR_.'backbone-min.js',
+           	_EPH_JS_DIR_.'jquery.fileupload.js',
+           	_EPH_JS_DIR_.'jquery.fileupload-process.js',
+           	_EPH_JS_DIR_.'jquery.fileupload-validate.js',
+           	_EPH_JS_DIR_.'themeuploadify.min.js',
+           	_EPH_JS_DIR_.'pqgrid_custom.js',
+			_EPH_JS_DIR_.'underscore-min.js',
+			_EPH_JS_DIR_.'backbone-min.js',
 			'https://cdn.ephenyxapi.com/fontawesome/js/all.js',
 
         ]);
 		
-		$this->addJS(_PS_JS_DIR_.'notifications.js');
+		$this->addJS(_EPH_JS_DIR_.'notifications.js');
         
 
         // Execute Hook AdminController SetMedia
@@ -4868,8 +4868,8 @@ class AdminControllerCore extends EphController {
         }
 
         /* Server Params */
-        $protocol_link = (Tools::usingSecureMode() && Configuration::get('PS_SSL_ENABLED')) ? 'https://' : 'http://';
-        $protocol_content = (Tools::usingSecureMode() && Configuration::get('PS_SSL_ENABLED')) ? 'https://' : 'http://';
+        $protocol_link = (Tools::usingSecureMode() && Configuration::get('EPH_SSL_ENABLED')) ? 'https://' : 'http://';
+        $protocol_content = (Tools::usingSecureMode() && Configuration::get('EPH_SSL_ENABLED')) ? 'https://' : 'http://';
 
         $this->context->link = new Link($protocol_link, $protocol_content);
 
@@ -4950,7 +4950,7 @@ class AdminControllerCore extends EphController {
                 'current'          => static::$currentIndex,
                 'token'            => $this->token,
                 'host_mode'        => 0,
-                'stock_management' => (int) Configuration::get('PS_STOCK_MANAGEMENT'),
+                'stock_management' => (int) Configuration::get('EPH_STOCK_MANAGEMENT'),
             ]
         );
 
@@ -5025,12 +5025,12 @@ class AdminControllerCore extends EphController {
             // Don't send any cookie
             $this->context->cookie->disallowWriting();
 			
-            if (defined('_PS_MODE_DEV_') && _PS_MODE_DEV_ && $_SERVER['REQUEST_URI'] != __PS_BASE_URI__) {
+            if (defined('_EPH_MODE_DEV_') && _EPH_MODE_DEV_ && $_SERVER['REQUEST_URI'] != __EPH_BASE_URI__) {
 				
                 die('[Debug] This page has moved<br />Please use the following URL instead: <a href="' . $finalUrl . '">' . $finalUrl . '</a>');
             }
 
-            $redirectType = Configuration::get('PS_CANONICAL_REDIRECT') == 2 ? '301' : '302';
+            $redirectType = Configuration::get('EPH_CANONICAL_REDIRECT') == 2 ? '301' : '302';
             header('HTTP/1.0 ' . $redirectType . ' Moved');
             header('Cache-Control: no-cache');
             Tools::redirectLink($finalUrl);
@@ -5367,8 +5367,8 @@ class AdminControllerCore extends EphController {
 
                     $path = Image::getImgFolderStatic($image) . $image . '-cart_default.jpg';
 
-                    if (file_exists(_PS_PROD_IMG_DIR_ . $path)) {
-                        $src = _PS_PROD_IMG_DIR_ . $path;
+                    if (file_exists(_EPH_PROD_IMG_DIR_ . $path)) {
+                        $src = _EPH_PROD_IMG_DIR_ . $path;
                     } else {
                         $src = _SHOP_ROOT_DIR_ . '/themes/' . $this->bo_theme . '/img/default.jpg';
                     }
@@ -5431,7 +5431,7 @@ class AdminControllerCore extends EphController {
         $jsContent = '';
 
         foreach ($jsDef as $jsfile) {
-            $jsContent = $jsContent . file_get_contents(_PS_ROOT_DIR_ . '/' . $jsfile) . PHP_EOL;
+            $jsContent = $jsContent . file_get_contents(_EPH_ROOT_DIR_ . '/' . $jsfile) . PHP_EOL;
         }
 
         return '<script type="text/javascript">' . PHP_EOL . $jsContent . PHP_EOL . '</script>';
@@ -6097,7 +6097,7 @@ class AdminControllerCore extends EphController {
         if ($this->errors || $this->warnings
             || $this->informations || $this->confirmations) {
             $token = Tools::getValue('token');
-            $messageCachePath = _PS_CACHE_DIR_ . '/' . static::MESSAGE_CACHE_PATH
+            $messageCachePath = _EPH_CACHE_DIR_ . '/' . static::MESSAGE_CACHE_PATH
                 . '-' . $token;
 
             file_put_contents($messageCachePath, '<?php
@@ -7037,7 +7037,7 @@ class AdminControllerCore extends EphController {
 
         $onlines = [];
 
-        $employees = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $employees = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_employee`, `firstname`, `lastname`, `email`, `last_timestamp`')
                 ->from('employee')
@@ -7056,7 +7056,7 @@ class AdminControllerCore extends EphController {
                 $employee['online'] = true;
             }
 
-            if (file_exists(_PS_EMPLOYEE_IMG_DIR_ . $employee['id_employee'] . '.jpg')) {
+            if (file_exists(_EPH_EMPLOYEE_IMG_DIR_ . $employee['id_employee'] . '.jpg')) {
                 $employee['image_link'] = 'img/e/' . $employee['id_employee'] . '.jpg';
             } else {
                 $employee['image_link'] = 'img/e/Unknown.png';
@@ -7067,7 +7067,7 @@ class AdminControllerCore extends EphController {
             $onlines[] = $employee;
         }
 
-        $saleAgents = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $saleAgents = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_sale_agent`, `firstname`, `lastname`, `email`, `last_timestamp`')
                 ->from('sale_agent')
@@ -7081,10 +7081,10 @@ class AdminControllerCore extends EphController {
                 $saleAgent['online'] = true;
             }
 
-            if (file_exists(_PS_SALEAGENT_IMG_DIR_ . $agent->id_student . '.jpg')) {
-                $saleAgent['image_link'] = _PS_IMG_ . 'sa/' . $agent->id_student . '.jpg';
+            if (file_exists(_EPH_SALEAGENT_IMG_DIR_ . $agent->id_student . '.jpg')) {
+                $saleAgent['image_link'] = _EPH_IMG_ . 'sa/' . $agent->id_student . '.jpg';
             } else {
-                $saleAgent['image_link'] = _PS_IMG_ . 'sa/Unknown.png';
+                $saleAgent['image_link'] = _EPH_IMG_ . 'sa/Unknown.png';
             }
 
             $saleAgent['type'] = 'agent';
@@ -7287,7 +7287,7 @@ class AdminControllerCore extends EphController {
                 $Upload['name'] = $_FILES[$name]['name'][$key];
                 $Upload['mime'] = $_FILES[$name]['type'][$key];
 
-                $uploadfile = _PS_MESSENGER_DIR_ . basename($rand . '.jpg');
+                $uploadfile = _EPH_MESSENGER_DIR_ . basename($rand . '.jpg');
                 $sourcePath = $_FILES[$name]['tmp_name'][$key];
 
                 move_uploaded_file($sourcePath, $uploadfile);
@@ -7307,7 +7307,7 @@ class AdminControllerCore extends EphController {
             $fileCount = 0;
 
             if (is_array($_FILES)) {
-                $dir = _PS_MESSENGER_DIR_;
+                $dir = _EPH_MESSENGER_DIR_;
                 $output = '';
 
                 foreach ($_FILES[$application]['name'] as $key => $val) {
@@ -7386,7 +7386,7 @@ class AdminControllerCore extends EphController {
         foreach ($messages as $key => $values) {
 
             foreach ($values as $message) {
-                $data = $this->context->smarty->createTemplate(_PS_AGENT_DIR_ . 'message.tpl');
+                $data = $this->context->smarty->createTemplate(_EPH_AGENT_DIR_ . 'message.tpl');
                 $data->assign([
                     'message'    => $message,
                     'targetType' => $message->sender_type,
@@ -7436,7 +7436,7 @@ class AdminControllerCore extends EphController {
 
         $onlines = [];
 
-        $employees = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $employees = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_employee`, `last_timestamp`')
                 ->from('employee')
@@ -7457,7 +7457,7 @@ class AdminControllerCore extends EphController {
 
         }
 
-        $saleAgents = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $saleAgents = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('`id_sale_agent`,  `last_timestamp`')
                 ->from('sale_agent')
@@ -7898,11 +7898,11 @@ class AdminControllerCore extends EphController {
             'tableName'          => $this->table,
             'className'          => $this->className,
             'link'               => $this->context->link,
-            'id_lang_default'    => Configuration::get('PS_LANG_DEFAULT'),
+            'id_lang_default'    => Configuration::get('EPH_LANG_DEFAULT'),
             'extraJs'            => $this->push_js_files,
             'extracss'           => $this->extracss,
             'tabs'               => $this->ajaxOptions,
-            'bo_imgdir'          =>  __PS_BASE_URI__ . 'content/themes' . $this->bo_theme . '/img/',
+            'bo_imgdir'          =>  __EPH_BASE_URI__ . 'content/themes' . $this->bo_theme . '/img/',
         ]);
 
         $li = '<li id="uper' . $this->controller_name . '" data-self="'.$this->link_rewrite.'" data-name="'.$this->page_title.'" data-controller="AdminDashboard"><a href="#content' . $this->controller_name . '">' . $this->publicName . '</a><button type="button" class="close tabdetail" data-id="uper' . $this->controller_name . '"><i class="icon icon-times-circle"></i></button></li>';
@@ -8046,12 +8046,12 @@ class AdminControllerCore extends EphController {
 		$context = Context::getContext();
 		$idShop = (int) $context->shop->id;
 
-		if (Configuration::get('PS_LOGO_INVOICE', null, null, $idShop) != false && file_exists(_PS_IMG_DIR_ . Configuration::get('PS_LOGO_INVOICE', null, null, $idShop))) {
-			$logo = _PS_IMG_DIR_ . Configuration::get('PS_LOGO_INVOICE', null, null, $idShop);
+		if (Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop))) {
+			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop);
 		} else
 
-		if (Configuration::get('PS_LOGO', null, null, $idShop) != false && file_exists(_PS_IMG_DIR_ . Configuration::get('PS_LOGO', null, null, $idShop))) {
-			$logo = _PS_IMG_DIR_ . Configuration::get('PS_LOGO', null, null, $idShop);
+		if (Configuration::get('EPH_LOGO', null, null, $idShop) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop))) {
+			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop);
 		}
 
 		return $logo;
@@ -8246,7 +8246,7 @@ class AdminControllerCore extends EphController {
 
         $fonts_family = [];
 
-        $all_fonts = Tools::file_get_contents(_PS_EPH_THEME_DIR_ . 'phenyx_fonts.json');
+        $all_fonts = Tools::file_get_contents(_EPH_EPH_THEME_DIR_ . 'phenyx_fonts.json');
         $all_fonts = Tools::jsonDecode($all_fonts);
 
         if (isset($all_fonts) && !empty($all_fonts)) {
@@ -8269,7 +8269,7 @@ class AdminControllerCore extends EphController {
             return false;
         }
 
-        $all_fonts = Tools::file_get_contents(_PS_ROOT_DIR_ . '/img/theme/phenyx_fonts.json');
+        $all_fonts = Tools::file_get_contents(_EPH_ROOT_DIR_ . '/img/theme/phenyx_fonts.json');
         $all_fonts = Tools::jsonDecode($all_fonts);
 
         if (isset($all_fonts) && !empty($all_fonts)) {
@@ -8309,7 +8309,7 @@ class AdminControllerCore extends EphController {
         
         $fonts_variants = [];
 
-        $all_fonts = Tools::file_get_contents(_PS_ROOT_DIR_ . '/img/theme/phenyx_fonts.json');
+        $all_fonts = Tools::file_get_contents(_EPH_ROOT_DIR_ . '/img/theme/phenyx_fonts.json');
         $all_fonts = Tools::jsonDecode($all_fonts);
 
         if (isset($all_fonts) && !empty($all_fonts)) {
@@ -8356,7 +8356,7 @@ class AdminControllerCore extends EphController {
         if (is_array($fontCollection)) {
 
             file_put_contents(
-                _PS_EPH_THEME_DIR_ . 'phenyx_fonts.json',
+                _EPH_EPH_THEME_DIR_ . 'phenyx_fonts.json',
                 json_encode($fontCollection, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
             );
         }

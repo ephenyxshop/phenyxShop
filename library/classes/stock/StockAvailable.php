@@ -103,7 +103,7 @@ class StockAvailableCore extends ObjectModel
 
         $query = static::addSqlShopRestriction($query, $idShop);
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
     }
 
     /**
@@ -127,8 +127,8 @@ class StockAvailableCore extends ObjectModel
         //if product is pack sync recursivly product in pack
         if (Pack::isPack($idProduct)) {
             if (Validate::isLoadedObject($product = new Product((int) $idProduct))) {
-                if ($product->pack_stock_type == 1 || $product->pack_stock_type == 2 || ($product->pack_stock_type == 3 && Configuration::get('PS_PACK_STOCK_TYPE') > 0)) {
-                    $productsPack = Pack::getItems($idProduct, (int) Configuration::get('PS_LANG_DEFAULT'));
+                if ($product->pack_stock_type == 1 || $product->pack_stock_type == 2 || ($product->pack_stock_type == 3 && Configuration::get('EPH_PACK_STOCK_TYPE') > 0)) {
+                    $productsPack = Pack::getItems($idProduct, (int) Configuration::get('EPH_LANG_DEFAULT'));
                     foreach ($productsPack as $productPack) {
                         static::synchronize($productPack->id, $orderIdShop);
                     }
@@ -208,7 +208,7 @@ class StockAvailableCore extends ObjectModel
                         $query->from('stock_available');
                         $query->where('id_product = '.(int) $idProduct.' AND id_product_attribute = '.(int) $idProductAttribute.static::addSqlShopRestriction(null, $idShop));
 
-                        if ((int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query)) {
+                        if ((int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query)) {
                             $query = [
                                 'table' => 'stock_available',
                                 'data'  => ['quantity' => $quantity],
@@ -383,7 +383,7 @@ class StockAvailableCore extends ObjectModel
 
             $query->where('id_product_attribute = '.(int) $idProductAttribute);
             $query = static::addSqlShopRestriction($query, $idShop);
-            $result = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+            $result = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
             Cache::store($key, $result);
 
             return $result;
@@ -461,7 +461,7 @@ class StockAvailableCore extends ObjectModel
 
         $idShop = (Shop::getContext() != Shop::CONTEXT_GROUP && $this->id_shop ? $this->id_shop : null);
 
-        if (!Configuration::get('PS_DISP_UNAVAILABLE_ATTR')) {
+        if (!Configuration::get('EPH_DISP_UNAVAILABLE_ATTR')) {
             $combination = new Combination((int) $this->id_product_attribute);
             if ($colors = $combination->getColorsAttributes()) {
                 $product = new Product((int) $this->id_product);
@@ -474,7 +474,7 @@ class StockAvailableCore extends ObjectModel
             }
         }
 
-        $totalQuantity = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $totalQuantity = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('SUM(`quantity`) AS `quantity`')
                 ->from(bqSQL(static::$definition['table']))
@@ -620,7 +620,7 @@ class StockAvailableCore extends ObjectModel
                     $idProductAttributeSql = $idProduct;
                 }
 
-                if ((int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+                if ((int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                     (new DbQuery())
                         ->select('COUNT(*)')
                         ->from('product'.bqSQL($paSql).'_shop')
@@ -712,7 +712,7 @@ class StockAvailableCore extends ObjectModel
 
         $query = static::addSqlShopRestriction($query, $idShop);
 
-        return (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
     }
 
     /**
@@ -741,7 +741,7 @@ class StockAvailableCore extends ObjectModel
 
         $query = static::addSqlShopRestriction($query, $idShop);
 
-        return (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query);
     }
 
     /**

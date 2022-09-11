@@ -75,7 +75,7 @@ class ProductDownloadCore extends ObjectModel {
      */
     public static function checkWritableDir() {
 
-        return is_writable(_PS_DOWNLOAD_DIR_);
+        return is_writable(_EPH_DOWNLOAD_DIR_);
     }
 
     /**
@@ -95,7 +95,7 @@ class ProductDownloadCore extends ObjectModel {
      */
     public static function getIdFromIdProduct($idProduct, $active = true) {
 
-        $id = (int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        $id = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_product_download`')
                 ->from('product_download')
@@ -121,7 +121,7 @@ class ProductDownloadCore extends ObjectModel {
      */
     public static function isFeatureActive() {
 
-        return Configuration::get('PS_VIRTUAL_PROD_FEATURE_ACTIVE');
+        return Configuration::get('EPH_VIRTUAL_PROD_FEATURE_ACTIVE');
     }
 
     /**
@@ -138,7 +138,7 @@ class ProductDownloadCore extends ObjectModel {
      */
     public static function getIdFromFilename($filename) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`id_product_download`')
                 ->from('product_download')
@@ -159,7 +159,7 @@ class ProductDownloadCore extends ObjectModel {
      */
     public static function getFilenameFromIdProduct($idProduct) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`filename`')
                 ->from('product_download')
@@ -181,7 +181,7 @@ class ProductDownloadCore extends ObjectModel {
      */
     public static function getFilenameFromFilename($filename) {
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue(
+        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`display_filename`')
                 ->from('product_download')
@@ -201,7 +201,7 @@ class ProductDownloadCore extends ObjectModel {
 
         do {
             $filename = sha1(microtime());
-        } while (file_exists(_PS_DOWNLOAD_DIR_ . $filename));
+        } while (file_exists(_EPH_DOWNLOAD_DIR_ . $filename));
 
         return $filename;
     }
@@ -219,7 +219,7 @@ class ProductDownloadCore extends ObjectModel {
 
         if (parent::update($nullValues)) {
             // Refresh cache of feature detachable because the row can be deactive
-            Configuration::updateGlobalValue('PS_VIRTUAL_PROD_FEATURE_ACTIVE', ProductDownload::isCurrentlyUsed($this->def['table'], true));
+            Configuration::updateGlobalValue('EPH_VIRTUAL_PROD_FEATURE_ACTIVE', ProductDownload::isCurrentlyUsed($this->def['table'], true));
 
             return true;
         }
@@ -278,7 +278,7 @@ class ProductDownloadCore extends ObjectModel {
         $result = !$this->checkFile();
 
         if (!$result) {
-            $result = @unlink(_PS_DOWNLOAD_DIR_ . $this->filename);
+            $result = @unlink(_EPH_DOWNLOAD_DIR_ . $this->filename);
 
             if ($result) {
                 $this->filename = '';
@@ -305,7 +305,7 @@ class ProductDownloadCore extends ObjectModel {
             return false;
         }
 
-        return file_exists(_PS_DOWNLOAD_DIR_ . $this->filename);
+        return file_exists(_EPH_DOWNLOAD_DIR_ . $this->filename);
     }
 
     /**
@@ -348,7 +348,7 @@ class ProductDownloadCore extends ObjectModel {
     public function getTextLink($admin = true, $hash = false) {
 
         $key = $this->filename . '-' . ($hash ? $hash : 'orderdetail');
-        $link = ($admin) ? 'get-file-admin.php?' : _PS_BASE_URL_ . __PS_BASE_URI__ . 'index.php?controller=get-file&';
+        $link = ($admin) ? 'get-file-admin.php?' : _EPH_BASE_URL_ . __EPH_BASE_URI__ . 'index.php?controller=get-file&';
         $link .= ($admin) ? 'file=' . $this->filename : 'key=' . $key;
 
         return $link;

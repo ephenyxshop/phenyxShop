@@ -71,7 +71,7 @@ class BanksAccountControllerCore extends FrontController {
             ]
         );
 
-        $this->setTemplate(_PS_THEME_DIR_ . 'banks.tpl');
+        $this->setTemplate(_EPH_THEME_DIR_ . 'banks.tpl');
     }
 
     /**
