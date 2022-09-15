@@ -5,7 +5,7 @@
  *
  * @since 1.8.1.0
  */
-class CustomerMessageCore extends ObjectModel {
+class CustomerMessageCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var int $id_customer_thread */
@@ -31,7 +31,7 @@ class CustomerMessageCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'customer_message',
@@ -111,7 +111,7 @@ class CustomerMessageCore extends ObjectModel {
                     ->select('COUNT(*)')
                     ->from('customer_message')
                     ->leftJoin('customer_thread', 'ct', 'cm.`id_customer_thread` = ct.`id_customer_thread`')
-                    ->where('1 ' . Shop::addSqlRestriction())
+                    ->where('1 ')
             );
         } else {
             return (int) Db::getInstance()->getValue(
@@ -119,7 +119,7 @@ class CustomerMessageCore extends ObjectModel {
                     ->select('COUNT(*)')
                     ->from('customer_message', 'cm')
                     ->leftJoin('customer_thread', 'ct', 'cm.`id_customer_thread` = ct.`id_customer_thread`')
-                    ->where($where . Shop::addSqlRestriction())
+                    ->where($where )
             );
         }
 

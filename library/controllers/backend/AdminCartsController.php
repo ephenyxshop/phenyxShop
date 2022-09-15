@@ -506,9 +506,9 @@ class AdminCartsControllerCore extends AdminController {
 
 		if (Validate::isLoadedObject($order)) {
 			$taxCalculationMethod = $order->getTaxCalculationMethod();
-			$idShop = (int) $order->id_shop;
+			$idCompany = (int) $order->id_shop;
 		} else {
-			$idShop = (int) $cart->id_shop;
+			$idCompany = (int) $cart->id_shop;
 			$taxCalculationMethod = Group::getPriceDisplayMethod(Group::getCurrent()->id);
 		}
 
@@ -557,7 +557,7 @@ class AdminCartsControllerCore extends AdminController {
 				);
 			}
 
-			$product['qty_in_stock'] = StockAvailable::getQuantityAvailableByProduct($product['id_product'], isset($product['id_product_attribute']) ? $product['id_product_attribute'] : null, (int) $idShop);
+			$product['qty_in_stock'] = StockAvailable::getQuantityAvailableByProduct($product['id_product'], isset($product['id_product_attribute']) ? $product['id_product_attribute'] : null);
 
 			$imageProduct = new Image($image['id_image']);
 			$product['image'] = (isset($image['id_image']) ? ImageManager::thumbnail(_EPH_IMG_DIR_ . 'p/' . $imageProduct->getExistingImgPath() . '.jpg', 'product_mini_' . (int) $product['id_product'] . (isset($product['id_product_attribute']) ? '_' . (int) $product['id_product_attribute'] : '') . '.jpg', 45, 'jpg') : '--');
@@ -629,7 +629,7 @@ class AdminCartsControllerCore extends AdminController {
 			}
 
 			if (!$this->context->cart->id_shop) {
-				$this->context->cart->id_shop = (int) $this->context->shop->id;
+				$this->context->cart->id_shop = (int) $this->context->company->id;
 			}
 
 			if (!$this->context->cart->id_lang) {

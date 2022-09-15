@@ -6,7 +6,7 @@
  *
  * @since 1.9.1.0
  */
-class WarehouseProductLocationCore extends ObjectModel
+class WarehouseProductLocationCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     /**
@@ -31,7 +31,7 @@ class WarehouseProductLocationCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'warehouse_product_location',
@@ -45,7 +45,7 @@ class WarehouseProductLocationCore extends ObjectModel
     ];
 
     /**
-     * @see ObjectModel::$webserviceParameters
+     * @see PhenyxObjectModel::$webserviceParameters
      */
     protected $webserviceParameters = [
         'fields'        => [

@@ -1,6 +1,6 @@
 <?php
 
-class EmployeeConfigurationCore extends ObjectModel {
+class EmployeeConfigurationCore extends PhenyxObjectModel {
 
 	public static $definition = [
 		'table'     => 'employee_configuration',

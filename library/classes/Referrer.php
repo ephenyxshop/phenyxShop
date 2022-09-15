@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class ReferrerCore extends ObjectModel {
+class ReferrerCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     protected static $_join = '(r.http_referer_like IS NULL OR r.http_referer_like = \'\' OR cs.http_referer LIKE r.http_referer_like)
@@ -16,8 +16,8 @@ class ReferrerCore extends ObjectModel {
             AND (r.request_uri_regexp IS NULL OR r.request_uri_regexp = \'\' OR cs.request_uri REGEXP r.request_uri_regexp)
             AND (r.http_referer_regexp_not IS NULL OR r.http_referer_regexp_not = \'\' OR cs.http_referer NOT REGEXP r.http_referer_regexp_not)
             AND (r.request_uri_regexp_not IS NULL OR r.request_uri_regexp_not = \'\' OR cs.request_uri NOT REGEXP r.request_uri_regexp_not)';
-    /** @var int $id_shop */
-    public $id_shop;
+    /** @var int $id_company */
+    public $id_company;
     /** @var string $name */
     public $name;
     /** @var string $passwd */
@@ -37,7 +37,7 @@ class ReferrerCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'referrer',
@@ -184,8 +184,6 @@ class ReferrerCore extends ObjectModel {
                 ->leftJoin('connections', 's', 'cs.`id_connections` = c.`id_connections`')
                 ->leftJoin('connections_page', 'cp', 'cp.`id_connections` = c.`id_connections`')
                 ->where((isset($employee->stats_date_from) && isset($employee->stats_date_to)) ? 'cs.`date_add` BETWEEN \'' . pSQL($employee->stats_date_from) . ' 00:00:00\' AND \'' . pSQL($employee->stats_date_to) . ' 23:59:59\'' : '')
-                ->where('1 ' . Shop::addSqlRestriction(false, 'rs'))
-                ->where('1 ' . Shop::addSqlRestriction(false, 'c'))
                 ->where('rc.`id_referrer` = ' . (int) $this->id)
                 ->where($idProduct ? 'pt.`name` = \'product\'' : '')
                 ->where($idProduct ? 'p.`id_object` = ' . (int) $idProduct : '')
@@ -215,7 +213,7 @@ class ReferrerCore extends ObjectModel {
             ->leftJoin('connections', 'c', 'cs.`id_connections` = c.`id_connections`')
             ->leftJoin('guest', 'g', 'g.`id_guest` = c.`id_guest`')
             ->leftJoin('customer', 'cu', 'cu.`id_customer` = g.`id_customer`')
-            ->where('cu.`date_add` BETWEEN ' . ModuleGraph::getDateBetween($employee) . ' ' . Shop::addSqlRestriction(false, 'rs') . ' ' . Shop::addSqlRestriction(false, 'c') . ' ' . Shop::addSqlRestriction(Shop::SHARE_CUSTOMER, 'cu'))
+            ->where('cu.`date_add` BETWEEN ' . ModuleGraph::getDateBetween($employee))
             ->where('cu.`date_add` > cs.`date_add`')
             ->where('rc.`id_referrer` = ' . (int) $this->id);
 
@@ -254,7 +252,7 @@ class ReferrerCore extends ObjectModel {
             ->innerJoin('connections', 'c', 'cs.`id_connections` = c.`id_connections`')
             ->innerJoin('guest', 'g', 'g.`id_guest` = c.`id_guest`')
             ->innerJoin('orders', 'oo', 'oo.`id_customer` = g.`id_customer`')
-            ->where('oo.`invoice_date` BETWEEN ' . ModuleGraph::getDateBetween($employee) . ' ' . Shop::addSqlRestriction(false, 'rs') . ' ' . Shop::addSqlRestriction(false, 'c') . ' ' . Shop::addSqlRestriction(Shop::SHARE_ORDER, 'oo'))
+            ->where('oo.`invoice_date` BETWEEN ' . ModuleGraph::getDateBetween($employee))
             ->where('oo.`date_add` > cs.`date_add`')
             ->where('rc.`id_referrer` = ' . (int) $this->id)
             ->where('oo.`valid` = 1')
@@ -282,7 +280,7 @@ class ReferrerCore extends ObjectModel {
                 (new DbQuery())
                     ->select('COUNT(`id_order`) AS `orders`, SUM(`total_paid_real` / `conversion_rate`) AS `sales`')
                     ->from('orders')
-                    ->where('`id_order` IN (' . implode($implode, ',') . ') ' . Shop::addSqlRestriction(Shop::SHARE_ORDER))
+                    ->where('`id_order` IN (' . implode($implode, ',') . ')')
                     ->where('`valid` = 1')
             );
         } else {
@@ -336,8 +334,7 @@ class ReferrerCore extends ObjectModel {
         foreach ($referrers as $row) {
             $referrer = new Referrer($row['id_referrer']);
 
-            foreach (Shop::getShops(true, null, true) as $idShop) {
-
+            
                 
 
                 $statsVisits = $referrer->getStatsVisits(null, $employee);
@@ -356,9 +353,9 @@ class ReferrerCore extends ObjectModel {
                         'cache_reg_rate'      => $statsVisits['uniqs'] ? $registrations / $statsVisits['uniqs'] : 0,
                         'cache_order_rate'    => $statsVisits['uniqs'] ? $statsSales['orders'] / $statsVisits['uniqs'] : 0,
                     ],
-                    'id_referrer = ' . (int) $referrer->id . ' AND `id_shop` = ' . (int) $idShop
+                    'id_referrer = ' . (int) $referrer->id
                 );
-            }
+           
 
         }
 

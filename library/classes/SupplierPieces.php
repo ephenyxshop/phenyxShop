@@ -3,7 +3,7 @@
 /**
  * @since 2.1.0.0
  */
-class SupplierPiecesCore extends ObjectModel {
+class SupplierPiecesCore extends PhenyxObjectModel {
 
     const ROUND_ITEM = 1;
     const ROUND_LINE = 2;
@@ -11,7 +11,7 @@ class SupplierPiecesCore extends ObjectModel {
 	
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'supplier_pieces',
@@ -64,8 +64,8 @@ class SupplierPiecesCore extends ObjectModel {
     ];
 
 	public $piece_type;
-    public $id_shop_group;
-    public $id_shop;
+    public $id_company_group;
+    public $id_company;
     public $id_lang;
     public $id_currency;
     public $id_order;
@@ -348,7 +348,6 @@ class SupplierPiecesCore extends ObjectModel {
                 ->select('*')
                 ->from('supplier_piece_detail', 'od')
                 ->leftJoin('product', 'p', 'p.`id_product` = od.`id_product`')
-                ->leftJoin('product_shop', 'ps', 'ps.`id_product` = od.`id_product`')
                 ->where('od.`id_supplier_piece` = ' . (int) $this->id)
         );
     }

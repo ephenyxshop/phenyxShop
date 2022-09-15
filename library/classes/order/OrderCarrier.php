@@ -34,7 +34,7 @@
  *
  * @since 1.9.1.0
  */
-class OrderCarrierCore extends ObjectModel
+class OrderCarrierCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     /** @var int */
@@ -66,7 +66,7 @@ class OrderCarrierCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'order_carrier',

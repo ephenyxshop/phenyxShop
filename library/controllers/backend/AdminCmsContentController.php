@@ -96,7 +96,7 @@ class AdminCmsContentControllerCore extends AdminController {
 			(new DbQuery())
 				->select('a.`id_cms_category`, a.`id_parent`, b.`name`, a.`position`, a.`active`')
 				->from('cms_category', 'a')
-				->leftJoin('cms_category_lang', 'b', 'b.`id_cms_category` = a.`id_cms_category` AND b.`id_lang` = ' . $this->context->language->id . ' AND b.`id_shop` = ' . $this->context->shop->id)
+				->leftJoin('cms_category_lang', 'b', 'b.`id_cms_category` = a.`id_cms_category` AND b.`id_lang` = ' . $this->context->language->id . ' AND b.`id_shop` = ' . $this->context->company->id)
 				->orderBy('a.`id_cms_category` ASC, a.`position` ASC')
 		);
 
@@ -138,7 +138,7 @@ class AdminCmsContentControllerCore extends AdminController {
 			(new DbQuery())
 				->select('a.`id_cms_category`, a.`id_parent`, b.`name`, a.`position`, a.`active`')
 				->from('cms_category', 'a')
-				->leftJoin('cms_category_lang', 'b', 'b.`id_cms_category` = a.`id_cms_category` AND b.`id_lang` = ' . $this->context->language->id . ' AND b.`id_shop` = ' . $this->context->shop->id)
+				->leftJoin('cms_category_lang', 'b', 'b.`id_cms_category` = a.`id_cms_category` AND b.`id_lang` = ' . $this->context->language->id . ' AND b.`id_shop` = ' . $this->context->company->id)
 				->orderBy('a.`id_cms_category` ASC, a.`position` ASC')
 		);
 
@@ -360,8 +360,8 @@ class AdminCmsContentControllerCore extends AdminController {
 			(new DbQuery())
 				->select('b.*, a.*, cml.`name`')
 				->from('cms', 'a')
-				->leftJoin('cms_lang', 'b', 'b.`id_cms` = a.`id_cms` AND b.`id_lang` = ' . $this->context->language->id . ' AND b.`id_shop` = ' . $this->context->shop->id)
-				->leftJoin('cms_category_lang', 'cml', 'cml.`id_cms_category` = a.`id_cms_category` AND cml.`id_lang` = ' . $this->context->language->id . ' AND cml.`id_shop` = ' . $this->context->shop->id)
+				->leftJoin('cms_lang', 'b', 'b.`id_cms` = a.`id_cms` AND b.`id_lang` = ' . $this->context->language->id . ' AND b.`id_shop` = ' . $this->context->company->id)
+				->leftJoin('cms_category_lang', 'cml', 'cml.`id_cms_category` = a.`id_cms_category` AND cml.`id_lang` = ' . $this->context->language->id . ' AND cml.`id_shop` = ' . $this->context->company->id)
 				->where('a.`id_cms_category` = ' . (int) $id_cms_category)
 				->orderBy('a.`position` ASC')
 		);

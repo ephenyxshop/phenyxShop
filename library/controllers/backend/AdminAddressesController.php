@@ -209,7 +209,7 @@ class AdminAddressesControllerCore extends AdminController {
 				->from('address', 'a')
 				->leftJoin('country_lang', 'cl', 'cl.`id_country` = a.`id_country` AND cl.`id_lang` = ' . (int) $this->context->language->id)
 				->leftJoin('customer', 'c', 'a.`id_customer` = c.`id_customer`')
-				->where('a.`id_customer` != 0 AND a.`deleted` = 0 ' . Shop::addSqlRestriction(Shop::SHARE_CUSTOMER, 'c'))
+				->where('a.`id_customer` != 0 AND a.`deleted` = 0 ')
 				->orderBy('a.`id_address` ASC')
 		);
 

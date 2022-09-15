@@ -15,7 +15,7 @@ class PageCacheKeyCore {
     public $idCurrency;
     public $idLanguage;
     public $idCountry;
-    public $idShop;
+    public $idCompany;
     public $idStudent;
 
     /**
@@ -27,13 +27,13 @@ class PageCacheKeyCore {
      * @param int    $idCurrency
      * @param int    $idLanguage
      * @param int    $idCountry
-     * @param int    $idShop
+     * @param int    $idCompany
      * @param int    $idGroup
      * @param int    $idStudent id of logged-in student, zero otherwise
      *
      * @since 1.0.7
      */
-    protected function __construct($entityType, $entityId, $url, $idCurrency, $idLanguage, $idCountry, $idShop, $idStudent) {
+    protected function __construct($entityType, $entityId, $url, $idCurrency, $idLanguage, $idCountry, $idCompany, $idStudent) {
 
         $this->entityType = $entityType;
         $this->entityId = $entityId;
@@ -41,7 +41,7 @@ class PageCacheKeyCore {
         $this->idCurrency = $idCurrency;
         $this->idLanguage = $idLanguage;
         $this->idCountry = $idCountry;
-        $this->idShop = $idShop;
+        $this->idShop = $idCompany;
         $this->idStudent = $idStudent;
     }
 
@@ -172,7 +172,7 @@ class PageCacheKeyCore {
             (int) $currency->id,
             (int) $context->language->id,
             (int) $context->country->id,
-            (int) $context->shop->id,
+            (int) $context->company->id,
             (int) $context->customer->id
         );
     }

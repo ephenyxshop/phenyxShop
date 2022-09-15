@@ -6,7 +6,7 @@
  *
  * @since 1.9.1.0
  */
-class TaxRulesGroupCore extends ObjectModel
+class TaxRulesGroupCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     public $name;
@@ -24,7 +24,7 @@ class TaxRulesGroupCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'tax_rules_group',

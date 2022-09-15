@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class GuestCore extends ObjectModel {
+class GuestCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     public $id_operating_system;
@@ -26,7 +26,7 @@ class GuestCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'guest',

@@ -1,6 +1,6 @@
 <?php
 
-class EphAutomapper extends ObjectModel {
+class EphAutomapper extends PhenyxObjectModel {
 
 	protected static $disabled = false;
 

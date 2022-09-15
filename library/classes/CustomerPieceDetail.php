@@ -5,11 +5,11 @@
  *
  * @since 2.1.0.0
  */
-class CustomerPieceDetailCore extends ObjectModel {
+class CustomerPieceDetailCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'customer_piece_detail',
@@ -128,11 +128,11 @@ class CustomerPieceDetailCore extends ObjectModel {
     public function __construct($id = null, $idLang = null, $context = null) {
 
         $this->context = $context;
-        $idShop = null;
-        if ($this->context != null && isset($this->context->shop)) {
-            $idShop = $this->context->shop->id;
+        $idCompany = null;
+        if ($this->context != null && isset($this->context->company)) {
+            $idCompany = $this->context->company->id;
         }
-        parent::__construct($id, $idLang, $idShop);
+        parent::__construct($id, $idLang, $idCompany);
 
         if ($context == null) {
             $context = Context::getContext();
@@ -244,7 +244,7 @@ class CustomerPieceDetailCore extends ObjectModel {
 
         $this->group_reduction = (float) Group::getReduction((int) $order->id_customer);
 
-        $shopId = $this->context->shop->id;
+        $shopId = $this->context->company->id;
 
         $quantityDiscount = SpecificPrice::getQuantityDiscount(
             (int) $product['id_product'],
@@ -359,9 +359,9 @@ class CustomerPieceDetailCore extends ObjectModel {
     }
 
 	
-	protected function setContext($idShop) {
-        if ($this->context->shop->id != $idShop) {
-            $this->context->shop = new Shop((int) $idShop);
+	protected function setContext($idCompany) {
+        if ($this->context->company->id != $idCompany) {
+            $this->context->company = new Company((int) $idCompany);
         }
     }
 	
@@ -594,10 +594,10 @@ class CustomerPieceDetailCore extends ObjectModel {
                 (new DbQuery())
                     ->select('DISTINCT od.`id_product` as produc_id, p.`id_product`, pl.`name`, pl.`link_rewrite`, p.`reference`, i.`id_image`, p.`show_price`')
                     ->select('cl.`link_rewrite` AS `category`, p.`ean13`, p.`out_of_stock`, p.`id_category_default`')
-                    ->select(Combination::isFeatureActive() ? 'IFNULL(`product_attribute_shop`.`id_product_attribute`, 0) id_product_attribute' : '')
+                    ->select(Combination::isFeatureActive() ? 'IFNULL(`pa`.`id_product_attribute`, 0) id_product_attribute' : '')
                     ->from('customer_piece_detail', 'od')
                     ->leftJoin('product', 'p', 'p.`id_product` = od.`id_product`')
-                    ->join((Combination::isFeatureActive() ? 'LEFT JOIN `'._DB_PREFIX_.'product_attribute_shop` product_attribute_shop ON (p.`id_product` = product_attribute_shop.`id_product` AND product_attribute_shop.`default_on` = 1 AND product_attribute_shop.id_shop='.(int) Context::getContext()->shop->id.')' : ''))
+                    ->join((Combination::isFeatureActive() ? 'LEFT JOIN `'._DB_PREFIX_.'product_attribute` pa ON (p.`id_product` = pa.`id_product` AND product_attribute_shop.`default_on` = 1'.')' : ''))
                     ->leftJoin('product_lang', 'pl', 'pl.`id_product` = od.`id_product` AND pl.`id_lang` = '.(int) $idLang)
                     ->leftJoin('category_lang', 'cl', 'cl.`id_category` = p.`id_category_default` AND cl.`id_lang` = '.(int) $idLang)
                     ->leftJoin('image', 'i', 'i.`id_product` = od.`id_product` ')

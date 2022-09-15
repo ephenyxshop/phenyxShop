@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class AliasCore extends ObjectModel {
+class AliasCore extends PhenyxObjectModel {
 
     /** @var string $alias */
     public $alias;
@@ -15,7 +15,7 @@ class AliasCore extends ObjectModel {
     public $active = true;
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'alias',

@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class LanguageCore extends ObjectModel {
+class LanguageCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var array Languages cache */
@@ -30,7 +30,7 @@ class LanguageCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'lang',
@@ -45,10 +45,7 @@ class LanguageCore extends ObjectModel {
             'date_format_full' => ['type' => self::TYPE_STRING, 'validate' => 'isPhpDateFormat', 'required' => true, 'size' => 32],
         ],
     ];
-    protected $webserviceParameters = [
-        'objectNodeName'  => 'language',
-        'objectsNodeName' => 'languages',
-    ];
+   
     protected $translationsFilesAndVars = [
         'fields' => '_FIELDS',
         'errors' => '_ERRORS',
@@ -75,7 +72,7 @@ class LanguageCore extends ObjectModel {
      * Returns an array of language IDs
      *
      * @param bool     $active Select only active languages
-     * @param int|bool $idShop Shop ID
+     * @param int|bool $idCompany Shop ID
      *
      * @return array
      *
@@ -83,16 +80,16 @@ class LanguageCore extends ObjectModel {
      * @version 1.8.1.0 Initial version
      * @throws PhenyxShopException
      */
-    public static function getIDs($active = true, $idShop = false) {
+    public static function getIDs($active = true) {
 
-        return static::getLanguages($active, $idShop, true);
+        return static::getLanguages($active, true);
     }
 
     /**
      * Returns available languages
      *
      * @param bool     $active  Select only active languages
-     * @param int|bool $idShop  Shop ID
+     * @param int|bool $idCompany  Shop ID
      * @param bool     $idsOnly If true, returns an array of language IDs
      *
      * @return array Languages
@@ -101,7 +98,7 @@ class LanguageCore extends ObjectModel {
      * @version 1.8.1.0 Initial version
      * @throws PhenyxShopException
      */
-    public static function getLanguages($active = true, $idShop = false, $idsOnly = false) {
+    public static function getLanguages($active = true, $idsOnly = false) {
 
         if (!static::$_LANGUAGES) {
             Language::loadLanguages();
@@ -111,7 +108,7 @@ class LanguageCore extends ObjectModel {
 
         foreach (static::$_LANGUAGES as $language) {
 
-            if ($active && !$language['active'] || ($idShop && !isset($language['shops'][(int) $idShop]))) {
+            if ($active && !$language['active']) {
                 continue;
             }
 
@@ -134,9 +131,8 @@ class LanguageCore extends ObjectModel {
 
         $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
-                ->select('l.*, ls.`id_shop`')
+                ->select('l.*')
                 ->from('lang', 'l')
-                ->leftJoin('lang_shop', 'ls', 'l.`id_lang` = ls.`id_lang`')
         );
 
         foreach ($result as $row) {
@@ -145,7 +141,7 @@ class LanguageCore extends ObjectModel {
                 static::$_LANGUAGES[(int) $row['id_lang']] = $row;
             }
 
-            static::$_LANGUAGES[(int) $row['id_lang']]['shops'][(int) $row['id_shop']] = true;
+            //static::$_LANGUAGES[(int) $row['id_lang']] = true;
         }
 
     }
@@ -342,13 +338,13 @@ class LanguageCore extends ObjectModel {
      * @version 1.8.1.0 Initial version
      * @throws PhenyxShopException
      */
-    public static function isMultiLanguageActivated($idShop = null) {
+    public static function isMultiLanguageActivated($idCompany = null) {
 
-        return (Language::countActiveLanguages($idShop) > 1);
+        return (Language::countActiveLanguages($idCompany) > 1);
     }
 
     /**
-     * @param null $idShop
+     * @param null $idCompany
      *
      * @return mixed
      *
@@ -356,24 +352,21 @@ class LanguageCore extends ObjectModel {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function countActiveLanguages($idShop = null) {
+    public static function countActiveLanguages($idCompany = null) {
 
-        if (isset(Context::getContext()->shop) && is_object(Context::getContext()->shop) && $idShop === null) {
-            $idShop = (int) Context::getContext()->shop->id;
-        }
+        
 
-        if (!isset(static::$countActiveLanguages[$idShop])) {
-            static::$countActiveLanguages[$idShop] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
+        if (!isset(static::$countActiveLanguages)) {
+            static::$countActiveLanguages = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('COUNT(DISTINCT l.`id_lang`)')
-                    ->from('lang', 'l')
-                    ->innerJoin('lang_shop', 'ls', 'ls.`id_lang` = l.`id_lang`')
-                    ->where('ls.`id_shop` = ' . (int) $idShop)
+                    ->from('lang', 'l')                    
+                    
                     ->where('l.`active` = 1')
             );
         }
 
-        return static::$countActiveLanguages[$idShop];
+        return static::$countActiveLanguages;
     }
 
     /**
@@ -826,69 +819,7 @@ class LanguageCore extends ObjectModel {
 
         $return = true;
 
-        $shops = Shop::getShopsCollection(false);
-
-        foreach ($shops as $shop) {
-            /** @var Shop $shop */
-            $idLangDefault = Configuration::get('EPH_LANG_DEFAULT', null, $shop->id_shop_group, $shop->id);
-
-            foreach ($langTables as $name) {
-                preg_match('#^' . preg_quote(_DB_PREFIX_) . '(.+)_lang$#i', $name, $m);
-                $identifier = 'id_' . $m[1];
-
-                $fields = '';
-                // We will check if the table contains a column "id_shop"
-                // If yes, we will add "id_shop" as a WHERE condition in queries copying data from default language
-                $shopFieldExists = $primaryKeyExists = false;
-                $columns = Db::getInstance()->executeS('SHOW COLUMNS FROM `' . $name . '`');
-
-                foreach ($columns as $column) {
-                    $fields .= '`' . $column['Field'] . '`, ';
-
-                    if ($column['Field'] == 'id_shop') {
-                        $shopFieldExists = true;
-                    }
-
-                    if ($column['Field'] == $identifier) {
-                        $primaryKeyExists = true;
-                    }
-
-                }
-
-                $fields = rtrim($fields, ', ');
-
-                if (!$primaryKeyExists) {
-                    continue;
-                }
-
-                $sql = 'INSERT IGNORE INTO `' . $name . '` (' . $fields . ') (SELECT ';
-
-                // For each column, copy data from default language
-                reset($columns);
-
-                foreach ($columns as $column) {
-
-                    if ($identifier != $column['Field'] && $column['Field'] != 'id_lang') {
-                        $sql .= '(
-                            SELECT `' . bqSQL($column['Field']) . '`
-                            FROM `' . bqSQL($name) . '` tl
-                            WHERE tl.`id_lang` = ' . (int) $idLangDefault . '
-                            ' . ($shopFieldExists ? ' AND tl.`id_shop` = ' . (int) $shop->id : '') . '
-                            AND tl.`' . bqSQL($identifier) . '` = `' . bqSQL(str_replace('_lang', '', $name)) . '`.`' . bqSQL($identifier) . '`
-                        ),';
-                    } else {
-                        $sql .= '`' . bqSQL($column['Field']) . '`,';
-                    }
-
-                }
-
-                $sql = rtrim($sql, ', ');
-                $sql .= ' FROM `' . _DB_PREFIX_ . 'lang` CROSS JOIN `' . bqSQL(str_replace('_lang', '', $name)) . '`)';
-                $return &= Db::getInstance()->execute($sql);
-            }
-
-        }
-
+       
         return $return;
     }
 
@@ -935,7 +866,7 @@ class LanguageCore extends ObjectModel {
     }
 
     /**
-     * @see     ObjectModel::getFields()
+     * @see     PhenyxObjectModel::getFields()
      * @return array
      *
      * @throws PhenyxShopException
@@ -1289,7 +1220,7 @@ class LanguageCore extends ObjectModel {
      */
     public function delete() {
 
-        if (!$this->hasMultishopEntries() || Shop::getContext() == Shop::CONTEXT_ALL) {
+       
 
             if (empty($this->iso_code)) {
                 $this->iso_code = Language::getIsoById($this->id);
@@ -1382,7 +1313,7 @@ class LanguageCore extends ObjectModel {
 
             }
 
-        }
+        
 
         if (!parent::delete()) {
             return false;

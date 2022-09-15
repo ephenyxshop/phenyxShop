@@ -502,7 +502,7 @@ abstract class DbCore {
         if ($sql instanceof DbQuery) {
             $sql = $sql->build();
         }
-
+       
         $this->result = $this->_query($sql);
 
         if (!$this->result && $this->getNumberError() == 2006) {
@@ -891,12 +891,9 @@ abstract class DbCore {
 
         global $webserviceCall;
 
-        $errno = $this->getNumberError();
+         $errno = $this->getNumberError();
 
-        if ($webserviceCall && $errno) {
-            $dbg = debug_backtrace();
-            WebserviceRequest::getInstance()->setError(500, '[SQL Error] ' . $this->getMsgError() . '. From ' . (isset($dbg[3]['class']) ? $dbg[3]['class'] : '') . '->' . $dbg[3]['function'] . '() Query was : ' . $sql, 97);
-        } else if (_EPH_DEBUG_SQL_ && $errno && !defined('EPH_INSTALLATION_IN_PROGRESS')) {
+        if (_EPH_DEBUG_SQL_ && $errno && !defined('EPH_INSTALLATION_IN_PROGRESS')) {
 
             if ($sql) {
                 throw new PhenyxShopDatabaseException($this->getMsgError() . '<br /><br /><pre>' . $sql . '</pre>');
@@ -904,7 +901,6 @@ abstract class DbCore {
 
             throw new PhenyxShopDatabaseException($this->getMsgError());
         }
-
     }
 
     /**

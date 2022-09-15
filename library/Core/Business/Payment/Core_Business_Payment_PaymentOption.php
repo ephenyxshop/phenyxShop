@@ -1,7 +1,7 @@
 <?php
 
-class Core_Business_Payment_PaymentOption
-{
+class Core_Business_Payment_PaymentOption {
+
     // @codingStandardsIgnoreEnd
 
     protected $callToActionText;
@@ -20,8 +20,8 @@ class Core_Business_Payment_PaymentOption
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function getCallToActionText()
-    {
+    public function getCallToActionText() {
+
         return $this->callToActionText;
     }
 
@@ -35,8 +35,8 @@ class Core_Business_Payment_PaymentOption
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function setCallToActionText($callToActionText)
-    {
+    public function setCallToActionText($callToActionText) {
+
         $this->callToActionText = $callToActionText;
 
         return $this;
@@ -50,8 +50,8 @@ class Core_Business_Payment_PaymentOption
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function getLogo()
-    {
+    public function getLogo() {
+
         return $this->logo;
     }
 
@@ -65,8 +65,8 @@ class Core_Business_Payment_PaymentOption
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function setLogo($logo)
-    {
+    public function setLogo($logo) {
+
         $this->logo = $logo;
 
         return $this;
@@ -80,11 +80,10 @@ class Core_Business_Payment_PaymentOption
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function getAction()
-    {
+    public function getAction() {
+
         return $this->action;
     }
-
 
     /**
      * Set action to be performed by this option
@@ -96,8 +95,8 @@ class Core_Business_Payment_PaymentOption
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function setAction($action)
-    {
+    public function setAction($action) {
+
         $this->action = $action;
 
         return $this;
@@ -109,8 +108,8 @@ class Core_Business_Payment_PaymentOption
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function getMethod()
-    {
+    public function getMethod() {
+
         return $this->method;
     }
 
@@ -122,8 +121,8 @@ class Core_Business_Payment_PaymentOption
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function setMethod($method)
-    {
+    public function setMethod($method) {
+
         $this->method = $method;
 
         return $this;
@@ -137,8 +136,8 @@ class Core_Business_Payment_PaymentOption
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function getInputs()
-    {
+    public function getInputs() {
+
         return $this->inputs;
     }
 
@@ -152,8 +151,8 @@ class Core_Business_Payment_PaymentOption
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function setInputs($inputs)
-    {
+    public function setInputs($inputs) {
+
         $this->inputs = $inputs;
 
         return $this;
@@ -167,8 +166,8 @@ class Core_Business_Payment_PaymentOption
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function getForm()
-    {
+    public function getForm() {
+
         return $this->form;
     }
 
@@ -182,8 +181,8 @@ class Core_Business_Payment_PaymentOption
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function setForm($form)
-    {
+    public function setForm($form) {
+
         $this->form = $form;
 
         return $this;
@@ -197,8 +196,8 @@ class Core_Business_Payment_PaymentOption
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function getModuleName()
-    {
+    public function getModuleName() {
+
         return $this->moduleName;
     }
 
@@ -212,8 +211,8 @@ class Core_Business_Payment_PaymentOption
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function setModuleName($moduleName)
-    {
+    public function setModuleName($moduleName) {
+
         $this->moduleName = $moduleName;
 
         return $this;
@@ -235,8 +234,8 @@ class Core_Business_Payment_PaymentOption
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function convertLegacyOption(array $legacyOption)
-    {
+    public static function convertLegacyOption(array $legacyOption) {
+
         if (!$legacyOption) {
             return null;
         }
@@ -249,10 +248,10 @@ class Core_Business_Payment_PaymentOption
 
         $defaults = [
             'action' => null,
-            'form' => null,
+            'form'   => null,
             'method' => null,
             'inputs' => [],
-            'logo' => null,
+            'logo'   => null,
         ];
 
         foreach ($legacyOption as $option) {
@@ -260,15 +259,16 @@ class Core_Business_Payment_PaymentOption
 
             $newOption = new Core_Business_Payment_PaymentOption();
             $newOption->setCallToActionText($option['cta_text'])
-                      ->setAction($option['action'])
-                      ->setForm($option['form'])
-                      ->setInputs($option['inputs'])
-                      ->setLogo($option['logo'])
-                      ->setMethod($option['method']);
+                ->setAction($option['action'])
+                ->setForm($option['form'])
+                ->setInputs($option['inputs'])
+                ->setLogo($option['logo'])
+                ->setMethod($option['method']);
 
             $newOptions[] = $newOption;
         }
 
         return $newOptions;
     }
+
 }

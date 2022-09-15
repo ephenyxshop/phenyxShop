@@ -601,13 +601,7 @@ class AdminCountriesControllerCore extends AdminController {
 
         ];
 
-        if (Shop::isFeatureActive()) {
-            $this->fields_form['input'][] = [
-                'type'  => 'shop',
-                'label' => $this->l('Shop association'),
-                'name'  => 'checkBoxShopAsso',
-            ];
-        }
+       
 
         $this->fields_form['submit'] = [
             'title' => $this->l('Save'),
@@ -655,7 +649,7 @@ class AdminCountriesControllerCore extends AdminController {
 
             foreach (AddressFormat::getValidateFields($className) as $name) {
                 $fields[] = '<a href="javascript:void(0);" class="addPattern btn btn-default btn-xs" id="' . ($className == 'Address' ? $name : $className . ':' . $name) . '">
-                    <i class="icon-plus-sign"></i>&nbsp;' . ObjectModel::displayFieldName($name, $className) . '</a>';
+                    <i class="icon-plus-sign"></i>&nbsp;' . PhenyxObjectModel::displayFieldName($name, $className) . '</a>';
             }
 
             $htmlTabcontent .= '

@@ -399,13 +399,7 @@ class AdminTaxRulesGroupControllerCore extends AdminController {
             ],
         ];
 
-        if (Shop::isFeatureActive()) {
-            $this->fields_form['input'][] = [
-                'type'  => 'shop',
-                'label' => $this->l('Shop association'),
-                'name'  => 'checkBoxShopAsso',
-            ];
-        }
+        
 
         if (!($obj = $this->loadObject(true))) {
             return '';

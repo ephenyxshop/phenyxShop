@@ -3,11 +3,11 @@
 /**
  * @since 2.1.0.0
  */
-class PaymentModeCore extends ObjectModel {
+class PaymentModeCore extends PhenyxObjectModel {
 
 	// @codingStandardsIgnoreStart
 	/**
-	 * @see ObjectModel::$definition
+	 * @see PhenyxObjectModel::$definition
 	 */
 	public static $definition = [
 		'table'     => 'payment_mode',
@@ -44,7 +44,7 @@ class PaymentModeCore extends ObjectModel {
 	 *
 	 * @param int|null $id
 	 * @param int|null $idLang
-	 * @param int|null $idShop
+	 * @param int|null $idCompany
 	 *
 	 * @since 2.1.0.0
 	 */

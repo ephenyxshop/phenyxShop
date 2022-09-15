@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class PhenyxShopLoggerCore extends ObjectModel {
+class PhenyxShopLoggerCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     protected static $is_present = [];
@@ -30,7 +30,7 @@ class PhenyxShopLoggerCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'log',

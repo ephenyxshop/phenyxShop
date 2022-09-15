@@ -1,7 +1,7 @@
 <?php
 
 
-class TaxRuleCore extends ObjectModel
+class TaxRuleCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     public $id_tax_rules_group;
@@ -15,7 +15,7 @@ class TaxRuleCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'tax_rule',

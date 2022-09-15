@@ -1,6 +1,6 @@
 <?php
 
-class TopMenuCore extends ObjectModel {
+class TopMenuCore extends PhenyxObjectModel {
 
     protected static $_forceCompile;
     protected static $_caching;
@@ -13,7 +13,7 @@ class TopMenuCore extends ObjectModel {
     public $id_cms_category;
     public $id_specific_page;
 	public $custom_hook;
-    public $id_shop;
+    public $id_company;
     public $name;
     public $link;
     public $active = 1;
@@ -588,7 +588,7 @@ class TopMenuCore extends ObjectModel {
             }
 
             if ($cache) {
-                $adtmCacheId = sprintf('ADTM|%d|%s|%d|%s', $this->context->cookie->id_lang, (Validate::isLoadedObject($this->context->customer) && $this->context->customer->isLogged()), (Shop::isFeatureActive() ? $this->context->shop->id : 0));
+                $adtmCacheId = sprintf('ADTM|%d|%s|%d|%s', $this->context->cookie->id_lang, (Validate::isLoadedObject($this->context->customer) && $this->context->customer->isLogged()));
                 return $this->display(_THEMES_DIR_ . 'menu/ephtopmenu_search.tpl', $adtmCacheId);
             }
 
@@ -983,34 +983,7 @@ class TopMenuCore extends ObjectModel {
 
     public static function addSqlAssociation($table, $alias, $identifier, $inner_join = true, $on = null, $shops = false) {
 
-        if (Shop::isFeatureActive()) {
-
-            if ($shops == 'all') {
-                $ids_shop = array_values(Shop::getCompleteListOfShopsID());
-            } else
-
-            if (is_array($shops) && count($shops)) {
-                $ids_shop = array_values($shops);
-            } else
-
-            if (is_numeric($shops)) {
-                $ids_shop = [$shops];
-            } else {
-                $ids_shop = array_values(Shop::getContextListShopID());
-            }
-
-            $table_alias = $alias . '_shop';
-
-            if (strpos($table, '.') !== false) {
-                list($table_alias, $table) = explode('.', $table);
-            }
-
-            return ($inner_join ? ' INNER' : ' LEFT') . ' JOIN `' . _DB_PREFIX_ . $table . '_shop` ' . $table_alias . '
-                        ON ' . $table_alias . '.' . $identifier . ' = ' . $alias . '.' . $identifier . '
-                        AND ' . $table_alias . '.id_shop IN (' . implode(', ', array_map('intval', $ids_shop)) . ') '
-                . ($on ? ' AND ' . $on : '');
-        }
-
+        
         return '';
     }
 
@@ -1240,7 +1213,6 @@ class TopMenuCore extends ObjectModel {
                 'default_language'  => (int) Configuration::get('EPH_LANG_DEFAULT'),
                 'languages'         => Language::getLanguages(false),
                 'options'           => $configOptions,
-                'shopFeatureActive' => Shop::isFeatureActive(),
             ]
         );
 

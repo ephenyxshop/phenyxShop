@@ -1,5 +1,5 @@
 <?php
-
+use WebPConvert\WebPConvert;
 /**
  * Class AdminImagesControllerCore
  *
@@ -125,7 +125,7 @@ class AdminImagesControllerCore extends AdminController {
                             ],
                         ],
                         'identifier' => 'id',
-                        'visibility' => Shop::CONTEXT_ALL,
+                        
                     ],
                     'EPH_PRODUCT_PICTURE_MAX_SIZE' => [
                         'title'      => $this->l('Maximum file size of product customization pictures'),
@@ -135,7 +135,7 @@ class AdminImagesControllerCore extends AdminController {
                         'cast'       => 'intval',
                         'type'       => 'text',
                         'suffix'     => $this->l('bytes'),
-                        'visibility' => Shop::CONTEXT_ALL,
+                        
                     ],
                     'EPH_PRODUCT_PICTURE_WIDTH'    => [
                         'title'      => $this->l('Product picture width'),
@@ -146,7 +146,7 @@ class AdminImagesControllerCore extends AdminController {
                         'type'       => 'text',
                         'width'      => 'px',
                         'suffix'     => $this->l('pixels'),
-                        'visibility' => Shop::CONTEXT_ALL,
+                        
                     ],
                     'EPH_PRODUCT_PICTURE_HEIGHT'   => [
                         'title'      => $this->l('Product picture height'),
@@ -157,7 +157,7 @@ class AdminImagesControllerCore extends AdminController {
                         'type'       => 'text',
                         'height'     => 'px',
                         'suffix'     => $this->l('pixels'),
-                        'visibility' => Shop::CONTEXT_ALL,
+                        
                     ],
                     'EPH_HIGHT_DPI'                => [
                         'type'       => 'bool',
@@ -166,7 +166,7 @@ class AdminImagesControllerCore extends AdminController {
                         'is_bool'    => true,
                         'hint'       => $this->l('This will generate an additional file for each image (thus doubling your total amount of images). Resolution of these images will be twice higher.'),
                         'desc'       => $this->l('Enable to optimize the display of your images on high pixel density screens.'),
-                        'visibility' => Shop::CONTEXT_ALL,
+                        
                     ],
 
                 ],
@@ -309,7 +309,7 @@ class AdminImagesControllerCore extends AdminController {
                             ],
                         ],
                         'identifier' => 'id',
-                        'visibility' => Shop::CONTEXT_ALL,
+                        
                     ],
                     'WEBP_CONFIG_COMMON_METHOD'    => [
                         'title'    => $this->l('Image format'),
@@ -471,7 +471,6 @@ class AdminImagesControllerCore extends AdminController {
                 'cast'       => 'intval',
                 'required'   => false,
                 'type'       => 'bool',
-                'visibility' => Shop::CONTEXT_ALL,
             ];
         }
 
@@ -574,15 +573,19 @@ class AdminImagesControllerCore extends AdminController {
     public function generateImageConfigurator() {
 		
 		$tabs = [];
-		$tabs['Options des Images'] = [
+		$tabs[$this->l('General Image Options')] = [
 			'key'		=> 'optImage',
 			'content'	=> $this->generateOptions('images')
 		];
-		$tabs['Gestion WebP'] = [
+		$tabs[$this->l('Regenerate Image')] = [
+			'key'		=> 'regenerate',
+			'content'	=> $this->generateRegenerate()
+		];
+        $tabs[$this->l('WebP Management')] = [
 			'key'		=> 'webP',
 			'content'	=> $this->generateOptions('webPconfig')
 		];
-		$tabs['Conversion WebP'] = [
+		$tabs[$this->l('WebP Conversion')] = [
 			'key'		=> 'webPconversion',
 			'content'	=> $this->generateOptions('cwebconfig')
 		];
@@ -618,6 +621,32 @@ class AdminImagesControllerCore extends AdminController {
         }
 
         return '';
+    }
+    
+    public function generateRegenerate() {
+        
+         $types = [
+            'categories'    => $this->l('Categories'),
+            'manufacturers' => $this->l('Manufacturers'),
+            'suppliers'     => $this->l('Suppliers'),
+            'products'      => $this->l('Products'),
+            'stores'        => $this->l('Stores'),
+        ];
+
+        $formats = [];
+        foreach ($types as $i => $type) {
+            $formats[$i] = ImageType::getImagesTypes($i);
+        }
+        $data = $this->createTemplate('controllers/images/regenerate.tpl');
+        $this->context->smarty->assign(
+            [
+                'types'   => $types,
+                'formats' => $formats,
+                'image_indexation' => $this->getIndexationStatus(),
+            ]
+        );
+        
+        return $data->fetch();
     }
 
 
@@ -863,8 +892,7 @@ class AdminImagesControllerCore extends AdminController {
    
     public function ajaxProcessRegenerateThumbnails() {
 
-        $request = json_decode(file_get_contents('php://input'));
-        $entityType = $request->entity_type;
+        $entityType = Tools::getValue('entity_type');
 
         if (!$entityType) {
             $this->ajaxDie(json_encode([
@@ -873,7 +901,7 @@ class AdminImagesControllerCore extends AdminController {
             ]));
         } else
 
-        if (!in_array($entityType, ['products', 'categories', 'manufacturers', 'suppliers', 'scenes', 'stores'])) {
+        if (!in_array($entityType, ['products', 'categories', 'manufacturers', 'suppliers', 'stores'])) {
             $this->ajaxDie(json_encode([
                 'hasError' => true,
                 'errors'   => [$this->l('Wrong entity type')],
@@ -881,8 +909,7 @@ class AdminImagesControllerCore extends AdminController {
         }
 
         try {
-            $idEntity = $this->getNextEntityId($request->entity_type);
-
+            $idEntity = $this->getNextEntityId($entityType);
             if (!$idEntity) {
                 $this->ajaxDie(json_encode([
                     'hasError'    => true,
@@ -891,27 +918,29 @@ class AdminImagesControllerCore extends AdminController {
                 ]));
             }
 
-            $this->regenerateNewImage($request->entity_type, $idEntity);
-            Configuration::updateValue('EPH_IMAGES_LAST_UPD_' . strtoupper($request->entity_type), $idEntity);
+            $result = $this->regenerateNewImage($entityType, $idEntity);
+            if($result) {
+                Configuration::updateValue('EPH_IMAGES_LAST_UPD_' . strtoupper($entityType), $idEntity);
+            }
+            
         } catch (Exception $e) {
             $this->errors[] = $e->getMessage();
         }
 
         $indexationStatus = $this->getIndexationStatus();
-
         if (!$indexationStatus || !array_sum(array_column(array_values($indexationStatus), 'indexed'))) {
             // First run, regenerate no picture images, too
+           
             $process = [
                 'categories'    => _EPH_CAT_IMG_DIR_,
                 'manufacturers' => _EPH_MANU_IMG_DIR_,
                 'suppliers'     => _EPH_SUPP_IMG_DIR_,
-                'scenes'        => _EPH_SCENE_IMG_DIR_,
                 'products'      => _EPH_PROD_IMG_DIR_,
                 'stores'        => _EPH_STORE_IMG_DIR_,
             ];
-
+            $result = true;
             foreach ($process as $type => $dir) {
-                $this->_regenerateNoPictureImages(
+                $result = $this->_regenerateNoPictureImages(
                     $dir,
                     ImageType::getImagesTypes($type),
                     Language::getLanguages(false)
@@ -919,12 +948,19 @@ class AdminImagesControllerCore extends AdminController {
             }
 
         }
-
-        $this->ajaxDie(json_encode([
-            'hasError'    => true,
-            'errors'      => $this->errors,
-            'indexStatus' => $indexationStatus,
-        ]));
+        if($result) {
+            $this->ajaxDie(json_encode([
+                'hasError'    => false,
+                'indexStatus' => $indexationStatus,
+            ]));
+        } else {
+            $this->ajaxDie(json_encode([
+                'hasError'    => true,
+                'errors'      => $this->errors,
+                'indexStatus' => $indexationStatus,
+            ]));
+        }
+        
     }
 
     /**
@@ -938,7 +974,6 @@ class AdminImagesControllerCore extends AdminController {
             ['type' => 'categories', 'dir' => _EPH_CAT_IMG_DIR_],
             ['type' => 'manufacturers', 'dir' => _EPH_MANU_IMG_DIR_],
             ['type' => 'suppliers', 'dir' => _EPH_SUPP_IMG_DIR_],
-            ['type' => 'scenes', 'dir' => _EPH_SCENE_IMG_DIR_],
             ['type' => 'products', 'dir' => _EPH_PROD_IMG_DIR_],
             ['type' => 'stores', 'dir' => _EPH_STORE_IMG_DIR_],
         ];
@@ -973,7 +1008,6 @@ class AdminImagesControllerCore extends AdminController {
             ['type' => 'categories', 'dir' => _EPH_CAT_IMG_DIR_],
             ['type' => 'manufacturers', 'dir' => _EPH_MANU_IMG_DIR_],
             ['type' => 'suppliers', 'dir' => _EPH_SUPP_IMG_DIR_],
-            ['type' => 'scenes', 'dir' => _EPH_SCENE_IMG_DIR_],
             ['type' => 'products', 'dir' => _EPH_PROD_IMG_DIR_],
             ['type' => 'stores', 'dir' => _EPH_STORE_IMG_DIR_],
         ];
@@ -1007,7 +1041,6 @@ class AdminImagesControllerCore extends AdminController {
             ['type' => 'categories', 'dir' => _EPH_CAT_IMG_DIR_],
             ['type' => 'manufacturers', 'dir' => _EPH_MANU_IMG_DIR_],
             ['type' => 'suppliers', 'dir' => _EPH_SUPP_IMG_DIR_],
-            ['type' => 'scenes', 'dir' => _EPH_SCENE_IMG_DIR_],
             ['type' => 'products', 'dir' => _EPH_PROD_IMG_DIR_],
             ['type' => 'stores', 'dir' => _EPH_STORE_IMG_DIR_],
         ];
@@ -1091,7 +1124,7 @@ class AdminImagesControllerCore extends AdminController {
 
         $return = [
             'success' => true,
-            'message' => $this->l('Le type d‘image a été supprimé avec succès'),
+            'message' => $this->l('Image Type has been deleted successfully'),
         ];
 
         die(Tools::jsonEncode($return));
@@ -1104,7 +1137,7 @@ class AdminImagesControllerCore extends AdminController {
 
         $return = [
             'success' => true,
-            'message' => $this->l('Les images WepP ont supprimées avec succès'),
+            'message' => $this->l('WebP Image has been deleted successfully'),
         ];
 
         die(Tools::jsonEncode($return));
@@ -1188,33 +1221,23 @@ class AdminImagesControllerCore extends AdminController {
 
     protected function regenerateNewImage($entityType, $idEntity) {
 
+       
         $process = [
             'categories'    => _EPH_CAT_IMG_DIR_,
             'manufacturers' => _EPH_MANU_IMG_DIR_,
             'suppliers'     => _EPH_SUPP_IMG_DIR_,
-            'scenes'        => _EPH_SCENE_IMG_DIR_,
             'products'      => _EPH_PROD_IMG_DIR_,
             'stores'        => _EPH_STORE_IMG_DIR_,
         ];
-        $type = ImageType::getImagesTypes($entityType);
-
-        $watermarkModules = Db::getInstance()->executeS(
-            (new DbQuery())
-                ->select('m.`name`')
-                ->from('module', 'm')
-                ->leftJoin('hook_module', 'hm', 'hm.`id_module` = m.`id_module`')
-                ->leftJoin('hook', 'h', 'hm.`id_hook` = h.`id_hook`')
-                ->where('h.`name` = \'actionWatermark\'')
-                ->where('m.`active` = 1')
-        );
-
+        $type = ImageType::getImagesTypes($entityType);        
+        $config = WebPGeneratorConfig::getConverterSettings();
         if ($entityType == 'products') {
-
+           
             $productsImages = array_column(
-                Image::getImages(null, $idEntity),
+                Image::getImages(Context::getContext()->language->id, $idEntity),
                 'id_image'
             );
-
+            $this->errors = [];
             foreach ($productsImages as $idImage) {
                 $imageObj = new Image($idImage);
                 $existingImage = $process[$entityType] . $imageObj->getExistingImgPath() . '.jpg';
@@ -1222,27 +1245,28 @@ class AdminImagesControllerCore extends AdminController {
                 if (count($type) > 0) {
 
                     foreach ($type as $imageType) {
+                        
                         $newFile = $process[$entityType] . $imageObj->getExistingImgPath() . '-' . stripslashes($imageType['name']) . '.jpg';
+                        $webPFile = $process[$entityType] . $imageObj->getExistingImgPath() . '-' . stripslashes($imageType['name']) . '.webp';
 
                         if (file_exists($newFile) && !unlink($newFile)) {
-                            $this->errors[] = $this->l('Unable to generate new file');
+                            $this->errors[] = $this->l('Unable to delete old jpg file');
                         }
-
+                        if (file_exists($webPFile) && !unlink($webPFile)) {
+                            $this->errors[] = $this->l('Unable to delete old webP file');
+                        }
                         if (!file_exists($newFile)) {
-
+                           
                             if (!ImageManager::resize($existingImage, $newFile, (int) ($imageType['width']), (int) ($imageType['height']))) {
                                 $this->errors[] = sprintf($this->l('Original image is corrupt (%s) or bad permission on folder'), $existingImage);
                             }
-
-                            if (ImageManager::webpSupport()) {
-                                ImageManager::resize(
-                                    $existingImage,
-                                    $process[$entityType] . $imageObj->getExistingImgPath() . '-' . stripslashes($imageType['name']) . '.webp',
-                                    (int) $imageType['width'],
-                                    (int) $imageType['height'],
-                                    'webp'
-                                );
+                            
+                            try {
+                                WebPConvert::convert($newFile, $webPFile, $config);
+                            } catch (Exception $exception) {
+			                     $this->errors[] = $exception->getMessage();           
                             }
+                            
 
                         }
 
@@ -1250,32 +1274,11 @@ class AdminImagesControllerCore extends AdminController {
 
                 }
 
-                if (is_array($watermarkModules) && count($watermarkModules)) {
-
-                    if (file_exists($process[$entityType] . $imageObj->getExistingImgPath() . '.jpg')) {
-
-                        foreach ($watermarkModules as $module) {
-                            $moduleInstance = Module::getInstanceByName($module['name']);
-
-                            if ($moduleInstance && is_callable([$moduleInstance, 'hookActionWatermark'])) {
-                                call_user_func([$moduleInstance, 'hookActionWatermark'], [
-                                    'id_image'   => $imageObj->id,
-                                    'id_product' => $imageObj->id_product,
-                                    'image_type' => $type,
-                                ]);
-                            }
-
-                        }
-
-                    }
-
-                }
+                
 
             }
-
-        } else
-
-        if ($entityType == 'users') {
+            
+            
 
         } else {
 
@@ -1296,12 +1299,18 @@ class AdminImagesControllerCore extends AdminController {
                 }
 
                 $newFile = $newDir . substr($image, 0, -4) . '-' . stripslashes($imageType['name']) . '.jpg';
+                
+                $webPFile = $newDir . substr($image, 0, -4) . '-' . stripslashes($imageType['name']) . '.webp';
 
                 if (file_exists($newFile) && !unlink($newFile)) {
                     $this->errors[] = sprintf(
                         $this->l('Can\'t remove old image %s.'),
                         $newFile
                     );
+                }
+                
+                if (file_exists($webPFile) && !unlink($webPFile)) {
+                    $this->errors[] = $this->l('Unable to delete old webP file');
                 }
 
                 if (file_exists($dir . $image) && !file_exists($newFile)) {
@@ -1311,7 +1320,7 @@ class AdminImagesControllerCore extends AdminController {
                             $this->l('Source file for %s id %s is corrupt: %s'),
                             $entityType,
                             $idEntity,
-                            str_replace(_EPH_ROOT_ADMIN_DIR_, '', $dir . $image)
+                            str_replace(_EPH_ROOT_DIR_, '', $dir . $image)
                         );
                     } else {
                         $success = ImageManager::resize(
@@ -1333,26 +1342,20 @@ class AdminImagesControllerCore extends AdminController {
                             }
 
                         }
-
-                        if (ImageManager::webpSupport()) {
-                            $success &= ImageManager::resize(
-                                $dir . $image,
-                                $newDir . substr($image, 0, -4) . '-' . stripslashes($imageType['name']) . '.webp',
-                                (int) $imageType['width'],
-                                (int) $imageType['height'],
-                                'webp'
-                            );
-
-                            if (ImageManager::retinaSupport()) {
-                                $success &= ImageManager::resize(
-                                    $dir . $image,
-                                    $newDir . substr($image, 0, -4) . '-' . stripslashes($imageType['name']) . '2x.webp',
-                                    (int) $imageType['width'] * 2,
-                                    (int) $imageType['height'] * 2
-                                );
-                            }
-
+                        try {
+                            WebPConvert::convert($newFile, $webPFile, $config);
+                        } catch (Exception $exception) {
+			                 $this->errors[] = $exception->getMessage();           
                         }
+                        if (ImageManager::retinaSupport()) {
+                            $webPFile = $newDir . substr($image, 0, -4) . '-' . stripslashes($imageType['name']) . '2x.webp';
+                            try {
+                                WebPConvert::convert($newFile, $webPFile, $config);
+                            } catch (Exception $exception) {
+			                     $this->errors[] = $exception->getMessage();           
+                            }
+                        }
+                        
 
                         if (!$success) {
                             $this->errors[] = $this->l('Unable to resize image');
@@ -1365,7 +1368,13 @@ class AdminImagesControllerCore extends AdminController {
             }
 
         }
-
+        if(count($this->errors)) {
+            $this->ajaxDie(json_encode([
+                'hasError'    => true,
+                'errors'      => $this->errors,
+            ]));
+        }
+        return true;
     }
 
     
@@ -1392,6 +1401,7 @@ class AdminImagesControllerCore extends AdminController {
    
     protected function _regenerateNewImages($dir, $type, $productsImages = false) {
 
+       
         if (!is_dir($dir)) {
             return false;
         }
@@ -1399,6 +1409,7 @@ class AdminImagesControllerCore extends AdminController {
         $generateHighDpiImages = (bool) Configuration::get('EPH_HIGHT_DPI');
 
         if (!$productsImages) {
+            
             $formattedThumbScene = ImageType::getFormatedName('thumb_scene');
             $formattedMedium = ImageType::getFormatedName('medium');
 
@@ -1456,16 +1467,15 @@ class AdminImagesControllerCore extends AdminController {
 
         } else {
 
+            
             foreach (Image::getAllImages() as $image) {
                 $imageObj = new Image($image['id_image']);
                 $existingImg = $dir . $imageObj->getExistingImgPath() . '.jpg';
-
                 if (file_exists($existingImg) && filesize($existingImg)) {
-
                     foreach ($type as $imageType) {
 
                         if (!file_exists($dir . $imageObj->getExistingImgPath() . '-' . stripslashes($imageType['name']) . '.jpg')) {
-
+                           
                             if (!ImageManager::resize($existingImg, $dir . $imageObj->getExistingImgPath() . '-' . stripslashes($imageType['name']) . '.jpg', (int) $imageType['width'], (int) $imageType['height'])) {
                                 $this->errors[] = sprintf(Tools::displayError('Original image is corrupt (%s) for product ID %2$d or bad permission on folder'), $existingImg, (int) $imageObj->id_product);
                             }
@@ -1579,7 +1589,7 @@ class AdminImagesControllerCore extends AdminController {
      */
     protected function _regenerateNoPictureImages($dir, $type, $languages) {
 
-        $errors = false;
+        $success = true;
 
         foreach ($type as $imageType) {
 
@@ -1593,7 +1603,7 @@ class AdminImagesControllerCore extends AdminController {
                 if (!file_exists($dir . $language['iso_code'] . '-default-' . stripslashes($imageType['name']) . '.jpg')) {
 
                     if (!ImageManager::resize($file, $dir . $language['iso_code'] . '-default-' . stripslashes($imageType['name']) . '.jpg', (int) $imageType['width'], (int) $imageType['height'])) {
-                        $errors = true;
+                        $success = false;
                     }
 
                     if (ImageManager::webpSupport()) {
@@ -1609,7 +1619,7 @@ class AdminImagesControllerCore extends AdminController {
                     if (ImageManager::retinaSupport()) {
 
                         if (!ImageManager::resize($file, $dir . $language['iso_code'] . '-default-' . stripslashes($imageType['name']) . '2x.jpg', (int) $imageType['width'] * 2, (int) $imageType['height'] * 2)) {
-                            $errors = true;
+                            $success = false;
                         }
 
                         if (ImageManager::webpSupport()) {
@@ -1630,7 +1640,7 @@ class AdminImagesControllerCore extends AdminController {
 
         }
 
-        return $errors;
+        return $success;
     }
 
     /**
@@ -1663,34 +1673,7 @@ class AdminImagesControllerCore extends AdminController {
     }
 
     
-    public function initRegenerate() {
-
-        $types = [
-            'categories'    => $this->l('Categories'),
-            'manufacturers' => $this->l('Manufacturers'),
-            'suppliers'     => $this->l('Suppliers'),
-            'scenes'        => $this->l('Scenes'),
-            'products'      => $this->l('Products'),
-            'stores'        => $this->l('Stores'),
-            'users'         => $this->l('Member'),
-            'cover_users'   => $this->l('Cover member'),
-            'wall'          => $this->l('Wall Picture'),
-        ];
-
-        $formats = [];
-
-        foreach ($types as $i => $type) {
-            $formats[$i] = ImageType::getImagesTypes($i);
-        }
-
-        $this->context->smarty->assign(
-            [
-                'types'   => $types,
-                'formats' => $formats,
-            ]
-        );
-    }
-
+    
    
     public function initMoveImages() {
 
@@ -1766,20 +1749,7 @@ class AdminImagesControllerCore extends AdminController {
                             ->select('COUNT(*)')
                             ->from(bqSQL(Manufacturer::$definition['table']))
                     ),
-                ],
-                'scenes'        => [
-                    'indexed' => (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
-                        (new DbQuery())
-                            ->select('COUNT(*)')
-                            ->from('scene_category')
-                            ->where('`id_scene` <= ' . (int) Configuration::get('EPH_IMAGES_LAST_UPD_SCENES'))
-                    ),
-                    'total'   => (int) Db::getInstance()->getValue(
-                        (new DbQuery())
-                            ->select('COUNT(*)')
-                            ->from('scene_category')
-                    ),
-                ],
+                ],                
                 'stores'        => [
                     'indexed' => (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                         (new DbQuery())
@@ -1794,19 +1764,7 @@ class AdminImagesControllerCore extends AdminController {
                     ),
                 ],
 
-                'users'         => [
-                    'indexed' => (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
-                        (new DbQuery())
-                            ->select('COUNT(*)')
-                            ->from(bqSQL(Customer::$definition['table']))
-                            ->where('`' . bqSQL(Customer::$definition['primary']) . '` <= ' . (int) Configuration::get('EPH_IMAGES_LAST_UPD_MEMBERS'))
-                    ),
-                    'total'   => (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
-                        (new DbQuery())
-                            ->select('COUNT(*)')
-                            ->from(bqSQL(Customer::$definition['table']))
-                    ),
-                ],
+                
             ];
         } catch (Exception $e) {
             return false;
@@ -1838,10 +1796,8 @@ class AdminImagesControllerCore extends AdminController {
         $image = Tools::getValue('image');
         $baseType = (string) Tools::getValue('type');
         $currentIndex = (int) Tools::getValue('currentIndex', 0);
-		$file = fopen("testWebpRegenerate.txt","a");
-		fwrite($file, $image .PHP_EOL);
+		
 		$result = Tools::resizeImg($image);
-		fwrite($file, $result.PHP_EOL);
         if($result) {
 			WebPGeneratorConfig::updateRegenerationProgress($baseType, $currentIndex);
         	$this->ajaxDie([
@@ -2030,19 +1986,19 @@ class AdminImagesControllerCore extends AdminController {
                 ],
                 [
                     'type'     => 'switch',
-                    'label'    => $this->l('Formations'),
-                    'name'     => 'esucation',
+                    'label'    => $this->l('Products'),
+                    'name'     => 'products',
                     'required' => false,
                     'is_bool'  => true,
                     'hint'     => $this->l('This type will be used for Product images.'),
                     'values'   => [
                         [
-                            'id'    => 'esucation_on',
+                            'id'    => 'products_on',
                             'value' => 1,
                             'label' => $this->l('Enabled'),
                         ],
                         [
-                            'id'    => 'esucation_off',
+                            'id'    => 'products_off',
                             'value' => 0,
                             'label' => $this->l('Disabled'),
                         ],
@@ -2050,27 +2006,87 @@ class AdminImagesControllerCore extends AdminController {
                 ],
                 [
                     'type'     => 'switch',
-                    'label'    => $this->l('Utilisateurs'),
-                    'name'     => 'users',
+                    'label'    => $this->l('Categories'),
+                    'name'     => 'categories',
                     'required' => false,
                     'class'    => 't',
                     'is_bool'  => true,
                     'hint'     => $this->l('This type will be used for Category images.'),
                     'values'   => [
                         [
-                            'id'    => 'users_on',
+                            'id'    => 'categories_on',
                             'value' => 1,
                             'label' => $this->l('Enabled'),
                         ],
                         [
-                            'id'    => 'users_off',
+                            'id'    => 'categories_off',
                             'value' => 0,
                             'label' => $this->l('Disabled'),
                         ],
                     ],
                 ],
-
-            ],
+                [
+                    'type'     => 'switch',
+                    'label'    => $this->l('Manufacturers'),
+                    'name'     => 'manufacturers',
+                    'required' => false,
+                    'is_bool'  => true,
+                    'hint'     => $this->l('This type will be used for Manufacturer images.'),
+                    'values'   => [
+                        [
+                            'id'    => 'manufacturers_on',
+                            'value' => 1,
+                            'label' => $this->l('Enabled'),
+                        ],
+                        [
+                            'id'    => 'manufacturers_off',
+                            'value' => 0,
+                            'label' => $this->l('Disabled'),
+                        ],
+                    ],
+                ],
+                [
+                    'type'     => 'switch',
+                    'label'    => $this->l('Suppliers'),
+                    'name'     => 'suppliers',
+                    'required' => false,
+                    'is_bool'  => true,
+                    'hint'     => $this->l('This type will be used for Supplier images.'),
+                    'values'   => [
+                        [
+                            'id'    => 'suppliers_on',
+                            'value' => 1,
+                            'label' => $this->l('Enabled'),
+                        ],
+                        [
+                            'id'    => 'suppliers_off',
+                            'value' => 0,
+                            'label' => $this->l('Disabled'),
+                        ],
+                    ],
+                ],
+                
+                [
+                    'type'     => 'switch',
+                    'label'    => $this->l('Stores'),
+                    'name'     => 'stores',
+                    'required' => false,
+                    'is_bool'  => true,
+                    'hint'     => $this->l('This type will be used for Store images.'),
+                    'values'   => [
+                        [
+                            'id'    => 'stores_on',
+                            'value' => 1,
+                            'label' => $this->l('Enabled'),
+                        ],
+                        [
+                            'id'    => 'stores_off',
+                            'value' => 0,
+                            'label' => $this->l('Disabled'),
+                        ],
+                    ],
+                ],
+                ],
             'submit' => [
                 'title' => $this->l('Save'),
             ],

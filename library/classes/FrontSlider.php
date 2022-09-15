@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class FrontSliderCore extends ObjectModel {
+class FrontSliderCore extends PhenyxObjectModel {
 
     public $author;
     public $name;
@@ -22,7 +22,7 @@ class FrontSliderCore extends ObjectModel {
 	public $GLOBALS = [];
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'layer_slider',

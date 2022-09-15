@@ -1,6 +1,6 @@
 <?php
 
-class Sepa extends ObjectModel {
+class Sepa extends PhenyxObjectModel {
 
     public $id;
 

@@ -131,18 +131,14 @@ class HelperCore {
         ];
 
         if (Tools::isSubmit('id_shop')) {
-            $idShop = Tools::getValue('id_shop');
+            $idCompany = Tools::getValue('id_shop');
         } else
-        if (Context::getContext()->shop->id) {
-            $idShop = Context::getContext()->shop->id;
+        if (Context::getContext()->company->id) {
+            $idCompany = Context::getContext()->company->id;
         } else
-        if (!Shop::isFeatureActive()) {
-            $idShop = Configuration::get('EPH_SHOP_DEFAULT');
-        } else {
-            $idShop = 0;
-        }
+        $idCompany = Configuration::get('EPH_SHOP_DEFAULT');
 
-        $shop = new Shop($idShop);
+        $shop = new Company($idCompany);
         $rootCategory = Category::getRootCategory(null, $shop);
         $disabledCategories[] = (int) Configuration::get('EPH_ROOT_CATEGORY');
 
@@ -258,74 +254,7 @@ class HelperCore {
         return $html;
     }
 
-    /**
-     * Render shop list
-     *
-     * @return string
-     *
-     * @deprecated deprecated since 1.0.0 use HelperShop->getRenderedShopList
-     * @throws PhenyxShopException
-     */
-    public static function renderShopList() {
-
-        Tools::displayAsDeprecated();
-
-        if (!Shop::isFeatureActive() || Shop::getTotalShops(false, null) < 2) {
-            return null;
-        }
-
-        $tree = Shop::getTree();
-        $context = Context::getContext();
-
-        // Get default value
-        $shopContext = Shop::getContext();
-
-        if ($shopContext == Shop::CONTEXT_ALL || ($context->controller->multishop_context_group == false && $shopContext == Shop::CONTEXT_GROUP)) {
-            $value = '';
-        } else
-        if ($shopContext == Shop::CONTEXT_GROUP) {
-            $value = 'g-' . Shop::getContextShopGroupID();
-        } else {
-            $value = 's-' . Shop::getContextShopID();
-        }
-
-        // Generate HTML
-        $url = $_SERVER['REQUEST_URI'] . (($_SERVER['QUERY_STRING']) ? '&' : '?') . 'setShopContext=';
-        // $html = '<a href="#"><i class="icon-home"></i> '.$shop->name.'</a>';
-        $html = '<select class="shopList" onchange="location.href = \'' . htmlspecialchars($url) . '\'+$(this).val();">';
-        $html .= '<option value="" class="first">' . Translate::getAdminTranslation('All shops') . '</option>';
-
-        foreach ($tree as $groupId => $groupData) {
-
-            if ((!isset($context->controller->multishop_context) || $context->controller->multishop_context & Shop::CONTEXT_GROUP)) {
-                $html .= '<option class="group" value="g-' . $groupId . '"' . (((empty($value) && $shopContext == Shop::CONTEXT_GROUP) || $value == 'g-' . $groupId) ? ' selected="selected"' : '') . ($context->controller->multishop_context_group == false ? ' disabled="disabled"' : '') . '>' . Translate::getAdminTranslation('Group:') . ' ' . htmlspecialchars($groupData['name']) . '</option>';
-            } else {
-                $html .= '<optgroup class="group" label="' . Translate::getAdminTranslation('Group:') . ' ' . htmlspecialchars($groupData['name']) . '"' . ($context->controller->multishop_context_group == false ? ' disabled="disabled"' : '') . '>';
-            }
-
-            if (!isset($context->controller->multishop_context) || $context->controller->multishop_context & Shop::CONTEXT_SHOP) {
-
-                foreach ($groupData['shops'] as $shopId => $shopData) {
-
-                    if ($shopData['active']) {
-                        $html .= '<option value="s-' . $shopId . '" class="shop"' . (($value == 's-' . $shopId) ? ' selected="selected"' : '') . '>' . ($context->controller->multishop_context_group == false ? htmlspecialchars($groupData['name']) . ' - ' : '') . $shopData['name'] . '</option>';
-                    }
-
-                }
-
-            }
-
-            if (!(!isset($context->controller->multishop_context) || $context->controller->multishop_context & Shop::CONTEXT_GROUP)) {
-                $html .= '</optgroup>';
-            }
-
-        }
-
-        $html .= '</select>';
-
-        return $html;
-    }
-
+    
     /**
      * @param string $tpl
      *

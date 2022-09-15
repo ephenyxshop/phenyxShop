@@ -5,17 +5,16 @@
  *
  * @since 1.8.1.0
  */
-class CategoryCore extends ObjectModel {
+class CategoryCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'          => 'category',
         'primary'        => 'id_category',
-        'multilang'      => true,
-        
+        'multilang'      => true,        
         'fields'         => [
             'nleft'            => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'],
             'nright'           => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'],
@@ -23,7 +22,6 @@ class CategoryCore extends ObjectModel {
             'active'           => ['type' => self::TYPE_BOOL, 'validate' => 'isBool', 'required' => true],
             'display_from_sub' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
             'id_parent'        => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'],
-            'id_shop_default'  => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],
             'is_root_category' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
             'position'         => ['type' => self::TYPE_INT],
             'date_add'         => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
@@ -77,23 +75,11 @@ class CategoryCore extends ObjectModel {
     /** @var bool is Category Root */
     public $is_root_category;
     /** @var int */
-    public $id_shop_default;
+    
     public $groupBox;
     /** @var string id_image is the category ID when an image exists and 'default' otherwise */
     public $id_image = 'default';
-    protected $webserviceParameters = [
-        'objectsNodeName' => 'categories',
-        'hidden_fields'   => ['nleft', 'nright', 'groupBox'],
-        'fields'          => [
-            'id_parent'             => ['xlink_resource' => 'categories'],
-            'level_depth'           => ['setter' => false],
-            'nb_products_recursive' => ['getter' => 'getWsNbProductsRecursive', 'setter' => false],
-        ],
-        'associations'    => [
-            'categories' => ['getter' => 'getChildrenWs', 'resource' => 'category'],
-            'products'   => ['getter' => 'getProductsWs', 'resource' => 'product'],
-        ],
-    ];
+    
     // @codingStandardsIgnoreEnd
 
     /**
@@ -101,7 +87,7 @@ class CategoryCore extends ObjectModel {
      *
      * @param null $idCategory
      * @param null $idLang
-     * @param null $idShop
+     * @param null $idCompany
      *
      * @since   1.8.1.0
      * @version 1.8.5.0
@@ -363,7 +349,7 @@ class CategoryCore extends ObjectModel {
      * @since   1.8.1.0
      * @version 1.8.5.0
      */
-    public static function getRootCategory($idLang = null, Shop $shop = null) {
+    public static function getRootCategory($idLang = null, Company $shop = null) {
 
         $context = Context::getContext();
 
@@ -373,11 +359,7 @@ class CategoryCore extends ObjectModel {
 
         if (!$shop) {
 
-            if (Shop::isFeatureActive() && Shop::getContext() != Shop::CONTEXT_SHOP) {
-                $shop = new Shop(Configuration::get('EPH_SHOP_DEFAULT'));
-            } else {
-                $shop = $context->shop;
-            }
+            $shop = $context->company;
 
         } else {
             return new Category($shop->getCategory(), $idLang);
@@ -385,11 +367,7 @@ class CategoryCore extends ObjectModel {
 
         $isMoreThanOneRootCategory = count(Category::getCategoriesWithoutParent()) > 1;
 
-        if (Shop::isFeatureActive() && $isMoreThanOneRootCategory && Shop::getContext() != Shop::CONTEXT_SHOP) {
-            $category = Category::getTopCategory($idLang);
-        } else {
-            $category = new Category($shop->getCategory(), $idLang);
-        }
+        $category = new Category($shop->getCategory(), $idLang);
 
         return $category;
     }
@@ -521,7 +499,7 @@ class CategoryCore extends ObjectModel {
      * @param int  $idLang Language ID
      * @param bool $active return only active categories
      *
-     * @param bool $idShop
+     * @param bool $idCompany
      *
      * @return array categories
      *
@@ -530,9 +508,9 @@ class CategoryCore extends ObjectModel {
      * @since   1.8.1.0
      * @version 1.8.5.0
      */
-    public static function getHomeCategories($idLang, $active = true, $idShop = false) {
+    public static function getHomeCategories($idLang, $active = true, $idCompany = false) {
 
-        return static::getChildren(Configuration::get('EPH_HOME_CATEGORY'), $idLang, $active, $idShop);
+        return static::getChildren(Configuration::get('EPH_HOME_CATEGORY'), $idLang, $active, $idCompany);
     }
 
     /**
@@ -540,7 +518,7 @@ class CategoryCore extends ObjectModel {
      * @param int  $idParent
      * @param int  $idLang
      * @param bool $active
-     * @param bool $idShop
+     * @param bool $idCompany
      *
      * @return array
      *
@@ -549,7 +527,7 @@ class CategoryCore extends ObjectModel {
      * @since   1.8.1.0
      * @version 1.8.5.0
      */
-    public static function getChildren($idParent, $idLang, $active = true, $idShop = false) {
+    public static function getChildren($idParent, $idLang, $active = true, $idCompany = false) {
 
         if (!Validate::isBool($active)) {
             die(Tools::displayError());
@@ -580,7 +558,7 @@ class CategoryCore extends ObjectModel {
      * @param int  $idParent
      * @param int  $idLang
      * @param bool $active
-     * @param bool $idShop
+     * @param bool $idCompany
      *
      * @return array
      *
@@ -589,13 +567,13 @@ class CategoryCore extends ObjectModel {
      * @since   1.8.1.0
      * @version 1.8.5.0
      */
-    public static function hasChildren($idParent, $idLang, $active = true, $idShop = false) {
+    public static function hasChildren($idParent, $idLang, $active = true, $idCompany = false) {
 
         if (!Validate::isBool($active)) {
             die(Tools::displayError());
         }
 
-        $cacheId = 'Category::hasChildren_' . (int) $idParent . '-' . (int) $idLang . '-' . (bool) $active . '-' . (int) $idShop;
+        $cacheId = 'Category::hasChildren_' . (int) $idParent . '-' . (int) $idLang . '-' . (bool) $active . '-' . (int) $idCompany;
 
         if (!Cache::isStored($cacheId)) {
             $query = 'SELECT c.id_category, "" AS name
@@ -613,56 +591,7 @@ class CategoryCore extends ObjectModel {
         return Cache::retrieve($cacheId);
     }
 
-    /**
-     * This method allow to return children categories with the number of sub children selected for a product
-     *
-     * @param int   $idParent
-     * @param array $selectedCat
-     * @param int   $idLang
-     * @param Shop  $shop
-     * @param bool  $useShopContext
-     *
-     * @return array
-     * @throws PrestaShopDatabaseException
-     * @throws PhenyxShopException
-     * @internal param int $id_product
-     * @since    1.0.0
-     * @version  1.0.0 Initial version
-     */
-    public static function getChildrenWithNbSelectedSubCat($idParent, $selectedCat, $idLang, Shop $shop = null, $useShopContext = true) {
-
-        if (!$shop) {
-            $shop = Context::getContext()->shop;
-        }
-
-        $idShop = $shop->id ? $shop->id : Configuration::get('EPH_SHOP_DEFAULT');
-        $selectedCat = explode(',', str_replace(' ', '', $selectedCat));
-        $sql = '
-        SELECT c.`id_category`, c.`level_depth`, cl.`name`,
-        IF((
-            SELECT COUNT(*)
-            FROM `' . _DB_PREFIX_ . 'category` c2
-            WHERE c2.`id_parent` = c.`id_category`
-        ) > 0, 1, 0) AS has_children,
-        ' . ($selectedCat ? '(
-            SELECT count(c3.`id_category`)
-            FROM `' . _DB_PREFIX_ . 'category` c3
-            WHERE c3.`nleft` > c.`nleft`
-            AND c3.`nright` < c.`nright`
-            AND c3.`id_category`  IN (' . implode(',', array_map('intval', $selectedCat)) . ')
-        )' : '0') . ' AS nbSelectedSubCat
-        FROM `' . _DB_PREFIX_ . 'category` c
-        LEFT JOIN `' . _DB_PREFIX_ . 'category_lang` cl ON (c.`id_category` = cl.`id_category` )
-        WHERE `id_lang` = ' . (int) $idLang . '
-        AND c.`id_parent` = ' . (int) $idParent;
-
-        if (!Shop::isFeatureActive() || Shop::getContext() == Shop::CONTEXT_SHOP && $useShopContext) {
-            $sql .= ' ORDER BY cs.`position` ASC';
-        }
-
-        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($sql);
-    }
-
+    
     /**
      * Copy products from a category to another
      *
@@ -994,10 +923,10 @@ class CategoryCore extends ObjectModel {
      * @version 1.8.5.0
      * @throws PhenyxShopException
      */
-    public static function inShopStatic($idCategory, Shop $shop = null) {
+    public static function inShopStatic($idCategory, Company $shop = null) {
 
         if (!$shop || !is_object($shop)) {
-            $shop = Context::getContext()->shop;
+            $shop = Context::getContext()->company;
         }
 
         if (!$interval = Category::getInterval($shop->getCategory())) {
@@ -1132,7 +1061,7 @@ class CategoryCore extends ObjectModel {
 
     /**
      * @param int      $position
-     * @param int|null $idShop
+     * @param int|null $idCompany
      *
      * @return bool
      *
@@ -1140,7 +1069,7 @@ class CategoryCore extends ObjectModel {
      * @version 1.8.5.0
      * @throws PhenyxShopException
      */
-    public function addPosition($position, $idShop = null) {
+    public function addPosition($position) {
 
         $return = true;
 
@@ -1152,7 +1081,7 @@ class CategoryCore extends ObjectModel {
      * @todo    rename that function to make it understandable (getNewLastPosition for example)
      *
      * @param int $idCategoryParent the parent category
-     * @param int $idShop
+     * @param int $idCompany
      *
      * @return int
      *
@@ -1160,7 +1089,7 @@ class CategoryCore extends ObjectModel {
      * @version 1.8.5.0
      * @throws PhenyxShopException
      */
-    public static function getLastPosition($idCategoryParent, $idShop) {
+    public static function getLastPosition($idCategoryParent) {
 
         if ((int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             '
@@ -1204,21 +1133,8 @@ class CategoryCore extends ObjectModel {
 
         $ret = parent::add($autoDate, $nullValues);
 
-        if (Tools::isSubmit('checkBoxShopAsso_category')) {
-
-            foreach (Tools::getValue('checkBoxShopAsso_category') as $idShop => $value) {
-                $position = (int) Category::getLastPosition((int) $this->id_parent, $idShop);
-                $this->addPosition($position, $idShop);
-            }
-
-        } else {
-
-            foreach (Shop::getShops(true) as $shop) {
-                $position = (int) Category::getLastPosition((int) $this->id_parent, $shop['id_shop']);
-                $this->addPosition($position, $shop['id_shop']);
-            }
-
-        }
+        $position = (int) Category::getLastPosition((int) $this->id_parent);
+        $this->addPosition($position);
 
         if (!isset($this->doNotRegenerateNTree) || !$this->doNotRegenerateNTree) {
             Category::regenerateEntireNtree();
@@ -1267,8 +1183,7 @@ class CategoryCore extends ObjectModel {
      */
     public static function regenerateEntireNtree() {
 
-        $id = Context::getContext()->shop->id;
-        $idShop = $id ? $id : Configuration::get('EPH_SHOP_DEFAULT');
+       
         $categories = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('c.`id_category`, c.`id_parent`')
@@ -1428,23 +1343,7 @@ class CategoryCore extends ObjectModel {
 
         if ($changed) {
 
-            if (Tools::isSubmit('checkBoxShopAsso_category')) {
-
-                foreach (Tools::getValue('checkBoxShopAsso_category') as $idAssoObject => $row) {
-
-                    foreach ($row as $idShop => $value) {
-                        $this->addPosition((int) Category::getLastPosition((int) $this->id_parent, (int) $idShop), (int) $idShop);
-                    }
-
-                }
-
-            } else {
-
-                foreach (Shop::getShops(true) as $shop) {
-                    $this->addPosition((int) Category::getLastPosition((int) $this->id_parent, $shop['id_shop']), $shop['id_shop']);
-                }
-
-            }
+            $this->addPosition((int) Category::getLastPosition((int) $this->id_parent));
 
         }
 
@@ -1571,7 +1470,7 @@ class CategoryCore extends ObjectModel {
     }
 
     /**
-     * @see     ObjectModel::toggleStatus()
+     * @see     PhenyxObjectModel::toggleStatus()
      *
      * @since   1.8.1.0
      * @version 1.8.5.0
@@ -2136,7 +2035,7 @@ class CategoryCore extends ObjectModel {
         static $parentCategoryCache = [];
 
         $context = Context::getContext()->cloneContext();
-        $context->shop = clone ($context->shop);
+        $context->company = clone ($context->company);
 
         if (is_null($idLang)) {
             $idLang = $context->language->id;
@@ -2145,29 +2044,22 @@ class CategoryCore extends ObjectModel {
         $categories = null;
         $idCurrent = $this->id;
 
-        if (count(Category::getCategoriesWithoutParent()) > 1 && Configuration::get('EPH_MULTISHOP_FEATURE_ACTIVE') && count(Shop::getShops(true, null, true)) != 1) {
-            $context->shop->id_category = (int) Configuration::get('EPH_ROOT_CATEGORY');
-        } else
+        $context->company = new Company(Configuration::get('EPH_SHOP_DEFAULT'));
+        $idCompany = $context->company->id;
 
-        if (!$context->shop->id) {
-            $context->shop = new Shop(Configuration::get('EPH_SHOP_DEFAULT'));
-        }
+        if (!isset($parentCategoryCache[$idCompany][$idLang])) {
 
-        $idShop = $context->shop->id;
-
-        if (!isset($parentCategoryCache[$idShop][$idLang])) {
-
-            if (!isset($parentCategoryCache[$idShop][$idLang])) {
-                $parentCategoryCache[$idShop] = [];
+            if (!isset($parentCategoryCache[$idCompany][$idLang])) {
+                $parentCategoryCache[$idCompany] = [];
             }
 
-            $parentCategoryCache[$idShop][$idLang] = [];
+            $parentCategoryCache[$idCompany][$idLang] = [];
         }
 
         while (true) {
 
-            if (!empty($parentCategoryCache[$idShop][$idLang][$idCurrent])) {
-                $result = $parentCategoryCache[$idShop][$idLang][$idCurrent];
+            if (!empty($parentCategoryCache[$idCompany][$idLang][$idCurrent])) {
+                $result = $parentCategoryCache[$idCompany][$idLang][$idCurrent];
             } else {
                 $sql = (new DbQuery())
                     ->select('c.*, cl.*')
@@ -2179,14 +2071,10 @@ class CategoryCore extends ObjectModel {
 
                 $rootCategory = Category::getRootCategory();
 
-                if (Shop::isFeatureActive() && Shop::getContext() == Shop::CONTEXT_SHOP
-                    && (!Tools::isSubmit('id_category') || (int) Tools::getValue('id_category') == (int) $rootCategory->id || (int) $rootCategory->id == (int) $context->shop->id_category)
-                ) {
-                    $sql->where('c.`id_parent` != 0');
-                }
+                $sql->where('c.`id_parent` != 0');
 
                 $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow($sql);
-                $parentCategoryCache[$idShop][$idLang][$idCurrent] = $result;
+                $parentCategoryCache[$idCompany][$idLang][$idCurrent] = $result;
             }
 
             if ($result) {
@@ -2197,7 +2085,7 @@ class CategoryCore extends ObjectModel {
                 $categories = [];
             }
 
-            if (!$result || ($result['id_category'] == $context->shop->id_category)) {
+            if (!$result || ($result['id_category'] == $context->company->id_category)) {
                 return $categories;
             }
 
@@ -2425,7 +2313,7 @@ class CategoryCore extends ObjectModel {
     }
 
     /**
-     * @param int $idShop
+     * @param int $idCompany
      *
      * @return bool
      *
@@ -2433,10 +2321,9 @@ class CategoryCore extends ObjectModel {
      * @version 1.8.5.0
      * @throws PhenyxShopException
      */
-    public function isParentCategoryAvailable($idShop) {
+    public function isParentCategoryAvailable($idCompany) {
 
-        $id = Context::getContext()->shop->id;
-        $idShop = $id ? $id : Configuration::get('EPH_SHOP_DEFAULT');
+        
 
         return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
@@ -2447,7 +2334,7 @@ class CategoryCore extends ObjectModel {
     }
 
     /**
-     * @param $id_shop
+     * @param $id_company
      *
      * @return bool
      *
@@ -2455,7 +2342,7 @@ class CategoryCore extends ObjectModel {
      * @version 1.8.5.0
      * @throws PhenyxShopException
      */
-    public function existsInShop($id_shop) {
+    public function existsInShop($id_company) {
 
         return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())

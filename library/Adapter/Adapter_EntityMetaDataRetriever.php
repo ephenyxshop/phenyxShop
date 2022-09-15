@@ -6,8 +6,8 @@
  * @since 1.9.1.0
  */
 // @codingStandardsIgnoreStart
-class Adapter_EntityMetaDataRetriever
-{
+class Adapter_EntityMetaDataRetriever {
+
     // @codingStandardsIgnoreEnd
 
     /**
@@ -19,8 +19,8 @@ class Adapter_EntityMetaDataRetriever
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function getEntityMetaData($className)
-    {
+    public function getEntityMetaData($className) {
+
         $metaData = new Core_Foundation_Database_EntityMetaData();
 
         $metaData->setEntityClassName($className);
@@ -41,4 +41,5 @@ class Adapter_EntityMetaDataRetriever
 
         return $metaData;
     }
+
 }

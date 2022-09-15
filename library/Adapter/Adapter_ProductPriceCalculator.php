@@ -4,8 +4,8 @@
  * Class Adapter_ProductPriceCalculator
  */
 // @codingStandardIgnoreStart
-class Adapter_ProductPriceCalculator
-{
+class Adapter_ProductPriceCalculator {
+
     // @codingStandardIgnoreEnd
 
     /**
@@ -51,6 +51,7 @@ class Adapter_ProductPriceCalculator
         Context $context = null,
         $useCustomerPrice = true
     ) {
+
         return Product::getPriceStatic(
             $idProduct,
             $usetax,

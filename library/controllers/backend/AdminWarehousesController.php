@@ -19,7 +19,6 @@ class AdminWarehousesControllerCore extends AdminController {
         $this->className = 'Warehouse';
         $this->deleted = true;
         $this->lang = false;
-        $this->multishop_context = Shop::CONTEXT_ALL;
 
         $this->fields_list = [
             'id_warehouse'    => [
@@ -302,16 +301,7 @@ class AdminWarehousesControllerCore extends AdminController {
 
         ];
 
-        // Shop Association
-
-        if (Shop::isFeatureActive()) {
-            $this->fields_form['input'][] = [
-                'type'           => 'shop',
-                'label'          => $this->l('Shop association'),
-                'name'           => 'checkBoxShopAsso',
-                'disable_shared' => Shop::SHARE_STOCK,
-            ];
-        }
+       
 
         // if it is still possible to change currency valuation and management type
 
@@ -461,7 +451,7 @@ class AdminWarehousesControllerCore extends AdminController {
             'address'                => $address,
             'shops'                  => $shops,
             'warehouse_num_products' => $warehouse->getNumberOfProducts(),
-            'warehouse_value'        => Tools::displayPrice(Tools::EPH_round($warehouse->getStockValue(), 2), $currency),
+            'warehouse_value'        => Tools::displayPrice(Tools::ps_round($warehouse->getStockValue(), 2), $currency),
             'warehouse_quantities'   => $warehouse->getQuantitiesofProducts(),
         ];
 

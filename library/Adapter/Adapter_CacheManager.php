@@ -6,8 +6,8 @@
  * @since 1.9.1.0
  */
 // @codingStandardsIgnoreStart
-class Adapter_CacheManager
-{
+class Adapter_CacheManager {
+
     // @codingStandardsIgnoreEnd
 
     /**
@@ -18,8 +18,8 @@ class Adapter_CacheManager
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function clean($key)
-    {
+    public function clean($key) {
+
         Cache::clean($key);
     }
 }

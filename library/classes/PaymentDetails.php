@@ -5,7 +5,7 @@
  *
  * @since 2.1.0.0
  */
-class PaymentDetailsCore extends ObjectModel {
+class PaymentDetailsCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var string $order_reference */
@@ -19,7 +19,7 @@ class PaymentDetailsCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'payment_details',
@@ -60,7 +60,7 @@ class PaymentDetailsCore extends ObjectModel {
 
     public static function getByCustomerPieceId($idCustomerPiece) {
 
-        return ObjectModel::hydrateCollection(
+        return PhenyxObjectModel::hydrateCollection(
             'PaymentDetails',
             Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())

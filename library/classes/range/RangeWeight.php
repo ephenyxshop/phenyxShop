@@ -6,7 +6,7 @@
  *
  * @since 1.9.1.0
  */
-class RangeWeightCore extends ObjectModel
+class RangeWeightCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     /** @var int $id_carrier */
@@ -18,7 +18,7 @@ class RangeWeightCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'range_weight',

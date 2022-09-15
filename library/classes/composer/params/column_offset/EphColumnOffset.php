@@ -1,6 +1,6 @@
 <?php
 
-class EphColumnOffset extends ObjectModel {
+class EphColumnOffset extends PhenyxObjectModel {
 
     protected $settings = [];
     protected $value = '';

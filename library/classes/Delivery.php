@@ -5,15 +5,15 @@
  *
  * @since 1.9.1.0
  */
-class DeliveryCore extends ObjectModel {
+class DeliveryCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var int */
     public $id_delivery;
     /** @var int * */
-    public $id_shop;
+    public $id_company;
     /** @var int * */
-    public $id_shop_group;
+    public $id_company_group;
     /** @var int */
     public $id_carrier;
     /** @var int */
@@ -27,7 +27,7 @@ class DeliveryCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'delivery',

@@ -20,7 +20,7 @@ class AdminLanguagesControllerCore extends AdminController {
         $this->publicName = $this->l('Languages');
         $this->lang = false;
         $this->deleted = false;
-        $this->multishop_context = Shop::CONTEXT_ALL;
+        
 
         $this->context = Context::getContext();
 
@@ -191,7 +191,7 @@ class AdminLanguagesControllerCore extends AdminController {
 
         foreach ($languages as &$lang) {
 
-            if (file_exists(_EPH_ROOT_ADMIN_DIR_ . '/img/l/' . $lang['id_lang'] . '.jpg')) {
+            if (file_exists(_EPH_ROOT_DIR_ . '/img/l/' . $lang['id_lang'] . '.jpg')) {
                 $flag = '/img/l/' . $lang['id_lang'] . '.jpg';
             } else {
                 $flag = '/img/l/none.jpg';
@@ -349,7 +349,7 @@ class AdminLanguagesControllerCore extends AdminController {
             'input'  => [
                 [
                     'type' => 'hidden',
-                    'name' => 'EPH_version',
+                    'name' => 'ps_version',
                 ],
                 [
                     'type'      => 'text',
@@ -445,13 +445,7 @@ class AdminLanguagesControllerCore extends AdminController {
             ],
         ];
 
-        if (Shop::isFeatureActive()) {
-            $this->fields_form['input'][] = [
-                'type'  => 'shop',
-                'label' => $this->l('Shop association'),
-                'name'  => 'checkBoxShopAsso',
-            ];
-        }
+        
 
         $this->fields_form['submit'] = [
             'title' => $this->l('Save'),
@@ -486,7 +480,7 @@ class AdminLanguagesControllerCore extends AdminController {
             ];
         }
 
-        $this->fields_value = ['EPH_version' => _EPH_VERSION_];
+        $this->fields_value = ['ps_version' => _EPH_VERSION_];
 
         return parent::renderForm();
     }
@@ -892,7 +886,7 @@ class AdminLanguagesControllerCore extends AdminController {
         parent::afterImageUpload();
 
         if (($idLang = (int) Tools::getValue('id_lang')) && isset($_FILES) && count($_FILES) && file_exists(_EPH_LANG_IMG_DIR_ . $idLang . '.jpg')) {
-            $currentFile = _EPH_TMP_IMG_DIR_ . 'lang_mini_' . $idLang . '_' . $this->context->shop->id . '.jpg';
+            $currentFile = _EPH_TMP_IMG_DIR_ . 'lang_mini_' . $idLang . '_' . $this->context->company->id . '.jpg';
 
             if (file_exists($currentFile)) {
                 unlink($currentFile);

@@ -1,6 +1,6 @@
 <?php
 
-class DiaryType extends ObjectModel {
+class DiaryType extends PhenyxObjectModel {
 
     public $id;
 

@@ -6,8 +6,8 @@
  * @since 1.9.1.0
  */
 // @codingStandardsIgnoreStart
-class Adapter_PackItemsManager
-{
+class Adapter_PackItemsManager {
+
     // @codingStandardsIgnoreEnd
 
     /**
@@ -22,8 +22,8 @@ class Adapter_PackItemsManager
      * @version 1.8.1.0 Initial version
      * @throws Adapter_Exception
      */
-    public function getPackItems($product, $idLang = false)
-    {
+    public function getPackItems($product, $idLang = false) {
+
         if (!static::isPack($product)) {
             return [];
         }
@@ -49,8 +49,8 @@ class Adapter_PackItemsManager
      * @version 1.8.1.0 Initial version
      * @throws Adapter_Exception
      */
-    public function getPacksContainingItem($item, $itemAttributeId, $idLang = false)
-    {
+    public function getPacksContainingItem($item, $itemAttributeId, $idLang = false) {
+
         if ($idLang === false) {
             $configuration = Adapter_ServiceLocator::get('Core_Business_ConfigurationInterface');
             $idLang = (int) $configuration->get('EPH_LANG_DEFAULT');
@@ -69,8 +69,8 @@ class Adapter_PackItemsManager
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function isPack($product)
-    {
+    public function isPack($product) {
+
         return Pack::isPack($product->id);
     }
 
@@ -88,8 +88,9 @@ class Adapter_PackItemsManager
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function isPacked($product, $idProductAttribute = false)
-    {
+    public function isPacked($product, $idProductAttribute = false) {
+
         return Pack::isPacked($product->id, $idProductAttribute);
     }
+
 }

@@ -1,6 +1,6 @@
 <?php
 
-class PFGFieldModelCore extends ObjectModel {
+class PFGFieldModelCore extends PhenyxObjectModel {
 
 	public $id_pfg;
 	public $type;

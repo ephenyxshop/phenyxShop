@@ -111,7 +111,14 @@ class AdminPreferencesControllerCore extends AdminController {
                 'default'    => '0',
                 'disabled'   => (Tools::getValue('EPH_SSL_ENABLED', Configuration::get('EPH_SSL_ENABLED'))) ? false : true,
             ];
-
+            $fields['EPH_USE_COMPOSER_ENVIRONNEMENT'] = [
+                'title'      => $this->l('Use class and controller From Vendor Direcory'),
+                'desc'       => $this->l('Usefull on Production environnement'),
+                'validation' => 'isBool',
+                'cast'       => 'intval',
+                'type'       => 'bool',
+                'default'    => '0',
+            ];
             $fields['EPH_FULL_THEME_MANAGEMENT_MODE'] = [
                 'title'      => $this->l('Activer les fonctionnalités de Thème avancée'),
                 'desc'       => $this->l('Active les fonctionnalités avancé du thème Ephenyx.'),
@@ -130,7 +137,6 @@ class AdminPreferencesControllerCore extends AdminController {
                         'cast'       => 'intval',
                         'type'       => 'bool',
                         'default'    => '0',
-                        'visibility' => Shop::CONTEXT_ALL,
                     ],
                     'EPH_ALLOW_HTML_IFRAME'          => [
                         'title'      => $this->l('Allow iframes on HTML fields'),
@@ -228,19 +234,7 @@ class AdminPreferencesControllerCore extends AdminController {
                         'desc'  => $this->l('Dèrnière version du thème front office'),
                         'cast'  => 'strval',
                         'type'  => 'text',
-                    ],
-                    '_EPH_FTP_USER_'                => [
-                        'title'      => $this->l('Utilisateur FTP'),
-                        'validation' => 'isUnsignedInt',
-                        'cast'       => 'intval',
-                        'type'       => 'text',
-                    ],
-                    '_EPH_FTP_PASSWORD_'            => [
-                        'title'      => $this->l('Mot de Passe FTP'),
-                        'validation' => 'isUnsignedInt',
-                        'cast'       => 'intval',
-                        'type'       => 'text',
-                    ],
+                    ],                   
                     '_EPHENYX_LICENSE_KEY_'         => [
                         'title' => $this->l('Ephenyx Shop licence Key'),
                         'desc'  => $this->l('Add the Ephenyx key to ensure update of your shop'),
@@ -266,10 +260,16 @@ class AdminPreferencesControllerCore extends AdminController {
                         'type'  => 'text',
                     ],
                     'EPH_SENDINBLUE_API'            => [
-                        'title' => $this->l('Clé API Send inBlue'),
+                        'title' => $this->l('API Key if you use Send inBlue'),
                         'desc'  => $this->l('Ajouter votre clé Send In Blue'),
                         'cast'  => 'strval',
                         'type'  => 'text',
+                    ],
+                    'EPH_HEAD_SCRIPT'            => [
+                        'title' => $this->l('Custom Front script in header'),
+                        'desc'  => $this->l('Facebook, paypal and other script'),
+                        'mode'  => 'javascript',
+                        'type'  => 'code',
                     ],
                     'EPH_SMS_TITLE'                 => [
                         'title' => $this->l('Entête SMS'),
@@ -311,10 +311,11 @@ class AdminPreferencesControllerCore extends AdminController {
         $this->ajaxOptions = $this->generateOptions();
     }
 
-    public function setMedia($isNewTheme = false) {
+    public function setAjaxMedia() {
 
-        parent::setMedia($isNewTheme);
-
+        return $this->pushJS([            
+            'https://cdn.ephenyxapi.com/ace/ace.js',
+        ]);
     }
 
     public function generateOptions() {
@@ -342,6 +343,8 @@ class AdminPreferencesControllerCore extends AdminController {
 
     public function ajaxProcessUpdateConfigurationOptions() {
 
+        $file = fopen("testProcessUpdateConfigurationOptions.txt","w");
+        
         foreach ($_POST as $key => $value) {
 
             if ($key == 'action' || $key == 'ajax') {
@@ -354,22 +357,69 @@ class AdminPreferencesControllerCore extends AdminController {
                 $idBank = Tools::getValue('EPH_SEPA_BANK');
 
                 Configuration::updateValue($key, $value);
+                $bank = new BankAccount($idBank);
+                Configuration::updateValue('SEPA_COMPANY_IBAN', $bank->iban);
+                Configuration::updateValue('SEPA_COMPANY_BIC', $bank->swift);
 
-            } else {
+            } else if ($key == 'EPH_HEAD_SCRIPT') {
+
+                Configuration::updateValue($key, $value, false, true);
+
+            } else{
+                fwrite($file,$key.' => '.$value.PHP_EOL);
                 Configuration::updateValue($key, $value);
             }
 
         }
-
-        $bank = new BankAccount($idBank);
-        Configuration::updateValue('SEPA_COMPANY_IBAN', $bank->iban);
-        Configuration::updateValue('SEPA_COMPANY_BIC', $bank->swift);
+        $useComposer = Configuration::get('EPH_USE_COMPOSER_ENVIRONNEMENT');
+        if($useComposer) {
+            $this->activateComposerEnvironnement(true);
+        } else {
+            $this->activateComposerEnvironnement();
+        }
         $result = [
             "success" => true,
             "message" => "Les options ont été mises à jour avec succès",
         ];
 
         die(Tools::jsonEncode($result));
+    }
+    
+    public function activateComposerEnvironnement($useComposer = false) {
+        
+        $seetingsFile = _EPH_ROOT_DIR_.'/app/settings.inc.php';
+        copy($seetingsFile, str_replace('.php', '.old.php', $seetingsFile));
+        $confFile = new AddConfToFile($seetingsFile, 'w');
+        if ($confFile->error) {
+            return false;
+        }
+        
+        $datas = [
+            ['_EPH_CACHING_SYSTEM_', _EPH_CACHING_SYSTEM_],
+            ['_DB_NAME_', _DB_NAME_],
+            ['_MYSQL_ENGINE_', _MYSQL_ENGINE_],
+            ['_DB_SERVER_', _DB_SERVER_],            
+            ['_DB_USER_', _DB_USER_],
+            ['_DB_PREFIX_', _DB_PREFIX_],
+            ['_DB_PASSWD_', _DB_PASSWD_],            
+            ['_COOKIE_KEY_', _COOKIE_KEY_],
+            ['_COOKIE_IV_', _COOKIE_IV_],
+            ['_EPH_CREATION_DATE_', defined("_EPH_CREATION_DATE_") ? _EPH_CREATION_DATE_ : date('Y-m-d')],
+            ['_RIJNDAEL_KEY_', _RIJNDAEL_KEY_],
+            ['_RIJNDAEL_IV_', _RIJNDAEL_IV_],            
+            ['_SHOP_MODE_', _SHOP_MODE_ ? true : 0],
+            ['_USE_SPECIFIC_CLASS_', _USE_SPECIFIC_CLASS_ ? true : 0],
+            ['_USE_SPECIFIC_CONTROLLER_', _USE_SPECIFIC_CONTROLLER_ ? true : 0],
+            ['_USE_FULL_COMPOSER_', $useComposer ? 1 : 0],
+            ['_EPH_VERSION_', _EPH_VERSION_],
+            ['_PHP_ENCRYPTION_KEY_', _PHP_ENCRYPTION_KEY_],
+        ];
+        
+        foreach ($datas as $data) {
+            $confFile->writeInFile($data[0], $data[1]);
+        }
+        unlink(_EPH_CACHE_DIR_.'class_index.php');
+        return true;
     }
 
     /**

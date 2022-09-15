@@ -26,7 +26,6 @@ class AdminStockCoverControllerCore extends AdminController {
         $this->list_id = 'product';
         $this->lang = true;
         $this->colorOnBackground = true;
-        $this->multishop_context = Shop::CONTEXT_ALL;
         $this->tpl_list_vars['show_filter'] = true;
 
         $this->fields_list = [
@@ -181,7 +180,6 @@ class AdminStockCoverControllerCore extends AdminController {
         // query
         $this->_select = 'a.id_product as id, COUNT(pa.id_product_attribute) as variations, SUM(s.usable_quantity) as stock';
         $this->_join = 'LEFT JOIN `' . _DB_PREFIX_ . 'product_attribute` pa ON (pa.id_product = a.id_product)
-                        ' . Shop::addSqlAssociation('product_attribute', 'pa', false) . '
                         INNER JOIN `' . _DB_PREFIX_ . 'stock` s ON (s.id_product = a.id_product)';
         $this->_group = 'GROUP BY a.id_product';
         $this->_where = 'AND a.advanced_stock_management = 1';

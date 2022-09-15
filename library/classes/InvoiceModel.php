@@ -1,7 +1,7 @@
 <?php
 
 
-class InvoiceModelCore extends ObjectModel {
+class InvoiceModelCore extends PhenyxObjectModel {
 
   
     public static $definition = [

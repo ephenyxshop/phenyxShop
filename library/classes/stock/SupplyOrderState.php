@@ -34,7 +34,7 @@
  *
  * @since 1.9.1.0
  */
-class SupplyOrderStateCore extends ObjectModel
+class SupplyOrderStateCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     /**
@@ -74,7 +74,7 @@ class SupplyOrderStateCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'supply_order_state',
@@ -92,7 +92,7 @@ class SupplyOrderStateCore extends ObjectModel
     ];
 
     /**
-     * @see ObjectModel::$webserviceParameters
+     * @see PhenyxObjectModel::$webserviceParameters
      */
     protected $webserviceParameters = [
         'objectsNodeName' => 'supply_order_states',

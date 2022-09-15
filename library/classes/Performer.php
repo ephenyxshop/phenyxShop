@@ -293,21 +293,18 @@ class PerformerCore {
      * @param int    $idLang
      * @param array  $keywords
      * @param array  $params
-     * @param int    $idShop
+     * @param int    $idCompany
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function addRoute($routeId, $rule, $controller, $idLang = null, array $keywords = [], array $params = [], $idShop = null) {
+    public function addRoute($routeId, $rule, $controller, $idLang = null, array $keywords = [], array $params = []) {
 
         if (isset(Context::getContext()->language) && $idLang === null) {
             $idLang = (int) Context::getContext()->language->id;
         }
 
-        if (isset(Context::getContext()->shop) && $idShop === null) {
-            $idShop = (int) Context::getContext()->shop->id;
-        }
-
+        
         if (!$rule && in_array($routeId, array_keys($this->default_routes))) {
             $rule = $this->default_routes[$routeId]['rule'];
         }
@@ -351,15 +348,15 @@ class PerformerCore {
 
         $regexp = '#^/' . $regexp . '$#u';
 
-        if (!isset($this->routes[$idShop])) {
-            $this->routes[$idShop] = [];
+        if (!isset($this->routes)) {
+            $this->routes = [];
         }
 
-        if (!isset($this->routes[$idShop][$idLang])) {
-            $this->routes[$idShop][$idLang] = [];
+        if (!isset($this->routes[$idLang])) {
+            $this->routes[$idLang] = [];
         }
 
-        $this->routes[$idShop][$idLang][$routeId] = [
+        $this->routes[$idLang][$routeId] = [
             'rule'       => $rule,
             'regexp'     => $regexp,
             'controller' => $controller,
@@ -522,17 +519,17 @@ class PerformerCore {
     /**
      * Load default routes group by languages
      *
-     * @param int|null $idShop
+     * @param int|null $idCompany
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      * @throws PhenyxShopException
      */
-    protected function loadRoutes($idShop = null) {
+    protected function loadRoutes() {
 
        
         // Load custom routes from modules
-        $modulesRoutes = Hook::exec('moduleRoutes', ['id_shop' => $idShop], null, true, false);
+        $modulesRoutes = Hook::exec('moduleRoutes', ['id_lang' => 1],  null, true, false);
 
         if (is_array($modulesRoutes) && count($modulesRoutes)) {
 
@@ -615,8 +612,7 @@ class PerformerCore {
                     $route['controller'],
                     $lang['id_lang'],
                     $route['keywords'],
-                    isset($route['params']) ? $route['params'] : [],
-                    $idShop
+                    isset($route['params']) ? $route['params'] : []
                 );
             }
 
@@ -644,8 +640,7 @@ class PerformerCore {
                             $row['page'],
                             $row['id_lang'],
                             [],
-                            [],
-                            $idShop
+                            []
                         );
                     }
 
@@ -743,7 +738,7 @@ class PerformerCore {
         // Dispatch back office controller + module back office controller
         case static::FC_ADMIN:
 
-            $tab = EmployeeMenu::getInstanceFromClassName($this->controller, Configuration::get('EPH_LANG_DEFAULT'));
+            $tab = EmployeeMenu::getInstanceFromClassName($this->controller, Context::getContext()->language->id);
             
             if ($tab->module) {
 
@@ -814,7 +809,7 @@ class PerformerCore {
     /**
      * Retrieve the controller from url or request uri if routes are activated
      *
-     * @param int|null $idShop
+     * @param int|null $idCompany
      *
      * @return string
      *
@@ -823,7 +818,7 @@ class PerformerCore {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function getController($idShop = null) {
+    public function getController($idCompany = null) {
 
         $context = Context::getContext();
         $file = fopen("testPerformerGetControllers.txt","w");
@@ -847,8 +842,8 @@ class PerformerCore {
 
         list($uri) = explode('?', $this->request_uri);
 
-        if (isset(Context::getContext()->shop) && $idShop === null) {
-            $idShop = (int) Context::getContext()->shop->id;
+        if (isset(Context::getContext()->shop) && $idCompany === null) {
+            $idCompany = (int) Context::getContext()->company->id;
         }
 
         $controller = Tools::getValue('controller');
@@ -901,14 +896,13 @@ class PerformerCore {
                         $this->empty_route['controller'],
                         Context::getContext()->language->id,
                         [],
-                        [],
-                        $idShop
+                        []
                     );
                 }
 
                 list($uri) = explode('?', $this->request_uri);
-                if (isset($this->routes[$idShop][Context::getContext()->language->id])) {
-                    $routes = $this->routes[$idShop][Context::getContext()->language->id];
+                if (isset($this->routes[Context::getContext()->language->id])) {
+                    $routes = $this->routes[Context::getContext()->language->id];
                     
                     foreach ($routes as $route) {
                          
@@ -1245,24 +1239,22 @@ class PerformerCore {
      *
      * @param string $routeId
      * @param int    $idLang
-     * @param int    $idShop
+     * @param int    $idCompany
      *
      * @return bool
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function hasRoute($routeId, $idLang = null, $idShop = null) {
+    public function hasRoute($routeId, $idLang = null) {
 
         if (isset(Context::getContext()->language) && $idLang === null) {
             $idLang = (int) Context::getContext()->language->id;
         }
 
-        if (isset(Context::getContext()->shop) && $idShop === null) {
-            $idShop = (int) Context::getContext()->shop->id;
-        }
+        
 
-        return isset($this->routes[$idShop]) && isset($this->routes[$idShop][$idLang]) && isset($this->routes[$idShop][$idLang][$routeId]);
+        return isset($this->routes) && isset($this->routes[$idLang]) && isset($this->routes[$idLang][$routeId]);
     }
 
     /**
@@ -1271,7 +1263,7 @@ class PerformerCore {
      * @param string $routeId
      * @param int    $idLang
      * @param string $keyword
-     * @param int    $idShop
+     * @param int    $idCompany
      *
      * @return bool
      *
@@ -1279,21 +1271,18 @@ class PerformerCore {
      * @version 1.8.1.0 Initial version
      * @throws PhenyxShopException
      */
-    public function hasKeyword($routeId, $idLang, $keyword, $idShop = null) {
+    public function hasKeyword($routeId, $idLang, $keyword) {
 
-        if ($idShop === null) {
-            $idShop = (int) Context::getContext()->shop->id;
+        
+        if (!isset($this->routes)) {
+            $this->loadRoutes();
         }
 
-        if (!isset($this->routes[$idShop])) {
-            $this->loadRoutes($idShop);
-        }
-
-        if (!isset($this->routes[$idShop]) || !isset($this->routes[$idShop][$idLang]) || !isset($this->routes[$idShop][$idLang][$routeId])) {
+        if (!isset($this->routes) || !isset($this->routes[$idLang]) || !isset($this->routes[$idLang][$routeId])) {
             return false;
         }
 
-        return preg_match('#\{([^{}]*:)?' . preg_quote($keyword, '#') . '(:[^{}]*)?\}#', $this->routes[$idShop][$idLang][$routeId]['rule']);
+        return preg_match('#\{([^{}]*:)?' . preg_quote($keyword, '#') . '(:[^{}]*)?\}#', $this->routes[$idLang][$routeId]['rule']);
     }
 
     /**
@@ -1344,7 +1333,7 @@ class PerformerCore {
      * @param array  $params
      * @param bool   $forceRoutes
      * @param string $anchor      Optional anchor to add at the end of this url
-     * @param null   $idShop
+     * @param null   $idCompany
      *
      * @return string
      *
@@ -1354,28 +1343,28 @@ class PerformerCore {
      * @since    1.0.0
      * @version  1.0.0 Initial version
      */
-    public function createUrl($routeId, $idLang = null, array $params = [], $forceRoutes = false, $anchor = '', $idShop = null) {
+    public function createUrl($routeId, $idLang = null, array $params = [], $forceRoutes = false, $anchor = '') {
 
         if ($idLang === null) {
             $idLang = (int) Context::getContext()->language->id;
         }
 
-        if ($idShop === null) {
-            $idShop = (int) Context::getContext()->shop->id;
+        
+
+        if (!isset($this->routes)) {
+            $this->loadRoutes();
         }
 
-        if (!isset($this->routes[$idShop])) {
-            $this->loadRoutes($idShop);
-        }
-
-        if (!isset($this->routes[$idShop][$idLang][$routeId])) {
+        if (!isset($this->routes[$idLang][$routeId])) {
             $query = http_build_query($params, '', '&');
             $indexLink = $this->use_routes ? '' : 'index.php';
-
-            return ($routeId == 'index') ? $indexLink . (($query) ? '?' . $query : '') : ((trim($routeId) == '') ? '' : 'index.php?controller=' . $routeId) . (($query) ? '&' . $query : '') . $anchor;
+            if(!is_null($routeId)) {
+                $routeId = trim($routeId);
+            }
+            return ($routeId == 'index') ? $indexLink . (($query) ? '?' . $query : '') : (($routeId == '') ? '' : 'index.php?controller=' . $routeId) . (($query) ? '&' . $query : '') . $anchor;
         }
 
-        $route = $this->routes[$idShop][$idLang][$routeId];
+        $route = $this->routes[$idLang][$routeId];
         // Check required fields
         $queryParams = isset($route['params']) ? $route['params'] : [];
         // Skip if we are not using routes
@@ -1477,142 +1466,7 @@ class PerformerCore {
         return $url . $anchor;
     }
 
-    public function createAdminUrl($routeId, $idLang = null, array $params = [], $forceRoutes = false, $anchor = '', $idShop = null) {
-
-        $file = fopen("testCreateUrl.txt","w");
-		
-		
-		if ($idLang === null) {
-            $idLang = (int) Context::getContext()->language->id;
-        }
-
-        if ($idShop === null) {
-            $idShop = (int) Context::getContext()->shop->id;
-        }
-
-        if (!isset($this->routes[$idShop])) {
-            $this->loadRoutes($idShop);
-        }
-		
-		
-        if (!isset($this->routes[$idShop][$idLang][$routeId])) {
-            $query = http_build_query($params, '', '&');
-            $indexLink = $this->use_routes ? '' : 'index.php';
-
-            if (!is_null($routeId)) {
-                $routeId = trim($routeId);
-            }
-
-            return ($routeId == 'index') ? $indexLink . (($query) ? '?' . $query : '') : (($routeId == '') ? '' : 'index.php?controller=' . $routeId) . (($query) ? '&' . $query : '') . $anchor;
-        }
-		
-
-        $route = $this->routes[$idShop][$idLang][$routeId];
-        // Check required fields
-        $queryParams = isset($route['params']) ? $route['params'] : [];
-        // Skip if we are not using routes
-        // Build an url which match a route
-
-        if ($this->use_routes || $forceRoutes) {
-
-            foreach ($route['keywords'] as $key => $data) {
-
-                if (!$data['required']) {
-                    continue;
-                }
-
-                if (!array_key_exists($key, $params)) {
-                    throw new PhenyxShopException('Performer::createUrl() miss required parameter "' . $key . '" for route "' . $routeId . '"');
-                }
-
-                if (isset($this->default_routes[$routeId])) {
-                    $queryParams[$this->default_routes[$routeId]['keywords'][$key]['param']] = $params[$key];
-                }
-
-            }
-
-            $url = $route['rule'];
-            $addParam = [];
-
-            foreach ($params as $key => $value) {
-
-                if (!isset($route['keywords'][$key])) {
-
-                    if (!isset($this->default_routes[$routeId]['keywords'][$key])) {
-                        $addParam[$key] = $value;
-                    }
-
-                } else {
-
-                    if ($params[$key]) {
-                        $replace = $route['keywords'][$key]['prepend'] . $params[$key] . $route['keywords'][$key]['append'];
-                    } else {
-                        $replace = '';
-                    }
-
-                    $url = preg_replace('#\{([^{}]*:)?' . $key . '(:[^{}]*)?\}#', $replace, $url);
-                }
-
-            }
-
-            $url = preg_replace('#\{([^{}]*:)?[a-z0-9_]+?(:[^{}]*)?\}#', '', $url);
-
-            if (count($addParam)) {
-                $url .= '?' . http_build_query($addParam, '', '&');
-            }
-
-        } else {
-            $addParams = [];
-
-            foreach ($route['keywords'] as $key => $data) {
-
-                if (!$data['required'] || !array_key_exists($key, $params) || ($key === 'rewrite' && in_array($route['controller'], ['education', 'educationtype', 'supplier', 'manufacturer', 'cms', 'cms_category']))) {
-                    continue;
-                }
-
-                if (isset($this->default_routes[$routeId])) {
-                    $queryParams[$this->default_routes[$routeId]['keywords'][$key]['param']] = $params[$key];
-                }
-
-            }
-
-            foreach ($params as $key => $value) {
-
-                if (!isset($route['keywords'][$key]) && !isset($this->default_routes[$routeId]['keywords'][$key])) {
-                    $addParams[$key] = $value;
-                }
-
-            }
-
-            if (isset($this->default_routes[$routeId])) {
-
-                foreach ($this->default_routes[$routeId]['keywords'] as $key => $keyword) {
-
-                    if (isset($keyword['alias']) && $keyword['alias']) {
-                        $addParams[$keyword['alias']] = $params[$key];
-                    }
-
-                }
-
-            }
-
-            if (!empty($route['controller'])) {
-                $queryParams['controller'] = $route['controller'];
-
-            }
-
-            $query = http_build_query(array_merge($addParams, $queryParams), '', '&');
-
-            if ($this->multilang_activated) {
-                $query .= (!empty($query) ? '&' : '') . 'id_lang=' . (int) $idLang;
-            }
-
-            $url = 'index.php?' . $query;
-        }
-
-        return $url . $anchor;
-    }
-
+   
     /**
      * @param string $rewrite
      * @param string $url
@@ -1701,6 +1555,7 @@ class PerformerCore {
         $context = Context::getContext();
         $link = $context->link;
         $idLang = $context->language->id;
+        $idCompany = $context->company->id;
 
         // Context sometimes contains no link in older versions of PS
 
@@ -1713,6 +1568,7 @@ class PerformerCore {
         $sql->from('category_lang');
         $sql->where('`link_rewrite` = \'' . pSQL($rewrite) . '\'');
         $sql->where('`id_lang` = ' . (int) $idLang);
+        $sql->where('`id_shop` = ' . (int) $idCompany);
 
         $results = Db::getInstance()->executeS($sql);
 
@@ -1823,7 +1679,7 @@ class PerformerCore {
         $context = Context::getContext();
         $link = $context->link;
         $idLang = $context->language->id;
-        $idShop = $context->shop->id;
+        $idCompany = $context->company->id;
 
         // Context sometimes contains no link in older versions of PS
 
@@ -1837,7 +1693,7 @@ class PerformerCore {
         $sql->innerJoin('cms_shop', 'cs', '`cl`.`id_cms` = `cs`.`id_cms`');
         $sql->where('`link_rewrite` = \'' . pSQL($rewrite) . '\'');
         $sql->where('`cl`.`id_lang` = ' . (int) $idLang);
-        $sql->where('`cs`.`id_shop` = ' . (int) $idShop);
+        $sql->where('`cs`.`id_shop` = ' . (int) $idCompany);
 
         $results = Db::getInstance()->executeS($sql);
 
@@ -1892,7 +1748,7 @@ class PerformerCore {
         $context = Context::getContext();
         $link = $context->link;
         $idLang = $context->language->id;
-        $idShop = $context->shop->id;
+        $idCompany = $context->company->id;
 
         // Context sometimes contains no link in older versions of PS
 
@@ -1906,7 +1762,7 @@ class PerformerCore {
         $sql->innerJoin('cms_category_shop', 'cs', '`cl`.`id_cms_category` = `cs`.`id_cms_category`');
         $sql->where('`link_rewrite` = \'' . pSQL($rewrite) . '\'');
         $sql->where('`cl`.`id_lang` = ' . (int) $idLang);
-        $sql->where('`cs`.`id_shop` = ' . (int) $idShop);
+        $sql->where('`cs`.`id_shop` = ' . (int) $idCompany);
 
         $results = Db::getInstance()->executeS($sql);
 

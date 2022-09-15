@@ -78,7 +78,6 @@ class AdminTranslationsControllerCore extends AdminController {
 
 		$this->bootstrap = true;
 		$this->publicName = $this->l('Translations');
-		$this->multishop_context = Shop::CONTEXT_ALL;
 		$this->table = 'translations';
 
 		parent::__construct();
@@ -185,7 +184,7 @@ class AdminTranslationsControllerCore extends AdminController {
 			'languages'         => $this->languages,
 			'translations_type' => $this->translations_informations,
 			'themes'            => $this->themes,
-			'id_theme_current'  => $this->context->shop->id_theme,
+			'id_theme_current'  => $this->context->company->id_theme,
 			'controller'        => $this->controller_name,
 			'link'              => $this->context->link,
 			'extraJs'           => $this->setAjaxMedia(),
@@ -283,7 +282,7 @@ class AdminTranslationsControllerCore extends AdminController {
 			$Upload['content'] = Tools::file_get_contents($_FILES['excelTranslation']['tmp_name']);
 			$Upload['name'] = $_FILES['excelTranslation']['name'];
 			$Upload['mime'] = $_FILES['excelTranslation']['type'];
-			$dir = _EPH_ROOT_ADMIN_DIR_ . DIRECTORY_SEPARATOR . 'translations' . DIRECTORY_SEPARATOR;
+			$dir = _EPH_ROOT_DIR_ . DIRECTORY_SEPARATOR . 'translations' . DIRECTORY_SEPARATOR;
 			$fileName = $_FILES['excelTranslation']['name'];
 			$uploadfile = $dir . basename($fileName);
 			$sourcePath = $_FILES['excelTranslation']['tmp_name'];
@@ -857,7 +856,7 @@ class AdminTranslationsControllerCore extends AdminController {
 
 		$drawing = new Drawing();
 		$drawing->setName('Logo Ephenyx Shop');
-		$drawing->setPath(_EPH_ROOT_ADMIN_DIR_ . '/themes/img/logoFrontOffice.png');
+		$drawing->setPath(_EPH_ROOT_DIR_ . '/themes/img/logoFrontOffice.png');
 		$drawing->setHeight(80);
 		$drawing->setCoordinates('A1');
 		$drawing->setWorksheet($spreadsheet->getActiveSheet());
@@ -3951,7 +3950,7 @@ class AdminTranslationsControllerCore extends AdminController {
 
 		$drawing = new Drawing();
 		$drawing->setName('Logo Ephenyx Shop');
-		$drawing->setPath(_EPH_ROOT_ADMIN_DIR_ . '/themes/img/logoFrontOffice.png');
+		$drawing->setPath(_EPH_ROOT_DIR_ . '/themes/img/logoFrontOffice.png');
 		$drawing->setHeight(80);
 		$drawing->setCoordinates('A1');
 		$drawing->setWorksheet($spreadsheet->getActiveSheet());

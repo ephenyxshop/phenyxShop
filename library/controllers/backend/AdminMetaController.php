@@ -43,7 +43,7 @@ class AdminMetaControllerCore extends AdminController {
 
         parent::__construct();
 
-        $this->sm_file = _EPH_ROOT_DIR_ . DIRECTORY_SEPARATOR . $this->context->shop->id . '_index_sitemap.xml';
+        $this->sm_file = _EPH_ROOT_DIR_ . DIRECTORY_SEPARATOR . $this->context->company->id . '_index_sitemap.xml';
         // Options to generate friendly urls
         $modRewrite = Tools::modRewriteActive();
         $generalFields = [
@@ -109,8 +109,7 @@ class AdminMetaControllerCore extends AdminController {
             'fields' => [],
         ];
 
-        if (!Shop::isFeatureActive()) {
-            $this->url = ShopUrl::getShopUrls($this->context->shop->id)->where('main', '=', 1)->getFirst();
+         $this->url = CompanyUrl::getCompanyUrls($this->context->company->id)->where('main', '=', 1)->getFirst();
 
             if ($this->url) {
                 $shopUrlOptions['description'] = $this->l('Here you can set the URL for your shop. If you migrate your shop to a new URL, remember to change the values below.');
@@ -143,9 +142,6 @@ class AdminMetaControllerCore extends AdminController {
                 $shopUrlOptions['submit'] = ['title' => $this->l('Save')];
             }
 
-        } else {
-            $shopUrlOptions['description'] = $this->l('The multistore option is enabled. If you want to change the URL of your shop, you must go to the "Multistore" page under the "Advanced Parameters" menu.');
-        }
 
         // List of options
         $this->fields_options = [
@@ -197,7 +193,6 @@ class AdminMetaControllerCore extends AdminController {
                     'enableSnippets'            => true,
                     'enableLiveAutocompletion'  => true,
                     'maxLines'                  => 400,
-                    'visibility'                => Shop::CONTEXT_ALL,
                     'value'                     => Tools::isSubmit('robots') ? Tools::getValue('robots') : @file_get_contents(_EPH_ROOT_DIR_ . '/robots.txt'),
                     'auto_value'                => false,
                 ],
@@ -225,7 +220,6 @@ class AdminMetaControllerCore extends AdminController {
                     'enableSnippets'            => true,
                     'enableLiveAutocompletion'  => true,
                     'maxLines'                  => 400,
-                    'visibility'                => Shop::CONTEXT_ALL,
                     'value'                     => Tools::isSubmit('htaccess') ? Tools::getValue('htaccess') : @file_get_contents(_EPH_ROOT_DIR_ . '/.htaccess'),
                     'auto_value'                => false,
                 ],
@@ -256,7 +250,6 @@ class AdminMetaControllerCore extends AdminController {
         }
 
         $this->extracss = $this->pushCSS([
-            _EPH_JS_DIR_ . 'ace/aceinput.css',
             _EPH_ADMIN_THEME_DIR_ . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/metas.css',
 
         ]);
@@ -303,6 +296,22 @@ class AdminMetaControllerCore extends AdminController {
                     attr: \'data-link="\'+AjaxLink' . $this->controller_name . '+\'" data-class="' . $this->className . '" data-rowIndx="\' + ui.rowIndx+\'" data-object="\' + ui.rowData.' . $this->identifier . '+\' "\',
             };
         }';
+        $this->filterModel = [
+			'on'          => true,
+			'mode'        => '\'AND\'',
+			'header'      => true,
+			'type'        => '\'local\'',
+			'menuIcon'    => 0,
+			'gridOptions' => [
+				'numberCell' => [
+					'show' => 0,
+				],
+				'width'      => '\'flex\'',
+				'flex'       => [
+					'one' => true,
+				],
+			],
+		];
 
         $this->paramContextMenu = [
             '#grid_' . $this->controller_name => [
@@ -373,7 +382,7 @@ class AdminMetaControllerCore extends AdminController {
             (new DbQuery())
                 ->select('a.`id_meta`, `page`, `title`, `url_rewrite`')
                 ->from('meta', 'a')
-                ->leftJoin('meta_lang', 'b', 'b.`id_meta` = a.`id_meta` AND b.`id_lang` = ' . $this->context->language->id . ' AND b.`id_shop` = ' . $this->context->shop->id)
+                ->leftJoin('meta_lang', 'b', 'b.`id_meta` = a.`id_meta` AND b.`id_lang` = ' . $this->context->language->id)
                 ->where('a.`configurable` = 1')
                 ->groupBy('a.`id_meta`')
                 ->orderBy('a.`id_meta` ASC')
@@ -411,6 +420,9 @@ class AdminMetaControllerCore extends AdminController {
                 'editable'   => false,
                 'dataType'   => 'string',
                 'hiddenable' => 'no',
+                'filter'     => [
+					'crules' => [['condition' => "contain"]],
+				],
             ],
             [
                 'title'    => $this->l('Page title'),
@@ -497,14 +509,14 @@ class AdminMetaControllerCore extends AdminController {
 
     public function ajaxProcessUpdateAdminMetas() {
 
-        $idShop = $this->context->shop->id;
+        $idShop = $this->context->company->id;
 
-        $shop = new Shop($idShop);
+        $shop = new Company($idShop);
         $shop_url = $shop->getUrls();
 
         $idShopUrl = $shop_url[0]['id_shop_url'];
 
-        $shopUrl = new ShopUrl($idShopUrl);
+        $shopUrl = new CompanyUrl($idShopUrl);
 
         foreach ($_POST as $key => $value) {
 
@@ -1202,17 +1214,13 @@ class AdminMetaControllerCore extends AdminController {
      */
     public function updateOptionDomain($value) {
 
-        if (!Shop::isFeatureActive() && $this->url && $this->url->domain != $value) {
-
-            if (Validate::isCleanHtml($value)) {
+        if (Validate::isCleanHtml($value)) {
                 $this->url->domain = $value;
                 $this->url->update();
                 Configuration::updateGlobalValue('EPH_SHOP_DOMAIN', $value);
             } else {
                 $this->errors[] = Tools::displayError('This domain is not valid.');
             }
-
-        }
 
     }
 
@@ -1227,18 +1235,13 @@ class AdminMetaControllerCore extends AdminController {
      */
     public function updateOptionDomainSsl($value) {
 
-        if (!Shop::isFeatureActive() && $this->url && $this->url->domain_ssl != $value) {
-
-            if (Validate::isCleanHtml($value)) {
+        if (Validate::isCleanHtml($value)) {
                 $this->url->domain_ssl = $value;
                 $this->url->update();
                 Configuration::updateGlobalValue('EPH_SHOP_DOMAIN_SSL', $value);
             } else {
                 $this->errors[] = Tools::displayError('The SSL domain is not valid.');
             }
-
-        }
-
     }
 
     /**
@@ -1252,10 +1255,8 @@ class AdminMetaControllerCore extends AdminController {
      */
     public function updateOptionUri($value) {
 
-        if (!Shop::isFeatureActive() && $this->url && $this->url->physical_uri != $value) {
-            $this->url->physical_uri = $value;
+        $this->url->physical_uri = $value;
             $this->url->update();
-        }
 
     }
 

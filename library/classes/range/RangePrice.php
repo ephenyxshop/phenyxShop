@@ -6,11 +6,11 @@
  *
  * @since 1.9.1.0
  */
-class RangePriceCore extends ObjectModel
+class RangePriceCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'range_price',

@@ -573,7 +573,7 @@ class AdminCartRulesControllerCore extends AdminController {
         }
 
         if (Tools::isSubmit('customerFilter')) {
-            $queryMultishop = Shop::isFeatureActive() ? 's.`name` AS `from_shop_name`,' : '';
+            $queryMultishop =  '';
             $searchQuery = trim(Tools::getValue('q'));
             $customers = Db::getInstance()->executeS(
                 'SELECT c.`id_customer`, c.`email`, ' . $queryMultishop . ' CONCAT(c.`firstname`, \' \', c.`lastname`) as cname
@@ -650,8 +650,7 @@ class AdminCartRulesControllerCore extends AdminController {
                 FROM ' . _DB_PREFIX_ . 'product p
                 LEFT JOIN `' . _DB_PREFIX_ . 'product_lang` pl
                     ON (p.`id_product` = pl.`id_product`
-                    AND pl.`id_lang` = ' . (int) $this->context->language->id . Shop::addSqlRestrictionOnLang('pl') . ')
-                ' . Shop::addSqlAssociation('product', 'p') . '
+                    AND pl.`id_lang` = ' . (int) $this->context->language->id .  ')
                 WHERE id_lang = ' . (int) $this->context->language->id . '
                 ORDER BY name'
             );
@@ -706,8 +705,7 @@ class AdminCartRulesControllerCore extends AdminController {
                 FROM ' . _DB_PREFIX_ . 'category c
                 LEFT JOIN `' . _DB_PREFIX_ . 'category_lang` cl
                     ON (c.`id_category` = cl.`id_category`
-                    AND cl.`id_lang` = ' . (int) $this->context->language->id . Shop::addSqlRestrictionOnLang('cl') . ')
-                ' . Shop::addSqlAssociation('category', 'c') . '
+                    AND cl.`id_lang` = ' . (int) $this->context->language->id .  ')
                 WHERE id_lang = ' . (int) $this->context->language->id . '
                 ORDER BY name'
             );
@@ -1077,7 +1075,7 @@ class AdminCartRulesControllerCore extends AdminController {
                 'shops'                         => $shops,
                 'cart_rules'                    => $cartRules,
                 'product_rule_groups'           => $productRuleGroups,
-                'product_rule_grouEPH_counter'   => count($productRuleGroups),
+                'product_rule_groups_counter'   => count($productRuleGroups),
                 'attribute_groups'              => $attributeGroups,
                 'currentIndex'                  => static::$currentIndex,
                 'currentToken'                  => $this->token,

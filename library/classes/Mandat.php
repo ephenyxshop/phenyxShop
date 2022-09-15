@@ -1,6 +1,6 @@
 <?php
 
-class Mandat extends ObjectModel {
+class Mandat extends PhenyxObjectModel {
 
     public $id;
 

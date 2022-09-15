@@ -70,7 +70,7 @@ class NotificationCore {
                 ->select('o.`id_currency`, o.`date_upd`, c.`firstname`, c.`lastname`')
                 ->from('customer_pieces', 'o')
                 ->leftJoin('customer', 'c', 'c.`id_customer` = o.`id_customer`')
-                ->where('`id_customer_piece` > ' . (int) $idLastElement . ' ' . Shop::addSqlRestriction(false, 'o'))
+                ->where('`id_customer_piece` > ' . (int) $idLastElement)
                 ->orderBy('`id_customer_piece` DESC')
                 ->limit(5);
             break;
@@ -83,7 +83,6 @@ class NotificationCore {
                 ->leftJoin('customer_thread', 'ct', 'c.`id_customer_thread` = ct.`id_customer_thread`')
                 ->where('c.`id_customer_message` > ' . (int) $idLastElement)
                 ->where('c.`id_employee` = 0')
-                ->where('ct.`id_shop` IN (' . implode(', ', Shop::getContextListShopID()) . ')')
                 ->orderBy('c.`id_customer_message` DESC')
                 ->limit(5);
             break;
@@ -92,7 +91,7 @@ class NotificationCore {
                 ->select('SQL_CALC_FOUND_ROWS t.`id_' . bqSQL($type) . '`, t.*')
                 ->from(bqSQL($type), 't')
                 ->where('t.`deleted` = 0')
-                ->where('t.`id_' . bqSQL($type) . '` > ' . (int) $idLastElement . ' ' . Shop::addSqlRestriction(false, 't'))
+                ->where('t.`id_' . bqSQL($type) . '` > ' . (int) $idLastElement)
                 ->orderBy('t.`id_' . bqSQL($type) . '` DESC')
                 ->limit(5);
             break;

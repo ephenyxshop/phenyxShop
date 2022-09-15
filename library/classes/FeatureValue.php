@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class FeatureValueCore extends ObjectModel {
+class FeatureValueCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var int Group id which attribute belongs */
@@ -17,7 +17,7 @@ class FeatureValueCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'feature_value',

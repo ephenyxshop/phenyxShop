@@ -5,7 +5,7 @@
  *
  * @since 2.1.0.0
  */
-class CompanyCore extends ObjectModel {
+class CompanyCore extends PhenyxObjectModel {
 
 	public $tax_system;
 	public $tax_payment;
@@ -77,6 +77,8 @@ class CompanyCore extends ObjectModel {
 
 	const CONTEXT_COMPANY = 1;    
     
+    const CONTEXT_ALL = 4;
+    
     public $theme_name;
     
     public $theme_directory;    
@@ -98,7 +100,7 @@ class CompanyCore extends ObjectModel {
 	public $working_plan = '{"monday":{"start":"09:00","end":"20:00","breaks":[{"start":"14:30","end":"15:00"}]},"tuesday":{"start":"09:00","end":"20:00","breaks":[{"start":"14:30","end":"15:00"}]},"wednesday":{"start":"09:00","end":"20:00","breaks":[{"start":"14:30","end":"15:00"}]},"thursday":{"start":"09:00","end":"20:00","breaks":[{"start":"14:30","end":"15:00"}]},"friday":{"start":"09:00","end":"20:00","breaks":[{"start":"14:30","end":"15:00"}]},"saturday":null,"sunday":null}';
 
 	/**
-	 * @see ObjectModel::$definition
+	 * @see PhenyxObjectModel::$definition
 	 */
 	public static $definition = [
 		'table'   => 'company',
@@ -383,7 +385,7 @@ class CompanyCore extends ObjectModel {
 	}
 
 	/**
-	 * @see     ObjectModel::add()
+	 * @see     PhenyxObjectModel::add()
 	 *
 	 * @since 2.1.0.0
 	 *
@@ -433,7 +435,7 @@ class CompanyCore extends ObjectModel {
 	}
 
 	/**
-	 * @see     ObjectModel::delete()
+	 * @see     PhenyxObjectModel::delete()
 	 *
 	 * @since 2.1.0.0
 	 *
@@ -445,5 +447,41 @@ class CompanyCore extends ObjectModel {
 		return $this->update();
 
 	}
+    
+    public function getTheme() {
+        
+        return $this->theme_directory;
+    }
+    
+    public static function getContext() {
+        
+        return static::$context;
+    }
+    
+    public static function getContextCompanyID($nullValueWithoutMultishop = false) {
+        
+        return static::$context_id_company;
+    }
+    
+    public static function setContext($type, $id = null){
+        // @codingStandardsIgnoreStart
+        switch ($type) {
+            case static::CONTEXT_ALL :
+                static::$context_id_shop = null;
+                static::$context_id_shop_group = null;
+                break;         
+
+            case static::CONTEXT_COMPANY :
+                static::$context_id_shop = (int) $id;
+                static::$context_id_shop_group = static::getGroupFromShop($id);
+                break;
+
+            default :
+                throw new PhenyxShopException('Unknown context for shop');
+        }
+        // @codingStandardsIgnoreEnd
+
+        static::$context = $type;
+    }
 
 }

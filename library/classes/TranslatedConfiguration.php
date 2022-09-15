@@ -46,7 +46,7 @@ class TranslatedConfigurationCore extends Configuration {
      */
     public function __construct($id = null, $idLang = null) {
 
-        $this->def = ObjectModel::getDefinition($this);
+        $this->def = PhenyxObjectModel::getDefinition($this);
         // Check if the id configuration is set in the configuration_lang table.
         // Otherwise configuration is not set as translated configuration.
 

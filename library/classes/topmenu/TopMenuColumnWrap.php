@@ -1,6 +1,6 @@
 <?php
 
-class TopMenuColumnWrapCore extends ObjectModel {
+class TopMenuColumnWrapCore extends PhenyxObjectModel {
 
     //public $id;
 

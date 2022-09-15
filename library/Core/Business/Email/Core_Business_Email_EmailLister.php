@@ -1,7 +1,7 @@
 <?php
 
-class Core_Business_Email_EmailLister
-{
+class Core_Business_Email_EmailLister {
+
     // @codingStandardsIgnoreEnd
 
     protected $filesystem;
@@ -11,8 +11,8 @@ class Core_Business_Email_EmailLister
      *
      * @param Core_Foundation_FileSystem_FileSystem $fs
      */
-    public function __construct(Core_Foundation_FileSystem_FileSystem $fs)
-    {
+    public function __construct(Core_Foundation_FileSystem_FileSystem $fs) {
+
         // Register dependencies
         $this->filesystem = $fs;
     }
@@ -27,8 +27,8 @@ class Core_Business_Email_EmailLister
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function getAvailableMails($dir)
-    {
+    public function getAvailableMails($dir) {
+
         if (!is_dir($dir)) {
             return null;
         }
@@ -37,20 +37,26 @@ class Core_Business_Email_EmailLister
         $mailList = [];
 
         // Remove unwanted .html / .txt / .tpl / .php / . / ..
+
         foreach ($mailDirectory as $mail) {
+
             if (strpos($mail->getFilename(), '.') !== false) {
                 $tmp = explode('.', $mail->getFilename());
 
                 // Check for filename existence (left part) and if extension is html (right part)
+
                 if (($tmp === false || !isset($tmp[0])) || (isset($tmp[1]) && $tmp[1] !== 'html')) {
                     continue;
                 }
 
                 $mailNameNoExt = $tmp[0];
+
                 if (!in_array($mailNameNoExt, $mailList)) {
                     $mailList[] = $mailNameNoExt;
                 }
+
             }
+
         }
 
         return $mailList;
@@ -66,8 +72,8 @@ class Core_Business_Email_EmailLister
      * @since   1.0.0
      * @version 1.0.0
      */
-    public function getCleanedMailName($mailName)
-    {
+    public function getCleanedMailName($mailName) {
+
         if (strpos($mailName, '.') !== false) {
             $tmp = explode('.', $mailName);
 
@@ -80,4 +86,5 @@ class Core_Business_Email_EmailLister
 
         return ucfirst(str_replace(['_', '-'], ' ', $mailName));
     }
+
 }

@@ -28,7 +28,7 @@ class AdminModulePaymentControllerCore extends AdminController {
         parent::__construct();
         $this->publicName = $this->l('Payment Modules Management');
 
-        $idShop = $this->context->shop->id;
+        $idCompany = $this->context->company->id;
 
         /* Get all modules then select only payment ones */
         $modules = Module::getModulesOnDisk(true);
@@ -47,7 +47,7 @@ class AdminModulePaymentControllerCore extends AdminController {
                     $sql->select('`id_country`');
                     $sql->from('module_country');
                     $sql->where('`id_module` = ' . (int) $module->id);
-                    $sql->where('`id_shop` = ' . (int) $idShop);
+                    $sql->where('`id_shop` = ' . (int) $idCompany);
 
                     $countries = DB::getInstance()->executeS($sql);
 
@@ -63,7 +63,7 @@ class AdminModulePaymentControllerCore extends AdminController {
                     $sql->select('`id_currency`');
                     $sql->from('module_currency');
                     $sql->where('`id_module` = ' . (int) $module->id);
-                    $sql->where('`id_shop` = ' . (int) $idShop);
+                    $sql->where('`id_shop` = ' . (int) $idCompany);
 
                     $currencies = DB::getInstance()->executeS($sql);
 
@@ -79,7 +79,7 @@ class AdminModulePaymentControllerCore extends AdminController {
                     $sql->select('`id_group`');
                     $sql->from('module_group');
                     $sql->where('`id_module` = ' . (int) $module->id);
-                    $sql->where('`id_shop` = ' . (int) $idShop);
+                    $sql->where('`id_shop` = ' . (int) $idCompany);
 
                     $groups = DB::getInstance()->executeS($sql);
 
@@ -95,7 +95,7 @@ class AdminModulePaymentControllerCore extends AdminController {
                     $sql->select('`id_reference`');
                     $sql->from('module_carrier');
                     $sql->where('`id_module` = ' . (int) $module->id);
-                    $sql->where('`id_shop` = ' . (int) $idShop);
+                    $sql->where('`id_shop` = ' . (int) $idCompany);
 
                     $carriers = Db::getInstance()->executeS($sql);
 
@@ -206,7 +206,7 @@ class AdminModulePaymentControllerCore extends AdminController {
 
         Db::getInstance()->execute('
             DELETE FROM `' . _DB_PREFIX_ . 'module_' . bqSQL($type) . '`
-            WHERE id_shop = ' . $this->context->shop->id . '
+            WHERE id_shop = ' . $this->context->company->id . '
             AND `id_module` IN (' . implode(', ', $modules) . ')'
         );
 
@@ -219,7 +219,7 @@ class AdminModulePaymentControllerCore extends AdminController {
                 if ($module->active && isset($_POST[$module->name . '_reference'])) {
 
                     foreach ($_POST[$module->name . '_reference'] as $selected) {
-                        $values[] = '(' . (int) $module->id . ', ' . (int) $this->context->shop->id . ', ' . (int) $selected . ')';
+                        $values[] = '(' . (int) $module->id . ', ' . (int) $this->context->company->id . ', ' . (int) $selected . ')';
                     }
 
                 }
@@ -242,7 +242,7 @@ class AdminModulePaymentControllerCore extends AdminController {
                 if ($module->active && isset($_POST[$module->name . '_' . $type . ''])) {
 
                     foreach ($_POST[$module->name . '_' . $type . ''] as $selected) {
-                        $values[] = '(' . (int) $module->id . ', ' . (int) $this->context->shop->id . ', ' . (int) $selected . ')';
+                        $values[] = '(' . (int) $module->id . ', ' . (int) $this->context->company->id . ', ' . (int) $selected . ')';
                     }
 
                 }
@@ -278,13 +278,7 @@ class AdminModulePaymentControllerCore extends AdminController {
         $this->toolbar_title = $this->l('Payment');
         unset($this->toolbar_btn['back']);
 
-        $shopContext = (!Shop::isFeatureActive() || Shop::getContext() == Shop::CONTEXT_SHOP);
-
-        if (!$shopContext) {
-            $this->tpl_view_vars = ['shop_context' => $shopContext];
-
-            return parent::renderView();
-        }
+        
 
         $displayRestrictions = false;
 
@@ -385,7 +379,7 @@ class AdminModulePaymentControllerCore extends AdminController {
             'modules_list'         => $this->renderModulesList(),
             'display_restrictions' => $displayRestrictions,
             'lists'                => $lists,
-            'EPH_base_uri'          => __EPH_BASE_URI__,
+            'ps_base_uri'          => __EPH_BASE_URI__,
             'payment_modules'      => $this->payment_modules,
             'url_submit'           => static::$currentIndex . '&token=' . $this->token,
             'shop_context'         => $shopContext,

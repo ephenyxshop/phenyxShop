@@ -5,11 +5,11 @@
  *
  * @since 1.9.1.0
  */
-class CombinationCore extends ObjectModel {
+class CombinationCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'product_attribute',
@@ -283,9 +283,9 @@ class CombinationCore extends ObjectModel {
         $product = new Product((int) $this->id_product);
 
         if ($product->getType() == Product::PTYPE_VIRTUAL) {
-            StockAvailable::setProductOutOfStock((int) $this->id_product, 1, null, (int) $this->id);
+            StockAvailable::setProductOutOfStock((int) $this->id_product, 1,  (int) $this->id);
         } else {
-            StockAvailable::setProductOutOfStock((int) $this->id_product, StockAvailable::outOfStock((int) $this->id_product), null, $this->id);
+            StockAvailable::setProductOutOfStock((int) $this->id_product, StockAvailable::outOfStock((int) $this->id_product),  $this->id);
         }
 
         SpecificPriceRule::applyAllRules([(int) $this->id_product]);

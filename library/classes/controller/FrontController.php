@@ -436,7 +436,7 @@ class FrontControllerCore extends Controller {
                         /** @var DOMElement $link */
 
                         if ($favicon = Tools::parseFaviconSizeTag(urldecode($attribute->value))) {
-                            $attribute->value = Media::getMediaPath(_EPH_IMG_DIR_ . "favicon/favicon_{$this->context->shop->id}_{$favicon['width']}_{$favicon['height']}.{$favicon['type']}");
+                            $attribute->value = Media::getMediaPath(_EPH_IMG_DIR_ . "favicon/favicon_{$this->context->company->id}_{$favicon['width']}_{$favicon['height']}.{$favicon['type']}");
                         }
 
                     }
@@ -448,8 +448,8 @@ class FrontControllerCore extends Controller {
                     $hookHeader .= $faviconHtml;
                 }
 
-                $hookHeader .= '<meta name="msapplication-config" content="' . Media::getMediaPath(_EPH_IMG_DIR_ . "favicon/browserconfig_{$this->context->shop->id}.xml") . '">';
-                $hookHeader .= '<link rel="manifest" href="' . Media::getMediaPath(_EPH_IMG_DIR_ . "favicon/manifest_{$this->context->shop->id}.json") . '">';
+                $hookHeader .= '<meta name="msapplication-config" content="' . Media::getMediaPath(_EPH_IMG_DIR_ . "favicon/browserconfig_{$this->context->company->id}.xml") . '">';
+                $hookHeader .= '<link rel="manifest" href="' . Media::getMediaPath(_EPH_IMG_DIR_ . "favicon/manifest_{$this->context->company->id}.json") . '">';
             }
 
             if (isset($this->php_self)) {
@@ -1915,8 +1915,6 @@ class FrontControllerCore extends Controller {
             $cart->id_lang = (int) $this->context->cookie->id_lang;
             $cart->id_currency = (int) $this->context->cookie->id_currency;
             $cart->id_guest = (int) $this->context->cookie->id_guest;
-            $cart->id_shop_group = (int) $this->context->shop->id_shop_group;
-            $cart->id_shop = $this->context->shop->id;
 
             if ($this->context->cookie->id_customer) {
                 $cart->id_customer = (int) $this->context->cookie->id_customer;
@@ -1952,7 +1950,7 @@ class FrontControllerCore extends Controller {
         if (Tools::getValue('fc') == 'module' && $moduleName != '' && (Module::getInstanceByName($moduleName) instanceof PaymentModule)) {
             $pageName = 'module-payment-submit';
         } else
-        if (preg_match('#^' . preg_quote($this->context->shop->physical_uri, '#') . 'plugins/([a-zA-Z0-9_-]+?)/(.*)$#', $_SERVER['REQUEST_URI'], $m)) {
+        if (preg_match('#^' . preg_quote($this->context->company->physical_uri, '#') . 'plugins/([a-zA-Z0-9_-]+?)/(.*)$#', $_SERVER['REQUEST_URI'], $m)) {
             $pageName = 'module-' . $m[1] . '-' . str_replace(['.php', '/'], ['', '-'], $m[2]);
         } else {
             $pageName = Performer::getInstance()->getController();
@@ -1987,7 +1985,7 @@ class FrontControllerCore extends Controller {
 
         }
 
-        $languages = Language::getLanguages(true, $this->context->shop->id);
+        $languages = Language::getLanguages(true);
         $metaLanguage = [];
 
         foreach ($languages as $lang) {
@@ -2087,7 +2085,6 @@ class FrontControllerCore extends Controller {
             'img_sup_dir'   => _THEME_SUP_DIR_,
             'img_ship_dir'  => _THEME_SHIP_DIR_,
             'img_store_dir' => _THEME_STORE_DIR_,
-            'img_col_dir'   => _THEME_COL_DIR_,
             'img_dir'       => _THEME_IMG_DIR_,
             'css_dir'       => _THEME_CSS_DIR_,
             'js_dir'        => _THEME_JS_DIR_,
@@ -2146,7 +2143,10 @@ class FrontControllerCore extends Controller {
 	
 	public function isMobileDevice() {
 		
-		return preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", $_SERVER["HTTP_USER_AGENT"]);
+         if ( isset($_SERVER["HTTP_USER_AGENT"]) ) {
+             return preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", $_SERVER["HTTP_USER_AGENT"]);
+         }
+		
 	}
 
 
@@ -3356,7 +3356,7 @@ class FrontControllerCore extends Controller {
         header('HTTP/1.1 503 temporarily overloaded');
         $this->context->smarty->assign(
             [
-                'shop_name'   => $this->context->shop->name,
+                'shop_name'   => $this->context->company->name,
                 'favicon_url' => _EPH_IMG_ . Configuration::get('EPH_FAVICON'),
                 'logo_url'    => $this->context->link->getMediaLink(_EPH_IMG_ . Configuration::get('EPH_LOGO')),
             ]
@@ -3582,14 +3582,14 @@ class FrontControllerCore extends Controller {
 
 		$logo = '';
 		$context = Context::getContext();
-		$idShop = (int) $context->shop->id;
+		$idCompany = (int) $context->company->id;
 
-		if (Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop))) {
-			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop);
+		if (Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany))) {
+			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany);
 		} else
 
-		if (Configuration::get('EPH_LOGO', null, null, $idShop) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop))) {
-			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop);
+		if (Configuration::get('EPH_LOGO', null, null, $idCompany) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idCompany))) {
+			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idCompany);
 		}
 
 		return $logo;

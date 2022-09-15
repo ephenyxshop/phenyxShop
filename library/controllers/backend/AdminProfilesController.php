@@ -19,7 +19,6 @@ class AdminProfilesControllerCore extends AdminController {
 		$this->table = 'profile';
 		$this->className = 'Profile';
 		$this->publicName = $this->l('Employee profiles');
-		$this->multishop_context = Shop::CONTEXT_ALL;
 		$this->lang = true;
 
 		$this->identifier = 'id_profile';

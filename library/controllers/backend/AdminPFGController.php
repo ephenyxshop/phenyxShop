@@ -353,7 +353,7 @@ class AdminPFGController extends AdminController {
 				->leftJoin('pfg_lang', 'etl', 'etl.`id_pfg` = et.`id_pfg` AND etl.`id_lang` = ' . (int) $this->context->language->id)
 				->orderBy('et.`id_pfg` ASC')
 		);
-		$shop = new Shop($this->context->shop->id);
+		$shop = new Company($this->context->company->id);
 		$url = 'https://' . $shop->domain_ssl;
 
 		foreach ($formulaires as &$formulaire) {

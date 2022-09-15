@@ -777,7 +777,7 @@ class AdminSepaControllerCore extends AdminController {
 
         $this->context->smarty->assign([
             'title'                => 'Export SEPA',
-            'logo_path'            => _EPH_ROOT_DIR_ . '/img/' . Configuration::get('EPH_LOGO', null, null, $this->context->shop->id),
+            'logo_path'            => _EPH_ROOT_DIR_ . '/img/' . Configuration::get('EPH_LOGO', null, null, $this->context->company->id),
             'total_sepas'          => Sepa::getTotal(),
             'date'                 => date('d-m-Y'),
             'sepas'                => Sepa::getSepa((int) $this->context->language->id, true),
@@ -824,7 +824,7 @@ class AdminSepaControllerCore extends AdminController {
             null,
             _EPH_SEPA_MAIL_DIR_,
             false,
-            (int) $this->context->shop->id
+            (int) $this->context->company->id
         )) {
             $json = [
                 'Email'  => $email,

@@ -6,7 +6,7 @@
  *
  * @since 1.9.1.0
  */
-class TaxCore extends ObjectModel
+class TaxCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     /** @var string Name */
@@ -26,7 +26,7 @@ class TaxCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'tax',

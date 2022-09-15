@@ -5,11 +5,11 @@
  *
  * @since 1.9.1.0
  */
-class CMSCategoryCore extends ObjectModel {
+class CMSCategoryCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'          => 'cms_category',
@@ -738,13 +738,13 @@ class CMSCategoryCore extends ObjectModel {
 
         // Delete CMS Category and its child from database
         $list = count($toDelete) > 1 ? implode(',', $toDelete) : (int) $this->id;
-        $idShopList = Shop::getContextListShopID();
+        $idCompanyList = [Context::getContext()->company->id];
 
         if (count($this->id_shop_list)) {
-            $idShopList = $this->id_shop_list;
+            $idCompanyList = $this->id_shop_list;
         }
 
-        Db::getInstance()->delete($this->def['table'] . '_shop', '`' . $this->def['primary'] . '` IN (' . $list . ') AND id_shop IN (' . implode(', ', $idShopList) . ')');
+        Db::getInstance()->delete($this->def['table'] . '_shop', '`' . $this->def['primary'] . '` IN (' . $list . ') AND id_shop IN (' . implode(', ', $idCompanyList) . ')');
 
         $hasMultishopEntries = $this->hasMultishopEntries();
 
@@ -841,7 +841,7 @@ class CMSCategoryCore extends ObjectModel {
             if (isset($this->name[$context->language->id])) {
                 $idLang = $context->language->id;
             } else {
-                $idLang = (int) Configuration::get('EPH_LANG_DEFAULT');
+                $idLang = (int) $context->language->id;
             }
 
         }

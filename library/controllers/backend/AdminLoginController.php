@@ -225,10 +225,8 @@ class AdminLoginControllerCore extends AdminController {
             // Find employee
             $this->context->employee = new Employee();
             $isEmployeeLoaded = $this->context->employee->getByEmail($email, $passwd);
-            $employeeAssociatedShop = $this->context->employee->getAssociatedShops();
 
-            if (!$isEmployeeLoaded
-                || (!$employeeAssociatedShop && !$this->context->employee->isSuperAdmin())) {
+            if (!$isEmployeeLoaded) {
                 $this->errors[] = Tools::displayError('The employee does not exist, or the password provided is incorrect.');
                 $this->context->employee->logout();
             } else {
