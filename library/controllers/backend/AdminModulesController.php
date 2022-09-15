@@ -316,13 +316,27 @@ class AdminModulesControllerCore extends AdminController {
                                 openModuleAjaxLink(datalink);
                             }
                         },
+                        "Unistall": {
+                            name: \'' . $this->l('Désinstaller') . ' \',
+                            icon: "puzzle",
+                            visible: function(key, opt){
+                              
+                                if ( rowData.enable ) {
+                                return false;
+                               }
+
+                               return false;
+                            },
+                            callback: function(itemKey, opt, e) {
+                                var datalink = optionsHtml.Uninstall;
+                                openModuleAjaxLink(datalink);
+                            }
+                        },
                         "Delete": {
                             name: \'' . $this->l('Supprimer') . ' \',
                             icon: "delete",
                             visible: function(key, opt){
-                            if ( !rowData.installed ) {
-                                    return false;
-                               }
+                            
                                if ( typeof optionsHtml.Delete !== \'undefined\' ) {
                                 return true;
                                }
@@ -1588,6 +1602,25 @@ class AdminModulesControllerCore extends AdminController {
 
         die(Tools::jsonEncode($return));
     }
+    
+    public function ajaxProcessUnstallModule() {
+
+        $module = Module::getInstanceByName(Tools::getValue('module_name'));
+        if($module->uninstall()) {
+            $return = [
+                'success' => true,
+                'message' => 'Le module a été désinstallé avec succès',
+            ];
+        } else {
+            $return = [
+                'success' => false,
+                'message' => 'Il y a eu un beug',
+            ];
+        }
+        
+
+        die(Tools::jsonEncode($return));
+    }
 
     public function ajaxProcessDisableModule() {
 
@@ -1603,6 +1636,8 @@ class AdminModulesControllerCore extends AdminController {
     }
 
     public function ajaxProcessEnableModule() {
+
+
 
         $module = Module::getInstanceByName(Tools::getValue('module_name'));
 
@@ -2342,15 +2377,7 @@ class AdminModulesControllerCore extends AdminController {
                     } else {
                         // If we install a module, force temporary global context for multishop
 
-                        if (Shop::isFeatureActive() && Shop::getContext() != Shop::CONTEXT_ALL && $method != 'getContent') {
-                            $shopId = (int) $this->context->shop->id;
-                            $this->context->tmpOldShop = clone ($this->context->shop);
-
-                            if ($shopId) {
-                                $this->context->shop = new Shop($shopId);
-                            }
-
-                        }
+                        
 
                         //retrocompatibility
 
@@ -2428,42 +2455,7 @@ class AdminModulesControllerCore extends AdminController {
                                     'is_reset_ready'            => $isResetReady,
                                 ]
                             );
-                            // Display checkbox in toolbar if multishop
-
-                            if (Shop::isFeatureActive()) {
-
-                                if (Shop::getContext() == Shop::CONTEXT_SHOP) {
-                                    $shopContext = 'shop <strong>' . $this->context->shop->name . '</strong>';
-                                } else
-                                if (Shop::getContext() == Shop::CONTEXT_GROUP) {
-                                    $shopGroup = new ShopGroup((int) Shop::getContextShopGroupID());
-                                    $shopContext = 'all shops of group shop <strong>' . $shopGroup->name . '</strong>';
-                                } else {
-                                    $shopContext = 'all shops';
-                                }
-
-                                $this->context->smarty->assign(
-                                    [
-                                        'module'                     => $module,
-                                        'display_multishop_checkbox' => true,
-                                        'current_url'                => $this->getCurrentUrl('enable'),
-                                        'shop_context'               => $shopContext,
-                                    ]
-                                );
-
-                            }
-
-                            $this->context->smarty->assign(
-                                [
-                                    'is_multishop'      => Shop::isFeatureActive(),
-                                    'multishop_context' => Shop::CONTEXT_ALL | Shop::CONTEXT_GROUP | Shop::CONTEXT_SHOP,
-                                ]
-                            );
-
-                            if (Shop::isFeatureActive() && isset($this->context->tmpOldShop)) {
-                                $this->context->shop = clone ($this->context->tmpOldShop);
-                                unset($this->context->tmpOldShop);
-                            }
+                           
 
                             // Display module configuration
                             $header = $this->context->smarty->fetch('controllers/modules/configure.tpl');
@@ -2484,10 +2476,7 @@ class AdminModulesControllerCore extends AdminController {
                             $moduleErrors[] = ['name' => $name, 'message' => $module->getErrors()];
                         }
 
-                        if (Shop::isFeatureActive() && Shop::getContext() != Shop::CONTEXT_ALL && isset($this->context->tmpOldShop)) {
-                            $this->context->shop = clone ($this->context->tmpOldShop);
-                            unset($this->context->tmpOldShop);
-                        }
+                       
 
                     }
 

@@ -140,7 +140,7 @@ class SearchCore {
                     FROM ' . _DB_PREFIX_ . 'search_word sw
                     LEFT JOIN ' . _DB_PREFIX_ . 'search_index si ON sw.id_word = si.id_word
                     WHERE sw.id_lang = ' . (int) $idLang . '
-                        AND sw.id_shop = ' . $context->shop->id . '
+                        AND sw.id_shop = ' . $context->company->id . '
                         AND sw.word LIKE
                     ' . ($word[0] == '-'
                     ? ' \'' . $startSearch . pSQL(mb_substr($word, 1, EPH_SEARCH_MAX_WORD_LENGTH)) . $endSearch . '\''
@@ -169,7 +169,7 @@ class SearchCore {
                 FROM ' . _DB_PREFIX_ . 'search_word sw
                 LEFT JOIN ' . _DB_PREFIX_ . 'search_index si ON sw.id_word = si.id_word
                 WHERE sw.id_lang = ' . (int) $idLang . '
-                    AND sw.id_shop = ' . $context->shop->id . '
+                    AND sw.id_shop = ' . $context->company->id . '
                     AND si.id_product = p.id_product
                     AND (' . implode(' OR ', $scoreArray) . ')
             ) position';
@@ -426,7 +426,7 @@ class SearchCore {
             $full = false;
         }
 
-        if ($full && Context::getContext()->shop->getContext() == Shop::CONTEXT_SHOP) {
+        if ($full) {
             $db->execute(
                 'DELETE si, sw FROM `' . _DB_PREFIX_ . 'search_index` si
                 INNER JOIN `' . _DB_PREFIX_ . 'product` p ON (p.id_product = si.id_product)
@@ -441,10 +441,6 @@ class SearchCore {
                 AND p.`active` = 1
                 '
             );
-        } else if ($full) {
-            $db->execute('TRUNCATE ' . _DB_PREFIX_ . 'search_index');
-            $db->execute('TRUNCATE ' . _DB_PREFIX_ . 'search_word');
-            ObjectModel::updateMultishopTable('Product', ['indexed' => 0]);
         } else {
             $db->execute(
                 'DELETE si FROM `' . _DB_PREFIX_ . 'search_index` si
@@ -944,7 +940,7 @@ class SearchCore {
     protected static function setProductsAsIndexed(&$products) {
 
         if (is_array($products) && !empty($products)) {
-            ObjectModel::updateMultishopTable('Product', ['indexed' => 1], 'a.id_product IN (' . implode(',', $products) . ')');
+            PhenyxObjectModel::updateMultishopTable('Product', ['indexed' => 1], 'a.id_product IN (' . implode(',', $products) . ')');
         }
 
     }
@@ -960,7 +956,7 @@ class SearchCore {
 
         if (is_array($products) && !empty($products)) {
             Db::getInstance()->execute('DELETE FROM ' . _DB_PREFIX_ . 'search_index WHERE id_product IN (' . implode(',', array_map('intval', $products)) . ')');
-            ObjectModel::updateMultishopTable('Product', ['indexed' => 0], 'a.id_product IN (' . implode(',', array_map('intval', $products)) . ')');
+            PhenyxObjectModel::updateMultishopTable('Product', ['indexed' => 0], 'a.id_product IN (' . implode(',', array_map('intval', $products)) . ')');
         }
 
     }
@@ -1021,9 +1017,7 @@ class SearchCore {
             $pageSize = 10;
         }
 
-        $id = Context::getContext()->shop->id;
-        $idShop = $id ? $id : Configuration::get('EPH_SHOP_DEFAULT');
-
+       
         $sqlGroups = '';
 
         if (Group::isFeatureActive()) {
@@ -1039,11 +1033,11 @@ class SearchCore {
             STRAIGHT_JOIN `' . _DB_PREFIX_ . 'product_tag` pt ON (pt.`id_tag` = t.`id_tag` AND t.`id_lang` = ' . (int) $idLang . ')
             STRAIGHT_JOIN `' . _DB_PREFIX_ . 'product` p ON (p.`id_product` = pt.`id_product`)
             LEFT JOIN `' . _DB_PREFIX_ . 'category_product` cp ON (cp.`id_product` = p.`id_product`)
-            LEFT JOIN `' . _DB_PREFIX_ . 'category_shop` cs ON (cp.`id_category` = cs.`id_category` AND cs.`id_shop` = ' . (int) $idShop . ')
+            LEFT JOIN `' . _DB_PREFIX_ . 'category` cs ON (cp.`id_category` = cs.`id_category`)
             ' . (Group::isFeatureActive() ? 'LEFT JOIN `' . _DB_PREFIX_ . 'category_group` cg ON (cg.`id_category` = cp.`id_category`)' : '') . '
             WHERE p.`active` = 1
             AND p.visibility IN (\'both\', \'search\')
-            AND cs.`id_shop` = ' . (int) Context::getContext()->shop->id . '
+           
             ' . $sqlGroups . '
             AND t.`name` LIKE \'%' . pSQL($tag) . '%\''
             );
@@ -1073,10 +1067,9 @@ class SearchCore {
                 LEFT JOIN `' . _DB_PREFIX_ . 'manufacturer` m ON (m.`id_manufacturer` = p.`id_manufacturer`)
                 LEFT JOIN `' . _DB_PREFIX_ . 'category_product` cp ON (cp.`id_product` = p.`id_product`)
                 ' . (Group::isFeatureActive() ? 'LEFT JOIN `' . _DB_PREFIX_ . 'category_group` cg ON (cg.`id_category` = cp.`id_category`)' : '') . '
-                LEFT JOIN `' . _DB_PREFIX_ . 'category_shop` cs ON (cp.`id_category` = cs.`id_category` AND cs.`id_shop` = ' . (int) $idShop . ')
+                LEFT JOIN `' . _DB_PREFIX_ . 'category` cs ON (cp.`id_category` = cs.`id_category`)
                 ' . Product::sqlStock('p', 0) . '
-                WHERE p.`active` = 1
-                    AND cs.`id_shop` = ' . (int) Context::getContext()->shop->id . '
+                WHERE p.`active` = 1                   
                     ' . $sqlGroups . '
                     AND t.`name` LIKE \'%' . pSQL($tag) . '%\'
                     GROUP BY p.id_product

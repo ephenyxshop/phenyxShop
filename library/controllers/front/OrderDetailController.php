@@ -72,7 +72,7 @@ class OrderDetailControllerCore extends FrontController {
                         $ct = new CustomerThread();
                         $ct->id_contact = 0;
                         $ct->id_customer = (int) $order->id_customer;
-                        $ct->id_shop = (int) $this->context->shop->id;
+                        $ct->id_shop = (int) $this->context->company->id;
 
                         if ($idProduct && $order->orderContainProduct($idProduct)) {
                             $ct->id_product = $idProduct;

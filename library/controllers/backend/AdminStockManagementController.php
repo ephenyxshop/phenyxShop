@@ -19,7 +19,6 @@ class AdminStockManagementControllerCore extends AdminController {
         $this->list_id = 'product';
         $this->className = 'Product';
         $this->lang = true;
-        $this->multishop_context = Shop::CONTEXT_ALL;
 
         $this->fields_list = [
             'reference'         => [
@@ -164,7 +163,7 @@ class AdminStockManagementControllerCore extends AdminController {
             (SELECT SUM(physical_quantity) FROM `' . _DB_PREFIX_ . 'stock` WHERE id_product = a.id_product) as physical_quantity,
             (SELECT SUM(usable_quantity) FROM `' . _DB_PREFIX_ . 'stock` WHERE id_product = a.id_product) as usable_quantity,
             a.id_product as id, COUNT(pa.id_product_attribute) as variations';
-            $this->_join = 'LEFT JOIN `' . _DB_PREFIX_ . 'product_attribute` pa ON (pa.id_product = a.id_product)' . Shop::addSqlAssociation('product_attribute', 'pa', false);
+            $this->_join = 'LEFT JOIN `' . _DB_PREFIX_ . 'product_attribute` pa ON (pa.id_product = a.id_product)';
             $this->_where = 'AND a.is_virtual = 0 AND a.advanced_stock_management = 1 ';
             $this->_group = 'GROUP BY a.id_product';
 

@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class MetaCore extends ObjectModel {
+class MetaCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     public $page;
@@ -18,7 +18,7 @@ class MetaCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'          => 'meta',
@@ -232,8 +232,7 @@ class MetaCore extends ObjectModel {
             ->select('`id_meta`')
             ->from('meta_lang')
             ->where('`url_rewrite` = \'' . pSQL($urlRewrite) . '\'')
-            ->where('`id_lang` = ' . (int) $idLang)
-            ->where('`id_shop` = ' . (int) Context::getContext()->shop->id);
+            ->where('`id_lang` = ' . (int) $idLang);
 
         return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
@@ -241,7 +240,6 @@ class MetaCore extends ObjectModel {
                 ->from('meta_lang')
                 ->where('id_meta = (' . $metaSql->build() . ')')
                 ->where('`id_lang` = ' . (int) $newIdLang)
-                ->where('`id_shop` = ' . (int) Context::getContext()->shop->id)
         );
     }
 
@@ -531,7 +529,7 @@ class MetaCore extends ObjectModel {
             ->from('cms_lang')
             ->where('`id_lang` = ' . (int) $idLang)
             ->where('`id_cms` = ' . (int) $idCms)
-            ->where(Context::getContext()->shop->id ? '`id_shop` = ' . (int) Context::getContext()->shop->id : '')
+            
         )) {
             $row['meta_title'] = $row['meta_title'] . ' - ' . Configuration::get('EPH_SHOP_NAME');
 
@@ -563,7 +561,7 @@ class MetaCore extends ObjectModel {
             ->from('cms_category_lang')
             ->where('`id_lang` = ' . (int) $idLang)
             ->where('`id_cms_category` = ' . (int) $idCmsCategory)
-            ->where(Context::getContext()->shop->id ? '`id_shop` = ' . (int) Context::getContext()->shop->id : '')
+            
         )) {
             $row['meta_title'] = $row['meta_title'] . ' - ' . Configuration::get('EPH_SHOP_NAME');
 

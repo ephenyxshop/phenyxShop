@@ -6,7 +6,7 @@
  *
  * @since 1.9.1.0
  */
-class SupplyOrderReceiptHistoryCore extends ObjectModel
+class SupplyOrderReceiptHistoryCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     /**
@@ -46,7 +46,7 @@ class SupplyOrderReceiptHistoryCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'supply_order_receipt_history',
@@ -63,7 +63,7 @@ class SupplyOrderReceiptHistoryCore extends ObjectModel
     ];
 
     /**
-     * @see ObjectModel::$webserviceParameters
+     * @see PhenyxObjectModel::$webserviceParameters
      */
     protected $webserviceParameters = [
         'objectsNodeName' => 'supply_order_receipt_histories',

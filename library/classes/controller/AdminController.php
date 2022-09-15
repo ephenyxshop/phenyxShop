@@ -121,9 +121,7 @@ class AdminControllerCore extends EphController {
     public $displayOptionGrid = false;
     /** @var string Security token */
     public $token;
-    /** @var string "shop" or "group_shop" */
-    public $shopLinkType;
-    /** @var array */
+      /** @var array */
     public $tpl_form_vars = [];
     /** @var array */
     public $tpl_list_vars = [];
@@ -530,9 +528,7 @@ class AdminControllerCore extends EphController {
 
         parent::__construct();
 
-        if ($this->multishop_context == -1) {
-            $this->multishop_context = Shop::CONTEXT_ALL | Shop::CONTEXT_GROUP | Shop::CONTEXT_SHOP;
-        }
+        
 
         $path = _SHOP_ROOT_DIR_ . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR;
 
@@ -641,17 +637,11 @@ class AdminControllerCore extends EphController {
         }
         
 
-        
-
-        if (!Shop::isFeatureActive()) {
-            $this->shopLinkType = '';
-        }
 
         $this->override_folder = Tools::toUnderscoreCase(substr($this->controller_name, 5)) . '/';
 
         $this->tpl_folder = Tools::toUnderscoreCase(substr($this->controller_name, 5)) . '/';
 
-        $this->initShopContext();
 
         $this->context->currency = new Currency(Configuration::get('EPH_CURRENCY_DEFAULT'));
 
@@ -685,7 +675,7 @@ class AdminControllerCore extends EphController {
 		$this->page_title = Meta::getTitle($this->php_self, $this->context->language->id);
 
         $this->_params = [
-            'shopUrl'     => ShopUrl::getMainShopDomain(),
+            'shopUrl'     => CompanyUrl::getMainShopDomain(),
             'purchaseKey' => Configuration::get('_EPHENYX_LICENSE_KEY_'),
             'UserIpAddr'  => $this->getUserIpAddr(),
             'ephenyxV'    => _EPH_VERSION_,
@@ -1330,100 +1320,7 @@ class AdminControllerCore extends EphController {
         return Translate::getAdminTranslation($string, $class, $addslashes, $htmlentities);
     }
 
-    /**
-     * @throws PhenyxShopException
-     *
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     */
-    public function initShopContext() {
-
-        if (!Validate::isLoadedObject($this->context->employee) || !$this->context->employee->isLoggedBack()) {
-            return;
-        }
-
-        // Change shop context ?
-
-        if (Shop::isFeatureActive() && Tools::getValue('setShopContext') !== false) {
-            $this->context->cookie->shopContext = Tools::getValue('setShopContext');
-            $url = parse_url($_SERVER['REQUEST_URI']);
-            $query = (isset($url['query'])) ? $url['query'] : '';
-            parse_str($query, $parseQuery);
-            unset($parseQuery['setShopContext'], $parseQuery['conf']);
-            $this->redirect_after = $url['path'] . '?' . http_build_query($parseQuery, '', '&');
-        } else
-
-        if (!Shop::isFeatureActive()) {
-            $this->context->cookie->shopContext = 's-' . (int) Configuration::get('EPH_SHOP_DEFAULT');
-        } else
-
-        if (Shop::getTotalShops(false, null) < 2) {
-            $this->context->cookie->shopContext = 's-' . (int) $this->context->employee->getDefaultShopID();
-        }
-
-        $idShop = '';
-        Shop::setContext(Shop::CONTEXT_ALL);
-
-        if ($this->context->cookie->shopContext) {
-            $split = explode('-', $this->context->cookie->shopContext);
-
-            if (count($split) == 2) {
-
-                if ($split[0] == 'g') {
-
-                    if ($this->context->employee->hasAuthOnShopGroup((int) $split[1])) {
-                        Shop::setContext(Shop::CONTEXT_GROUP, (int) $split[1]);
-                    } else {
-                        $idShop = (int) $this->context->employee->getDefaultShopID();
-                        Shop::setContext(Shop::CONTEXT_SHOP, $idShop);
-                    }
-
-                } else
-
-                if (Shop::getShop($split[1]) && $this->context->employee->hasAuthOnShop($split[1])) {
-                    $idShop = (int) $split[1];
-                    Shop::setContext(Shop::CONTEXT_SHOP, $idShop);
-                } else {
-                    $idShop = (int) $this->context->employee->getDefaultShopID();
-                    Shop::setContext(Shop::CONTEXT_SHOP, $idShop);
-                }
-
-            }
-
-        }
-
-        // Check multishop context and set right context if need
-
-        if (!($this->multishop_context & Shop::getContext())) {
-
-            if (Shop::getContext() == Shop::CONTEXT_SHOP && !($this->multishop_context & Shop::CONTEXT_SHOP)) {
-                Shop::setContext(Shop::CONTEXT_GROUP, Shop::getContextShopGroupID());
-            }
-
-            if (Shop::getContext() == Shop::CONTEXT_GROUP && !($this->multishop_context & Shop::CONTEXT_GROUP)) {
-                Shop::setContext(Shop::CONTEXT_ALL);
-            }
-
-        }
-
-        // Replace existing shop if necessary
-
-        if (!$idShop) {
-            $this->context->shop = new Shop((int) Configuration::get('EPH_SHOP_DEFAULT'));
-        } else
-
-        if ($this->context->shop->id != $idShop) {
-            $this->context->shop = new Shop((int) $idShop);
-        }
-
-        if ($this->context->shop->id_theme != $this->context->theme->id) {
-            $this->context->theme = new Theme((int) $this->context->shop->id_theme);
-        }
-
-        // Replace current default country
-        $this->context->country = new Country((int) Configuration::get('EPH_COUNTRY_DEFAULT'));
-    }
-
+    
     /**
      * @TODO    uses redirectAdmin only if !$this->ajax
      * @return bool
@@ -1578,7 +1475,7 @@ class AdminControllerCore extends EphController {
         $definition = false;
 
         if (isset($this->className) && $this->className) {
-            $definition = ObjectModel::getDefinition($this->className);
+            $definition = PhenyxObjectModel::getDefinition($this->className);
         }
 
         foreach ($filters as $key => $value) {
@@ -1978,52 +1875,14 @@ class AdminControllerCore extends EphController {
         /* SQL table : orders, but class name is Order */
         $sqlTable = $this->table == 'order' ? 'orders' : $this->table;
 
-        // Add SQL shop restriction
-        $selectShop = $joinShop = $whereShop = '';
-
-        if ($this->shopLinkType) {
-            $selectShop = ', shop.name as shop_name ';
-            $joinShop = ' LEFT JOIN ' . _DB_PREFIX_ . $this->shopLinkType . ' shop
-                            ON a.id_' . $this->shopLinkType . ' = shop.id_' . $this->shopLinkType;
-            $whereShop = Shop::addSqlRestriction($this->shopShareDatas, 'a');
-        }
-
-        if ($this->multishop_context && Shop::isTableAssociated($this->table) && !empty($this->className)) {
-
-            if (Shop::getContext() != Shop::CONTEXT_ALL || !$this->context->employee->isSuperAdmin()) {
-                $testJoin = !preg_match('#`?' . preg_quote(_DB_PREFIX_ . $this->table . '_shop') . '`? *sa#', $this->_join);
-
-                if (Shop::isFeatureActive() && $testJoin && Shop::isTableAssociated($this->table)) {
-                    $this->_where .= ' AND EXISTS (
-                        SELECT 1
-                        FROM `' . _DB_PREFIX_ . $this->table . '_shop` sa
-                        WHERE a.' . $this->identifier . ' = sa.' . $this->identifier . ' AND sa.id_shop IN (' . implode(', ', Shop::getContextListShopID()) . ')
-                    )';
-                }
-
-            }
-
-        }
-
+       
         /* Query in order to get results with all fields */
         $langJoin = '';
 
         if ($this->lang) {
             $langJoin = 'LEFT JOIN `' . _DB_PREFIX_ . $this->table . '_lang` b ON (b.`' . $this->identifier . '` = a.`' . $this->identifier . '` AND b.`id_lang` = ' . (int) $idLang;
 
-            if ($idLangShop) {
-
-                if (!Shop::isFeatureActive()) {
-                    $langJoin .= ' AND b.`id_shop` = ' . (int) Configuration::get('EPH_SHOP_DEFAULT');
-                } else
-
-                if (Shop::getContext() == Shop::CONTEXT_SHOP) {
-                    $langJoin .= ' AND b.`id_shop` = ' . (int) $idLangShop;
-                } else {
-                    $langJoin .= ' AND b.`id_shop` = a.id_shop_default';
-                }
-
-            }
+            
 
             $langJoin .= ')';
         }
@@ -2075,16 +1934,15 @@ class AdminControllerCore extends EphController {
             }
 
             $this->_listsql .= '
-            ' . (isset($this->_select) ? ', ' . rtrim($this->_select, ', ') : '') . $selectShop;
+            ' . (isset($this->_select) ? ', ' . rtrim($this->_select, ', ') : '') ;
 
             $sqlFrom = '
             FROM `' . _DB_PREFIX_ . $sqlTable . '` a ';
             $sqlJoin = '
             ' . $langJoin . '
-            ' . (isset($this->_join) ? $this->_join . ' ' : '') . '
-            ' . $joinShop;
+            ' . (isset($this->_join) ? $this->_join . ' ' : '') ;
             $sqlWhere = ' ' . (isset($this->_where) ? $this->_where . ' ' : '') . ($this->deleted ? 'AND a.`deleted` = 0 ' : '') .
-                (isset($this->_filter) ? $this->_filter : '') . $whereShop . '
+                (isset($this->_filter) ? $this->_filter : '')  . '
             ' . (isset($this->_group) ? $this->_group . ' ' : '') . '
             ' . $havingClause;
             $sqlOrderBy = ' ORDER BY ' . ((str_replace('`', '', $orderBy) == $this->identifier) ? 'a.' : '') . $orderBy . ' ' . pSQL($orderWay) .
@@ -2174,7 +2032,7 @@ class AdminControllerCore extends EphController {
         if (method_exists($this, 'getValidationRules')) {
             $definition = $this->getValidationRules();
         } else {
-            $definition = ObjectModel::getDefinition($className);
+            $definition = PhenyxObjectModel::getDefinition($className);
         }
 
         $defaultLanguage = new Language((int) Configuration::get('EPH_LANG_DEFAULT'));
@@ -2399,95 +2257,8 @@ class AdminControllerCore extends EphController {
         return true;
     }
 
-    /**
-     * Update the associations of shops
-     *
-     * @param int $idObject
-     *
-     * @return bool|void
-     * @throws PhenyxShopDatabaseException
-     *
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     * @throws PhenyxShopException
-     * @throws PhenyxShopException
-     */
-    protected function updateAssoShop($idObject) {
-
-        if (!Shop::isFeatureActive()) {
-            return;
-        }
-
-        if (!Shop::isTableAssociated($this->table)) {
-            return;
-        }
-
-        $assosData = $this->getSelectedAssoShop($this->table);
-
-        // Get list of shop id we want to exclude from asso deletion
-        $excludeIds = $assosData;
-
-        foreach (Db::getInstance()->executeS('SELECT id_shop FROM ' . _DB_PREFIX_ . 'shop') as $row) {
-
-            if (!$this->context->employee->hasAuthOnShop($row['id_shop'])) {
-                $excludeIds[] = $row['id_shop'];
-            }
-
-        }
-
-        Db::getInstance()->delete($this->table . '_shop', '`' . bqSQL($this->identifier) . '` = ' . (int) $idObject . ($excludeIds ? ' AND id_shop NOT IN (' . implode(', ', array_map('intval', $excludeIds)) . ')' : ''));
-
-        $insert = [];
-
-        foreach ($assosData as $idShop) {
-            $insert[] = [
-                $this->identifier => (int) $idObject,
-                'id_shop'         => (int) $idShop,
-            ];
-        }
-
-        return Db::getInstance()->insert($this->table . '_shop', $insert, false, true, Db::INSERT_IGNORE);
-    }
-
-    /**
-     * Returns an array with selected shops and type (group or boutique shop)
-     *
-     * @param string $table
-     *
-     * @return array
-     *
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     */
-    protected function getSelectedAssoShop($table) {
-
-        if (!Shop::isFeatureActive() || !Shop::isTableAssociated($table)) {
-            return [];
-        }
-
-        $shops = Shop::getShops(true, null, true);
-
-        if (count($shops) == 1 && isset($shops[0])) {
-            return [$shops[0], 'shop'];
-        }
-
-        $assos = [];
-
-        if (Tools::isSubmit('checkBoxShopAsso_' . $table)) {
-
-            foreach (Tools::getValue('checkBoxShopAsso_' . $table) as $idShop => $value) {
-                $assos[] = (int) $idShop;
-            }
-
-        } else
-
-        if (Shop::getTotalShops(false) == 1) {
-            // if we do not have the checkBox multishop, we can have an admin with only one shop and being in multishop
-            $assos[] = (int) Shop::getContextShopID();
-        }
-
-        return $assos;
-    }
+    
+   
 
     /**
      * Overload this method for custom checking
@@ -2827,14 +2598,14 @@ class AdminControllerCore extends EphController {
      */
     public function display() {
 		
-		if ((Configuration::get('EPH_CSS_BACKOFFICE_CACHE') || Configuration::get('EPH_JS_BACKOFFICE_CACHE')) && is_writable(_EPH_ALL_THEMES_DIR_ . 'cache')) {
+		if ((Configuration::get('EPH_CSS_BACKOFFICE_CACHE') || Configuration::get('EPH_JS_BACKOFFICE_CACHE')) && is_writable(_EPH_ADMIN_THEME_DIR_ . 'backend/cache')) {
             
             if (Configuration::get('EPH_CSS_BACKOFFICE_CACHE')) {
-                $this->css_files = Media::cccCss($this->css_files);
+                $this->css_files = Media::cccAdminCss($this->css_files);
             }
 
             if (Configuration::get('EPH_JS_BACKOFFICE_CACHE')) {
-                $this->js_files = Media::cccJs($this->js_files);
+                $this->js_files = Media::cccAdminJS($this->js_files);
             }
 
         }
@@ -3168,12 +2939,6 @@ class AdminControllerCore extends EphController {
 
         header('Cache-Control: no-store, no-cache');
 
-        // Multishop
-        $isMultishop = Shop::isFeatureActive();
-		
-		
-
-        // Quick access
 
         $topbars = EmployeeMenu::getEmployeeMenus($this->context->language->id, 1);
 
@@ -3230,19 +2995,14 @@ class AdminControllerCore extends EphController {
 
         if (Validate::isLoadedObject($this->context->employee)) {
 
-            $helperShop = new HelperShop();
+           
 
             $this->context->smarty->assign(
                 [
                     'autorefresh_notifications' => Configuration::get('EPH_ADMINREFRESH_NOTIFICATION'),
                     'round_mode'                => Configuration::get('EPH_PRICE_ROUND_MODE'),
                     'employee'                  => $this->context->employee,
-                    'multi_shop'                => Shop::isFeatureActive(),
-                    'shop_list'                 => $helperShop->getRenderedShopList(),
-                    'shop'                      => $this->context->shop,
-                    'shop_group'                => new ShopGroup((int) Shop::getContextShopGroupID()),
-                    'is_multishop'              => $isMultishop,
-                    'multishop_context'         => $this->multishop_context,
+                    'shop'                      => $this->context->company,
                    'default_tab_link'           => $this->context->link->getAdminLink('admindashboard'),
                     'front_link'                => $this->context->link->getBaseLink(),
                     'login_link'                => $this->context->link->getBaseLink(),
@@ -3253,8 +3013,8 @@ class AdminControllerCore extends EphController {
             $this->context->smarty->assign('default_tab_link', $this->context->link->getAdminLink('admindashboard'));
         }
 
-        // Shop::initialize() in config.php may empty $this->context->shop->virtual_uri so using a new shop instance for getBaseUrl()
-        $this->context->shop = new Shop((int) $this->context->shop->id);
+       
+        $this->context->company = new Company((int) $this->context->company->id);
 
         $this->context->smarty->assign(
             [
@@ -3271,7 +3031,7 @@ class AdminControllerCore extends EphController {
                 'full_language_code' => $this->context->language->language_code,
                 'link'               => $this->context->link,
                 'shop_name'          => Configuration::get('EPH_SHOP_NAME'),
-                'base_url'           => $this->context->shop->getBaseURL(),
+                'base_url'           => $this->context->company->getBaseURL(),
                 'topbars'            => $topbars,
                 'pic_dir'            => _THEME_PROD_PIC_DIR_,
                 'controller_name'    => htmlentities(Tools::getValue('controller')),
@@ -3422,7 +3182,7 @@ class AdminControllerCore extends EphController {
             'AjaxLinkBackUsers'   => $this->context->link->getAdminLink('adminbackusers'),
 			'AjaxLinkAdminCustomerPieces'   => $this->context->link->getAdminLink('admincustomerpieces'),
 			'AjaxLinkEmployees'   => $this->context->link->getAdminLink('adminemployees'),
-            'shop_path'           => 'https://' . ShopUrl::getMainShopDomainSSL(),
+            'shop_path'           => 'https://' . CompanyUrl::getMainShopDomainSSL(),
             'AjaxLinkAdminStates' => $this->context->link->getAdminLink('adminstates'),
             'currentLang'         => $this->context->language->id,
             'AjaxMemberId'        => $this->context->employee->id,
@@ -3706,18 +3466,7 @@ class AdminControllerCore extends EphController {
                 foreach ($fieldset['form']['input'] as $input) {
                     if (!isset($this->fields_value[$input['name']])) {
 						
-                        if (isset($input['type']) && $input['type'] == 'shop') {
-
-                            if ($obj->id) {
-                                $result = Shop::getShopById((int) $obj->id, $this->identifier, $this->table);
-
-                                foreach ($result as $row) {
-                                    $this->fields_value['shop'][$row['id_' . $input['type']]][] = $row['id_shop'];
-                                }
-
-                            }
-
-                        } else
+                        
 
                         if (isset($input['lang']) && $input['lang']) {
                             foreach ($this->_languages as $language) {
@@ -3826,7 +3575,7 @@ class AdminControllerCore extends EphController {
         $helper->orderWay = $this->_orderWay;
         $helper->listTotal = $this->_listTotal;
         $helper->shopLink = $this->shopLink;
-        $helper->shopLinkType = $this->shopLinkType;
+        $helper->shopLinkType = '';
         $helper->identifier = $this->identifier;
         $helper->token = $this->token;
         $helper->languages = $this->_languages;
@@ -4310,14 +4059,14 @@ class AdminControllerCore extends EphController {
 
         $deactivateModule = [
             'href'  => $linkAdminModules . '?action=disableModule&ajax=1&module_name=' . urlencode($module->name) . '&tab_module=' . $module->tab,
-            'title' => Shop::isFeatureActive() ? htmlspecialchars($module->active ? $this->translationsTab['Disable this module'] : $this->translationsTab['Enable this module for all shops']) : '',
+            'title' => $this->translationsTab['Disable this module'] ,
             'text'  => 'Disable',
             'cond'  => $module->id,
             'icon'  => 'off',
         ];
         $activateModule = [
             'href'  => $linkAdminModules . '?action=enableModule&ajax=1&module_name=' . urlencode($module->name) . '&tab_module=' . $module->tab,
-            'title' => Shop::isFeatureActive() ? htmlspecialchars($module->active ? $this->translationsTab['Disable this module'] : $this->translationsTab['Enable this module for all shops']) : '',
+            'title' => $this->translationsTab['Enable this module'],
             'text'  => 'Enable',
             'cond'  => $module->id,
             'icon'  => 'off',
@@ -5716,7 +5465,7 @@ class AdminControllerCore extends EphController {
 
         $languages = Language::getLanguages(false);
 
-        $hideMultishopCheckbox = (Shop::getTotalShops(false, null) < 2) ? true : false;
+        
 
         foreach ($this->fields_options as $categoryData) {
 
@@ -5750,35 +5499,13 @@ class AdminControllerCore extends EphController {
             // Validate fields
 
             foreach ($fields as $field => $values) {
-                // We don't validate fields with no visibility
-
-                if (!$hideMultishopCheckbox && Shop::isFeatureActive() && isset($values['visibility']) && $values['visibility'] > Shop::getContext()) {
-                    continue;
-                }
+                
 
                 // Check if field is required
 
-                if ((!Shop::isFeatureActive() && isset($values['required']) && $values['required'])
-                    || (Shop::isFeatureActive() && isset($_POST['multishopOverrideOption'][$field]) && isset($values['required']) && $values['required'])
-                ) {
-
-                    if (isset($values['type']) && $values['type'] == 'textLang') {
-
-                        foreach ($languages as $language) {
-
-                            if (($value = Tools::getValue($field . '_' . $language['id_lang'])) == false && (string) $value != '0') {
-                                $this->errors[] = sprintf(Tools::displayError('field %s is required.'), $values['title']);
-                            }
-
-                        }
-
-                    } else
-
-                    if (($value = Tools::getValue($field)) == false && (string) $value != '0') {
+                if (($value = Tools::getValue($field)) == false && (string) $value != '0') {
                         $this->errors[] = sprintf(Tools::displayError('field %s is required.'), $values['title']);
                     }
-
-                }
 
                 // Check field validator
 
@@ -5820,14 +5547,6 @@ class AdminControllerCore extends EphController {
 
                 foreach ($fields as $key => $options) {
 
-                    if (Shop::isFeatureActive() && isset($options['visibility']) && $options['visibility'] > Shop::getContext()) {
-                        continue;
-                    }
-
-                    if (!$hideMultishopCheckbox && Shop::isFeatureActive() && Shop::getContext() != Shop::CONTEXT_ALL && empty($options['no_multishop_checkbox']) && empty($_POST['multishopOverrideOption'][$key])) {
-                        Configuration::deleteFromContext($key);
-                        continue;
-                    }
 
                     // check if a method updateOptionFieldName is available
                     $methodName = 'updateOption' . Tools::toCamelCase($key, true);
@@ -7887,14 +7606,14 @@ class AdminControllerCore extends EphController {
 
 		$logo = '';
 		$context = Context::getContext();
-		$idShop = (int) $context->shop->id;
+		$idCompany = (int) $context->company->id;
 
-		if (Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop))) {
-			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop);
+		if (Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany))) {
+			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany);
 		} else
 
-		if (Configuration::get('EPH_LOGO', null, null, $idShop) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop))) {
-			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop);
+		if (Configuration::get('EPH_LOGO', null, null, $idCompany) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idCompany))) {
+			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idCompany);
 		}
 
 		return $logo;

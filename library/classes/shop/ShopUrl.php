@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class ShopUrlCore extends ObjectModel
+class ShopUrlCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     /** @var int $id_shop */
@@ -33,7 +33,7 @@ class ShopUrlCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'shop_url',
@@ -57,7 +57,7 @@ class ShopUrlCore extends ObjectModel
     ];
 
     /**
-     * @see     ObjectModel::getFields()
+     * @see     PhenyxObjectModel::getFields()
      * @return array
      *
      * @since 1.9.1.0

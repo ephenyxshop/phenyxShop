@@ -87,7 +87,7 @@ class OrderConfirmationControllerCore extends FrontController {
                     $varProducts[] = [
                         'id_product' => $product['id_product'],
                         'name'       => $product['product_name'],
-                        'price'      => $product['product_price'],
+                        'price'      => $product['unit_tax_incl'],
                         'quantity'   => $product['product_quantity'],
                     ];
                 }

@@ -182,18 +182,7 @@ class AdminReferrersControllerCore extends AdminController {
         return $tpl->fetch();
     }
 
-    /**
-     * Set media
-     *
-     * @return void
-     *
-     * @since 1.9.1.0
-     */
-    public function setMedia($isNewTheme) {
-
-        parent::setMedia($isNewTheme);
-        $this->context->controller->addJqueryUI('ui.datepicker');
-    }
+    
 
     /**
      * Initialize page header toolbar
@@ -235,7 +224,7 @@ class AdminReferrersControllerCore extends AdminController {
                             (sa.cache_orders*base_fee) as fee1, (sa.cache_sales*percent_fee/100) as fee2';
         $this->_join = '
             LEFT JOIN `' . _DB_PREFIX_ . 'referrer_shop` sa
-                ON (sa.' . $this->identifier . ' = a.' . $this->identifier . ' AND sa.id_shop IN (' . implode(', ', Shop::getContextListShopID()) . '))';
+                ON (sa.' . $this->identifier . ' = a.' . $this->identifier . ' AND sa.id_shop IN (' . implode(', ', [Context::getContext()->company->id]) . '))';
 
         $this->_group = 'GROUP BY sa.id_referrer';
 
@@ -399,13 +388,7 @@ class AdminReferrersControllerCore extends AdminController {
             ],
         ];
 
-        if (Shop::isFeatureActive()) {
-            $this->fields_form[1]['form']['input'][] = [
-                'type'  => 'shop',
-                'label' => $this->l('Shop association'),
-                'name'  => 'checkBoxShopAsso',
-            ];
-        }
+        
 
         $this->fields_form[2] = [
             'form' => [

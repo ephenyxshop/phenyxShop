@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class CartRuleCore extends ObjectModel {
+class CartRuleCore extends PhenyxObjectModel {
 
     /* Filters used when retrieving the cart rules applied to a cart of when calculating the value of a reduction */
     const FILTER_ACTION_ALL = 1;
@@ -109,7 +109,7 @@ class CartRuleCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'cart_rule',
@@ -165,11 +165,7 @@ class CartRuleCore extends ObjectModel {
      */
     public static function copyConditions($idCartRuleSource, $idCartRuleDestination) {
 
-        Db::getInstance()->execute(
-            '
-        INSERT INTO `' . _DB_PREFIX_ . 'cart_rule_shop` (`id_cart_rule`, `id_shop`)
-        (SELECT ' . (int) $idCartRuleDestination . ', id_shop FROM `' . _DB_PREFIX_ . 'cart_rule_shop` WHERE `id_cart_rule` = ' . (int) $idCartRuleSource . ')'
-        );
+        
         Db::getInstance()->execute(
             '
         INSERT INTO `' . _DB_PREFIX_ . 'cart_rule_carrier` (`id_cart_rule`, `id_carrier`)
@@ -406,28 +402,7 @@ class CartRuleCore extends ObjectModel {
 
         unset($cartRule);
 
-        foreach ($result as $key => $cartRule) {
-
-            if ($cartRule['shop_restriction']) {
-                $cartRuleShops = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
-                    (new DbQuery())
-                        ->select('`id_shop`')
-                        ->from('cart_rule_shop')
-                        ->where('`id_cart_rule` = ' . (int) $cartRule['id_cart_rule'])
-                );
-
-                foreach ($cartRuleShops as $cartRuleShop) {
-
-                    if (Shop::isFeatureActive() && ($cartRuleShop['id_shop'] == Context::getContext()->shop->id)) {
-                        continue 2;
-                    }
-
-                }
-
-                unset($result[$key]);
-            }
-
-        }
+        
 
         if (isset($cart) && isset($cart->id)) {
 
@@ -995,7 +970,7 @@ class CartRuleCore extends ObjectModel {
         )
         AND (
             cr.`shop_restriction` = 0
-            ' . ((Shop::isFeatureActive() && $context->shop->id) ? 'OR crs.id_shop = ' . (int) $context->shop->id : '') . '
+            
         )
         AND (
             cr.`group_restriction` = 0
@@ -1022,7 +997,7 @@ class CartRuleCore extends ObjectModel {
         $result = Db::getInstance()->executeS($sql, true, false);
 
         if ($result) {
-            $cartRules = ObjectModel::hydrateCollection('CartRule', $result);
+            $cartRules = PhenyxObjectModel::hydrateCollection('CartRule', $result);
 
             if ($cartRules) {
 
@@ -1155,22 +1130,7 @@ class CartRuleCore extends ObjectModel {
 
         }
 
-        // Check if the cart rules appliy to the shop browsed by the customer
-
-        if ($this->shop_restriction && $context->shop->id && Shop::isFeatureActive()) {
-            $idCartRule = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
-                (new DbQuery())
-                    ->select('crs.`id_cart_rule`')
-                    ->from('cart_rule_shop', 'crs')
-                    ->where('crs.`id_cart_rule` = ' . (int) $this->id)
-                    ->where('crs.`id_shop` = ' . (int) $context->shop->id)
-            );
-
-            if (!$idCartRule) {
-                return (!$displayError) ? false : Tools::displayError('You cannot use this voucher');
-            }
-
-        }
+        
 
         // Check if the products chosen by the customer are usable with the cart rule
 
@@ -1395,7 +1355,7 @@ class CartRuleCore extends ObjectModel {
     }
 
     /**
-     * @see     ObjectModel::add()
+     * @see     PhenyxObjectModel::add()
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
@@ -1437,7 +1397,7 @@ class CartRuleCore extends ObjectModel {
     }
 
     /**
-     * @see     ObjectModel::delete()
+     * @see     PhenyxObjectModel::delete()
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
@@ -1887,17 +1847,7 @@ class CartRuleCore extends ObjectModel {
             return false;
         }
 
-        $shopList = '';
-
-        if ($type == 'shop') {
-            $shops = Context::getContext()->employee->getAssociatedShops();
-
-            if (count($shops)) {
-                $shopList = ' AND t.id_shop IN (' . implode(array_map('intval', $shops), ',') . ') ';
-            }
-
-        }
-
+        
         if ($offset !== null && $limit !== null) {
             $sqlLimit = ' LIMIT ' . (int) $offset . ', ' . (int) ($limit + 1);
         } else {
@@ -1915,7 +1865,7 @@ class CartRuleCore extends ObjectModel {
             ' . ($activeOnly ? 'AND t.active = 1' : '') . '
             ' . (in_array($type, ['carrier', 'shop']) ? ' AND t.deleted = 0' : '') . '
             ' . ($type == 'cart_rule' ? 'AND t.id_cart_rule != ' . (int) $this->id : '') .
-                $shopList .
+                
                 (in_array($type, ['carrier', 'shop']) ? ' ORDER BY t.name ASC ' : '') .
                 (in_array($type, ['country', 'group', 'cart_rule']) && $i18n ? ' ORDER BY tl.name ASC ' : '') .
                 $sqlLimit

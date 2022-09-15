@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class ProfileCore extends ObjectModel {
+class ProfileCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     protected static $_cache_accesses = [];
@@ -16,7 +16,7 @@ class ProfileCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'profile',

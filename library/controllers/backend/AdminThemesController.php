@@ -48,8 +48,7 @@ class AdminThemesControllerCore extends AdminController {
     public $fonts_files;
 
     public $fulle_management;
-
-    public $education_management;
+    
 
     // @codingStandardsIgnoreEnd
 
@@ -72,23 +71,21 @@ class AdminThemesControllerCore extends AdminController {
         $this->updateFontFamily();
 
         $this->fulle_management = Configuration::get('EPH_FULL_THEME_MANAGEMENT_MODE');
-        $this->education_management = _EDUCATION_MODE_;
         $this->ajaxOptions = $this->generateThemeConfigurator();
 
         $this->extra_vars = [
             'fulle_management'     => $this->fulle_management,
-            'education_management' => $this->education_management,
-            'EPH_POLYGON_ACTIVE'   => !empty(Configuration::get('EPH_POLYGON_ACTIVE')) ? Configuration::get('EPH_POLYGON_ACTIVE') : 1,
+            'EPH_POLYGON_ACTIVE'   => !empty(Configuration::get('EPH_POLYGON_ACTIVE')) ? Configuration::get('EPH_POLYGON_ACTIVE') : 0,
         ];
 
         $this->extracss = $this->pushCSS([
-            _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/themes.css', _EPH_JS_DIR_ . 'colorpicker/jquery.colorpicker.css', _EPH_JS_DIR_ . 'ace/theme/twilight.css',
+            _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/themes.css', 
+            _EPH_JS_DIR_ . 'colorpicker/jquery.colorpicker.css', 
+            _EPH_JS_DIR_ . 'ace/theme/twilight.css',
             _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/css_back.css',
         ]);
 
-        $this->bootsrap_index = Configuration::get('xprtbootsrap_index');
-
-        $this->bootsrap_education = Configuration::get('xprtbootsrap_education');
+        
 
         $this->fonts_files = _EPH_THEME_DIR . 'phenyx_fonts.json';
 
@@ -114,6 +111,9 @@ class AdminThemesControllerCore extends AdminController {
                 [
                     'name' => 'parallaxImage',
                     'type' => 'img_base64',
+                ],
+                [
+                    'name' => 'slide_logo'
                 ],
                 [
                     'name' => 'logo_position',
@@ -838,6 +838,7 @@ class AdminThemesControllerCore extends AdminController {
                 ],
                 [
                     'type'  => 'text',
+                    'form_group_id' => 'video_link_group',
                     'label' => $this->l('Lien de la Video'),
                     'name'  => 'EPH_HOME_VIDEO_LINK',
                     'desc'  => $this->l('Lien de la Vidéo, youtube, vimeo ex https://vimeo.com/xxxx...'),
@@ -865,6 +866,7 @@ class AdminThemesControllerCore extends AdminController {
                 ],
                 [
                     'type'  => 'upload_img',
+                    'form_group_id' => 'imagePreview',
                     'label' => $this->l('Prévisualisation de l‘image'),
                     'name'  => 'parallaxImage',
                 ],
@@ -1495,328 +1497,7 @@ class AdminThemesControllerCore extends AdminController {
 
         ];
 
-        $fields_forms['indexseetings'] = [
-            'legend'  => [
-                'title' => $this->l('Page Index'),
-            ],
-            'id_form' => 'index_theme_seetings',
-            'input'   => [
-
-                [
-                    'type'      => 'theme_manager',
-                    'label'     => $this->l('Gestion de l‘ordre des Widgets'),
-                    'name'      => 'phenyxIndex_theme_manager',
-                    'templates' => [
-                        'bootsrap_index' => [
-                            [
-                                'key'    => 'row',
-                                'name'   => 'Affichage en Ligne',
-                                'class'  => 'lines',
-                                'fields' => true,
-                                'box'    => [
-                                    [
-                                        'type'   => 'bootstrap_conteneur',
-                                        'id'     => 'phenyxIndex_conteneur',
-                                        'name'   => 'Debut du Conteneur Principale',
-                                        'drag'   => false,
-                                        'fields' => [
-                                            [
-                                                'id'   => 'row_sm',
-                                                'name' => 'Bootstrap sm',
-                                            ],
-                                            [
-                                                'id'   => 'row_lg',
-                                                'name' => 'Bootstrap lg',
-                                            ],
-                                            [
-                                                'id'   => 'row_sm_offset',
-                                                'name' => 'Bootstrap sm Offset',
-                                            ],
-                                            [
-                                                'id'   => 'row_lg_offset',
-                                                'name' => 'Bootstrap lg Offset',
-                                            ],
-
-                                        ],
-                                    ],
-                                    [
-                                        'type'    => 'block',
-                                        'drag'    => false,
-                                        'id'      => 'displayEphenyxIndex',
-                                        'name'    => 'Zone Hook displayEphenyxIndex',
-                                        'content' => '',
-                                    ],
-                                    [
-                                        'type'   => 'bootstrap_conteneur',
-                                        'drag'   => false,
-                                        'id'     => 'qualiopi_conteneur',
-                                        'name'   => 'Conteneur Image Qualiopi',
-                                        'fields' => [
-                                            [
-                                                'id'   => 'row_img_lg',
-                                                'name' => 'bootstrap lg',
-                                            ],
-                                        ],
-                                    ],
-                                    [
-                                        'type'    => 'block',
-                                        'drag'    => false,
-                                        'id'      => 'qualiopiLogo',
-                                        'name'    => 'Logo Qualiopi',
-                                        'content' => '',
-                                    ],
-                                    [
-                                        'type'   => 'bootstrap_conteneur',
-                                        'drag'   => false,
-                                        'id'     => 'qualiopi_tag_conteneur',
-                                        'name'   => 'Conteneur Tag Qualiopi',
-                                        'fields' => [
-                                            [
-                                                'id'   => 'row_tag_lg',
-                                                'name' => 'bootstrap lg',
-                                            ],
-                                        ],
-                                    ],
-                                    [
-                                        'type'    => 'block',
-                                        'drag'    => false,
-                                        'id'      => 'qualiopiTag',
-                                        'name'    => 'Tag Certification',
-                                        'content' => '$shopName est certifié Qualiopi',
-                                    ],
-                                    [
-                                        'type'    => 'block',
-                                        'drag'    => false,
-                                        'id'      => 'displayEphenyxIndexBottom',
-                                        'name'    => 'Zone Hook displayEphenyxIndexBottom',
-                                        'content' => '',
-                                    ],
-                                    [
-                                        'type'    => 'block',
-                                        'drag'    => false,
-                                        'id'      => 'displayCertification',
-                                        'name'    => 'Zone Hook displayCertification',
-                                        'content' => '',
-                                    ],
-                                ],
-                            ],
-                            [
-                                'key'    => 'column',
-                                'name'   => 'Affichage en Colonne',
-                                'class'  => 'grid',
-                                'fields' => true,
-                                'box'    => [
-                                    [
-                                        'type'   => 'bootstrap_conteneur',
-                                        'id'     => 'phenyxIndex_conteneur',
-                                        'name'   => 'Debut du Conteneur Principale',
-                                        'drag'   => false,
-                                        'fields' => [
-                                            [
-                                                'id'   => 'column_xs',
-                                                'name' => 'Bootstrap xs',
-                                            ],
-                                            [
-                                                'id'   => 'column_sm',
-                                                'name' => 'Bootstrap sm',
-                                            ],
-                                            [
-                                                'id'   => 'column_md',
-                                                'name' => 'Bootstrap md',
-                                            ],
-                                        ],
-                                    ],
-                                    [
-                                        'type'    => 'block',
-                                        'drag'    => false,
-                                        'id'      => 'displayEphenyxIndex',
-                                        'name'    => 'Zone Hook displayEphenyxIndex',
-                                        'content' => '',
-                                    ],
-                                    [
-                                        'type'   => 'bootstrap_conteneur',
-                                        'drag'   => false,
-                                        'id'     => 'qualiopi_conteneur',
-                                        'name'   => 'Conteneur Image Qualiopi',
-                                        'fields' => [
-                                            [
-                                                'id'   => 'column_img_lg',
-                                                'name' => 'bootstrap lg',
-                                            ],
-                                        ],
-                                    ],
-                                    [
-                                        'type'    => 'block',
-                                        'drag'    => false,
-                                        'id'      => 'qualiopiLogo',
-                                        'name'    => 'Logo Qualiopi',
-                                        'content' => '',
-                                    ],
-                                    [
-                                        'type'   => 'bootstrap_conteneur',
-                                        'drag'   => false,
-                                        'id'     => 'qualiopi_tag_conteneur',
-                                        'name'   => 'Conteneur Tag Qualiopi',
-                                        'fields' => [
-                                            [
-                                                'id'   => 'column_tag_lg',
-                                                'name' => 'bootstrap lg',
-                                            ],
-                                        ],
-                                    ],
-                                    [
-                                        'type'    => 'block',
-                                        'drag'    => false,
-                                        'id'      => 'qualiopiTag',
-                                        'name'    => 'Tag Certification',
-                                        'content' => '$shopName est certifié Qualiopi',
-                                    ],
-                                    [
-                                        'type'    => 'block',
-                                        'drag'    => false,
-                                        'id'      => 'displayEphenyxIndexBottom',
-                                        'name'    => 'Zone Hook displayEphenyxIndexBottom',
-                                        'content' => '',
-                                    ],
-                                    [
-                                        'type'    => 'block',
-                                        'drag'    => false,
-                                        'id'      => 'displayCertification',
-                                        'name'    => 'Zone Hook displayCertification',
-                                        'content' => '',
-                                    ],
-                                ],
-
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'type'        => 'border_radius',
-                    'label'       => $this->l('Border Radius du tag phenyxIndex'),
-                    'name'        => 'phenyxIndex_border_radius',
-                    'default_val' => '0 0 0 0',
-                ],
-                [
-                    'type'        => 'color',
-                    'label'       => $this->l('Background du tag phenyxIndex'),
-                    'name'        => 'phenyxIndex_bck_color',
-                    'default_val' => 'transparent',
-                ],
-                [
-                    'type'        => 'box_shadow',
-                    'label'       => $this->l('Box Shadow'),
-                    'name'        => 'phenyxIndex_box_shadow',
-                    'default_val' => '0 0 0 rgba(255,255,255,1)',
-                ],
-                [
-                    'type'  => 'contener_border',
-                    'label' => $this->l('Border du tag phenyxIndex'),
-                    'name'  => 'phenyxIndex_border',
-                ],
-                [
-                    'type'  => 'larger',
-                    'label' => $this->l('Largeur du tag phenyxIndex'),
-                    'name'  => 'phenyxIndex_width',
-                ],
-                [
-                    'type'        => 'padding',
-                    'label'       => $this->l('Espacement intérieur du tag phenyxIndex- padding (px)'),
-                    'name'        => 'phenyxIndex_padding',
-                    'default_val' => '0 15px 0 15px',
-                ],
-
-                [
-                    'type'        => 'select',
-                    'label'       => $this->l('Utiliser une image pour le Background Papier'),
-                    'name'        => 'enable_papier_bg',
-                    'default_val' => '0',
-                    'options'     => [
-                        'id'    => 'id',
-                        'name'  => 'name',
-                        'query' => [
-                            [
-                                'id'   => '1',
-                                'name' => 'Oui',
-                            ],
-                            [
-                                'id'   => '0',
-                                'name' => 'Non',
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'type'             => 'upload_img',
-                    'form_group_class' => 'papier_body_bg_on',
-                    'label'            => $this->l('Select Papier Class Image'),
-                    'form_group_class' => 'papier_background',
-                    'name'             => 'papier_bg_image',
-                    'default_val'      => '',
-                ],
-
-            ],
-            'submit'  => [
-                'title' => $this->l('Save'),
-                'class' => 'button',
-            ],
-        ];
-        $fields_forms['familyType'] = [
-            'legend'  => [
-                'title' => $this->l('Les Familles'),
-            ],
-            'id_form' => 'Family_theme_seetings',
-            'input'   => [
-
-                [
-                    'type'       => 'infoheading',
-                    'label'      => $this->l('Réglage FX '),
-                    'name'       => 'infoheading',
-                    'colorclass' => 'info_custom success',
-                ],
-                [
-                    'type'  => 'element_before',
-                    'label' => $this->l('Lien Image Education Before'),
-                    'name'  => 'education_image_before',
-                ],
-
-            ],
-
-        ];
-        $fields_forms['educations'] = [
-            'legend'  => [
-                'title' => $this->l('Les Formations'),
-            ],
-            'id_form' => 'education_theme_seetings',
-            'input'   => [
-                [
-                    'type'      => 'theme_manager',
-                    'label'     => $this->l('Gestion de l‘ordre des Widgets'),
-                    'name'      => 'phenyxIndex_theme_manager',
-                    'templates' => [
-                        'bootsrap_education' => [
-                            [
-                                'key'    => 'row',
-                                'name'   => 'Affichage en Ligne',
-                                'class'  => 'lines',
-                                'fields' => false,
-
-                            ],
-                            [
-                                'key'    => 'column',
-                                'name'   => 'Affichage en Colonne',
-                                'class'  => 'grid',
-                                'fields' => false,
-
-                            ],
-                        ],
-                    ],
-                ],
-
-            ],
-
-        ];
-
+       
         $fields_forms['footerseetings'] = [
             'legend'  => [
                 'title' => $this->l('Le Footer'),
@@ -2241,72 +1922,7 @@ class AdminThemesControllerCore extends AdminController {
                 'class' => 'button',
             ],
         ];
-        $fields_forms['sliderHome'] = [
-            'legend'  => [
-                'title' => $this->l('Le Slider'),
-            ],
-            'id_form' => 'slider_style',
-            'input'   => [
-
-                [
-                    'type'       => 'infoheading',
-                    'label'      => $this->l('Revslider Home'),
-                    'name'       => 'infoheading',
-                    'colorclass' => 'info_custom success',
-                ],
-                [
-                    'type'        => 'color',
-                    'label'       => $this->l('Appliquer un BackGround au Slider'),
-                    'name'        => 'slider_bck_color',
-                    'default_val' => 'transparent',
-                    'predefine'   => [
-
-                    ],
-                ],
-                [
-                    'type'        => 'margin',
-                    'label'       => $this->l('Espacement extérieur du conteneur - margin (%)'),
-                    'name'        => 'slider_row_margin',
-                    'default_val' => '0 0 0 0',
-                ],
-                [
-                    'type'        => 'margin',
-                    'label'       => $this->l('Espacement du Slider - margin (%)'),
-                    'name'        => 'slider_margin',
-                    'default_val' => '0 0 0 0',
-                ],
-                [
-                    'type'        => 'bootstrap_offset',
-                    'label'       => $this->l('Larger Bootsrap du conteneur'),
-                    'name'        => 'slider_bootsrap_width',
-                    'default_val' => '12',
-                ],
-                [
-                    'type'        => 'bootstrap_offset',
-                    'label'       => $this->l('Espacement extérieur Bootsrap Offset'),
-                    'name'        => 'slider_offset',
-                    'default_val' => '0',
-
-                ],
-                [
-                    'type'       => 'infoheading',
-                    'label'      => $this->l('Revslider Index Bottom'),
-                    'name'       => 'infoheading',
-                    'colorclass' => 'info_custom success',
-                ],
-                [
-                    'type'        => 'margin',
-                    'label'       => $this->l('Espacement du Slider - margin (%)'),
-                    'name'        => 'bottom_slider_margin',
-                    'default_val' => '0 0 0 0',
-                ],
-
-            ],
-            'submit'  => [
-                'title' => $this->l('Save'),
-                'class' => 'button',
-            ],
-        ];
+        
 
         $url_no_image = Context::getContext()->link->getBaseFrontLink() . 'img/fr.jpg';
         $xprt = [];
@@ -2338,7 +1954,7 @@ class AdminThemesControllerCore extends AdminController {
                 'type_image_path'      => $image_path,
                 'type_image_url'       => $image_url,
                 'type_rand_time'       => $rand_time,
-                'favicon_src'          => !empty(Configuration::get('EPH_SOURCE_FAVICON')) ? $this->context->link->getBaseFrontLink() . 'img/' . Configuration::get('EPH_SOURCE_FAVICON') : $url_no_image,
+                'favicon_src'          => !empty(Configuration::get('EPH_SOURCE_FAVICON')) ? $this->context->link->getBaseFrontLink() . 'content/img/' . Configuration::get('EPH_SOURCE_FAVICON') : $url_no_image,
                 'type_patterns'        => $this->GetAllPattern(),
                 'type_bgimages'        => $this->GetAllBGImage(),
                 'color_group'          => self::$color_group,
@@ -2373,8 +1989,8 @@ class AdminThemesControllerCore extends AdminController {
     public function generateTabTheme() {
 
         $data = $this->createTemplate('controllers/themes/theme_tabs.tpl');
-        $cur_theme = Theme::getThemeInfo($this->context->shop->id_theme);
-        $theme = new Theme($this->context->shop->id_theme);
+        $cur_theme = Theme::getThemeInfo($this->context->company->id_theme);
+        $theme = new Theme($this->context->company->id_theme);
         $xprt_demo_number = Configuration::get("xprt_demo_number");
         $all_demo = [];
         $all_demo_link = [];
@@ -2403,7 +2019,7 @@ class AdminThemesControllerCore extends AdminController {
             'link'                   => $this->context->link,
             'cur_theme'              => $cur_theme,
             'theme'                  => $theme,
-            'EPH_HOME_SLIDER_ACTIVE' => Configuration::get('EPH_HOME_SLIDER_ACTIVE'),
+            'EPH_HOME_SLIDER_ACTIVE' => !empty(Configuration::get('EPH_HOME_SLIDER_ACTIVE')) ? Configuration::get('EPH_HOME_SLIDER_ACTIVE') : 0,
             '_THEME_IMG_DIR_'        => _THEME_IMG_DIR_,
 
         ]);
@@ -2506,53 +2122,7 @@ class AdminThemesControllerCore extends AdminController {
                         ],
                     ],
                 ],
-                [
-                    'type'       => 'infoheading',
-                    'label'      => $this->l('Espace CEF'),
-                    'name'       => 'infoheading',
-                    'colorclass' => 'info_custom success',
-                ],
-                [
-                    'type'        => 'switch',
-                    'label'       => $this->l('Appliquer la classe Polygone au Menu'),
-                    'name'        => 'cef_polygon_menu',
-                    'class'       => 't',
-                    'is_bool'     => true,
-                    'default_val' => '1',
-                    'values'      => [
-                        [
-                            'id'      => 'cef_polygon_menu_on',
-                            'value'   => 1,
-                            'label_1' => $this->l('Yes'),
-                        ],
-                        [
-                            'id'      => 'cef_polygon_menu_off',
-                            'value'   => 0,
-                            'label_0' => $this->l('No'),
-                        ],
-                    ],
-                ],
-                [
-                    'type'        => 'switch',
-                    'label'       => $this->l('Appliquer la classe Polygone au Corps'),
-                    'name'        => 'cef_polygon_core',
-                    'class'       => 't',
-                    'is_bool'     => true,
-                    'default_val' => '1',
-                    'values'      => [
-                        [
-                            'id'      => 'cef_polygon_core_on',
-                            'value'   => 1,
-                            'label_1' => $this->l('Yes'),
-                        ],
-                        [
-                            'id'      => 'cef_polygon_core_off',
-                            'value'   => 0,
-                            'label_0' => $this->l('No'),
-                        ],
-                    ],
-                ],
-
+                
             ],
             'submit'  => [
                 'title' => $this->l('Save'),
@@ -2662,6 +2232,27 @@ class AdminThemesControllerCore extends AdminController {
             'id_form' => 'theme_images',
             'input'   => [
                 [
+                    'type'        => 'switch',
+                    'label'       => $this->l('Utiliser un Slider pour le Logo'),
+                    'desc'             => $this->l('If activated, the logo will appears throught the hook : {hook h="displayLogo"}'),
+                    'name'        => 'slide_logo',
+                    'class'       => 't',
+                    'is_bool'     => true,
+                    'default_val' => '1',
+                    'values'      => [
+                        [
+                            'id'      => 'slide_logo_on',
+                            'value'   => 1,
+                            'label_1' => $this->l('Yes'),
+                        ],
+                        [
+                            'id'      => 'slide_logo_off',
+                            'value'   => 0,
+                            'label_0' => $this->l('No'),
+                        ],
+                    ],
+                ],
+                [
                     'type'        => 'img_upload',
                     'label'       => $this->l('Le logo du site'),
                     'name'        => 'EPH_LOGO',
@@ -2677,6 +2268,7 @@ class AdminThemesControllerCore extends AdminController {
                 [
                     'type'     => 'radio',
                     'label'    => $this->l('Position Du Logo'),
+                    'form_group_class' => 'logo_position_group',
                     'name'     => 'logo_position',
                     'required' => true,
                     'values'   => [
@@ -2694,46 +2286,12 @@ class AdminThemesControllerCore extends AdminController {
                 ],
 
                 [
-                    'type'        => 'margin',
-                    'label'       => $this->l('Espacement extérieur du Logo - margin (px)'),
-                    'name'        => 'logo_margin',
-                    'default_val' => '0 0 0 0',
-                ],
-                [
-                    'type'  => 'height',
-                    'label' => $this->l('Hauteur du Logo'),
-                    'desc'  => $this->l('Laisser vide pour auto'),
-                    'name'  => 'logo_height',
-                ],
-                [
-                    'type'  => 'larger',
-                    'label' => $this->l('Largeur du Logo'),
-                    'desc'  => $this->l('Laisser vide pour auto'),
-                    'name'  => 'logo_width',
-                ],
-                [
-                    'type'  => 'background_position',
-                    'label' => $this->l('Position du BackGround du Logo'),
-                    'name'  => 'logo_bg_position',
-
-                ],
-                [
-                    'type'  => 'background_size',
-                    'label' => $this->l('Taille du Background du Logo'),
-                    'name'  => 'logo_bck_size',
-                ],
-                [
                     'type'        => 'img_upload',
                     'label'       => $this->l('Le logo des Factures'),
                     'name'        => 'EPH_LOGO_INVOICE',
                     'default_val' => '',
                 ],
-                [
-                    'type'        => 'img_upload',
-                    'label'       => $this->l('Le Tampon de la société'),
-                    'name'        => 'EPH_SOURCE_STAMP',
-                    'default_val' => '',
-                ],
+               
                 [
                     'type'        => 'img_upload',
                     'label'       => $this->l('Le logo des réseaux sociaux'),
@@ -2747,12 +2305,7 @@ class AdminThemesControllerCore extends AdminController {
                     'default_val' => '',
                 ],
 
-                [
-                    'type'        => 'img_upload',
-                    'label'       => $this->l('Logo Qualiopi'),
-                    'name'        => 'logo_qualiopi',
-                    'default_val' => '',
-                ],
+                
 
             ],
             'submit'  => [
@@ -2803,7 +2356,7 @@ class AdminThemesControllerCore extends AdminController {
                 'type_image_path'      => $image_path,
                 'type_image_url'       => $image_url,
                 'type_rand_time'       => $rand_time,
-                'favicon_src'          => !empty(Configuration::get('EPH_SOURCE_FAVICON')) ? $this->context->link->getBaseFrontLink() . 'img/' . Configuration::get('EPH_SOURCE_FAVICON') : $url_no_image,
+                'favicon_src'          => !empty(Configuration::get('EPH_SOURCE_FAVICON')) ? $this->context->link->getBaseFrontLink() . 'content/img/' . Configuration::get('EPH_SOURCE_FAVICON') : $url_no_image,
                 'type_patterns'        => $this->GetAllPattern(),
                 'type_bgimages'        => $this->GetAllBGImage(),
                 'color_group'          => self::$color_group,
@@ -2988,31 +2541,31 @@ class AdminThemesControllerCore extends AdminController {
         }
 
         $context = Context::getContext();
-        $url_no_image = $context->link->getBaseFrontLink() . 'img/fr.jpg';
-        $this->fields_value['EPH_LOGO'] = !empty(Configuration::get('EPH_LOGO')) ? $context->link->getBaseFrontLink() . 'img/' . Configuration::get('EPH_LOGO') : $url_no_image;
+        $url_no_image = $context->link->getBaseFrontLink() . 'content/img/fr.jpg';
+        $this->fields_value['EPH_LOGO'] = !empty(Configuration::get('EPH_LOGO')) ? $context->link->getBaseFrontLink() . 'content/img/' . Configuration::get('EPH_LOGO') : $url_no_image;
 
-        $this->fields_value['EPH_LOGO_MOBILE'] = !empty(Configuration::get('EPH_LOGO_MOBILE')) ? $context->link->getBaseFrontLink() . 'img/' . Configuration::get('EPH_LOGO_MOBILE') : $url_no_image;
+        $this->fields_value['EPH_LOGO_MOBILE'] = !empty(Configuration::get('EPH_LOGO_MOBILE')) ? $context->link->getBaseFrontLink() . 'content/img/' . Configuration::get('EPH_LOGO_MOBILE') : $url_no_image;
 
-        $this->fields_value['EPH_OGGPIC'] = !empty(Configuration::get('EPH_OGGPIC')) ? $context->link->getBaseFrontLink() . 'oggpic/' . Configuration::get('EPH_OGGPIC') : $url_no_image;
+        $this->fields_value['EPH_OGGPIC'] = !empty(Configuration::get('EPH_OGGPIC')) ? $context->link->getBaseFrontLink() . 'content/oggpic/' . Configuration::get('EPH_OGGPIC') : $url_no_image;
 
-        $this->fields_value['EPH_LOGO_MAIL'] = !empty(Configuration::get('EPH_LOGO_MAIL')) ? $context->link->getBaseFrontLink() . 'img/' . Configuration::get('EPH_LOGO_MAIL') : $url_no_image;
+        $this->fields_value['EPH_LOGO_MAIL'] = !empty(Configuration::get('EPH_LOGO_MAIL')) ? $context->link->getBaseFrontLink() . 'content/img/' . Configuration::get('EPH_LOGO_MAIL') : $url_no_image;
 
-        $this->fields_value['EPH_LOGO_INVOICE'] = !empty(Configuration::get('EPH_LOGO_INVOICE')) ? $context->link->getBaseFrontLink() . 'img/' . Configuration::get('EPH_LOGO_INVOICE') : $url_no_image;
+        $this->fields_value['EPH_LOGO_INVOICE'] = !empty(Configuration::get('EPH_LOGO_INVOICE')) ? $context->link->getBaseFrontLink() . 'content/img/' . Configuration::get('EPH_LOGO_INVOICE') : $url_no_image;
 
-        $this->fields_value['EPH_SOURCE_STAMP'] = !empty(Configuration::get('EPH_SOURCE_STAMP')) ? $context->link->getBaseFrontLink() . 'img/' . Configuration::get('EPH_SOURCE_STAMP') : $url_no_image;
+        $this->fields_value['EPH_SOURCE_STAMP'] = !empty(Configuration::get('EPH_SOURCE_STAMP')) ? $context->link->getBaseFrontLink() . 'content/img/' . Configuration::get('EPH_SOURCE_STAMP') : $url_no_image;
 
-        $this->fields_value['EPH_FAVICON'] = !empty(Configuration::get('EPH_FAVICON')) ? $context->link->getBaseFrontLink() . 'img/' . Configuration::get('EPH_FAVICON') : $url_no_image;
+        $this->fields_value['EPH_FAVICON'] = !empty(Configuration::get('EPH_FAVICON')) ? $context->link->getBaseFrontLink() . 'content/img/' . Configuration::get('EPH_FAVICON') : $url_no_image;
 
         $this->fields_value['EPH_FOOTER_EMAIL'] = !empty(Configuration::get('EPH_FOOTER_EMAIL')) ? Configuration::get('EPH_FOOTER_EMAIL') : '';
 
         $this->fields_value['EPH_POLYGON_MODE'] = !empty(Configuration::get('EPH_POLYGON_MODE')) ? Configuration::get('EPH_POLYGON_MODE') : '';
 
-        $this->fields_value['logo_qualiopi'] = !empty(Configuration::get('xprtlogo_qualiopi')) ? Configuration::get('xprtlogo_qualiopi') : $url_no_image;
-        $this->fields_value['EPH_POLYGON_ACTIVE'] = !empty(Configuration::get('EPH_POLYGON_ACTIVE')) ? Configuration::get('EPH_POLYGON_ACTIVE') : 1;
+       
+        $this->fields_value['EPH_POLYGON_ACTIVE'] = !empty(Configuration::get('EPH_POLYGON_ACTIVE')) ? Configuration::get('EPH_POLYGON_ACTIVE') : 0;
         $this->tpl_form_vars['EPH_POLYGON_ACTIVE'] = $this->fields_value['EPH_POLYGON_ACTIVE'];
-        $this->tpl_form_vars['EPH_HOME_SLIDER_ACTIVE'] = Configuration::get('EPH_HOME_SLIDER_ACTIVE');
-        $this->tpl_form_vars['EPH_HOME_VIDEO_ACTIVE'] = Configuration::get('EPH_HOME_VIDEO_ACTIVE');
-        $this->tpl_form_vars['EPH_HOME_PARALLAX_ACTIVE'] = Configuration::get('EPH_HOME_PARALLAX_ACTIVE');
+        $this->tpl_form_vars['EPH_HOME_SLIDER_ACTIVE'] = !empty(Configuration::get('EPH_HOME_SLIDER_ACTIVE')) ? Configuration::get('EPH_HOME_SLIDER_ACTIVE') : 0;
+        $this->tpl_form_vars['EPH_HOME_VIDEO_ACTIVE'] = !empty(Configuration::get('EPH_HOME_VIDEO_ACTIVE')) ? Configuration::get('EPH_HOME_VIDEO_ACTIVE') : 0;
+        $this->tpl_form_vars['EPH_HOME_PARALLAX_ACTIVE'] = !empty(Configuration::get('EPH_HOME_PARALLAX_ACTIVE')) ? Configuration::get('EPH_HOME_PARALLAX_ACTIVE') : 0;
 
         if ($this->assigngFontsValues()) {
 
@@ -3067,7 +2620,7 @@ class AdminThemesControllerCore extends AdminController {
 
     public function GetAllBGImage() {
 
-        $theme_dir = $this->context->shop->theme_directory;
+        $theme_dir = $this->context->company->theme_directory;
         $pattern_path = _EPH_EPH_THEME_DIR_;
         $pattern_images_url = Context::getContext()->shop->getBaseURL() . 'img/theme/';
         $pattern_images = [];
@@ -3093,7 +2646,7 @@ class AdminThemesControllerCore extends AdminController {
 
     public function GetAllPattern() {
 
-        $theme_dir = $this->context->shop->theme_directory;
+        $theme_dir = $this->context->company->theme_directory;
         $pattern_path = _EPH_THEME_DIR_ . 'img/patterns/';
 
         $pattern_images_url = Context::getContext()->shop->getBaseURL() . 'themes/' . $theme_dir . '/img/patterns/';
@@ -3126,54 +2679,33 @@ class AdminThemesControllerCore extends AdminController {
 
     public function setAjaxMedia() {
 
-        return $this->pushJS([_EPH_JS_DIR_ . 'themes.js', _EPH_JS_DIR_ . 'tinymce/tinymce.min.js', _EPH_JS_DIR_ . 'tinymce.inc.js', _EPH_JS_DIR_ . 'colorpicker/jquery.colorpicker.js', _EPH_JS_DIR_ . 'colorpicker/i18n/jquery.ui.colorpicker-fr.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-pantone.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-crayola.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-ral-classic.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-x11.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-copic.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-prismacolor.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-isccnbs.js', _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-din6164.js', _EPH_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-rgbslider.js', _EPH_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-memory.js', _EPH_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-swatchesswitcher.js', _EPH_JS_DIR_ . 'colorpicker/parsers/jquery.ui.colorpicker-cmyk-parser.js', _EPH_JS_DIR_ . 'colorpicker/parsers/jquery.ui.colorpicker-cmyk-percentage-parser.js', _EPH_JS_DIR_ . 'vendor/spin.js', _EPH_JS_DIR_ . 'vendor/ladda.js', _EPH_JS_DIR_ . 'pdfuploadify.min.js',
+        return $this->pushJS([
+            _EPH_JS_DIR_ . 'themes.js', 
+            _EPH_JS_DIR_ . 'tinymce/tinymce.min.js', 
+            _EPH_JS_DIR_ . 'tinymce.inc.js', 
+            _EPH_JS_DIR_ . 'colorpicker/jquery.colorpicker.js', 
+            _EPH_JS_DIR_ . 'colorpicker/i18n/jquery.ui.colorpicker-fr.js', 
+            _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-pantone.js', 
+            _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-crayola.js', 
+            _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-ral-classic.js', 
+            _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-x11.js', 
+            _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-copic.js', 
+            _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-prismacolor.js', 
+            _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-isccnbs.js', 
+            _EPH_JS_DIR_ . 'colorpicker/swatches/jquery.ui.colorpicker-din6164.js', 
+            _EPH_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-rgbslider.js', 
+            _EPH_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-memory.js', 
+            _EPH_JS_DIR_ . 'colorpicker/parts/jquery.ui.colorpicker-swatchesswitcher.js', 
+            _EPH_JS_DIR_ . 'colorpicker/parsers/jquery.ui.colorpicker-cmyk-parser.js', 
+            _EPH_JS_DIR_ . 'colorpicker/parsers/jquery.ui.colorpicker-cmyk-percentage-parser.js', 
+            _EPH_JS_DIR_ . 'vendor/spin.js', 
+            _EPH_JS_DIR_ . 'vendor/ladda.js', 
+            _EPH_JS_DIR_ . 'pdfuploadify.min.js',
             'https://cdn.ephenyxapi.com/ace/ace.js',
         ]);
     }
 
-    public function updateThemesDocumnents() {
-
-        $pdfUploader = new HelperUploader('reglementUrl');
-
-        $files = $pdfUploader->process();
-
-        if (is_array($files) && count($files)) {
-
-            foreach ($files as $image) {
-                $destinationFile = _EPH_IMG_DIR_ . 'reglement.pdf';
-                copy($image['save_path'], $destinationFile);
-            }
-
-        }
-
-        $pdfUploader = new HelperUploader('deontologieUrl');
-
-        $files = $pdfUploader->process();
-
-        if (is_array($files) && count($files)) {
-
-            foreach ($files as $image) {
-                $destinationFile = _EPH_IMG_DIR_ . 'deontologie.pdf';
-                copy($image['save_path'], $destinationFile);
-            }
-
-        }
-
-        $pdfUploader = new HelperUploader('catalogueUrl');
-
-        $files = $pdfUploader->process();
-
-        if (is_array($files) && count($files)) {
-
-            foreach ($files as $image) {
-                $destinationFile = _EPH_CATALOGUE_DIR_ . 'catalogue.pdf';
-                copy($image['save_path'], $destinationFile);
-            }
-
-        }
-
-    }
-
+    
     public function AsignGlobalSettingValue() {
 
         $id_lang = Context::getcontext()->language->id;
@@ -3508,7 +3040,7 @@ class AdminThemesControllerCore extends AdminController {
                         ($row['scenes'] == 1 ? 'true' : 'false');
                 }
 
-                $idShop = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
+                $idCompany = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                     (new DbQuery())
                         ->select('`id_shop`')
                         ->from('shop')
@@ -3521,7 +3053,7 @@ class AdminThemesControllerCore extends AdminController {
                         ->select('m.`id_module`, m.`name`, m.`active`, ms.`id_shop`')
                         ->from('module', 'm')
                         ->leftJoin('module_shop', 'ms', 'm.`id_module` = ms.`id_module`')
-                        ->where('ms.`id_shop` = ' . (int) $idShop)
+                        ->where('ms.`id_shop` = ' . (int) $idCompany)
                 );
 
                 // Select the list of hook for this shop
@@ -3532,7 +3064,7 @@ class AdminThemesControllerCore extends AdminController {
                         ->leftJoin('hook_module', 'hm', 'hm.`id_hook` = h.`id_hook`')
                         ->leftJoin('module', 'm', 'hm.`id_module` = m.`id_module`')
                         ->leftOuterJoin('hook_module_exceptions', 'hme', 'hme.`id_module` = hm.`id_module` AND hme.`id_hook` = h.`id_hook`')
-                        ->where('hm.`id_shop` = ' . (int) $idShop)
+                        ->where('hm.`id_shop` = ' . (int) $idCompany)
                         ->groupBy('hm.`id_module`, h.`id_hook`')
                         ->orderBy('name_module')
                 );
@@ -3680,7 +3212,7 @@ class AdminThemesControllerCore extends AdminController {
             'EPH_LOGO_MOBILE'     => 'EPH_LOGO_MOBILE',
             'EPH_LOGO_MAIL'       => 'EPH_LOGO_MAIL',
             'EPH_LOGO_INVOICE'    => 'EPH_LOGO_INVOICE',
-            'EPH_SOURCE_STAMP'   => 'EPH_SOURCE_STAMP',
+            'parallaxImage'      => 'EPH_HOME_PARALLAX_FILE',
             'EPH_SOURCE_FAVICON' => 'EPH_SOURCE_FAVICON',
             'EPH_FAVICON'         => 'EPH_FAVICON',
             'EPH_OGGPIC'         => 'EPH_OGGPIC',
@@ -3692,6 +3224,7 @@ class AdminThemesControllerCore extends AdminController {
             $imageUploader = new HelperImageUploader($key);
             $imageUploader->setAcceptTypes(['jpeg', 'png', 'jpg']);
             $files = $imageUploader->process();
+            fwrite($file, $key.PHP_EOL);
 
             if (is_array($files) && count($files)) {
 
@@ -3704,16 +3237,14 @@ class AdminThemesControllerCore extends AdminController {
                     fwrite($file, print_r($image, true));
 
                     if ($key == 'EPH_FAVICON') {
-                        $destinationFile = _EPH_FRONT_DIR_ . '/img/favicon.ico';
+                        $destinationFile = _SHOP_ROOT_DIR_ . '/img/favicon.ico';
                         $this->uploadIco($image, $destinationFile);
                         $ext = pathinfo($image['name'], PATHINFO_EXTENSION);
-                        $destinationFile = _EPH_FRONT_DIR_ . '/img/favicon_src.' . $ext;
+                        $destinationFile = _SHOP_ROOT_DIR_ . '/img/favicon_src.' . $ext;
                         $fileName = 'favicon_src.' . $ext;
 
                         if (copy($image['save_path'], $destinationFile)) {
                             Configuration::updateValue('EPH_SOURCE_FAVICON', $fileName);
-                            $adminFile = _EPH_ROOT_DIR_ . '/themes/img/favicon.ico';
-                            copy($destinationFile, $adminFile);
                         }
 
                         continue;
@@ -3723,27 +3254,27 @@ class AdminThemesControllerCore extends AdminController {
 
                     switch ($key) {
                     case 'EPH_LOGO':
-                        $destinationFile = _EPH_FRONT_DIR_ . '/img/logoFrontOffice.' . $ext;
+                        $destinationFile = _SHOP_ROOT_DIR_ . '/img/logoFrontOffice.' . $ext;
                         $fileName = 'logoFrontOffice.' . $ext;
                         break;
                     case 'EPH_LOGO_MOBILE':
-                        $destinationFile = _EPH_FRONT_DIR_ . '/img/logoMobile.' . $ext;
+                        $destinationFile = _SHOP_ROOT_DIR_ . '/img/logoMobile.' . $ext;
                         $fileName = 'logoMobile.' . $ext;
                         break;
                     case 'EPH_LOGO_MAIL':
-                        $destinationFile = _EPH_FRONT_DIR_ . '/img/logoMail.' . $ext;
+                        $destinationFile = _SHOP_ROOT_DIR_ . '/img/logoMail.' . $ext;
                         $fileName = 'logoMail.' . $ext;
                         break;
                     case 'EPH_LOGO_INVOICE':
-                        $destinationFile = _EPH_FRONT_DIR_ . '/img/logoInvoice.' . $ext;
+                        $destinationFile = _SHOP_ROOT_DIR_ . '/img/logoInvoice.' . $ext;
                         $fileName = 'logoInvoice.' . $ext;
                         break;
-                    case 'EPH_SOURCE_STAMP':
-                        $destinationFile = _EPH_FRONT_DIR_ . '/img/companyStamp.' . $ext;
-                        $fileName = 'companyStamp.' . $ext;
+                    case 'parallaxImage':
+                        $destinationFile = _EPH_THEME_DIR_ . 'img/parallax.' . $ext;
+                        $fileName = 'parallax.' . $ext;
                         break;
                     case 'EPH_OGGPIC':
-                        $destinationFile = _EPH_FRONT_DIR_ . '/oggpic/oggpic.' . $ext;
+                        $destinationFile = _SHOP_ROOT_DIR_ . '/oggpic/oggpic.' . $ext;
                         $fileName = 'oggpic.' . $ext;
                         break;
                     }
@@ -3760,96 +3291,12 @@ class AdminThemesControllerCore extends AdminController {
 
     }
 
-    public function updateCurrentLogoPictures() {
-
-        $arrayImage = [
-            'serviceAccesUrl'         => 'EPH_SERVICE_ACCES_LOGO',
-            'serviceCertificationUrl' => 'EPH_SERVICE_CERTIFICATION_LOGO',
-            'serviceCompetanceUrl'    => 'EPH_SERVICE_COMPETENCE_LOGO',
-            'serviceOutilsUrl'        => 'EPH_SERVICE_OUTIL_LOGO',
-            'imageCertification'      => 'EPH_CERTIFICATION_IMAGE',
-        ];
-
-        foreach ($arrayImage as $key => $type) {
-            $imageUploader = new HelperImageUploader($key);
-            $imageUploader->setAcceptTypes(['jpeg', 'png', 'jpg']);
-            $files = $imageUploader->process();
-
-            if (is_array($files) && count($files)) {
-
-                foreach ($files as $image) {
-                    $ext = pathinfo($image['name'], PATHINFO_EXTENSION);
-
-                    switch ($key) {
-
-                    case 'serviceAccesUrl':
-                        $destinationFile = _EPH_IMG_DIR_ . 'serviceAcces.' . $ext;
-                        $fileName = 'serviceAcces.' . $ext;
-                        break;
-                    case 'serviceCertificationUrl':
-                        $destinationFile = _EPH_IMG_DIR_ . 'serviceCertification.' . $ext;
-                        $fileName = 'serviceCertification.' . $ext;
-                        break;
-                    case 'serviceCompetanceUrl':
-                        $destinationFile = _EPH_IMG_DIR_ . 'serviceCompetance.' . $ext;
-                        $fileName = 'serviceCompetance.' . $ext;
-                        break;
-                    case 'serviceOutilsUrl':
-                        $destinationFile = _EPH_IMG_DIR_ . 'serviceOutils.' . $ext;
-                        $fileName = 'serviceOutils.' . $ext;
-                        break;
-                    case 'imageCertification':
-                        $destinationFile = _EPH_IMG_DIR_ . 'imageCertif.' . $ext;
-                        $fileName = 'imageCertif.' . $ext;
-                        break;
-                    }
-
-                    if (copy($image['save_path'], $destinationFile)) {
-                        Configuration::updateValue($type, $fileName);
-                    }
-
-                }
-
-            }
-
-        }
-
-        $result = [
-            'success' => true,
-            'message' => 'Les réglages du thème ont été mis à jour avec succès',
-        ];
-
-        die(Tools::jsonEncode($result));
-
-    }
-
+    
     public function ajaxProcessUpdateTheme() {
 
-        $file = fopen("testProcessUpdateTheme.txt", "w");
-        fwrite($file, $this->bootsrap_index . PHP_EOL);
+       
         $this->updateCurrentLogoTheme();
-
-        $this->updateThemesDocumnents();
-
-        $bootsrap_index = Tools::getValue('bootsrap_index');
-
-        if ($bootsrap_index != $this->bootsrap_index) {
-
-            if (file_exists(_EPH_ADMIN_DIR_ . '/template/front/index_' . $bootsrap_index . '.tpl')) {
-                copy(_EPH_ADMIN_DIR_ . '/template/front/index_' . $bootsrap_index . '.tpl', _EPH_THEME_DIR_ . 'index.tpl');
-            }
-
-        }
-
-        $bootsrap_education = Tools::getValue('bootsrap_education');
-
-        if ($bootsrap_education != $this->bootsrap_education) {
-
-            if (file_exists(_EPH_ADMIN_DIR_ . '/template/front/education_' . $bootsrap_education . '.tpl')) {
-                copy(_EPH_ADMIN_DIR_ . '/template/front/education_' . $bootsrap_education . '.tpl', _EPH_THEME_DIR_ . 'education.tpl');
-            }
-
-        }
+       
 
         $this->saveTheme($this->fieldForm);
 
@@ -4155,9 +3602,7 @@ class AdminThemesControllerCore extends AdminController {
         $custom_css = $tpl->fetch();
         $css = fopen($this->cssRootfile, 'w');
         fwrite($css, $custom_css);
-        $css = fopen($this->agent_cssRootfile, 'w');
-        fwrite($css, $custom_css);
-
+        
         $tpl = $context->smarty->createTemplate(_EPH_ALL_THEMES_DIR_ . "xprtcustom_css.tpl");
 
         foreach ($xprt as $key => $value) {
@@ -4179,8 +3624,7 @@ class AdminThemesControllerCore extends AdminController {
         $custom_css = $tpl->fetch();
         $css = fopen($this->cssfile, 'w');
         fwrite($css, $custom_css);
-        $css = fopen($this->agent_cssfile, 'w');
-        fwrite($css, $custom_css);
+       
         $is_polygone = Configuration::get('EPH_POLYGON_ACTIVE');
 
         if ($is_polygone) {
@@ -4195,17 +3639,7 @@ class AdminThemesControllerCore extends AdminController {
             $custom_css = $tpl->fetch();
             $css = fopen($this->cssPolygonfile, 'w');
             fwrite($css, $custom_css);
-            $tpl = $context->smarty->createTemplate(_EPH_ALL_THEMES_DIR_ . "xprtpolygon_agent_css.tpl");
-
-            foreach ($xprt as $key => $value) {
-                $tpl->assign([
-                    $key => $value,
-                ]);
-            }
-
-            $custom_css = $tpl->fetch();
-            $css = fopen($this->agent_cssPolygonfile, 'w');
-            fwrite($css, $custom_css);
+            
         } else {
 
             if (file_exists($this->cssPolygonfile)) {
@@ -4239,8 +3673,6 @@ class AdminThemesControllerCore extends AdminController {
 
         $custom_css = $tpl->fetch();
         $css = fopen($this->jsfile, 'w');
-        fwrite($css, $custom_css);
-        $css = fopen($this->agent_jsfile, 'w');
         fwrite($css, $custom_css);
         @chmod($generatecssfilename, 0777);
     }
@@ -4691,7 +4123,7 @@ class AdminThemesControllerCore extends AdminController {
                     foreach ($this->to_export as $row) {
 
                         if (!in_array($row, $this->native_modules)) {
-                            $this->archiveThisFile($zip, $row, _EPH_FRONT_DIR_ . '/modules/', 'modules/');
+                            $this->archiveThisFile($zip, $row, _SHOP_ROOT_DIR_ . '/modules/', 'modules/');
                         }
 
                     }
@@ -4815,7 +4247,7 @@ class AdminThemesControllerCore extends AdminController {
             SELECT m.`id_module`, m.`name`, m.`active`, ms.`id_shop`
             FROM `' . _DB_PREFIX_ . 'module` m
             LEFT JOIN `' . _DB_PREFIX_ . 'module_shop` ms On (m.`id_module` = ms.`id_module`)
-            WHERE ms.`id_shop` = ' . (int) $this->context->shop->id . '
+            WHERE ms.`id_shop` = ' . (int) $this->context->company->id . '
         '
         );
 
@@ -4827,7 +4259,7 @@ class AdminThemesControllerCore extends AdminController {
             LEFT JOIN `' . _DB_PREFIX_ . 'hook_module` hm ON hm.`id_hook` = h.`id_hook`
             LEFT JOIN `' . _DB_PREFIX_ . 'module` m ON hm.`id_module` = m.`id_module`
             LEFT OUTER JOIN `' . _DB_PREFIX_ . 'hook_module_exceptions` hme ON (hme.`id_module` = hm.`id_module` AND hme.`id_hook` = h.`id_hook`)
-            WHERE hm.`id_shop` = ' . (int) $this->context->shop->id . '
+            WHERE hm.`id_shop` = ' . (int) $this->context->company->id . '
             GROUP BY `id_module`, `id_hook`
             ORDER BY `name_module`
         '
@@ -5176,7 +4608,7 @@ class AdminThemesControllerCore extends AdminController {
 
                     if (Validate::isLoadedObject($theme)) {
 
-                        if (!copy($sandbox . $themeDir . $configFile, _EPH_FRONT_DIR_ . '/app/xml/themes/' . $theme->directory . '.xml')) {
+                        if (!copy($sandbox . $themeDir . $configFile, _SHOP_ROOT_DIR_ . '/app/xml/themes/' . $theme->directory . '.xml')) {
                             $this->errors[] = $this->l('Can\'t copy configuration file');
                         }
 
@@ -5677,11 +5109,9 @@ class AdminThemesControllerCore extends AdminController {
             $tmp['id_theme'] = $shop->id_theme;
             $shops[] = $tmp;
 
-            if (Shop::isFeatureActive()) {
-                $shops = Shop::getShops();
-            }
+           
 
-            $currentShop = $this->context->shop->id;
+            $currentShop = $this->context->company->id;
 
             foreach ($shops as $shop) {
                 $shopTheme = new Theme((int) $shop['id_theme']);
@@ -5801,12 +5231,7 @@ class AdminThemesControllerCore extends AdminController {
 
         $shopsAsso = $this->context->employee->getAssociatedShops();
 
-        if (Shop::isFeatureActive() && !Tools::getIsset('checkBoxShopAsso_theme') && count($shopsAsso) > 1) {
-            $this->errors[] = $this->l('You must choose at least one shop.');
-            $this->display = 'ChooseThemeModule';
-
-            return;
-        }
+       
 
         $theme = new Theme((int) Tools::getValue('id_theme'));
 
@@ -5842,7 +5267,7 @@ class AdminThemesControllerCore extends AdminController {
 
             $this->modules_errors = [];
 
-            foreach ($shops as $idShop) {
+            foreach ($shops as $idCompany) {
 
                 foreach ($_POST as $key => $value) {
 
@@ -5863,7 +5288,7 @@ class AdminThemesControllerCore extends AdminController {
                                 }
 
                                 if ((int) $module->id > 0 && isset($moduleHook[$module->name])) {
-                                    $this->hookModule($module->id, $moduleHook[$module->name], $idShop);
+                                    $this->hookModule($module->id, $moduleHook[$module->name], $idCompany);
                                 }
 
                             } else {
@@ -5892,7 +5317,7 @@ class AdminThemesControllerCore extends AdminController {
                                 }
 
                                 if ((int) $module->id > 0 && isset($moduleHook[$module->name])) {
-                                    $this->hookModule($module->id, $moduleHook[$module->name], $idShop);
+                                    $this->hookModule($module->id, $moduleHook[$module->name], $idCompany);
                                 }
 
                             } else {
@@ -5906,9 +5331,9 @@ class AdminThemesControllerCore extends AdminController {
 
                     if (strncmp($key, 'to_disable', strlen('to_disable')) == 0) {
                         $keyExploded = explode('_', $key);
-                        $idShopModule = (int) substr($keyExploded[2], 4);
+                        $idCompanyModule = (int) substr($keyExploded[2], 4);
 
-                        if ((int) $idShopModule > 0 && $idShopModule != (int) $idShop) {
+                        if ((int) $idCompanyModule > 0 && $idCompanyModule != (int) $idCompany) {
                             continue;
                         }
 
@@ -5927,17 +5352,13 @@ class AdminThemesControllerCore extends AdminController {
 
                 }
 
-                $shop = new Shop((int) $idShop);
+                $shop = new Shop((int) $idCompany);
                 $shop->id_theme = (int) Tools::getValue('id_theme');
-                $this->context->shop->id_theme = $shop->id_theme;
-                $this->context->shop->update();
+                $this->context->company->id_theme = $shop->id_theme;
+                $this->context->company->update();
                 $shop->save();
 
-                if (Shop::isFeatureActive()) {
-                    Configuration::updateValue('EPH_PRODUCTS_PER_PAGE', (int) $theme->product_per_page, false, null, (int) $idShop);
-                } else {
-                    Configuration::updateValue('EPH_PRODUCTS_PER_PAGE', (int) $theme->product_per_page);
-                }
+                Configuration::updateValue('EPH_PRODUCTS_PER_PAGE', (int) $theme->product_per_page);
 
             }
 
@@ -6096,106 +5517,7 @@ class AdminThemesControllerCore extends AdminController {
         $this->updateLogo('EPH_LOGO', 'logo');
     }
 
-    /**
-     * Generic function which allows logo upload
-     *
-     * @param string $fieldName
-     * @param string $logoPrefix
-     *
-     * @return bool
-     *
-     * @since 1.9.1.0
-     * @throws PhenyxShopException
-     */
-    protected function updateLogo($fieldName, $logoPrefix) {
-
-        $idShop = $this->context->shop->id;
-
-        if (isset($_FILES[$fieldName]['tmp_name']) && $_FILES[$fieldName]['tmp_name'] && $_FILES[$fieldName]['size']) {
-
-            if ($error = ImageManager::validateUpload($_FILES[$fieldName], Tools::getMaxUploadSize())) {
-                $this->errors[] = $error;
-
-                return false;
-            }
-
-            $tmpName = tempnam(_EPH_TMP_IMG_DIR_, 'PS');
-
-            if (!$tmpName || !move_uploaded_file($_FILES[$fieldName]['tmp_name'], $tmpName)) {
-                return false;
-            }
-
-            $ext = ($fieldName == 'EPH_STORES_ICON') ? '.gif' : '.jpg';
-            $logoName = str_replace('%', '', urlencode(Tools::link_rewrite($this->context->shop->name))) . '-' . $logoPrefix . '-' . (int) Configuration::get('EPH_IMG_UPDATE_TIME') . (int) $idShop . $ext;
-
-            if ($this->context->shop->getContext() == Shop::CONTEXT_ALL || $idShop == 0
-                || Shop::isFeatureActive() == false
-            ) {
-                $logoName = str_replace('%', '', urlencode(Tools::link_rewrite($this->context->shop->name))) . '-' . $logoPrefix . '-' . (int) Configuration::get('EPH_IMG_UPDATE_TIME') . $ext;
-            }
-
-            if ($fieldName == 'EPH_STORES_ICON') {
-
-                if (!@ImageManager::resize($tmpName, _EPH_IMG_DIR_ . $logoName, null, null, 'gif', true)) {
-                    $this->errors[] = Tools::displayError('An error occurred while attempting to copy your logo.');
-                }
-
-            } else {
-
-                if (!@ImageManager::resize($tmpName, _EPH_IMG_DIR_ . $logoName)) {
-                    $this->errors[] = Tools::displayError('An error occurred while attempting to copy your logo.');
-                }
-
-            }
-
-            $idShop = null;
-            $idShopGroup = null;
-
-            if (!count($this->errors) && @filemtime(_EPH_IMG_DIR_ . Configuration::get($fieldName))) {
-
-                if (Shop::isFeatureActive()) {
-
-                    if (Shop::getContext() == Shop::CONTEXT_SHOP) {
-                        $idShop = Shop::getContextShopID();
-                        $idShopGroup = Shop::getContextShopGroupID();
-                        Shop::setContext(Shop::CONTEXT_ALL);
-                        $logoAll = Configuration::get($fieldName);
-                        Shop::setContext(Shop::CONTEXT_GROUP);
-                        $logoGroup = Configuration::get($fieldName);
-                        Shop::setContext(Shop::CONTEXT_SHOP);
-                        $logoShop = Configuration::get($fieldName);
-
-                        if ($logoAll != $logoShop && $logoGroup != $logoShop && $logoShop != false) {
-                            @unlink(_EPH_IMG_DIR_ . Configuration::get($fieldName));
-                        }
-
-                    } else
-
-                    if (Shop::getContext() == Shop::CONTEXT_GROUP) {
-                        $idShopGroup = Shop::getContextShopGroupID();
-                        Shop::setContext(Shop::CONTEXT_ALL);
-                        $logoAll = Configuration::get($fieldName);
-                        Shop::setContext(Shop::CONTEXT_GROUP);
-
-                        if ($logoAll != Configuration::get($fieldName)) {
-                            @unlink(_EPH_IMG_DIR_ . Configuration::get($fieldName));
-                        }
-
-                    }
-
-                } else {
-                    @unlink(_EPH_IMG_DIR_ . Configuration::get($fieldName));
-                }
-
-            }
-
-            Configuration::updateValue($fieldName, $logoName, false, $idShopGroup, $idShop);
-            Hook::exec('actionAdminThemesControllerUpdate_optionsAfter');
-            @unlink($tmpName);
-        }
-
-    }
-
+    
     /**
      * Update EPH_LOGO_MAIL
      *
@@ -6245,14 +5567,14 @@ class AdminThemesControllerCore extends AdminController {
      */
     public function updateOptionPsFavicon() {
 
-        $idShop = $this->context->shop->id;
+        $idCompany = $this->context->company->id;
 
-        if ($idShop == Configuration::get('EPH_SHOP_DEFAULT')) {
+        if ($idCompany == Configuration::get('EPH_SHOP_DEFAULT')) {
             $this->uploadIco('EPH_FAVICON', _EPH_IMG_DIR_ . 'favicon.ico');
         }
 
-        if ($this->uploadIco('EPH_FAVICON', _EPH_IMG_DIR_ . 'favicon_' . (int) $idShop . '.ico')) {
-            Configuration::updateValue('EPH_FAVICON', 'favicon_' . (int) $idShop . '.ico');
+        if ($this->uploadIco('EPH_FAVICON', _EPH_IMG_DIR_ . 'favicon_' . (int) $idCompany . '.ico')) {
+            Configuration::updateValue('EPH_FAVICON', 'favicon_' . (int) $idCompany . '.ico');
         }
 
         Configuration::updateGlobalValue('EPH_FAVICON', 'favicon.ico');
@@ -6278,8 +5600,8 @@ class AdminThemesControllerCore extends AdminController {
             @umask($previousUmask);
         }
 
-        $idShop = (int) $this->context->shop->id;
-        $this->uploadIco('EPH_SOURCE_FAVICON', _EPH_IMG_DIR_ . "favicon/favicon_{$idShop}_source.png");
+        $idCompany = (int) $this->context->company->id;
+        $this->uploadIco('EPH_SOURCE_FAVICON', _EPH_IMG_DIR_ . "favicon/favicon_{$idCompany}_source.png");
 
         $newTemplate = Tools::getValue('EPH_SOURCE_FAVICON_CODE');
 
@@ -6325,8 +5647,8 @@ class AdminThemesControllerCore extends AdminController {
 
                 if ($favicon = Tools::parseFaviconSizeTag(urldecode($attribute->value))) {
                     ImageManager::resize(
-                        _EPH_IMG_DIR_ . "favicon/favicon_{$idShop}_source.png",
-                        _EPH_IMG_DIR_ . "favicon/favicon_{$idShop}_{$favicon['width']}_{$favicon['height']}.png",
+                        _EPH_IMG_DIR_ . "favicon/favicon_{$idCompany}_source.png",
+                        _EPH_IMG_DIR_ . "favicon/favicon_{$idCompany}_{$favicon['width']}_{$favicon['height']}.png",
                         (int) $favicon['width'],
                         (int) $favicon['height'],
                         'png'
@@ -6338,7 +5660,7 @@ class AdminThemesControllerCore extends AdminController {
                         '310x310',
                         '310x150',
                     ])) {
-                        $path = Media::getMediaPath(_EPH_IMG_DIR_ . "favicon/favicon_{$idShop}_{$favicon['width']}_{$favicon['height']}.png");
+                        $path = Media::getMediaPath(_EPH_IMG_DIR_ . "favicon/favicon_{$idCompany}_{$favicon['width']}_{$favicon['height']}.png");
                         $logo = $favicon['width'] == $favicon['height']
                         ? $browserConfig->createElement("square{$favicon['width']}x{$favicon['height']}logo", $path)
                         : $browserConfig->createElement("wide{$favicon['width']}x{$favicon['height']}logo", $path);
@@ -6346,7 +5668,7 @@ class AdminThemesControllerCore extends AdminController {
                     }
 
                     $manifest['icons'][] = [
-                        'src'   => Media::getMediaPath(_EPH_IMG_DIR_ . "favicon/favicon_{$idShop}_{$favicon['width']}_{$favicon['height']}.png"),
+                        'src'   => Media::getMediaPath(_EPH_IMG_DIR_ . "favicon/favicon_{$idCompany}_{$favicon['width']}_{$favicon['height']}.png"),
                         'sizes' => "{$favicon['width']}x{$favicon['height']}",
                         'type'  => "image/{$favicon['type']}",
                     ];
@@ -6365,8 +5687,8 @@ class AdminThemesControllerCore extends AdminController {
             $filteredHtml .= $dom->saveHTML($link);
         }
 
-        file_put_contents(_EPH_IMG_DIR_ . "favicon/browserconfig_{$idShop}.xml", $browserConfig->saveXML());
-        file_put_contents(_EPH_IMG_DIR_ . "favicon/manifest_{$idShop}.json", json_encode($manifest, JSON_UNESCAPED_SLASHES + JSON_PRETTY_PRINT));
+        file_put_contents(_EPH_IMG_DIR_ . "favicon/browserconfig_{$idCompany}.xml", $browserConfig->saveXML());
+        file_put_contents(_EPH_IMG_DIR_ . "favicon/manifest_{$idCompany}.json", json_encode($manifest, JSON_UNESCAPED_SLASHES + JSON_PRETTY_PRINT));
         Configuration::updateValue('EPH_SOURCE_FAVICON_CODE', nl2br(urldecode($filteredHtml)), true);
 
         if (!$this->errors) {
@@ -6418,14 +5740,14 @@ class AdminThemesControllerCore extends AdminController {
      */
     public function updateOptionPsFavicon_57() {
 
-        $idShop = $this->context->shop->id;
+        $idCompany = $this->context->company->id;
 
-        if ($idShop == Configuration::get('EPH_SHOP_DEFAULT')) {
+        if ($idCompany == Configuration::get('EPH_SHOP_DEFAULT')) {
             $this->uploadIco('EPH_FAVICON_57', _EPH_IMG_DIR_ . 'favicon_57.png');
         }
 
-        if ($this->uploadIco('EPH_FAVICON_57', _EPH_IMG_DIR_ . 'favicon_57-' . (int) $idShop . '.png')) {
-            Configuration::updateValue('EPH_FAVICON_57', 'favicon_57-' . (int) $idShop . '.png');
+        if ($this->uploadIco('EPH_FAVICON_57', _EPH_IMG_DIR_ . 'favicon_57-' . (int) $idCompany . '.png')) {
+            Configuration::updateValue('EPH_FAVICON_57', 'favicon_57-' . (int) $idCompany . '.png');
         }
 
         Configuration::updateGlobalValue('EPH_FAVICON_57', 'favicon_57.png');
@@ -6447,14 +5769,14 @@ class AdminThemesControllerCore extends AdminController {
      */
     public function updateOptionPsFavicon_72() {
 
-        $idShop = $this->context->shop->id;
+        $idCompany = $this->context->company->id;
 
-        if ($idShop == Configuration::get('EPH_SHOP_DEFAULT')) {
+        if ($idCompany == Configuration::get('EPH_SHOP_DEFAULT')) {
             $this->uploadIco('EPH_FAVICON_72', _EPH_IMG_DIR_ . 'favicon_72.png');
         }
 
-        if ($this->uploadIco('EPH_FAVICON_72', _EPH_IMG_DIR_ . 'favicon_72-' . (int) $idShop . '.png')) {
-            Configuration::updateValue('EPH_FAVICON_72', 'favicon_72-' . (int) $idShop . '.png');
+        if ($this->uploadIco('EPH_FAVICON_72', _EPH_IMG_DIR_ . 'favicon_72-' . (int) $idCompany . '.png')) {
+            Configuration::updateValue('EPH_FAVICON_72', 'favicon_72-' . (int) $idCompany . '.png');
         }
 
         Configuration::updateGlobalValue('EPH_FAVICON_72', 'favicon_72.png');
@@ -6476,14 +5798,14 @@ class AdminThemesControllerCore extends AdminController {
      */
     public function updateOptionPsFavicon_114() {
 
-        $idShop = $this->context->shop->id;
+        $idCompany = $this->context->company->id;
 
-        if ($idShop == Configuration::get('EPH_SHOP_DEFAULT')) {
+        if ($idCompany == Configuration::get('EPH_SHOP_DEFAULT')) {
             $this->uploadIco('EPH_FAVICON_114', _EPH_IMG_DIR_ . 'favicon_114.png');
         }
 
-        if ($this->uploadIco('EPH_FAVICON_114', _EPH_IMG_DIR_ . 'favicon_114-' . (int) $idShop . '.png')) {
-            Configuration::updateValue('EPH_FAVICON_114', 'favicon_114-' . (int) $idShop . '.png');
+        if ($this->uploadIco('EPH_FAVICON_114', _EPH_IMG_DIR_ . 'favicon_114-' . (int) $idCompany . '.png')) {
+            Configuration::updateValue('EPH_FAVICON_114', 'favicon_114-' . (int) $idCompany . '.png');
         }
 
         Configuration::updateGlobalValue('EPH_FAVICON_114', 'favicon_114.png');
@@ -6505,14 +5827,14 @@ class AdminThemesControllerCore extends AdminController {
      */
     public function updateOptionPsFavicon_144() {
 
-        $idShop = $this->context->shop->id;
+        $idCompany = $this->context->company->id;
 
-        if ($idShop == Configuration::get('EPH_SHOP_DEFAULT')) {
+        if ($idCompany == Configuration::get('EPH_SHOP_DEFAULT')) {
             $this->uploadIco('EPH_FAVICON_144', _EPH_IMG_DIR_ . 'favicon_144.png');
         }
 
-        if ($this->uploadIco('EPH_FAVICON_144', _EPH_IMG_DIR_ . 'favicon_144-' . (int) $idShop . '.png')) {
-            Configuration::updateValue('EPH_FAVICON_144', 'favicon_144-' . (int) $idShop . '.png');
+        if ($this->uploadIco('EPH_FAVICON_144', _EPH_IMG_DIR_ . 'favicon_144-' . (int) $idCompany . '.png')) {
+            Configuration::updateValue('EPH_FAVICON_144', 'favicon_144-' . (int) $idCompany . '.png');
         }
 
         Configuration::updateGlobalValue('EPH_FAVICON_144', 'favicon_144.png');
@@ -6534,14 +5856,14 @@ class AdminThemesControllerCore extends AdminController {
      */
     public function updateOptionPsFavicon_192() {
 
-        $idShop = $this->context->shop->id;
+        $idCompany = $this->context->company->id;
 
-        if ($idShop == Configuration::get('EPH_SHOP_DEFAULT')) {
+        if ($idCompany == Configuration::get('EPH_SHOP_DEFAULT')) {
             $this->uploadIco('EPH_FAVICON_192', _EPH_IMG_DIR_ . 'favicon_192.png');
         }
 
-        if ($this->uploadIco('EPH_FAVICON_192', _EPH_IMG_DIR_ . 'favicon_192-' . (int) $idShop . '.png')) {
-            Configuration::updateValue('EPH_FAVICON_192', 'favicon_192-' . (int) $idShop . '.png');
+        if ($this->uploadIco('EPH_FAVICON_192', _EPH_IMG_DIR_ . 'favicon_192-' . (int) $idCompany . '.png')) {
+            Configuration::updateValue('EPH_FAVICON_192', 'favicon_192-' . (int) $idCompany . '.png');
         }
 
         Configuration::updateGlobalValue('EPH_FAVICON_192', 'favicon_192.png');
@@ -6604,9 +5926,9 @@ class AdminThemesControllerCore extends AdminController {
 
         $idTheme = (int) Tools::getValue('id_theme');
 
-        if ($idTheme && $this->context->shop->id_theme != $idTheme) {
-            $this->context->shop->id_theme = $idTheme;
-            $this->context->shop->update();
+        if ($idTheme && $this->context->company->id_theme != $idTheme) {
+            $this->context->company->id_theme = $idTheme;
+            $this->context->company->update();
             $this->redirect_after = static::$currentIndex . '&token=' . $this->token;
         }
 
@@ -6922,10 +6244,10 @@ class AdminThemesControllerCore extends AdminController {
             ();
         }
 
-        $_GET['id_theme'] = $this->context->shop->id_theme;
+        $_GET['id_theme'] = $this->context->company->id_theme;
         $_GET['updatetheme'] = true;
 
-        $this->object = new Theme($this->context->shop->id_theme);
+        $this->object = new Theme($this->context->company->id_theme);
 
         if ($this->fields_options && is_array($this->fields_options)) {
 

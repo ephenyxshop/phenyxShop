@@ -176,13 +176,13 @@ class VcLoopQueryBuilder {
 		$db = Db::getInstance();
 		$context = Context::getContext();
 		$id_lang = $context->language->id;
-		$id_shop = $context->shop->id;
+		$id_company = $context->company->id;
 
 		$sql = "SELECT sbpl.* FROM "._DB_PREFIX_."smart_blog_post sbp INNER JOIN "._DB_PREFIX_."smart_blog_post_lang sbpl ON sbp.id_smart_blog_post=sbpl.id_smart_blog_post";
 		$sql .= " LEFT JOIN "._DB_PREFIX_."smart_blog_post_shop sbps ON sbpl.id_smart_blog_post=sbps.id_smart_blog_post";
 		$sql .= " LEFT JOIN "._DB_PREFIX_."smart_blog_post_category sbpc ON sbpc.id_smart_blog_post=sbp.id_smart_blog_post";
 		$sql .= " LEFT JOIN "._DB_PREFIX_."smart_blog_post_tag sbpt ON sbpt.id_post=sbp.id_smart_blog_post";
-		$sql .= " WHERE sbps.id_shop={$id_shop} AND sbpl.id_lang={$id_lang} AND sbp.active=1";
+		$sql .= " WHERE sbps.id_shop={$id_company} AND sbpl.id_lang={$id_lang} AND sbp.active=1";
 		
 		if(isset($this->args['cats']) && !empty($this->args['cats']) ){
 			$sql .= " AND sbpc.id_smart_blog_category IN ({$this->args['cats']})";

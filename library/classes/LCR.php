@@ -1,6 +1,6 @@
 <?php
 
-class LCR extends ObjectModel {
+class LCR extends PhenyxObjectModel {
 
     public $id;
 

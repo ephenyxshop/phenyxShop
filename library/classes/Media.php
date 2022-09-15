@@ -333,7 +333,7 @@ class MediaCore {
 
         if ($addNoConflict) {
             $return[] = Media::getJSPath(
-                Context::getContext()->shop->getBaseURL(true, false) . _EPH_JS_DIR_ . 'jquery/jquery.noConflict.php?version=' . $version
+                Context::getContext()->company->getBaseURL(true, false) . _EPH_JS_DIR_ . 'jquery/jquery.noConflict.php?version=' . $version
             );
         }
 
@@ -360,19 +360,19 @@ class MediaCore {
 
     /**
      * @param int      $type
-     * @param int|null $idShop
+     * @param int|null $idCompany
      *
      * @return string
      *
      * @since 1.0.2 Introduced to effectively fix the favicon bugs
      */
-    public static function getFaviconPath($type = self::FAVICON, $idShop = null) {
+    public static function getFaviconPath($type = self::FAVICON, $idCompany = null) {
 
-        if (!$idShop) {
-            $idShop = (int) Context::getContext()->shop->id;
+        if (!$idCompany) {
+            $idCompany = (int) Context::getContext()->company->id;
         }
 
-        $storePath = Shop::isFeatureActive() ? '-' . (int) $idShop : '';
+        
 
         switch ($type) {
         case static::FAVICON_57:
@@ -402,11 +402,7 @@ class MediaCore {
             break;
         }
 
-        // Copy shop favicon if it does not exist
-
-        if (Shop::isFeatureActive() && !file_exists(_EPH_IMG_DIR_ . "{$path}{$storePath}.{$ext}")) {
-            @copy(_EPH_IMG_DIR_ . "{$path}.{$ext}", _EPH_IMG_DIR_ . "{$path}{$storePath}.{$ext}");
-        }
+       
 
         return (string) Media::getMediaPath(_EPH_IMG_DIR_ . "{$path}.{$ext}");
     }
@@ -788,6 +784,146 @@ class MediaCore {
 
         return array_merge($splittedCss, $compiledCss);
     }
+    
+    public static function cccAdminCss($cssFiles, $cachePath = null) {
+
+       
+        //inits
+        $cssFilesByMedia = [];
+        $externalCssFiles = [];
+        $compressedCssFiles = [];
+        $compressedCssFilesNotFound = [];
+        $compressedCssFilesInfos = [];
+        $protocolLink = Tools::getCurrentUrlProtocolPrefix();
+        //if cache_path not specified, set curent theme cache folder
+        $cachePath = $cachePath ? $cachePath : _EPH_ADMIN_THEME_DIR_ . 'backend/cache/';
+        $cssSplitNeedRefresh = false;
+
+        // group css files by media
+
+        foreach ($cssFiles as $filename => $media) {
+
+            if (!array_key_exists($media, $cssFilesByMedia)) {
+                $cssFilesByMedia[$media] = [];
+            }
+
+            $infos = [];
+            $infos['uri'] = $filename;
+            $urlData = parse_url($filename);
+
+            if (array_key_exists('host', $urlData)) {
+                $externalCssFiles[$filename] = $media;
+                continue;
+            }
+
+            $infos['path'] = _EPH_ROOT_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, '/', $urlData['path']);
+            
+
+            if (!@filemtime($infos['path'])) {
+                $infos['path'] = _EPH_CORE_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, '/', $urlData['path']);
+            }
+            
+            $cssFilesByMedia[$media]['files'][] = $infos;
+
+            if (!array_key_exists('date', $cssFilesByMedia[$media])) {
+                $cssFilesByMedia[$media]['date'] = 0;
+            }
+
+            $cssFilesByMedia[$media]['date'] = max(
+                (int) @filemtime($infos['path']),
+                $cssFilesByMedia[$media]['date']
+            );
+
+            if (!array_key_exists($media, $compressedCssFilesInfos)) {
+                $compressedCssFilesInfos[$media] = ['key' => ''];
+            }
+
+            $compressedCssFilesInfos[$media]['key'] .= $filename;
+        }
+
+        // get compressed css file infos
+        $version = (int) Configuration::get('EPH_CCCCSS_VERSION');
+
+        foreach ($compressedCssFilesInfos as $media => &$info) {
+            $key = md5($info['key'] . $protocolLink);
+            $filename = $cachePath . 'v_' . $version . '_' . $key . '_' . $media . '.css';
+
+            $info = [
+                'key'  => $key,
+                'date' => (int) @filemtime($filename),
+            ];
+        }
+
+        foreach ($cssFilesByMedia as $media => $mediaInfos) {
+
+            if ($mediaInfos['date'] > $compressedCssFilesInfos[$media]['date']) {
+
+                if ($compressedCssFilesInfos[$media]['date']) {
+                    Configuration::updateValue('EPH_CCCCSS_VERSION', ++$version);
+                    break;
+                }
+
+            }
+
+        }
+
+        // aggregate and compress css files content, write new caches files
+        $importUrl = [];
+
+        foreach ($cssFilesByMedia as $media => $mediaInfos) {
+            $cacheFilename = $cachePath . 'v_' . $version . '_' . $compressedCssFilesInfos[$media]['key'] . '_' . $media . '.css';
+
+            if ($mediaInfos['date'] > $compressedCssFilesInfos[$media]['date']) {
+                $cssSplitNeedRefresh = true;
+                $cacheFilename = $cachePath . 'v_' . $version . '_' . $compressedCssFilesInfos[$media]['key'] . '_' . $media . '.css';
+                $compressedCssFiles[$media] = '';
+
+                foreach ($mediaInfos['files'] as $fileInfos) {
+
+                    if (file_exists($fileInfos['path'])) {
+                        $compressedCssFiles[$media] .= Media::minifyCSS(file_get_contents($fileInfos['path']), $fileInfos['uri'], $importUrl);
+                    } else {
+                        $compressedCssFilesNotFound[] = $fileInfos['path'];
+                    }
+
+                }
+
+                if (!empty($compressedCssFilesNotFound)) {
+                    $content = '/* WARNING ! file(s) not found : "' . implode(',', $compressedCssFilesNotFound) . '" */' . "\n" . $compressedCssFiles[$media];
+                } else {
+                    $content = $compressedCssFiles[$media];
+                }
+
+                $content = '@charset "UTF-8";' . "\n" . $content;
+                $content = implode('', $importUrl) . $content;
+                file_put_contents($cacheFilename, $content);
+                chmod($cacheFilename, 0777);
+            }
+
+            $compressedCssFiles[$media] = $cacheFilename;
+        }
+
+        // rebuild the original css_files array
+        $cssFiles = [];
+
+        foreach ($compressedCssFiles as $media => $filename) {
+            $url = str_replace(_EPH_THEME_DIR_, _THEMES_DIR_ . _THEME_NAME_ . '/', $filename);
+            $cssFiles[$protocolLink . Tools::getMediaServer($url) . $url] = $media;
+        }
+
+        $compiledCss = array_merge($externalCssFiles, $cssFiles);
+
+        //If browser not IE <= 9, bypass ieCssSplitter
+        $userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+
+        if (!preg_match('/(?i)msie [1-9]/', $userAgent)) {
+            return $compiledCss;
+        }
+
+        $splittedCss = static::ieCssSplitter($compiledCss, $cachePath . 'ie9', $cssSplitNeedRefresh);
+
+        return array_merge($splittedCss, $compiledCss);
+    }
 
     /**
      * @param string $cssContent
@@ -935,6 +1071,100 @@ class MediaCore {
         $jsExternalFiles = [];
         $protocolLink = Tools::getCurrentUrlProtocolPrefix();
         $cachePath = _EPH_THEME_DIR_ . 'cache/';
+
+        // get js files infos
+
+        foreach ($jsFiles as $filename) {
+
+            if (Validate::isAbsoluteUrl($filename)) {
+                $jsExternalFiles[] = $filename;
+            } else {
+                $infos = [];
+                $infos['uri'] = $filename;
+                $urlData = parse_url($filename);
+                $infos['path'] = _EPH_ROOT_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, '/', $urlData['path']);
+
+                if (!@filemtime($infos['path'])) {
+                    $infos['path'] = _EPH_CORE_DIR_ . Tools::str_replace_once(__EPH_BASE_URI__, '/', $urlData['path']);
+                }
+
+                $jsFilesInfos[] = $infos;
+
+                $jsFilesDate = max(
+                    (int) @filemtime($infos['path']),
+                    $jsFilesDate
+                );
+                $compressedJsFilename .= $filename;
+            }
+
+        }
+
+        // get compressed js file infos
+        $compressedJsFilename = md5($compressedJsFilename);
+        $version = (int) Configuration::get('EPH_CCCJS_VERSION');
+        $compressedJsPath = $cachePath . 'v_' . $version . '_' . $compressedJsFilename . '.js';
+        $compressedJsFileDate = (int) @filemtime($compressedJsPath);
+
+        // aggregate and compress js files content, write new caches files
+
+        if ($jsFilesDate > $compressedJsFileDate) {
+
+            if ($compressedJsFileDate) {
+                Configuration::updateValue('EPH_CCCJS_VERSION', ++$version);
+            }
+
+            $compressedJsPath = $cachePath . 'v_' . $version . '_' . $compressedJsFilename . '.js';
+            $content = '';
+
+            foreach ($jsFilesInfos as $fileInfos) {
+
+                if (file_exists($fileInfos['path'])) {
+                    $tmpContent = file_get_contents($fileInfos['path']);
+
+                    if (preg_match('@\.(min|pack)\.[^/]+$@', $fileInfos['path'], $matches)) {
+                        $content .= preg_replace('/\/\/@\ssourceMappingURL\=[_a-zA-Z0-9-.]+\.' . $matches[1] . '\.map\s+/', '', $tmpContent);
+                    } else {
+                        $content .= Media::packJS($tmpContent);
+                    }
+
+                } else {
+                    $compressedJsFilesNotFound[] = $fileInfos['path'];
+                }
+
+            }
+
+            if (!empty($compressedJsFilesNotFound)) {
+                $content = '/* WARNING ! file(s) not found : "' . implode(',', $compressedJsFilesNotFound) . '" */' . "\n" . $content;
+            }
+
+            file_put_contents($compressedJsPath, $content);
+            chmod($compressedJsPath, 0777);
+        }
+
+        // rebuild the original js_files array
+        $url = '';
+
+        if (strpos($compressedJsPath, _EPH_ROOT_DIR_) !== false) {
+            $url = str_replace(_EPH_ROOT_DIR_ . '/', __EPH_BASE_URI__, $compressedJsPath);
+        }
+
+        if (strpos($compressedJsPath, _EPH_CORE_DIR_) !== false) {
+            $url = str_replace(_EPH_CORE_DIR_ . '/', __EPH_BASE_URI__, $compressedJsPath);
+        }
+
+        return array_merge([$protocolLink . Tools::getMediaServer($url) . $url], $jsExternalFiles);
+    }
+    
+    public static function cccAdminJS($jsFiles) {
+
+        //inits
+        $compressedJsFilesNotFound = [];
+        $jsFilesInfos = [];
+        $jsFilesDate = 0;
+        $compressedJsFilename = '';
+        $jsExternalFiles = [];
+        $protocolLink = Tools::getCurrentUrlProtocolPrefix();
+        $cachePath = $cachePath ? $cachePath : _EPH_ADMIN_THEME_DIR_ . 'backend/cache/';
 
         // get js files infos
 

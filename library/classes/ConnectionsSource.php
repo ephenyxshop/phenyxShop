@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class ConnectionsSourceCore extends ObjectModel {
+class ConnectionsSourceCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     public static $uri_max_size = 255;
@@ -17,7 +17,7 @@ class ConnectionsSourceCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'connections_source',

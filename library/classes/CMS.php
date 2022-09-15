@@ -5,11 +5,11 @@
  *
  * @since 1.9.1.0
  */
-class CMSCore extends ObjectModel {
+class CMSCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'          => 'cms',
@@ -104,7 +104,7 @@ class CMSCore extends ObjectModel {
     public static function listCms($idLang = null, $idBlock = false, $active = true) {
 
         if (empty($idLang)) {
-            $idLang = (int) Configuration::get('EPH_LANG_DEFAULT');
+            $idLang = (int) Context::getContext()->language->id;
         }
 
         return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
@@ -125,7 +125,7 @@ class CMSCore extends ObjectModel {
      * @param int|null $idLang
      * @param int|null $idCmsCategory
      * @param bool     $active
-     * @param int|null $idShop
+     * @param int|null $idCompany
      *
      * @return array|false|mysqli_result|null|PDOStatement|resource
      *
@@ -134,7 +134,7 @@ class CMSCore extends ObjectModel {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function getCMSPages($idLang = null, $idCmsCategory = null, $active = true, $idShop = null) {
+    public static function getCMSPages($idLang = null, $idCmsCategory = null, $active = true, $idCompany = null) {
 
         $sql = new DbQuery();
         $sql->select('*');
@@ -142,16 +142,16 @@ class CMSCore extends ObjectModel {
 
         if ($idLang) {
 
-            if ($idShop) {
-                $sql->innerJoin('cms_lang', 'l', 'c.`id_cms` = l.`id_cms` AND l.`id_lang` = ' . (int) $idLang . ' AND l.`id_shop` = ' . (int) $idShop);
+            if ($idCompany) {
+                $sql->innerJoin('cms_lang', 'l', 'c.`id_cms` = l.`id_cms` AND l.`id_lang` = ' . (int) $idLang . ' AND l.`id_shop` = ' . (int) $idCompany);
             } else {
                 $sql->innerJoin('cms_lang', 'l', 'c.`id_cms` = l.`id_cms` AND l.`id_lang` = ' . (int) $idLang);
             }
 
         }
 
-        if ($idShop) {
-            $sql->innerJoin('cms_shop', 'cs', 'c.`id_cms` = cs.`id_cms` AND cs.`id_shop` = ' . (int) $idShop);
+        if ($idCompany) {
+            $sql->innerJoin('cms_shop', 'cs', 'c.`id_cms` = cs.`id_cms` AND cs.`id_shop` = ' . (int) $idCompany);
         }
 
         if ($active) {
@@ -192,7 +192,7 @@ class CMSCore extends ObjectModel {
     /**
      * @param int      $idCms
      * @param int|null $idLang
-     * @param int|null $idShop
+     * @param int|null $idCompany
      *
      * @return array|bool|null|object
      *
@@ -201,14 +201,14 @@ class CMSCore extends ObjectModel {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function getCMSContent($idCms, $idLang = null, $idShop = null) {
+    public static function getCMSContent($idCms, $idLang = null, $idCompany = null) {
 
         if (is_null($idLang)) {
-            $idLang = (int) Configuration::get('EPH_LANG_DEFAULT');
+            $idLang = (int) Context::getContext()->language->id;
         }
 
-        if (is_null($idShop)) {
-            $idShop = (int) Configuration::get('EPH_SHOP_DEFAULT');
+        if (is_null($idCompany)) {
+            $idCompany = (int) Configuration::get('EPH_SHOP_DEFAULT');
         }
 
         return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
@@ -217,7 +217,7 @@ class CMSCore extends ObjectModel {
                 ->from('cms_lang')
                 ->where('`id_cms` = ' . (int) $idCms)
                 ->where('`id_lang` = ' . (int) $idLang)
-                ->where('`id_shop` = ' . (int) $idShop)
+                ->where('`id_shop` = ' . (int) $idCompany)
         );
     }
 

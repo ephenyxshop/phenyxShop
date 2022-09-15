@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<dwsync>
+<file name="AverageTaxOfProductsTaxCalculator.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="index.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="TaxCalculator.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="Tax.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="TaxManagerFactory.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="TaxManagerInterface.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="TaxManagerModule.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="TaxMode.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="TaxRule.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="TaxRulesGroup.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="TaxRulesTaxManager.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="AverageTaxOfProductsTaxCalculator.php" server="142.11.250.73" local="133076359412747150" remote="133074465000000000" Dst="2" />
+<file name="index.php" server="142.11.250.73" local="133076359434179344" remote="133074465000000000" Dst="2" />
+<file name="Tax.php" server="142.11.250.73" local="133076359413992019" remote="133074465000000000" Dst="2" />
+<file name="TaxCalculator.php" server="142.11.250.73" local="133076359415298476" remote="133074465000000000" Dst="2" />
+<file name="TaxManagerFactory.php" server="142.11.250.73" local="133076359420265582" remote="133074465000000000" Dst="2" />
+<file name="TaxManagerInterface.php" server="142.11.250.73" local="133076359419018838" remote="133074465000000000" Dst="2" />
+<file name="TaxManagerModule.php" server="142.11.250.73" local="133076359421512491" remote="133074465000000000" Dst="2" />
+<file name="TaxMode.php" server="142.11.250.73" local="133076359424010982" remote="133076076600000000" Dst="2" />
+<file name="TaxRule.php" server="142.11.250.73" local="133076359426714603" remote="133074465000000000" Dst="2" />
+<file name="TaxRulesGroup.php" server="142.11.250.73" local="133076359427965998" remote="133074465000000000" Dst="2" />
+<file name="TaxRulesTaxManager.php" server="142.11.250.73" local="133076359430469715" remote="133074465000000000" Dst="2" />
+</dwsync>

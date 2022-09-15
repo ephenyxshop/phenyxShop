@@ -72,7 +72,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'class'      => 'chosen',
                         'list'       => Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS((new DbQuery())->select('`name`')->from('timezone')),
                         'identifier' => 'name',
-                        'visibility' => Shop::CONTEXT_ALL,
+                        
                     ],
                 ],
                 'submit' => ['title' => $this->l('Save')],
@@ -124,7 +124,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'hint'       => $this->l('The ISO 639-1 identifier for the language of the country where your web server is located (en, fr, sp, ru, pl, nl, etc.).'),
                         'validation' => 'isLanguageIsoCode',
                         'type'       => 'text',
-                        'visibility' => Shop::CONTEXT_ALL,
+                        
                         'class'      => 'fixed-width-sm',
                     ],
                     'EPH_LOCALE_COUNTRY'  => [
@@ -132,7 +132,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'hint'       => $this->l('The ISO 3166-1 alpha-2 identifier for the country/region where your web server is located, in lowercase (us, gb, fr, sp, ru, pl, nl, etc.).'),
                         'validation' => 'isLanguageIsoCode',
                         'type'       => 'text',
-                        'visibility' => Shop::CONTEXT_ALL,
+                        
                         'class'      => 'fixed-width-sm',
                     ],
                 ],
@@ -228,7 +228,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'class'      => 'chosen',
                         'list'       => Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS((new DbQuery())->select('`name`')->from('timezone')),
                         'identifier' => 'name',
-                        'visibility' => Shop::CONTEXT_ALL,
+                       
                     ],
                 ],
                 'submit' => ['title' => $this->l('Save')],
@@ -322,7 +322,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'hint'       => $this->l('The ISO 639-1 identifier for the language of the country where your web server is located (en, fr, sp, ru, pl, nl, etc.).'),
                         'validation' => 'isLanguageIsoCode',
                         'type'       => 'text',
-                        'visibility' => Shop::CONTEXT_ALL,
+                       
                         'class'      => 'fixed-width-sm',
                     ],
                     'EPH_LOCALE_COUNTRY'  => [
@@ -330,7 +330,7 @@ class AdminLocalizationControllerCore extends AdminController {
                         'hint'       => $this->l('The ISO 3166-1 alpha-2 identifier for the country/region where your web server is located, in lowercase (us, gb, fr, sp, ru, pl, nl, etc.).'),
                         'validation' => 'isLanguageIsoCode',
                         'type'       => 'text',
-                        'visibility' => Shop::CONTEXT_ALL,
+                        
                         'class'      => 'fixed-width-sm',
                     ],
                 ],
@@ -376,7 +376,7 @@ class AdminLocalizationControllerCore extends AdminController {
         if (Tools::isSubmit('submitLocalizationPack')) {
 
             if (($isoLocalizationPack = Tools::getValue('iso_localization_pack')) && Validate::isFileName($isoLocalizationPack)) {
-                $path = _EPH_ROOT_ADMIN_DIR_ . '/localization/' . $isoLocalizationPack . '.xml';
+                $path = _EPH_ROOT_DIR_ . '/localization/' . $isoLocalizationPack . '.xml';
 
                 if (!($pack = @file_get_contents($path))) {
                     $this->errors[] = Tools::displayError('Cannot load the localization pack.');
@@ -437,7 +437,7 @@ class AdminLocalizationControllerCore extends AdminController {
         if (Tools::isSubmit('submitLocalizationPack')) {
 
             if (($isoLocalizationPack = Tools::getValue('iso_localization_pack')) && Validate::isFileName($isoLocalizationPack)) {
-                $path = _EPH_ROOT_ADMIN_DIR_ . '/localization/' . $isoLocalizationPack . '.xml';
+                $path = _EPH_ROOT_DIR_ . '/localization/' . $isoLocalizationPack . '.xml';
 
                 if (!($pack = @file_get_contents($path))) {
                     $this->errors[] = Tools::displayError('Cannot load the localization pack.');
@@ -530,7 +530,7 @@ class AdminLocalizationControllerCore extends AdminController {
         $localizationsPack = false;
         $this->tpl_option_vars['options_content'] = $this->renderOptions();
 
-        $localizationFile = _EPH_ROOT_ADMIN_DIR_ . '/localization/localization.xml';
+        $localizationFile = _EPH_ROOT_DIR_ . '/localization/localization.xml';
 
         if (file_exists($localizationFile)) {
             $xmlLocalization = @simplexml_load_file($localizationFile);
@@ -553,7 +553,7 @@ class AdminLocalizationControllerCore extends AdminController {
 
         // Add local localization .xml files to the list if they are not already there
 
-        foreach (scandir(_EPH_ROOT_ADMIN_DIR_ . '/localization/') as $entry) {
+        foreach (scandir(_EPH_ROOT_DIR_ . '/localization/') as $entry) {
             $m = [];
 
             if (preg_match('/^([a-z]{2})\.xml$/', $entry, $m)) {
@@ -562,7 +562,7 @@ class AdminLocalizationControllerCore extends AdminController {
                 if (empty($remoteIsos[$iso])) {
                     // if the pack is only there locally and not on PhenyxShop.com
 
-                    $xmlPack = @simplexml_load_file(_EPH_ROOT_ADMIN_DIR_ . '/localization/' . $entry);
+                    $xmlPack = @simplexml_load_file(_EPH_ROOT_DIR_ . '/localization/' . $entry);
 
                     if (!$xmlPack) {
                         return $this->displayWarning($this->l(sprintf('%1s could not be loaded', $entry)));
@@ -711,23 +711,10 @@ class AdminLocalizationControllerCore extends AdminController {
 
         Configuration::updateValue('EPH_CURRENCY_DEFAULT', $value);
 
-        /* Set conversion rate of default currency to 1 */
-        ObjectModel::updateMultishopTable('Currency', ['conversion_rate' => 1], 'a.id_currency');
+      
+         Currency::refreshCurrencies();
 
-        $tmpContext = Shop::getContext();
-
-        if ($tmpContext == Shop::CONTEXT_GROUP) {
-            $tmpShop = Shop::getContextShopGroupID();
-        } else {
-            $tmpShop = (int) Shop::getContextShopID();
-        }
-
-        foreach (Shop::getContextListShopID() as $idShop) {
-            Shop::setContext(Shop::CONTEXT_SHOP, (int) $idShop);
-            Currency::refreshCurrencies();
-        }
-
-        Shop::setContext($tmpContext, $tmpShop);
+        
     }
 
 }

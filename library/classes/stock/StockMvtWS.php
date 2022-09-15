@@ -6,11 +6,11 @@
  *
  * @since 1.9.1.0
  */
-class StockMvtWSCore extends ObjectModelCore
+class StockMvtWSCore extends PhenyxObjectModelCore
 {
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'stock_mvt',
@@ -127,7 +127,7 @@ class StockMvtWSCore extends ObjectModelCore
      */
     public $reference;
     /**
-     * @see ObjectModel::$webserviceParameters
+     * @see PhenyxObjectModel::$webserviceParameters
      */
     protected $webserviceParameters = [
         'fields'        => [
@@ -154,7 +154,7 @@ class StockMvtWSCore extends ObjectModelCore
     ];
 
     /**
-     * Associations tables for attributes that require different tables than stated in ObjectModel::definition
+     * Associations tables for attributes that require different tables than stated in PhenyxObjectModel::definition
      *
      * @var array
      */
@@ -173,7 +173,7 @@ class StockMvtWSCore extends ObjectModelCore
     /**
      * @param int|null $id
      * @param int|null $idLang
-     * @param int|null $idShop
+     * @param int|null $idCompany
      *
      * @throws Adapter_Exception
      * @throws PhenyxShopDatabaseException

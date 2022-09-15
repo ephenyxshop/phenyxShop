@@ -1434,7 +1434,7 @@ class WebserviceRequestCore
                 if ($assoc['type'] != 'fk_shop') {
                     $sql .= '_'.$assoc['type'];
                 } else {
-                    $def = ObjectModel::getDefinition($this->resourceConfiguration['retrieveData']['className']);
+                    $def = PhenyxObjectModel::getDefinition($this->resourceConfiguration['retrieveData']['className']);
                     if (isset($def['fields']) && isset($def['fields']['id_shop_group'])) {
                         $checkShopGroup = true;
                     }

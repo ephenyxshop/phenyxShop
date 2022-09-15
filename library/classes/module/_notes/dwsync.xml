@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<dwsync>
+<file name="BoOrder.php" server="192.129.167.152" local="132980989390000000" remote="133056525600000000" Dst="2" />
+<file name="CarrierModule.php" server="192.129.167.152" local="132980989390000000" remote="133056525600000000" Dst="2" />
+<file name="CurrencyRateModule.php" server="192.129.167.152" local="132980989390000000" remote="133056525600000000" Dst="2" />
+<file name="EphModule.php" server="192.129.167.152" local="132980989390000000" remote="133056525600000000" Dst="2" />
+<file name="ErrorModule.php" server="192.129.167.152" local="132980989390000000" remote="133056525600000000" Dst="2" />
+<file name="FreeOrder.php" server="192.129.167.152" local="132980989390000000" remote="133056525600000000" Dst="2" />
+<file name="ImportModule.php" server="192.129.167.152" local="132980989390000000" remote="133056525600000000" Dst="2" />
+<file name="index.php" server="192.129.167.152" local="132980989390000000" remote="133056525600000000" Dst="2" />
+<file name="LibraryModule.php" server="192.129.167.152" local="132980989390000000" remote="133056525600000000" Dst="2" />
+<file name="Module.php" server="192.129.167.152" local="133056536994555239" remote="133056525600000000" Dst="2" />
+<file name="ModuleGraph.php" server="192.129.167.152" local="133056536994894334" remote="133056525600000000" Dst="2" />
+<file name="ModuleGraphEngine.php" server="192.129.167.152" local="132980989390000000" remote="133056525600000000" Dst="2" />
+<file name="ModuleGrid.php" server="192.129.167.152" local="133056536994974124" remote="133056525600000000" Dst="2" />
+<file name="ModuleGridEngine.php" server="192.129.167.152" local="132980989390000000" remote="133056525600000000" Dst="2" />
+<file name="ModuleStats.php" server="192.129.167.152" local="133056536995063882" remote="133056526200000000" Dst="2" />
+<file name="PaymentModule.php" server="192.129.167.152" local="132991653560000000" remote="133056526200000000" Dst="2" />
+<file name="Module.php" server="142.11.250.73" local="133076359333401963" remote="133076108400000000" Dst="2" />
+<file name="BoOrder.php" server="142.11.250.73" local="133076359309490865" remote="133074464400000000" Dst="2" />
+<file name="CarrierModule.php" server="142.11.250.73" local="133076359311992735" remote="133074464400000000" Dst="2" />
+<file name="CurrencyRateModule.php" server="142.11.250.73" local="133076359314667816" remote="133074561600000000" Dst="2" />
+<file name="EphModule.php" server="142.11.250.73" local="133076359315911003" remote="133074464400000000" Dst="2" />
+<file name="ErrorModule.php" server="142.11.250.73" local="133076359318414527" remote="133074464400000000" Dst="2" />
+<file name="FreeOrder.php" server="142.11.250.73" local="133076359321058436" remote="133074464400000000" Dst="2" />
+<file name="ImportModule.php" server="142.11.250.73" local="133076359322312234" remote="133074464400000000" Dst="2" />
+<file name="index.php" server="142.11.250.73" local="133076359343583311" remote="133074464400000000" Dst="2" />
+<file name="LibraryModule.php" server="142.11.250.73" local="133076359324850843" remote="133074464400000000" Dst="2" />
+<file name="ModuleGraph.php" server="142.11.250.73" local="133076359328576874" remote="133074464400000000" Dst="2" />
+<file name="ModuleGraphEngine.php" server="142.11.250.73" local="133076359331066088" remote="133074464400000000" Dst="2" />
+<file name="ModuleGrid.php" server="142.11.250.73" local="133076359336075012" remote="133074464400000000" Dst="2" />
+<file name="ModuleGridEngine.php" server="142.11.250.73" local="133076359337321555" remote="133074464400000000" Dst="2" />
+<file name="ModuleStats.php" server="142.11.250.73" local="133076359339814891" remote="133074464400000000" Dst="2" />
+<file name="PaymentModule.php" server="142.11.250.73" local="133076359345933489" remote="133076103000000000" Dst="2" />
+</dwsync>

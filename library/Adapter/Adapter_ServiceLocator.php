@@ -4,8 +4,8 @@
  * Class Adapter_ServiceLocator
  */
 // @codingStandardsIgnoreStart
-class Adapter_ServiceLocator
-{
+class Adapter_ServiceLocator {
+
     // @codingStandardsIgnoreEnd
 
     /**
@@ -17,8 +17,8 @@ class Adapter_ServiceLocator
     /**
      * @param Core_Foundation_IoC_Container $container
      */
-    public static function setServiceContainerInstance(Core_Foundation_IoC_Container $container)
-    {
+    public static function setServiceContainerInstance(Core_Foundation_IoC_Container $container) {
+
         self::$serviceContainer = $container;
     }
 
@@ -33,12 +33,13 @@ class Adapter_ServiceLocator
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function get($serviceName)
-    {
+    public static function get($serviceName) {
+
         if (empty(self::$serviceContainer) || is_null(self::$serviceContainer)) {
             throw new Adapter_Exception('Service container is not set.');
         }
 
         return self::$serviceContainer->make($serviceName);
     }
+
 }

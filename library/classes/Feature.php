@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class FeatureCore extends ObjectModel {
+class FeatureCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var string Name */
@@ -15,7 +15,7 @@ class FeatureCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'feature',

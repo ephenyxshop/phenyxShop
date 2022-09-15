@@ -82,7 +82,7 @@ class HelperTreeCategoriesCore extends TreeCore {
             if (!empty($categories[$category['id_category']])) {
                 $tree[$category['id_category']]['children'] = $this->fillTree($categories, $category['id_category']);
             } else
-            if ($result = Category::hasChildren($category['id_category'], $this->getLang(), false, $this->getShop()->id)) {
+            if ($result = Category::hasChildren($category['id_category'], $this->getLang(), false)) {
                 $tree[$category['id_category']]['children'] = [$result[0]['id_category'] => $result[0]];
             }
 
@@ -102,7 +102,7 @@ class HelperTreeCategoriesCore extends TreeCore {
     public function getData() {
 
         if (!isset($this->_data)) {
-            $shop = $this->getShop();
+           
             $lang = $this->getLang();
             $rootCategory = (int) $this->getRootCategory();
 
@@ -116,7 +116,7 @@ class HelperTreeCategoriesCore extends TreeCore {
                     $rootCategory = Category::getRootCategory()->id;
                 }
 
-                $categories[$rootCategory] = Category::getChildren($rootCategory, $lang, false, $shop->id);
+                $categories[$rootCategory] = Category::getChildren($rootCategory, $lang, false);
                 $children = $this->fillTree($categories, $rootCategory);
                 $this->setData($children);
             } else {
@@ -127,10 +127,10 @@ class HelperTreeCategoriesCore extends TreeCore {
 
                 $newSelectedCategories = [];
                 $selectedCategories = $this->getSelectedCategories();
-                $categories[$rootCategory] = Category::getChildren($rootCategory, $lang, false, $shop->id);
+                $categories[$rootCategory] = Category::getChildren($rootCategory, $lang, false);
 
                 foreach ($selectedCategories as $selectedCategory) {
-                    $category = new Category($selectedCategory, $lang, $shop->id);
+                    $category = new Category($selectedCategory, $lang);
                     $newSelectedCategories[] = $selectedCategory;
                     $parents = $category->getParentsCategories($lang);
 
@@ -143,7 +143,7 @@ class HelperTreeCategoriesCore extends TreeCore {
                 $newSelectedCategories = array_unique($newSelectedCategories);
 
                 foreach ($newSelectedCategories as $selectedCategory) {
-                    $currentCategory = Category::getChildren($selectedCategory, $lang, false, $shop->id);
+                    $currentCategory = Category::getChildren($selectedCategory, $lang, false);
 
                     if (!empty($currentCategory)) {
                         $categories[$selectedCategory] = $currentCategory;
@@ -406,33 +406,7 @@ class HelperTreeCategoriesCore extends TreeCore {
         return $this;
     }
 
-    /**
-     * @return Shop
-     *
-     * @since   1.8.1.0
-     * @version 1.8.5.0
-     * @throws PhenyxShopException
-     */
-    public function getShop() {
-
-        if (!isset($this->_shop)) {
-
-            if (Tools::isSubmit('id_shop')) {
-                $this->setShop(new Shop(Tools::getValue('id_shop')));
-            } else
-            if ($this->getContext()->shop->id) {
-                $this->setShop(new Shop($this->getContext()->shop->id));
-            } else
-            if (!Shop::isFeatureActive()) {
-                $this->setShop(new Shop(Configuration::get('EPH_SHOP_DEFAULT')));
-            } else {
-                $this->setShop(new Shop(0));
-            }
-
-        }
-
-        return $this->_shop;
-    }
+    
 
     /**
      * @return mixed

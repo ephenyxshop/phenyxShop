@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class ConnectionCore extends ObjectModel {
+class ConnectionCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var int */
@@ -16,16 +16,12 @@ class ConnectionCore extends ObjectModel {
     public $ip_address;
     /** @var string */
     public $http_referer;
-    /** @var int */
-    public $id_shop;
-    /** @var int */
-    public $id_shop_group;
     /** @var string */
     public $date_add;
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'connections',
@@ -35,8 +31,6 @@ class ConnectionCore extends ObjectModel {
             'id_page'       => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true],
             'ip_address'    => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'http_referer'  => ['type' => self::TYPE_STRING, 'validate' => 'isAbsoluteUrl'],
-            'id_shop'       => ['type' => self::TYPE_INT, 'required' => true],
-            'id_shop_group' => ['type' => self::TYPE_INT, 'required' => true],
             'date_add'      => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
         ],
     ];
@@ -116,8 +110,7 @@ class ConnectionCore extends ObjectModel {
             // This is a bot and we have to retrieve its connection ID
             $sql = 'SELECT SQL_NO_CACHE `id_connections` FROM `' . _DB_PREFIX_ . 'connections`
                     WHERE ip_address = ' . (int) ip2long(Tools::getRemoteAddr()) . '
-                        AND `date_add` > \'' . pSQL(date('Y-m-d H:i:00', time() - 1800)) . '\'
-                        ' . Shop::addSqlRestriction(Shop::SHARE_CUSTOMER) . '
+                        AND `date_add` > \'' . pSQL(date('Y-m-d H:i:00', time() - 1800)) . '\'                        
                     ORDER BY `date_add` DESC';
 
             if ($idConnections = Db::getInstance()->getValue($sql, false)) {
@@ -133,7 +126,6 @@ class ConnectionCore extends ObjectModel {
                 FROM `' . _DB_PREFIX_ . 'connections`
                 WHERE `id_guest` = ' . (int) $cookie->id_guest . '
                     AND `date_add` > \'' . pSQL(date('Y-m-d H:i:00', time() - 1800)) . '\'
-                    ' . Shop::addSqlRestriction(Shop::SHARE_CUSTOMER) . '
                 ORDER BY `date_add` DESC';
         $result = Db::getInstance()->getRow($sql, false);
 
@@ -152,8 +144,6 @@ class ConnectionCore extends ObjectModel {
             $connection->id_guest = (int) $cookie->id_guest;
             $connection->id_page = Page::getCurrentId();
             $connection->ip_address = Tools::getRemoteAddr() ? (int) ip2long(Tools::getRemoteAddr()) : '';
-            $connection->id_shop = Context::getContext()->shop->id;
-            $connection->id_shop_group = Context::getContext()->shop->id_shop_group;
             $connection->date_add = $cookie->date_add;
 
             if (Validate::isAbsoluteUrl($referer)) {
@@ -233,23 +223,6 @@ class ConnectionCore extends ObjectModel {
         );
     }
 
-    /**
-     * @see     ObjectModel::getFields()
-     * @return array
-     *
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     * @throws PhenyxShopException
-     */
-    public function getFields() {
-
-        if (!$this->id_shop_group) {
-            $this->id_shop_group = Context::getContext()->shop->id_shop_group;
-        }
-
-        $fields = parent::getFields();
-
-        return $fields;
-    }
+    
 
 }

@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class SupplierCore extends ObjectModel {
+class SupplierCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /**
@@ -48,7 +48,7 @@ class SupplierCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'supplier',

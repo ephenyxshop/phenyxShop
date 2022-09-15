@@ -34,7 +34,7 @@
  *
  * @since   1.8.1.0
  */
-class WebserviceKeyCore extends ObjectModel
+class WebserviceKeyCore extends PhenyxObjectModel
 {
     /** @var string Key */
     public $key;
@@ -46,7 +46,7 @@ class WebserviceKeyCore extends ObjectModel
     public $description;
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'webservice_account',

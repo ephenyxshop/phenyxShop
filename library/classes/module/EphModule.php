@@ -1,6 +1,6 @@
 <?php
 
-class EphModuleCore extends ObjectModel {
+class EphModuleCore extends PhenyxObjectModel {
 
     public $name;
 	public $base64;

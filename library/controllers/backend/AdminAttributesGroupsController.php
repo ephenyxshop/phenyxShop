@@ -104,13 +104,7 @@ class AdminAttributesGroupsControllerCore extends AdminController {
             ],
         ];
 
-        if (Shop::isFeatureActive()) {
-            $this->fields_form['input'][] = [
-                'type'  => 'shop',
-                'label' => $this->l('Shop association'),
-                'name'  => 'checkBoxShopAsso',
-            ];
-        }
+       
 
         $this->fields_form['submit'] = [
             'title' => $this->l('Save'),

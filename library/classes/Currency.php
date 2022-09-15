@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class CurrencyCore extends ObjectModel {
+class CurrencyCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var array Currency cache */
@@ -49,7 +49,7 @@ class CurrencyCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'          => 'currency',
@@ -77,7 +77,7 @@ class CurrencyCore extends ObjectModel {
      *
      * @param int|null $id
      * @param int|null $idLang
-     * @param int|null $idShop
+     * @param int|null $idCompany
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
@@ -99,7 +99,7 @@ class CurrencyCore extends ObjectModel {
     }
 
     /**
-     * @param int $idShop
+     * @param int $idCompany
      *
      * @return array|false|mysqli_result|null|PDOStatement|resource
      *
@@ -108,21 +108,21 @@ class CurrencyCore extends ObjectModel {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function getCurrenciesByIdShop($idShop = 0) {
+    public static function getCurrenciesByIdShop($idCompany = 0) {
 
         return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('currency', 'c')
                 ->leftJoin('currency_shop', 'cs', 'cs.`id_currency` = c.`id_currency`')
-                ->where($idShop ? 'cs.`id_shop` = ' . (int) $idShop : '')
+                ->where($idCompany ? 'cs.`id_shop` = ' . (int) $idCompany : '')
                 ->orderBy('`name` ASC')
         );
     }
 
     /**
      * @param int      $idModule
-     * @param int|null $idShop
+     * @param int|null $idCompany
      *
      * @return array|bool|null|object
      *
@@ -131,24 +131,21 @@ class CurrencyCore extends ObjectModel {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function getPaymentCurrenciesSpecial($idModule, $idShop = null) {
+    public static function getPaymentCurrenciesSpecial($idModule, $idCompany = null) {
 
-        if (is_null($idShop)) {
-            $idShop = Context::getContext()->shop->id;
-        }
+        
 
         return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
                 ->select('*')
                 ->from('module_currency')
                 ->where('`id_module` = ' . (int) $idModule)
-                ->where('`id_shop` = ' . (int) $idShop)
         );
     }
 
     /**
      * @param int      $idModule
-     * @param int|null $idShop
+     * @param int|null $idCompany
      *
      * @return array|false|mysqli_result|null|PDOStatement|resource
      *
@@ -157,11 +154,9 @@ class CurrencyCore extends ObjectModel {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function getPaymentCurrencies($idModule, $idShop = null) {
+    public static function getPaymentCurrencies($idModule, $idCompany = null) {
 
-        if (is_null($idShop)) {
-            $idShop = Context::getContext()->shop->id;
-        }
+        
 
         return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
@@ -171,14 +166,13 @@ class CurrencyCore extends ObjectModel {
                 ->where('c.`deleted` = 0')
                 ->where('mc.`id_module` = ' . (int) $idModule)
                 ->where('c.`active` = 1')
-                ->where('mc.`id_shop` = ' . (int) $idShop)
                 ->orderBy('c.`name` ASC')
         );
     }
 
     /**
      * @param int      $idModule
-     * @param int|null $idShop
+     * @param int|null $idCompany
      *
      * @return array|bool|false|mysqli_result|null|PDOStatement|resource
      *
@@ -187,22 +181,19 @@ class CurrencyCore extends ObjectModel {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function checkPaymentCurrencies($idModule, $idShop = null) {
+    public static function checkPaymentCurrencies($idModule, $idCompany = null) {
 
         if (empty($idModule)) {
             return false;
         }
 
-        if (is_null($idShop)) {
-            $idShop = Context::getContext()->shop->id;
-        }
+        
 
         return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('*')
                 ->from('module_currency')
                 ->where('`id_module` = ' . (int) $idModule)
-                ->where('`id_shop` = ' . (int) $idShop)
         );
     }
 
@@ -436,7 +427,7 @@ class CurrencyCore extends ObjectModel {
     }
 
     /**
-     * @param int|null $idShop
+     * @param int|null $idCompany
      *
      * @return bool
      *
@@ -444,13 +435,13 @@ class CurrencyCore extends ObjectModel {
      * @version 1.8.1.0 Initial version
      * @throws PhenyxShopException
      */
-    public static function isMultiCurrencyActivated($idShop = null) {
+    public static function isMultiCurrencyActivated($idCompany = null) {
 
-        return (Currency::countActiveCurrencies($idShop) > 1);
+        return (Currency::countActiveCurrencies($idCompany) > 1);
     }
 
     /**
-     * @param null $idShop
+     * @param null $idCompany
      *
      * @return mixed
      *
@@ -458,24 +449,20 @@ class CurrencyCore extends ObjectModel {
      * @version 1.8.1.0 Initial version
      * @throws PhenyxShopException
      */
-    public static function countActiveCurrencies($idShop = null) {
+    public static function countActiveCurrencies($idCompany = null) {
 
-        if ($idShop === null) {
-            $idShop = (int) Context::getContext()->shop->id;
-        }
+        
 
-        if (!isset(static::$countActiveCurrencies[$idShop])) {
-            static::$countActiveCurrencies[$idShop] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
+        if (!isset(static::$countActiveCurrencies[$idCompany])) {
+            static::$countActiveCurrencies[$idCompany] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
                 (new DbQuery())
                     ->select('COUNT(DISTINCT c.`id_currency`)')
                     ->from('currency', 'c')
-                    ->leftJoin('currency_shop', 'cs', 'cs.`id_currency` = c.`id_currency`')
-                    ->where('cs.`id_shop` = ' . (int) $idShop)
                     ->where('c.`active` = 1')
             );
         }
 
-        return static::$countActiveCurrencies[$idShop];
+        return static::$countActiveCurrencies[$idCompany];
     }
 
     /**
@@ -515,12 +502,12 @@ class CurrencyCore extends ObjectModel {
      * @version 1.8.1.0 Initial version
      * @throws PhenyxShopException
      */
-    public static function exists($isoCode, $isoCodeNum, $idShop = 0) {
+    public static function exists($isoCode, $isoCodeNum, $idCompany = 0) {
 
         if (is_int($isoCode)) {
-            $idCurrencyExists = Currency::getIdByIsoCodeNum((int) $isoCodeNum, (int) $idShop);
+            $idCurrencyExists = Currency::getIdByIsoCodeNum((int) $isoCodeNum, (int) $idCompany);
         } else {
-            $idCurrencyExists = Currency::getIdByIsoCode($isoCode, (int) $idShop);
+            $idCurrencyExists = Currency::getIdByIsoCode($isoCode, (int) $idCompany);
         }
 
         if ($idCurrencyExists) {
@@ -533,7 +520,7 @@ class CurrencyCore extends ObjectModel {
 
     /**
      * @param     $isoCodeNum
-     * @param int $idShop
+     * @param int $idCompany
      *
      * @return int
      *
@@ -541,40 +528,37 @@ class CurrencyCore extends ObjectModel {
      * @version 1.8.1.0 Initial version
      * @throws PhenyxShopException
      */
-    public static function getIdByIsoCodeNum($isoCodeNum, $idShop = 0) {
+    public static function getIdByIsoCodeNum($isoCodeNum, $idCompany = 0) {
 
-        $query = Currency::getIdByQuery($idShop);
+        $query = Currency::getIdByQuery($idCompany);
         $query->where('iso_code_num = \'' . pSQL($isoCodeNum) . '\'');
 
         return (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query->build());
     }
 
     /**
-     * @param int $idShop
+     * @param int $idCompany
      *
      * @return DbQuery
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function getIdByQuery($idShop = 0) {
+    public static function getIdByQuery($idCompany = 0) {
 
         $query = new DbQuery();
         $query->select('c.id_currency');
         $query->from('currency', 'c');
         $query->where('deleted = 0');
 
-        if (Shop::isFeatureActive() && $idShop > 0) {
-            $query->leftJoin('currency_shop', 'cs', 'cs.id_currency = c.id_currency');
-            $query->where('id_shop = ' . (int) $idShop);
-        }
+        
 
         return $query;
     }
 
     /**
      * @param     $isoCode
-     * @param int $idShop
+     * @param int $idCompany
      *
      * @return int
      *
@@ -582,12 +566,12 @@ class CurrencyCore extends ObjectModel {
      * @version 1.8.1.0 Initial version
      * @throws PhenyxShopException
      */
-    public static function getIdByIsoCode($isoCode, $idShop = 0) {
+    public static function getIdByIsoCode($isoCode, $idCompany = 0) {
 
-        $cacheId = 'Currency::getIdByIsoCode_' . pSQL($isoCode) . '-' . (int) $idShop;
+        $cacheId = 'Currency::getIdByIsoCode_' . pSQL($isoCode) . '-' . (int) $idCompany;
 
         if (!Cache::isStored($cacheId)) {
-            $query = Currency::getIdByQuery($idShop);
+            $query = Currency::getIdByQuery($idCompany);
             $query->where('iso_code = \'' . pSQL($isoCode) . '\'');
 
             $result = (int) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue($query->build());

@@ -2002,7 +2002,6 @@ class AdminTopMenuControllerCore extends AdminController {
 			'current_id_lang'      => (int) $this->context->language->id,
 			'default_language'     => (int) Configuration::get('EPH_LANG_DEFAULT'),
 			'languages'            => Language::getLanguages(false),
-			'shopFeatureActive'    => Shop::isFeatureActive(),
 		];
 
 		return $vars;
@@ -2014,7 +2013,7 @@ class AdminTopMenuControllerCore extends AdminController {
 		$cmsCategories = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			'SELECT cc.*, ccl.*
             FROM `' . _DB_PREFIX_ . 'cms_category` cc
-            LEFT JOIN `' . _DB_PREFIX_ . 'cms_category_lang` ccl ON cc.`id_cms_category` = ccl.`id_cms_category`' . Shop::addSqlRestrictionOnLang('ccl') . '
+            LEFT JOIN `' . _DB_PREFIX_ . 'cms_category_lang` ccl ON cc.`id_cms_category` = ccl.`id_cms_category`
             WHERE ccl.`id_lang` = ' . (int) $id_lang . '
             AND cc.`id_parent` != 0
             ORDER BY cc.`level_depth` ASC, cc.`position` ASC'
@@ -3049,7 +3048,7 @@ class AdminTopMenuControllerCore extends AdminController {
 		$result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			'SELECT c.*, cl.*
             FROM `' . _DB_PREFIX_ . 'category` c
-            LEFT JOIN `' . _DB_PREFIX_ . 'category_lang` cl ON c.`id_category` = cl.`id_category`' . Shop::addSqlRestrictionOnLang('cl') . '
+            LEFT JOIN `' . _DB_PREFIX_ . 'category_lang` cl ON c.`id_category` = cl.`id_category`
             RIGHT JOIN `' . _DB_PREFIX_ . 'category` c2 ON c2.`id_category` = ' . (int) $root_category . ' AND c.`nleft` >= c2.`nleft` AND c.`nright` <= c2.`nright`
             WHERE `id_lang` = ' . (int) $id_lang . '
             ORDER BY c.`level_depth` ASC, c.`position` ASC'
@@ -3177,7 +3176,7 @@ class AdminTopMenuControllerCore extends AdminController {
 	public function outputSpecificPageSelect($object) {
 
 		$pages = Meta::getMetasByIdLang((int) $this->context->cookie->id_lang);
-		$default_routes = Dispatcher::getInstance()->default_routes;
+		$default_routes = Performer::getInstance()->default_routes;
 
 		foreach ($pages as $p => $page) {
 
@@ -3228,7 +3227,6 @@ class AdminTopMenuControllerCore extends AdminController {
 				'default_language'       => (int) Configuration::get('EPH_LANG_DEFAULT'),
 				'languages'              => Language::getLanguages(false),
 				'options'                => $configOptions,
-				'shopFeatureActive'      => Shop::isFeatureActive(),
 			]
 		);
 
@@ -3263,7 +3261,7 @@ class AdminTopMenuControllerCore extends AdminController {
 	public function getPageList() {
 
 		$pages = Meta::getMetasByIdLang((int) $this->context->cookie->id_lang);
-		$default_routes = Dispatcher::getInstance()->default_routes;
+		$default_routes = Performer::getInstance()->default_routes;
 
 		foreach ($pages as $p => $page) {
 
@@ -3335,7 +3333,7 @@ class AdminTopMenuControllerCore extends AdminController {
 				'pagesList'                 => $this->getPageList(),
 				'link_targets'              => $this->link_targets,
 				'selected'                  => $selected,
-				'iso'                       => file_exists(_EPH_ROOT_ADMIN_DIR_ . '/js/tinymce/langs/' . $iso . '.js') ? $iso : 'en',
+				'iso'                       => file_exists(_EPH_ROOT_DIR_ . '/js/tinymce/langs/' . $iso . '.js') ? $iso : 'en',
 				'pathCSS'                   => _THEME_CSS_DIR_,
 				'ad'                        => __EPH_BASE_URI__ . basename(_EPH_ADMIN_DIR_),
 				'menu_img_dir'              => '/themes/' . $context->employee->bo_theme . '/img/topmenu/',
@@ -3502,7 +3500,6 @@ class AdminTopMenuControllerCore extends AdminController {
 				'current_id_lang'   => (int) $context->language->id,
 				'default_language'  => (int) Configuration::get('EPH_LANG_DEFAULT'),
 				'languages'         => Language::getLanguages(false),
-				'shopFeatureActive' => Shop::isFeatureActive(),
 				'groups'            => Group::getGroups((int) $this->context->cookie->id_lang),
 				'iso'               => file_exists(_SHOP_CORE_DIR_ . _EPH_JS_DIR_ . 'tiny_mce/langs/' . $iso . '.js') ? $iso : 'en',
 				'pathCSS'           => _THEME_CSS_DIR_,
@@ -3606,7 +3603,6 @@ class AdminTopMenuControllerCore extends AdminController {
 				'current_id_lang'     => (int) $context->language->id,
 				'default_language'    => (int) Configuration::get('EPH_LANG_DEFAULT'),
 				'languages'           => Language::getLanguages(false),
-				'shopFeatureActive'   => Shop::isFeatureActive(),
 				'groups'              => Group::getGroups((int) $this->context->cookie->id_lang),
 				'iso'                 => file_exists(_SHOP_CORE_DIR_ . _EPH_JS_DIR_ . 'tiny_mce/langs/' . $iso . '.js') ? $iso : 'en',
 				'pathCSS'             => _THEME_CSS_DIR_,
@@ -3671,7 +3667,6 @@ class AdminTopMenuControllerCore extends AdminController {
 				'current_id_lang'   => (int) $context->language->id,
 				'default_language'  => (int) Configuration::get('EPH_LANG_DEFAULT'),
 				'languages'         => Language::getLanguages(false),
-				'shopFeatureActive' => Shop::isFeatureActive(),
 				'groups'            => Group::getGroups((int) $this->context->cookie->id_lang),
 				'categoryList'      => $this->getCategoryList(),
 				'cms'               => CMS::listCms((int) $this->context->cookie->id_lang),
@@ -4881,7 +4876,6 @@ class AdminTopMenuControllerCore extends AdminController {
 		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->ExecuteS('
             SELECT c.id_cms_category' . ($with_position ? ', ' . $with_position_field : '') . '
             FROM `' . _DB_PREFIX_ . 'cms_category` c
-            ' . Shop::addSqlAssociation('cms_category', 'c') . '
             WHERE `id_parent` = ' . (int) $id_cms_category . '
             ' . ($active ? 'AND `active` = 1' : '') . '
             GROUP BY c.`id_cms_category`
@@ -4893,7 +4887,6 @@ class AdminTopMenuControllerCore extends AdminController {
 		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			'SELECT c.*
             FROM `' . _DB_PREFIX_ . 'cms` c
-            ' . Shop::addSqlAssociation('cms', 'c') . '
             WHERE c.`id_cms_category` = ' . (int) $idCategory . '
             AND c.`active` = 1;'
 		);

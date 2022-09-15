@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class CustomizationCore extends ObjectModel {
+class CustomizationCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var int $id_product_attribute */
@@ -27,7 +27,7 @@ class CustomizationCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'customization',
@@ -162,7 +162,7 @@ class CustomizationCore extends ObjectModel {
     /**
      * @param int      $idCustomization
      * @param int      $idLang
-     * @param int|null $idShop
+     * @param int|null $idCompany
      *
      * @return bool|false|null|string
      *
@@ -170,14 +170,10 @@ class CustomizationCore extends ObjectModel {
      * @version 1.8.1.0 Initial version
      * @throws PhenyxShopException
      */
-    public static function getLabel($idCustomization, $idLang, $idShop = null) {
+    public static function getLabel($idCustomization, $idLang, $idCompany = null) {
 
         if (!(int) $idCustomization || !(int) $idLang) {
             return false;
-        }
-
-        if (Shop::isFeatureActive() && !(int) $idShop) {
-            $idShop = (int) Context::getContext()->shop->id;
         }
 
         $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
@@ -185,7 +181,6 @@ class CustomizationCore extends ObjectModel {
                 ->select('`name`')
                 ->from('customization_field_lang')
                 ->where('`id_customization_field` = ' . (int) $idCustomization)
-                ->where($idShop ? 'cfl.`id_shop` = ' . (int) $idShop : '')
                 ->where('`id_lang` = ' . (int) $idLang)
         );
 
@@ -346,45 +341,6 @@ class CustomizationCore extends ObjectModel {
         return $results;
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     *
-     * @throws PhenyxShopDatabaseException
-     * @throws PhenyxShopException
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     */
-    public function setWsCustomizedDataTextFields($values) {
-
-        $cart = new Cart($this->id_cart);
-
-        if (!Validate::isLoadedObject($cart)) {
-            WebserviceRequest::getInstance()->setError(500, Tools::displayError('Could not load cart id=' . $this->id_cart), 137);
-
-            return false;
-        }
-
-        Db::getInstance()->delete('customized_data', 'id_customization = ' . (int) $this->id . ' AND type = 1');
-
-        foreach ($values as $value) {
-
-            if (!Db::getInstance()->insert(
-                'customized_data',
-                [
-                    'id_customization' => $this->id,
-                    'type'             => 1,
-                    'index'            => (int) $value['id_customization_field'],
-                    'value'            => pSQL($value['value']),
-                ]
-            )) {
-                return false;
-            }
-
-        }
-
-        return true;
-    }
+   
 
 }

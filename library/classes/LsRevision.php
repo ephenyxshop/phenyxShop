@@ -1,7 +1,7 @@
 <?php
 
 
-class LsRevisionCore extends ObjectModel {
+class LsRevisionCore extends PhenyxObjectModel {
 
    
 	public $id_layer_slider;
@@ -10,7 +10,7 @@ class LsRevisionCore extends ObjectModel {
     public $date_c;
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'layerslider_revisions',

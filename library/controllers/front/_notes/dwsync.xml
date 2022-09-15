@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<dwsync>
+<file name="AddressesController.php" server="142.11.250.73" local="133076359729463225" remote="133063506600000000" Dst="2" />
+<file name="AttachmentController.php" server="142.11.250.73" local="133076359732126102" remote="133063506600000000" Dst="2" />
+<file name="AuthController.php" server="142.11.250.73" local="133076359733392721" remote="133063506600000000" Dst="2" />
+<file name="BankAccountController.php" server="142.11.250.73" local="133076359735896031" remote="133063506600000000" Dst="2" />
+<file name="BanksAccountController.php" server="142.11.250.73" local="133076359737142691" remote="133063506600000000" Dst="2" />
+<file name="BestSalesController.php" server="142.11.250.73" local="133076359739645999" remote="133063506600000000" Dst="2" />
+<file name="CartController.php" server="142.11.250.73" local="133076359746158565" remote="133073529000000000" Dst="2" />
+<file name="CategoryController.php" server="142.11.250.73" local="133076359747405237" remote="133063506600000000" Dst="2" />
+<file name="ChangeCurrencyController.php" server="142.11.250.73" local="133076359749898992" remote="133056526800000000" Dst="2" />
+<file name="CmsController.php" server="142.11.250.73" local="133076359752641650" remote="133074537000000000" Dst="2" />
+<file name="CompareController.php" server="142.11.250.73" local="133076359753928095" remote="133063506600000000" Dst="2" />
+<file name="ContactController.php" server="142.11.250.73" local="133076359757687808" remote="133074452400000000" Dst="2" />
+<file name="DiscountController.php" server="142.11.250.73" local="133076359758934538" remote="133074452400000000" Dst="2" />
+<file name="FaviconController.php" server="142.11.250.73" local="133076359760191184" remote="133074452400000000" Dst="2" />
+<file name="GetFileController.php" server="142.11.250.73" local="133076359763941146" remote="133063506600000000" Dst="2" />
+<file name="GuestTrackingController.php" server="142.11.250.73" local="133076359774114597" remote="133063506600000000" Dst="2" />
+<file name="HistoryController.php" server="142.11.250.73" local="133076359785294674" remote="133063506600000000" Dst="2" />
+<file name="IdentityController.php" server="142.11.250.73" local="133076359796575458" remote="133063506600000000" Dst="2" />
+<file name="IndexController.php" server="142.11.250.73" local="133076359807666788" remote="133063506600000000" Dst="2" />
+<file name="MandatSepaController.php" server="142.11.250.73" local="133076359818732881" remote="133063506600000000" Dst="2" />
+<file name="MyAccountController.php" server="142.11.250.73" local="133076359821236579" remote="133063506600000000" Dst="2" />
+<file name="ManufacturerController.php" server="142.11.250.73" local="133076359822493190" remote="133063506600000000" Dst="2" />
+<file name="NewProductsController.php" server="142.11.250.73" local="133076359824986524" remote="133063506600000000" Dst="2" />
+<file name="NotificationsController.php" server="142.11.250.73" local="133076359827501824" remote="133063506600000000" Dst="2" />
+<file name="OrderConfirmationController.php" server="142.11.250.73" local="133076359828747884" remote="133076184600000000" Dst="2" />
+<file name="OrderController.php" server="142.11.250.73" local="133076359832678039" remote="133063506600000000" Dst="2" />
+<file name="OrderDetailController.php" server="142.11.250.73" local="133076359835111563" remote="133074452400000000" Dst="2" />
+<file name="OrderFollowController.php" server="142.11.250.73" local="133076359836358614" remote="133063506600000000" Dst="2" />
+<file name="OrderOpcController.php" server="142.11.250.73" local="133076359841255099" remote="133063506600000000" Dst="2" />
+<file name="OrderReturnController.php" server="142.11.250.73" local="133076359843758933" remote="133063506600000000" Dst="2" />
+<file name="PageNotFoundController.php" server="142.11.250.73" local="133076359843758933" remote="133063506600000000" Dst="2" />
+<file name="ParentOrderController.php" server="142.11.250.73" local="133076359849922662" remote="133074609600000000" Dst="2" />
+<file name="PasswordController.php" server="142.11.250.73" local="133076359851189592" remote="133063506600000000" Dst="2" />
+<file name="PricesDropController.php" server="142.11.250.73" local="133076359852437106" remote="133063506600000000" Dst="2" />
+<file name="SearchController.php" server="142.11.250.73" local="133076359857715493" remote="133063506600000000" Dst="2" />
+<file name="SitemapController.php" server="142.11.250.73" local="133076359858972603" remote="133063506600000000" Dst="2" />
+<file name="ProductController.php" server="142.11.250.73" local="133076359860219692" remote="133076268000000000" Dst="2" />
+<file name="StoresController.php" server="142.11.250.73" local="133076359863937386" remote="133076136000000000" Dst="2" />
+<file name="StatisticsController.php" server="142.11.250.73" local="133076359865204334" remote="133056526800000000" Dst="2" />
+<file name="SupplierController.php" server="142.11.250.73" local="133076359866461019" remote="133063506600000000" Dst="2" />
+<file name="index.php" server="142.11.250.73" local="133076359870180687" remote="133056526800000000" Dst="2" />
+</dwsync>

@@ -1,5 +1,5 @@
 <?php
-class PFGSubmissionModelCore extends ObjectModel {
+class PFGSubmissionModelCore extends PhenyxObjectModel {
 		
 	public $id_pfg;
 	public $entry;

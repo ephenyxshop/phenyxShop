@@ -6,8 +6,8 @@
  * @since 1.9.1.0
  */
 // @codingStandardsIgnoreStart
-class Adapter_AddressFactory
-{
+class Adapter_AddressFactory {
+
     // @codingStandardsIgnoreEnd
 
     /**
@@ -22,8 +22,8 @@ class Adapter_AddressFactory
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function findOrCreate($idAddress = null, $withGeoLocation = false)
-    {
+    public function findOrCreate($idAddress = null, $withGeoLocation = false) {
+
         $funcArgs = func_get_args();
 
         return call_user_func_array(['Address', 'initialize'], $funcArgs);
@@ -39,8 +39,8 @@ class Adapter_AddressFactory
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function addressExists($idAddress)
-    {
+    public function addressExists($idAddress) {
+
         return Address::addressExists($idAddress);
     }
 }

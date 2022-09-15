@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class SpecificPriceCore extends ObjectModel {
+class SpecificPriceCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var array $_specificPriceCache */
@@ -24,11 +24,7 @@ class SpecificPriceCore extends ObjectModel {
     public $id_cart = 0;
     /** @var int $id_product_attribute */
     public $id_product_attribute;
-    /** @var int $id_shop */
-    public $id_shop;
-    /** @var int $id_shop_group */
-    public $id_shop_group;
-    /** @var int $id_currency */
+      /** @var int $id_currency */
     public $id_currency;
     /** @var int $id_country */
     public $id_country;
@@ -53,14 +49,12 @@ class SpecificPriceCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'specific_price',
         'primary' => 'id_specific_price',
         'fields'  => [
-            'id_shop_group'          => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],
-            'id_shop'                => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true],
             'id_cart'                => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true],
             'id_product'             => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true],
             'id_product_attribute'   => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],
@@ -78,21 +72,7 @@ class SpecificPriceCore extends ObjectModel {
             'to'                     => ['type' => self::TYPE_DATE, 'validate' => 'isDateFormat', 'required' => true],
         ],
     ];
-    protected $webserviceParameters = [
-        'objectsNodeName' => 'specific_prices',
-        'objectNodeName'  => 'specific_price',
-        'fields'          => [
-            'id_shop_group'        => ['xlink_resource' => 'shop_groups'],
-            'id_shop'              => ['xlink_resource' => 'shops', 'required' => true],
-            'id_cart'              => ['xlink_resource' => 'carts', 'required' => true],
-            'id_product'           => ['xlink_resource' => 'products', 'required' => true],
-            'id_product_attribute' => ['xlink_resource' => 'product_attributes'],
-            'id_currency'          => ['xlink_resource' => 'currencies', 'required' => true],
-            'id_country'           => ['xlink_resource' => 'countries', 'required' => true],
-            'id_group'             => ['xlink_resource' => 'groups', 'required' => true],
-            'id_customer'          => ['xlink_resource' => 'customers', 'required' => true],
-        ],
-    ];
+    
 
     /**
      * @param int      $idProduct
@@ -163,7 +143,7 @@ class SpecificPriceCore extends ObjectModel {
 
     /**
      * @param int  $idProduct
-     * @param int  $idShop
+     * @param int  $idCompany
      * @param int  $idCurrency
      * @param int  $idCountry
      * @param int  $idGroup
@@ -180,7 +160,7 @@ class SpecificPriceCore extends ObjectModel {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function getSpecificPrice($idProduct, $idShop, $idCurrency, $idCountry, $idGroup, $quantity, $idProductAttribute = null, $idCustomer = 0, $idCart = 0, $realQuantity = 0) {
+    public static function getSpecificPrice($idProduct, $idCurrency, $idCountry, $idGroup, $quantity, $idProductAttribute = null, $idCustomer = 0, $idCart = 0, $realQuantity = 0) {
 
         if (!static::isFeatureActive()) {
             return [];
@@ -191,7 +171,7 @@ class SpecificPriceCore extends ObjectModel {
                     ** The price must not change between the top and the bottom of the page
         */
 
-        $key = ((int) $idProduct . '-' . (int) $idShop . '-' . (int) $idCurrency . '-' . (int) $idCountry . '-' . (int) $idGroup . '-' . (int) $quantity . '-' . (int) $idProductAttribute . '-' . (int) $idCart . '-' . (int) $idCustomer . '-' . (int) $realQuantity);
+        $key = ((int) $idProduct . '-'  . (int) $idCurrency . '-' . (int) $idCountry . '-' . (int) $idGroup . '-' . (int) $quantity . '-' . (int) $idProductAttribute . '-' . (int) $idCart . '-' . (int) $idCustomer . '-' . (int) $realQuantity);
 
         if (!array_key_exists($key, static::$_specificPriceCache)) {
             $queryExtra = static::computeExtraConditions($idProduct, $idProductAttribute, $idCustomer, $idCart);
@@ -199,9 +179,8 @@ class SpecificPriceCore extends ObjectModel {
 
             static::$_specificPriceCache[$key] = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
-                    ->select('*, ' . static::_getScoreQuery($idProduct, $idShop, $idCurrency, $idCountry, $idGroup, $idCustomer))
+                    ->select('*, ' . static::_getScoreQuery($idProduct, $idCurrency, $idCountry, $idGroup, $idCustomer))
                     ->from(bqSQL(static::$definition['table']))
-                    ->where('`id_shop` ' . static::formatIntInQuery(0, $idShop))
                     ->where('`id_currency` ' . static::formatIntInQuery(0, $idCurrency))
                     ->where('`id_country` ' . static::formatIntInQuery(0, $idCountry))
                     ->where('`id_group` ' . static::formatIntInQuery(0, $idGroup) . ' ' . $queryExtra)
@@ -411,7 +390,7 @@ class SpecificPriceCore extends ObjectModel {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    protected static function _getScoreQuery($idProduct, $idShop, $idCurrency, $idCountry, $idGroup, $idCustomer) {
+    protected static function _getScoreQuery($idProduct, $idCurrency, $idCountry, $idGroup, $idCustomer) {
 
         $select = '(';
 
@@ -537,7 +516,7 @@ class SpecificPriceCore extends ObjectModel {
 
     /**
      * @param int  $idProduct
-     * @param int  $idShop
+     * @param int  $idCompany
      * @param int  $idCurrency
      * @param int  $idCountry
      * @param int  $idGroup
@@ -552,7 +531,7 @@ class SpecificPriceCore extends ObjectModel {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function getQuantityDiscounts($idProduct, $idShop, $idCurrency, $idCountry, $idGroup, $idProductAttribute = null, $allCombinations = false, $idCustomer = 0) {
+    public static function getQuantityDiscounts($idProduct, $idCurrency, $idCountry, $idGroup, $idProductAttribute = null, $allCombinations = false, $idCustomer = 0) {
 
         if (!static::isFeatureActive()) {
             return [];
@@ -561,9 +540,8 @@ class SpecificPriceCore extends ObjectModel {
         $queryExtra = static::computeExtraConditions($idProduct, ((!$allCombinations) ? $idProductAttribute : null), $idCustomer, null);
         $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
-                ->select('*, ' . static::_getScoreQuery($idProduct, $idShop, $idCurrency, $idCountry, $idGroup, $idCustomer))
+                ->select('*, ' . static::_getScoreQuery($idProduct, $idCurrency, $idCountry, $idGroup, $idCustomer))
                 ->from('specific_price')
-                ->where('`id_shop` ' . static::formatIntInQuery(0, $idShop))
                 ->where('`id_currency` ' . static::formatIntInQuery(0, $idCurrency))
                 ->where('`id_country` ' . static::formatIntInQuery(0, $idCountry))
                 ->where('`id_group` ' . static::formatIntInQuery(0, $idGroup) . ' ' . $queryExtra)
@@ -596,7 +574,7 @@ class SpecificPriceCore extends ObjectModel {
 
     /**
      * @param int  $idProduct
-     * @param int  $idShop
+     * @param int  $idCompany
      * @param int  $idCurrency
      * @param int  $idCountry
      * @param int  $idGroup
@@ -611,7 +589,7 @@ class SpecificPriceCore extends ObjectModel {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function getQuantityDiscount($idProduct, $idShop, $idCurrency, $idCountry, $idGroup, $quantity, $idProductAttribute = null, $idCustomer = 0) {
+    public static function getQuantityDiscount($idProduct, $idCurrency, $idCountry, $idGroup, $quantity, $idProductAttribute = null, $idCustomer = 0) {
 
         if (!static::isFeatureActive()) {
             return [];
@@ -621,9 +599,8 @@ class SpecificPriceCore extends ObjectModel {
 
         return Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
             (new DbQuery())
-                ->select('*, ' . static::_getScoreQuery($idProduct, $idShop, $idCurrency, $idCountry, $idGroup, $idCustomer))
+                ->select('*, ' . static::_getScoreQuery($idProduct, $idCurrency, $idCountry, $idGroup, $idCustomer))
                 ->from('specific_price')
-                ->where('`id_shop` ' . static::formatIntInQuery(0, $idShop))
                 ->where('`id_currency` ' . static::formatIntInQuery(0, $idCurrency))
                 ->where('`id_country` ' . static::formatIntInQuery(0, $idCountry))
                 ->where('`id_group` ' . static::formatIntInQuery(0, $idGroup))
@@ -633,7 +610,7 @@ class SpecificPriceCore extends ObjectModel {
     }
 
     /**
-     * @param int    $idShop
+     * @param int    $idCompany
      * @param int    $idCurrency
      * @param int    $idCountry
      * @param int    $idGroup
@@ -649,7 +626,7 @@ class SpecificPriceCore extends ObjectModel {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function getProductIdByDate($idShop, $idCurrency, $idCountry, $idGroup, $beginning, $ending, $idCustomer = 0, $withCombinationId = false) {
+    public static function getProductIdByDate($idCurrency, $idCountry, $idGroup, $beginning, $ending, $idCustomer = 0, $withCombinationId = false) {
 
         if (!static::isFeatureActive()) {
             return [];
@@ -660,7 +637,6 @@ class SpecificPriceCore extends ObjectModel {
             (new DbQuery())
                 ->select('`id_product`, `id_product_attribute`')
                 ->from('specific_price')
-                ->where('`id_shop` ' . static::formatIntInQuery(0, $idShop))
                 ->where('`id_currency` ' . static::formatIntInQuery(0, $idCurrency))
                 ->where('`id_country` ' . static::formatIntInQuery(0, $idCountry))
                 ->where('`id_group` ' . static::formatIntInQuery(0, $idGroup))
@@ -701,7 +677,7 @@ class SpecificPriceCore extends ObjectModel {
     /**
      * @param int    $idProduct
      * @param int    $idProductAttribute
-     * @param int    $idShop
+     * @param int    $idCompany
      * @param int    $idGroup
      * @param int    $idCountry
      * @param int    $idCurrency
@@ -717,7 +693,7 @@ class SpecificPriceCore extends ObjectModel {
      * @version 1.8.1.0 Initial version
      * @throws PhenyxShopException
      */
-    public static function exists($idProduct, $idProductAttribute, $idShop, $idGroup, $idCountry, $idCurrency, $idCustomer, $fromQuantity, $from, $to, $rule = false) {
+    public static function exists($idProduct, $idProductAttribute, $idGroup, $idCountry, $idCurrency, $idCustomer, $fromQuantity, $from, $to, $rule = false) {
 
         $rule = ' AND `id_specific_price_rule`' . (!$rule ? ' = 0' : ' != 0');
 
@@ -727,7 +703,6 @@ class SpecificPriceCore extends ObjectModel {
                 ->from('specific_price')
                 ->where('`id_product` = ' . (int) $idProduct)
                 ->where('`id_product_attribute` = ' . (int) $idProductAttribute)
-                ->where('`id_shop` = ' . (int) $idShop)
                 ->where('`id_group` = ' . (int) $idGroup)
                 ->where('`id_country` = ' . (int) $idCountry)
                 ->where('`id_currency` = ' . (int) $idCurrency)

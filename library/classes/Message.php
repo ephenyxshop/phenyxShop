@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class MessageCore extends ObjectModel {
+class MessageCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var string message content */
@@ -24,7 +24,7 @@ class MessageCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'message',

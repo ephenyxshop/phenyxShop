@@ -6,7 +6,7 @@
  *
  * @since 1.9.1.0
  */
-class GroupReductionCore extends ObjectModel
+class GroupReductionCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     protected static $reduction_cache = [];
@@ -16,7 +16,7 @@ class GroupReductionCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'group_reduction',

@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class StoreCore extends ObjectModel {
+class StoreCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var int Country id */
@@ -45,7 +45,7 @@ class StoreCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'store',

@@ -202,7 +202,7 @@ class AdminGendersControllerCore extends AdminController {
 
         if (($id_gender = (int) Tools::getValue('id_gender')) &&
             isset($_FILES) && count($_FILES) && file_exists(_EPH_GENDERS_DIR_ . $id_gender . '.jpg')) {
-            $current_file = _EPH_TMP_IMG_DIR_ . 'gender_mini_' . $id_gender . '_' . $this->context->shop->id . '.jpg';
+            $current_file = _EPH_TMP_IMG_DIR_ . 'gender_mini_' . $id_gender . '_' . $this->context->company->id . '.jpg';
 
             if (file_exists($current_file)) {
                 unlink($current_file);

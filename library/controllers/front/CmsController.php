@@ -29,9 +29,9 @@ class CmsControllerCore extends FrontController {
     public function init() {
 
         if ($idCms = (int) Tools::getValue('id_cms')) {
-            $this->cms = new CMS($idCms, $this->context->language->id, $this->context->shop->id);
+            $this->cms = new CMS($idCms, $this->context->language->id, $this->context->company->id);
         } else if ($idCmsCategory = (int) Tools::getValue('id_cms_category')) {
-            $this->cms_category = new CMSCategory($idCmsCategory, $this->context->language->id, $this->context->shop->id);
+            $this->cms_category = new CMSCategory($idCmsCategory, $this->context->language->id, $this->context->company->id);
         }
 
         if (Configuration::get('EPH_SSL_ENABLED') && Tools::getValue('content_only') && $idCms && Validate::isLoadedObject($this->cms)
@@ -49,7 +49,7 @@ class CmsControllerCore extends FrontController {
         if (Validate::isLoadedObject($this->cms)) {
             $adtoken = Tools::getAdminToken('AdminCmsContent' . (int) Tab::getIdFromClassName('AdminCmsContent') . (int) Tools::getValue('id_employee'));
 
-            if (!$this->cms->isAssociatedToShop() || !$this->cms->active && Tools::getValue('adtoken') != $adtoken) {
+            if (!$this->cms->active && Tools::getValue('adtoken') != $adtoken) {
                 header('HTTP/1.1 404 Not Found');
                 header('Status: 404 Not Found');
             } else {
@@ -110,6 +110,10 @@ class CmsControllerCore extends FrontController {
         $this->context->smarty->assign('id_current_lang', $this->context->language->id);
         $this->context->smarty->assign('home_title', $parentCat->name);
         $this->context->smarty->assign('cgv_id', Configuration::get('EPH_CONDITIONS_CMS_ID'));
+        if (Module::isInstalled('jscomposer') && (bool) Module::isEnabled('jscomposer')) {
+            
+            $this->cms->content = JsComposer::do_shortcode($this->cms->content);
+        }
 
         if ($this->assignCase == 1) {
 
@@ -138,7 +142,7 @@ class CmsControllerCore extends FrontController {
                     'category'     => $this->cms_category, //for backward compatibility
                     'cms_category' => $this->cms_category,
                     'sub_category' => $this->cms_category->getSubCategories($this->context->language->id),
-                    'cms_pages'    => CMS::getCMSPages($this->context->language->id, (int) $this->cms_category->id, true, (int) $this->context->shop->id),
+                    'cms_pages'    => CMS::getCMSPages($this->context->language->id, (int) $this->cms_category->id, true, (int) $this->context->company->id),
                     'path'         => ($this->cms_category->id !== 1) ? Tools::getPath($this->cms_category->id, $this->cms_category->name, false, 'CMS') : '',
                     'body_classes' => [$this->php_self . '-' . $this->cms_category->id, $this->php_self . '-' . $this->cms_category->link_rewrite],
                 ]

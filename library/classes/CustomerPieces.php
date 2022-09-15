@@ -3,7 +3,7 @@
 /**
  * @since 2.1.0.0
  */
-class CustomerPiecesCore extends ObjectModel {
+class CustomerPiecesCore extends PhenyxObjectModel {
 
     const ROUND_ITEM = 1;
     const ROUND_LINE = 2;
@@ -11,7 +11,7 @@ class CustomerPiecesCore extends ObjectModel {
 	
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'customer_pieces',
@@ -19,8 +19,6 @@ class CustomerPiecesCore extends ObjectModel {
         'fields'  => [
             'id_piece_origine'            => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],
             'piece_type'                  => ['type' => self::TYPE_STRING, 'validate' => 'isMessage'],
-            'id_shop_group'               => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],
-            'id_shop'                     => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],
             'id_lang'                     => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true],
             'id_currency'                 => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true],
             'id_cart'                    => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],
@@ -70,8 +68,6 @@ class CustomerPiecesCore extends ObjectModel {
 
     public $id_piece_origine;
     public $piece_type;
-    public $id_shop_group;
-    public $id_shop;
     public $id_lang;
     public $id_currency;
     public $id_cart;
@@ -253,7 +249,7 @@ class CustomerPiecesCore extends ObjectModel {
     public function getFields() {
 
         if (!$this->id_lang) {
-            $this->id_lang = Configuration::get('EPH_LANG_DEFAULT', null, null, $this->id_shop);
+            $this->id_lang = $this->context->language->id;
         }
 
         return parent::getFields();
@@ -515,7 +511,6 @@ class CustomerPiecesCore extends ObjectModel {
                 ->select('*')
                 ->from('customer_piece_detail', 'od')
                 ->leftJoin('product', 'p', 'p.`id_product` = od.`id_product`')
-                ->leftJoin('product_shop', 'ps', 'ps.`id_product` = od.`id_product`')
                 ->where('od.`id_customer_piece` = ' . (int) $this->id)
         );
     }
@@ -609,7 +604,7 @@ class CustomerPiecesCore extends ObjectModel {
             && (int) $product['id_warehouse'] > 0) {
             $product['current_stock'] = StockManagerFactory::getManager()->getProductPhysicalQuantities($product['id_product'], $product['id_product_attribute'], (int) $product['id_warehouse'], true);
         } else {
-            $product['current_stock'] = StockAvailable::getQuantityAvailableByProduct($product['id_product'], $product['id_product_attribute'], (int) $this->id_shop);
+            $product['current_stock'] = StockAvailable::getQuantityAvailableByProduct($product['id_product'], $product['id_product_attribute']);
         }
     }
 	
@@ -699,7 +694,7 @@ class CustomerPiecesCore extends ObjectModel {
                 	->from('customer_pieces', 'o')
 					->leftJoin('customer_piece_state', 'os', 'os.`id_customer_piece_state` = o.`current_state`')
 					->leftJoin('customer_piece_state_lang', 'osl', 'o.`current_state` = osl.`id_customer_piece_state` AND osl.`id_lang` = '.(int) $context->language->id)
-                	->where('o.`id_customer` = ' . (int) $idCustomer . ' ' . Shop::addSqlRestriction(Shop::SHARE_ORDER))
+                	->where('o.`id_customer` = ' . (int) $idCustomer)
 					->where('`piece_type` LIKE \''.$key.'\'')
 					->groupBy('o.`id_customer_piece`')
 				->orderBy('o.`date_add` DESC')
@@ -780,7 +775,7 @@ class CustomerPiecesCore extends ObjectModel {
             (new DbQuery())
                 ->select('COUNT(`id_customer_piece`) AS `nb`')
                 ->from('customer_pieces')
-                ->where('`id_customer` = ' . (int) $idCustomer . ' ' . Shop::addSqlRestriction())
+                ->where('`id_customer` = ' . (int) $idCustomer)
         );
 
         return isset($result['nb']) ? $result['nb'] : 0;
@@ -854,8 +849,6 @@ class CustomerPiecesCore extends ObjectModel {
 		$piece = new CustomerPieces();
 		$piece->id_piece_origine = 0;
 		$piece->piece_type = 'ORDER';
-		$piece->id_shop_group = $cart->id_shop_group;
-		$piece->id_shop = $cart->id_shop;
 		$piece->id_lang = $cart->id_lang;
 		$piece->id_currency = $cart->id_currency;
 		$piece->id_cart = $order->id_cart;
@@ -1277,8 +1270,6 @@ class CustomerPiecesCore extends ObjectModel {
 					$newPiece->validate = 0;
 					$newPiece->booked = 0;
 					$newPiece->id_book_record = 0;
-					$newPiece->id_shop = (int) $context->shop->id;
-					$newPiece->id_shop_group = (int) $context->shop->id_shop_group;
 					$newPiece->id_lang = $context->language->id;
 					$newPiece->round_mode = Configuration::get('EPH_PRICE_ROUND_MODE');
 					$newPiece->round_type = Configuration::get('EPH_ROUND_TYPE');
@@ -1522,7 +1513,7 @@ class CustomerPiecesCore extends ObjectModel {
 		
 
 		$context = Context::getContext();
-		$idShop = (int) $context->shop->id;
+		$idCompany = (int) $context->company->id;
 
 		$pathLogo = $this->getLogo();
 
@@ -1557,7 +1548,7 @@ class CustomerPiecesCore extends ObjectModel {
 		$data->assign(
 			[
 				'company'        => $context->company,
-				'free_text'      => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->shop->id),
+				'free_text'      => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->company->id),
 				'logo_path'      => $pathLogo,
 				'width_logo'     => $width,
 				'height_logo'    => $height,
@@ -1576,7 +1567,7 @@ class CustomerPiecesCore extends ObjectModel {
 		$data->assign(
 			[
 				'company'        => $context->company,
-				'free_text'      => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->shop->id),
+				'free_text'      => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->company->id),
 				'logo_path'      => $pathLogo,
 				'piece'          => $this,
 				'payments'       => $payments,
@@ -1601,7 +1592,7 @@ class CustomerPiecesCore extends ObjectModel {
 		$data->assign(
 			[
 				'company'          => $context->company,
-				'free_text'        => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->shop->id),
+				'free_text'        => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->company->id),
 				'logo_path'        => $pathLogo,
 				'piece'            => $this,
 				'payments'         => $payments,
@@ -1646,14 +1637,14 @@ class CustomerPiecesCore extends ObjectModel {
 
 		$logo = '';
 		$context = Context::getContext();
-		$idShop = (int) $context->shop->id;
+		$idCompany = (int) $context->company->id;
 
-		if (Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop))) {
-			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop);
+		if (Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany))) {
+			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany);
 		} else
 
-		if (Configuration::get('EPH_LOGO', null, null, $idShop) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop))) {
-			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop);
+		if (Configuration::get('EPH_LOGO', null, null, $idCompany) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idCompany))) {
+			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idCompany);
 		}
 
 		return $logo;
@@ -1718,7 +1709,7 @@ class CustomerPiecesCore extends ObjectModel {
             (new DbQuery())
                 ->select('`id_customer_piece`')
                 ->from('customer_pieces')
-                ->where('`id_cart` = '.(int) $idCart.' '.Shop::addSqlRestriction())
+                ->where('`id_cart` = '.(int) $idCart)
         );
 
         return isset($result['id_customer_piece']) ? $result['id_customer_piece'] : false;

@@ -70,37 +70,21 @@ abstract class PaymentModuleCore extends Module {
 
     public function addCheckboxCurrencyRestrictionsForModule(array $shops = []) {
 
-        if (!$shops) {
-            $shops = Shop::getShops(true, null, true);
-        }
-
-        foreach ($shops as $s) {
-
-            if (!Db::getInstance()->execute('
-                    INSERT INTO `' . _DB_PREFIX_ . 'module_currency` (`id_module`, `id_shop`, `id_currency`)
+        if (!Db::getInstance()->execute('
+                    INSERT INTO `' . _DB_PREFIX_ . 'module_currency` (`id_module`,  `id_currency`)
                     SELECT ' . (int) $this->id . ', "' . (int) $s . '", `id_currency` FROM `' . _DB_PREFIX_ . 'currency` WHERE deleted = 0')) {
                 return false;
             }
-
-        }
 
         return true;
     }
 
     public function addRadioCurrencyRestrictionsForModule(array $shops = []) {
 
-        if (!$shops) {
-            $shops = Shop::getShops(true, null, true);
-        }
-
-        foreach ($shops as $s) {
-
-            if (!Db::getInstance()->execute('INSERT INTO `' . _DB_PREFIX_ . 'module_currency` (`id_module`, `id_shop`, `id_currency`)
+        if (!Db::getInstance()->execute('INSERT INTO `' . _DB_PREFIX_ . 'module_currency` (`id_module`,  `id_currency`)
                 VALUES (' . (int) $this->id . ', "' . (int) $s . '", -2)')) {
                 return false;
             }
-
-        }
 
         return true;
     }
@@ -135,10 +119,10 @@ abstract class PaymentModuleCore extends Module {
         $this->context->cart->setTaxCalculationMethod();
 
         $this->context->language = new Language((int) $this->context->cart->id_lang);
-        $this->context->shop = ($shop ? $shop : new Shop((int) $this->context->cart->id_shop));
-        ShopUrl::resetMainDomainCache();
+        $this->context->company = Context::getContext()->company;
+        CompanyUrl::resetMainDomainCache();
         $id_currency = $currency_special ? (int) $currency_special : (int) $this->context->cart->id_currency;
-        $this->context->currency = new Currency((int) $id_currency, null, (int) $this->context->shop->id);
+        $this->context->currency = new Currency((int) $id_currency, null, (int) $this->context->company->id);
 
         if (Configuration::get('EPH_TAX_ADDRESS_TYPE') == 'id_address_delivery') {
             $context_country = $this->context->country;
@@ -269,8 +253,6 @@ abstract class PaymentModuleCore extends Module {
                     $piece->id_piece_origine = 0;
                     $piece->piece_type = 'ORDER';
                     $piece->id_cart = $this->context->cart->id;
-                    $piece->id_shop_group = $this->context->cart->id_shop_group;
-                    $piece->id_shop = $this->context->cart->id_shop;
                     $piece->id_lang = $this->context->cart->id_lang;
                     $piece->id_currency = $this->context->cart->id_currency;
                     $piece->id_customer = $this->context->cart->id_customer;
@@ -591,7 +573,7 @@ abstract class PaymentModuleCore extends Module {
                         $customer_thread = new CustomerThread();
                         $customer_thread->id_contact = 0;
                         $customer_thread->id_customer = (int) $piece->id_customer;
-                        $customer_thread->id_shop = (int) $this->context->shop->id;
+                        $customer_thread->id_shop = (int) $this->context->company->id;
                         $customer_thread->id_order = (int) $piece->id;
                         $customer_thread->id_lang = (int) $this->context->language->id;
                         $customer_thread->email = $this->context->customer->email;
@@ -759,7 +741,7 @@ abstract class PaymentModuleCore extends Module {
 
                             if (StockAvailable::dependsOnStock($product['product_id'])) {
                                 // synchronizes
-                                StockAvailable::synchronize($product['product_id'], $piece->id_shop);
+                                StockAvailable::synchronize($product['product_id']);
                             }
 
                         }
@@ -919,10 +901,9 @@ abstract class PaymentModuleCore extends Module {
         return Db::getInstance()->executeS('
         SELECT DISTINCT m.`id_module`, h.`id_hook`, m.`name`, hm.`position`
         FROM `' . _DB_PREFIX_ . 'module` m
-        LEFT JOIN `' . _DB_PREFIX_ . 'hook_module` hm ON hm.`id_module` = m.`id_module`'
-            . Shop::addSqlRestriction(false, 'hm') . '
+        LEFT JOIN `' . _DB_PREFIX_ . 'hook_module` hm ON hm.`id_module` = m.`id_module`
         LEFT JOIN `' . _DB_PREFIX_ . 'hook` h ON hm.`id_hook` = h.`id_hook`
-        INNER JOIN `' . _DB_PREFIX_ . 'module_shop` ms ON (m.`id_module` = ms.`id_module` AND ms.id_shop=' . (int) Context::getContext()->shop->id . ')
+        INNER JOIN `' . _DB_PREFIX_ . 'module_shop` ms ON (m.`id_module` = ms.`id_module`)
         WHERE h.`name` = \'' . pSQL($hook_payment) . '\'');
     }
 

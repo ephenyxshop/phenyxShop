@@ -306,7 +306,6 @@ class AdminPPreferencesControllerCore extends AdminController {
                         'cast'       => 'intval',
                         'required'   => false,
                         'type'       => 'bool',
-                        'visibility' => Shop::CONTEXT_ALL,
                         'js'         => [
                             'on'  => 'onchange="advancedStockManagementActivationAuthorization()"',
                             'off' => 'onchange="advancedStockManagementActivationAuthorization()"',
@@ -319,7 +318,6 @@ class AdminPPreferencesControllerCore extends AdminController {
                         'cast'       => 'intval',
                         'required'   => false,
                         'type'       => 'bool',
-                        'visibility' => Shop::CONTEXT_ALL,
                     ],
                     'EPH_DEFAULT_WAREHOUSE_NEW_PRODUCT' => [
                         'title'      => $this->l('Default warehouse on new products'),

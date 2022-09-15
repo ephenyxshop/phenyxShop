@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class HookPositionCore extends ObjectModel {
+class HookPositionCore extends PhenyxObjectModel {
 
     public $id_hook;
     /**
@@ -36,7 +36,7 @@ class HookPositionCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'hook_position',
@@ -245,7 +245,8 @@ class HookPositionCore extends ObjectModel {
         $collection = [];
         if (is_null($idLang)) {
             $idLang = Context::getContext()->language->id;
-        }     
+        }
+        $liveHooks = HookPosition::getLiveHooks();
         
         $hooks = new PhenyxShopCollection('HookPosition', $idLang);
         $hooks->where('target', '=', 'index');

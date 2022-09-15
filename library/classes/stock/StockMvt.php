@@ -6,7 +6,7 @@
  *
  * @since 1.9.1.0
  */
-class StockMvtCore extends ObjectModel
+class StockMvtCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     public $id;
@@ -106,7 +106,7 @@ class StockMvtCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'stock_mvt',

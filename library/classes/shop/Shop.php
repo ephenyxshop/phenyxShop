@@ -5,11 +5,11 @@
  *
  * @since 1.9.1.0
  */
-class ShopCore extends ObjectModel
+class ShopCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'shop',

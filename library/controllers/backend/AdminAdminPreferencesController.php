@@ -34,7 +34,6 @@ class AdminAdminPreferencesControllerCore extends AdminController {
                         'validation' => 'isBool',
                         'cast'       => 'intval',
                         'type'       => 'bool',
-                        'visibility' => Shop::CONTEXT_ALL,
                     ],
                     'EPH_COOKIE_CHECKIP'     => [
                         'title'      => $this->l('Check the cookie\'s IP address'),
@@ -43,7 +42,6 @@ class AdminAdminPreferencesControllerCore extends AdminController {
                         'cast'       => 'intval',
                         'type'       => 'bool',
                         'default'    => '0',
-                        'visibility' => Shop::CONTEXT_ALL,
                     ],
                     'EPH_COOKIE_LIFETIME_FO' => [
                         'title'      => $this->l('Lifetime of front office cookies'),
@@ -53,7 +51,6 @@ class AdminAdminPreferencesControllerCore extends AdminController {
                         'type'       => 'text',
                         'suffix'     => $this->l('hours'),
                         'default'    => '480',
-                        'visibility' => Shop::CONTEXT_ALL,
                     ],
                     'EPH_COOKIE_LIFETIME_BO' => [
                         'title'      => $this->l('Lifetime of back office cookies'),
@@ -63,7 +60,6 @@ class AdminAdminPreferencesControllerCore extends AdminController {
                         'type'       => 'text',
                         'suffix'     => $this->l('hours'),
                         'default'    => '480',
-                        'visibility' => Shop::CONTEXT_ALL,
                     ],
                 ],
                 'submit' => ['title' => $this->l('Save')],

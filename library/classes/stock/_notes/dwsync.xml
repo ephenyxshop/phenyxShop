@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<dwsync>
+<file name="index.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="Stock.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="StockAvailable.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="StockManager.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="StockManagerFactory.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="StockManagerInterface.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="StockManagerModule.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="StockMvt.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="StockMvtReason.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="StockMvtWS.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="SupplyOrder.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="SupplyOrderDetail.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="SupplyOrderHistory.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="SupplyOrderReceiptHistory.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="SupplyOrderState.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="Warehouse.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="WarehouseProductLocation.php" server="192.129.167.152" local="132980989400000000" remote="133056526200000000" Dst="2" />
+<file name="index.php" server="142.11.250.73" local="133076359408799036" remote="133074465000000000" Dst="2" />
+<file name="Stock.php" server="142.11.250.73" local="133076359371028924" remote="133074465000000000" Dst="2" />
+<file name="StockAvailable.php" server="142.11.250.73" local="133076359377175331" remote="133076107200000000" Dst="2" />
+<file name="StockManager.php" server="142.11.250.73" local="133076359379638544" remote="133074465000000000" Dst="2" />
+<file name="StockManagerFactory.php" server="142.11.250.73" local="133076359380885211" remote="133074465000000000" Dst="2" />
+<file name="StockManagerInterface.php" server="142.11.250.73" local="133076359383398444" remote="133074465000000000" Dst="2" />
+<file name="StockManagerModule.php" server="142.11.250.73" local="133076359386072340" remote="133074465000000000" Dst="2" />
+<file name="StockMvt.php" server="142.11.250.73" local="133076359387325008" remote="133074465000000000" Dst="2" />
+<file name="StockMvtReason.php" server="142.11.250.73" local="133076359389818601" remote="133074465000000000" Dst="2" />
+<file name="StockMvtWS.php" server="142.11.250.73" local="133076359392516107" remote="133076076600000000" Dst="2" />
+<file name="SupplyOrder.php" server="142.11.250.73" local="133076359395018578" remote="133074465000000000" Dst="2" />
+<file name="SupplyOrderDetail.php" server="142.11.250.73" local="133076359396279235" remote="133074465000000000" Dst="2" />
+<file name="SupplyOrderHistory.php" server="142.11.250.73" local="133076359398855896" remote="133074465000000000" Dst="2" />
+<file name="SupplyOrderReceiptHistory.php" server="142.11.250.73" local="133076359400106169" remote="133074465000000000" Dst="2" />
+<file name="SupplyOrderState.php" server="142.11.250.73" local="133076359402609354" remote="133074465000000000" Dst="2" />
+<file name="Warehouse.php" server="142.11.250.73" local="133076359406298183" remote="133076114400000000" Dst="2" />
+<file name="WarehouseProductLocation.php" server="142.11.250.73" local="133076359407552045" remote="133074465000000000" Dst="2" />
+</dwsync>

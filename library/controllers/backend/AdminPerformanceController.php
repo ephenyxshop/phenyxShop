@@ -157,7 +157,7 @@ class AdminPerformanceControllerCore extends AdminController {
         $data->assign([
             'EPH_CACHE_ENABLED'           => Configuration::get('EPH_CACHE_ENABLED'),
             'EPH_CACHE_SYSTEM'            => Configuration::get('EPH_CACHE_SYSTEM') ?: 'CacheFs',
-            'EPH_cache_fs_directory_depth' => $depth ? $depth : 1,
+            'ps_cache_fs_directory_depth' => $depth ? $depth : 1,
             'memcached_servers'           => CacheMemcache::getMemcachedServers(),
             'redis_servers'               => CacheRedis::getRedisServers(),
             'cacheDisabled'               => !Cache::isEnabled(),
@@ -216,7 +216,7 @@ class AdminPerformanceControllerCore extends AdminController {
 
         $data = $this->createTemplate('controllers/performance/fullPage.tpl');
 
-        $controllerList = $this->displayControllerList(json_decode(Configuration::get('EPH_PAGE_CACHE_CONTROLLERS'), true), $this->context->shop->id);
+        $controllerList = $this->displayControllerList(json_decode(Configuration::get('EPH_PAGE_CACHE_CONTROLLERS'), true), $this->context->company->id);
 
         $data->assign([
             'controllerList'              => $controllerList,
@@ -325,11 +325,7 @@ class AdminPerformanceControllerCore extends AdminController {
                             'value' => 'filesystem',
                             'label' => $this->l('File System') . (is_writable(_EPH_CACHE_DIR_ . 'smarty/cache') ? '' : ' ' . sprintf($this->l('(the directory %s must be writable)'), realpath(_EPH_CACHE_DIR_ . 'smarty/cache'))),
                         ],
-                        [
-                            'id'    => 'smarty_caching_type_mysql',
-                            'value' => 'mysql',
-                            'label' => $this->l('MySQL'),
-                        ],
+                        
 
                     ],
                 ],
@@ -812,6 +808,7 @@ class AdminPerformanceControllerCore extends AdminController {
                     'type' => 'hidden',
                     'name' => 'cache_up',
                 ],
+
                 [
                     'type'    => 'switch',
                     'label'   => $this->l('Use cache'),
@@ -866,7 +863,7 @@ class AdminPerformanceControllerCore extends AdminController {
                 [
                     'type'  => 'text',
                     'label' => $this->l('Directory depth'),
-                    'name'  => 'EPH_cache_fs_directory_depth',
+                    'name'  => 'ps_cache_fs_directory_depth',
                 ],
             ],
             'submit'           => [
@@ -878,7 +875,7 @@ class AdminPerformanceControllerCore extends AdminController {
         $depth = Configuration::get('EPH_CACHEFS_DIRECTORY_DEPTH');
         $this->fields_value['EPH_CACHE_ENABLED'] = Configuration::get('EPH_CACHE_ENABLED');
         $this->fields_value['EPH_CACHE_SYSTEM'] = Configuration::get('EPH_CACHE_SYSTEM') ?: 'CacheFs';
-        $this->fields_value['EPH_cache_fs_directory_depth'] = $depth ? $depth : 1;
+        $this->fields_value['ps_cache_fs_directory_depth'] = $depth ? $depth : 1;
         $this->tpl_form_vars['memcached_servers'] = CacheMemcache::getMemcachedServers();
         $this->tpl_form_vars['redis_servers'] = CacheRedis::getRedisServers();
         $this->tpl_form_vars['cacheDisabled'] = !Cache::isEnabled();
@@ -989,7 +986,7 @@ class AdminPerformanceControllerCore extends AdminController {
             'dynamicHooks'   => true,
         ];
 
-        $controllerList = $this->displayControllerList(json_decode(Configuration::get('EPH_PAGE_CACHE_CONTROLLERS'), true), $this->context->shop->id);
+        $controllerList = $this->displayControllerList(json_decode(Configuration::get('EPH_PAGE_CACHE_CONTROLLERS'), true), $this->context->company->id);
 
         $this->tpl_form_vars['controllerList'] = $controllerList;
         $this->tpl_form_vars['moduleSettings'] = $moduleSettings;
@@ -1026,7 +1023,7 @@ class AdminPerformanceControllerCore extends AdminController {
             $profilingStatus = $this->disableProfiling();
         }
 
-        $themeCacheDirectory = _EPH_ALL_THEMES_DIR_ . $this->context->shop->theme_directory . '/cache/';
+        $themeCacheDirectory = _EPH_ALL_THEMES_DIR_ . $this->context->company->theme_directory . '/cache/';
 
         if (((bool) Tools::getValue('EPH_CSS_THEME_CACHE') || (bool) Tools::getValue('EPH_JS_THEME_CACHE')) && !is_writable($themeCacheDirectory)) {
 
@@ -1142,7 +1139,7 @@ class AdminPerformanceControllerCore extends AdminController {
 
             if ($cachingSystem == 'CacheFs') {
 
-                if (!($depth = Tools::getValue('EPH_cache_fs_directory_depth'))) {
+                if (!($depth = Tools::getValue('ps_cache_fs_directory_depth'))) {
                     $this->errors[] = Tools::displayError('Please set a directory depth.');
                 }
 
@@ -1202,25 +1199,25 @@ class AdminPerformanceControllerCore extends AdminController {
 
     /**
      * @param $fileList
-     * @param $idShop
+     * @param $idCompany
      *
      * @return string
      */
-    public function displayControllerList($fileList, $idShop) {
+    public function displayControllerList($fileList, $idCompany) {
 
         if (!is_array($fileList)) {
             $fileList = ($fileList) ? [$fileList] : [];
         }
 
-        $content = '<p><input type="text" name="EPH_PAGE_CACHE_CONTROLLERS" value="' . implode(', ', $fileList) . '" id="em_text_' . $idShop . '" placeholder="' . $this->l('E.g. address, addresses, attachment') . '"/></p>';
+        $content = '<p><input type="text" name="EPH_PAGE_CACHE_CONTROLLERS" value="' . implode(', ', $fileList) . '" id="em_text_' . $idCompany . '" placeholder="' . $this->l('E.g. address, addresses, attachment') . '"/></p>';
 
-        if ($idShop) {
-            $shop = new Shop($idShop);
+        if ($idCompany) {
+            $shop = new Company($idCompany);
             $content .= ' (' . $shop->name . ')';
         }
 
         $content .= '<p>
-                    <select size="25" id="em_list_' . $idShop . '" multiple="multiple">
+                    <select size="25" id="em_list_' . $idCompany . '" multiple="multiple">
                     <option disabled="disabled">' . $this->l('___________ CUSTOM ___________') . '</option>';
 
         // @todo do something better with controllers
@@ -1501,6 +1498,7 @@ class AdminPerformanceControllerCore extends AdminController {
                     }
 
                 }
+
 
                 $this->ajaxDie(json_encode([$res]));
             }

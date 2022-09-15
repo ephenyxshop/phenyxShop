@@ -287,7 +287,7 @@ class PackCore extends Product {
         $context = Context::getContext();
 
         $sql = '
-        SELECT p.*, product_shop.*, pl.*, image_shop.`id_image` id_image, il.`legend`, IFNULL(pa.id_product_attribute, 0) id_product_attribute
+        SELECT p.*,  pl.*, image_shop.`id_image` id_image, il.`legend`, IFNULL(pa.id_product_attribute, 0) id_product_attribute
         FROM `' . _DB_PREFIX_ . 'product` p
         NATURAL LEFT JOIN `' . _DB_PREFIX_ . 'product_lang` pl
         LEFT JOIN `' . _DB_PREFIX_ . 'product_attribute` pa

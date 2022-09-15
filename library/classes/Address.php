@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class AddressCore extends ObjectModel {
+class AddressCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var int Customer id which address belongs to */
@@ -65,7 +65,7 @@ class AddressCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'address',
@@ -131,7 +131,7 @@ class AddressCore extends ObjectModel {
     }
 
     /**
-     * @see     ObjectModel::add()
+     * @see     PhenyxObjectModel::add()
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
@@ -182,7 +182,7 @@ class AddressCore extends ObjectModel {
     }
 
     /**
-     * @see     ObjectModel::delete()
+     * @see     PhenyxObjectModel::delete()
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
@@ -225,7 +225,7 @@ class AddressCore extends ObjectModel {
     }
 
     /**
-     * @see     ObjectModel::validateController()
+     * @see     PhenyxObjectModel::validateController()
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version

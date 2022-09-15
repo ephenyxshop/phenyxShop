@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class HookZoneCore extends ObjectModel {
+class HookZoneCore extends PhenyxObjectModel {
 
     public $id_hook;
     /**
@@ -36,7 +36,7 @@ class HookZoneCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'hook_zone',

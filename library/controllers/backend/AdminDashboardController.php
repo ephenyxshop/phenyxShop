@@ -623,7 +623,8 @@ class AdminDashboardControllerCore extends AdminController {
 
 		Tools::clearSmartyCache();
 		Tools::cleanFrontCache();
-		Tools::cleanThemeDirectory();
+        Tools::cleanModuleDataBase();
+		Tools::cleanThemeDirectory();        
 		Tools::generateIndex();
 		PageCache::flush();
 
@@ -824,7 +825,6 @@ class AdminDashboardControllerCore extends AdminController {
 		$json_tax_with_cats = $rs_f->json_encode_client_side($post_types_with_categories);
 
 		$gethooks = RevLoader::getHooks();
-		$shoEPH_arr = Shop::getShops();
 		$uslider = new RevSliderSlider();
 		$pop_posts = $uslider->get_popular_posts(15);
 		$rec_posts = $uslider->get_latest_posts(15);
@@ -923,7 +923,6 @@ class AdminDashboardControllerCore extends AdminController {
 		$datas = [
 			'rsaf'                     => $rsaf,
 			'gethooks'                 => $gethooks,
-			'shoEPH_arr'                => $shoEPH_arr,
 			'json_tax_with_cats'       => $json_tax_with_cats,
 			'idSlider'                 => $idSlider,
 			'slide_alias'              => $slide_alias,

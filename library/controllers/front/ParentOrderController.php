@@ -380,9 +380,7 @@ class ParentOrderControllerCore extends FrontController {
         foreach ($summary['products'] as $key => &$product) {
             $product['quantity'] = $product['cart_quantity']; // for compatibility with 1.2 themes
 
-            if ($cartProductContext->shop->id != $product['id_shop']) {
-                $cartProductContext->shop = new Shop((int) $product['id_shop']);
-            }
+            
 
             $product['price_without_specific_price'] = Product::getPriceStatic(
                 $product['id_product'],
@@ -404,9 +402,9 @@ class ParentOrderControllerCore extends FrontController {
             );
 
             if (Product::getTaxCalculationMethod()) {
-                $product['is_discounted'] = Tools::EPH_round($product['price_without_specific_price'], _EPH_PRICE_COMPUTE_PRECISION_) != Tools::EPH_round($product['price'], _EPH_PRICE_COMPUTE_PRECISION_);
+                $product['is_discounted'] = Tools::ps_round($product['price_without_specific_price'], _EPH_PRICE_COMPUTE_PRECISION_) != Tools::ps_round($product['price'], _EPH_PRICE_COMPUTE_PRECISION_);
             } else {
-                $product['is_discounted'] = Tools::EPH_round($product['price_without_specific_price'], _EPH_PRICE_COMPUTE_PRECISION_) != Tools::EPH_round($product['price_wt'], _EPH_PRICE_COMPUTE_PRECISION_);
+                $product['is_discounted'] = Tools::ps_round($product['price_without_specific_price'], _EPH_PRICE_COMPUTE_PRECISION_) != Tools::ps_round($product['price_wt'], _EPH_PRICE_COMPUTE_PRECISION_);
             }
 
         }
@@ -455,8 +453,9 @@ class ParentOrderControllerCore extends FrontController {
 
         $this->context->smarty->assign(
             [
-                'HOOK_SHOPPING_CART'       => Hook::exec('displayShoppingCartFooter', $summary),
-                'HOOK_SHOPPING_CART_EXTRA' => Hook::exec('displayShoppingCart', $summary),
+                'HOOK_SHOPPING_CART_DETAILS'  => Hook::exec('displayBottomCartDetail', $summary),
+                'HOOK_SHOPPING_CART'          => Hook::exec('displayShoppingCartFooter', $summary),
+                'HOOK_SHOPPING_CART_EXTRA'    => Hook::exec('displayShoppingCart', $summary),
             ]
         );
     }

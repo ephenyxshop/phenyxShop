@@ -190,7 +190,7 @@ class AdminModulesPositionsControllerCore extends AdminController {
                 // Adding vars...
                 else {
 
-                    if (!$module->registerHook($hook->name, Shop::getContextListShopID())) {
+                    if (!$module->registerHook($hook->name)) {
                         $this->errors[] = Tools::displayError('An error occurred while transplanting the module to its hook.');
                     } else {
                         $exceptions = Tools::getValue('exceptions');
@@ -210,7 +210,7 @@ class AdminModulesPositionsControllerCore extends AdminController {
 
                         }
 
-                        if (!$this->errors && !$module->registerExceptions($idHook, $exceptions, Shop::getContextListShopID())) {
+                        if (!$this->errors && !$module->registerExceptions($idHook, $exceptions)) {
                             $this->errors[] = Tools::displayError('An error occurred while transplanting the module to its hook.');
                         }
 
@@ -293,7 +293,7 @@ class AdminModulesPositionsControllerCore extends AdminController {
 
                         // Add files exceptions
 
-                        if (!$module->editExceptions($idHook, $exceptions, Shop::getContextListShopID())) {
+                        if (!$module->editExceptions($idHook, $exceptions)) {
                             $this->errors[] = Tools::displayError('An error occurred while transplanting the module to its hook.');
                         } else {
                             Tools::redirectAdmin(static::$currentIndex . '&conf=16' . ($this->display_key ? '&show_modules=' . $this->display_key : '') . '&token=' . $this->token);
@@ -328,8 +328,8 @@ class AdminModulesPositionsControllerCore extends AdminController {
                     $this->errors[] = Tools::displayError('Hook cannot be loaded.');
                 } else {
 
-                    if (!$module->unregisterHook($idHook, Shop::getContextListShopID())
-                        || !$module->unregisterExceptions($idHook, Shop::getContextListShopID())
+                    if (!$module->unregisterHook($idHook)
+                        || !$module->unregisterExceptions($idHook)
                     ) {
                         $this->errors[] = Tools::displayError('An error occurred while deleting the module from its hook.');
                     } else {
@@ -432,7 +432,7 @@ class AdminModulesPositionsControllerCore extends AdminController {
             $this->errors[] = Tools::displayError('This module cannot be transplanted to this hook.');
         } else {
 
-            if (!$module->registerHook($hook->name, Shop::getContextListShopID())) {
+            if (!$module->registerHook($hook->name)) {
                 $this->errors[] = Tools::displayError('An error occurred while transplanting the module to its hook.');
             } else {
                 $exceptions = Tools::getValue('exceptions');
@@ -452,7 +452,7 @@ class AdminModulesPositionsControllerCore extends AdminController {
 
                 }
 
-                if (!$this->errors && !$module->registerExceptions($idHook, $exceptions, Shop::getContextListShopID())) {
+                if (!$this->errors && !$module->registerExceptions($idHook, $exceptions)) {
                     $this->errors[] = Tools::displayError('An error occurred while transplanting the module to its hook.');
                 }
 
@@ -524,7 +524,7 @@ class AdminModulesPositionsControllerCore extends AdminController {
 
                 }
 
-                if (!$module->editExceptions($idHook, $exceptions, Shop::getContextListShopID())) {
+                if (!$module->editExceptions($idHook, $exceptions)) {
                     $this->errors[] = Tools::displayError('An error occurred while transplanting the module to its hook.');
                 }
 
@@ -603,8 +603,7 @@ class AdminModulesPositionsControllerCore extends AdminController {
             $sql = 'SELECT id_module
                     FROM ' . _DB_PREFIX_ . 'hook_module
                     WHERE id_module = ' . $idModule . '
-                        AND id_hook = ' . $idHook . '
-                        AND id_shop IN(' . implode(', ', Shop::getContextListShopID()) . ')';
+                        AND id_hook = ' . $idHook;
 
             if (!Db::getInstance()->getValue($sql)) {
                 Tools::redirectAdmin(static::$currentIndex . '&token=' . $this->token);
@@ -689,27 +688,24 @@ class AdminModulesPositionsControllerCore extends AdminController {
      * Display module exception list
      *
      * @param array $fileList
-     * @param int   $idShop
+     * @param int   $idCompany
      *
      * @return string
      *
      * @since 1.9.1.0
      */
-    public function displayModuleExceptionList($fileList, $idShop) {
+    public function displayModuleExceptionList($fileList, $idCompany) {
 
         if (!is_array($fileList)) {
             $fileList = ($fileList) ? [$fileList] : [];
         }
 
-        $content = '<p><input type="text" name="exceptions[' . $idShop . ']" value="' . implode(', ', $fileList) . '" id="em_text_' . $idShop . '" placeholder="' . $this->l('E.g. address, addresses, attachment') . '"/></p>';
+        $content = '<p><input type="text" name="exceptions[' . $idCompany . ']" value="' . implode(', ', $fileList) . '" id="em_text_' . $idCompany . '" placeholder="' . $this->l('E.g. address, addresses, attachment') . '"/></p>';
 
-        if ($idShop) {
-            $shop = new Shop($idShop);
-            $content .= ' (' . $shop->name . ')';
-        }
+        
 
         $content .= '<p>
-                    <select size="25" id="em_list_' . $idShop . '" multiple="multiple">
+                    <select size="25" id="em_list_' . $idCompany . '" multiple="multiple">
                     <option disabled="disabled">' . $this->l('___________ CUSTOM ___________') . '</option>';
 
         // @todo do something better with controllers
@@ -819,7 +815,7 @@ class AdminModulesPositionsControllerCore extends AdminController {
             'ad'          => $adminDir,
             'liveToken'   => $this->token,
             'id_employee' => (int) $this->context->employee->id,
-            'id_shop'     => (int) $this->context->shop->id,
+            'id_shop'     => (int) $this->context->company->id,
         ];
 
         $this->context->smarty->assign(
@@ -832,12 +828,12 @@ class AdminModulesPositionsControllerCore extends AdminController {
                 'url_show_modules'   => static::$currentIndex . '&token=' . $this->token . '&show_modules=',
                 'modules'            => $moduleInstances,
                 'url_show_invisible' => static::$currentIndex . '&token=' . $this->token . '&show_modules=' . (int) Tools::getValue('show_modules') . '&hook_position=',
-                'live_edit'          => Shop::isFeatureActive() && Shop::getContext() != Shop::CONTEXT_SHOP,
+                
                 'url_live_edit'      => $this->getLiveEditUrl($liveEditParams),
                 'display_key'        => $this->display_key,
                 'hooks'              => $hooks,
                 'url_submit'         => static::$currentIndex . '&token=' . $this->token,
-                'can_move'           => (Shop::isFeatureActive() && Shop::getContext() != Shop::CONTEXT_SHOP) ? false : true,
+                
             ]
         );
 
@@ -853,25 +849,7 @@ class AdminModulesPositionsControllerCore extends AdminController {
      *
      * @since 1.9.1.0
      */
-    public function getLiveEditUrl($liveEditParams) {
-
-        $lang = '';
-
-        $languageIds = Language::getIDs(true);
-
-        if (Configuration::get('EPH_REWRITING_SETTINGS') && !empty($languageIds) && count($languageIds) > 1) {
-            $lang = Language::getIsoById($this->context->employee->id_lang) . '/';
-        }
-
-        unset($languageIds);
-
-        // Shop::initialize() in config.php may empty $this->context->shop->virtual_uri so using a new shop instance for getBaseUrl()
-        $this->context->shop = new Shop((int) $this->context->shop->id);
-        $url = $this->context->shop->getBaseURL() . $lang . Performer::getInstance()->createUrl('index', (int) $this->context->language->id, $liveEditParams);
-
-        return $url;
-    }
-
+    
     /**
      * Ajax process update positions
      *
@@ -1035,10 +1013,10 @@ class AdminModulesPositionsControllerCore extends AdminController {
             }
 
             $hooksList = explode(',', Tools::getValue('hooks_list'));
-            $idShop = (int) Tools::getValue('id_shop');
+            $idCompany = (int) Tools::getValue('id_shop');
 
-            if (!$idShop) {
-                $idShop = $this->context->shop->id;
+            if (!$idCompany) {
+                $idCompany = $this->context->company->id;
             }
 
             $res = true;
@@ -1046,7 +1024,7 @@ class AdminModulesPositionsControllerCore extends AdminController {
 
             foreach ($hooksList as $idHook => $modules) {
                 // 1st, drop all previous hooked modules
-                $sql = 'DELETE FROM `' . _DB_PREFIX_ . 'hook_module` WHERE `id_hook` =  ' . (int) $idHook . ' AND id_shop = ' . (int) $idShop;
+                $sql = 'DELETE FROM `' . _DB_PREFIX_ . 'hook_module` WHERE `id_hook` =  ' . (int) $idHook . ' AND id_shop = ' . (int) $idCompany;
                 $res &= Db::getInstance()->execute($sql);
 
                 $i = 1;
@@ -1061,7 +1039,7 @@ class AdminModulesPositionsControllerCore extends AdminController {
 
                         if ($idModule && !in_array($idModule, $ids)) {
                             $ids[] = (int) $idModule;
-                            $value .= '(' . (int) $idModule . ', ' . (int) $idShop . ', ' . (int) $idHook . ', ' . (int) $i . '),';
+                            $value .= '(' . (int) $idModule . ', ' . (int) $idCompany . ', ' . (int) $idHook . ', ' . (int) $i . '),';
                         }
 
                         $i++;

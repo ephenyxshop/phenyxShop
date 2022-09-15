@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class ImageTypeCore extends ObjectModel {
+class ImageTypeCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /**
@@ -44,7 +44,7 @@ class ImageTypeCore extends ObjectModel {
     ];
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'image_type',
@@ -220,7 +220,7 @@ class ImageTypeCore extends ObjectModel {
      */
     public static function getFormatedName($name) {
 
-        $themeName = Context::getContext()->shop->theme_name;
+        $themeName = Context::getContext()->company->theme_name;
         $nameWithoutThemeName = str_replace(['_' . $themeName, $themeName . '_'], '', $name);
 
         //check if the theme name is already in $name if yes only return $name

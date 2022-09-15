@@ -3,11 +3,11 @@
 /**
  * @since 1.9.1.0
  */
-class FrontLinkCore extends ObjectModel {
+class FrontLinkCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'blocklink',

@@ -5,18 +5,16 @@
  *
  * @since 2.1.0.0
  */
-class CustomerCore extends ObjectModel {
+class CustomerCore extends PhenyxObjectModel {
 
 	// @codingStandardsIgnoreStart
 	/**
-	 * @see ObjectModel::$definition
+	 * @see PhenyxObjectModel::$definition
 	 */
 	public static $definition = [
 		'table'   => 'customer',
 		'primary' => 'id_customer',
 		'fields'  => [
-			'id_shop_group'              => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'copy_post' => false],
-			'id_shop'                    => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'copy_post' => false],
 			'id_country'                 => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'copy_post' => false],
 			'id_gender'                  => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],
 			'id_tax_mode'                => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],
@@ -60,7 +58,6 @@ class CustomerCore extends ObjectModel {
 	protected static $_defaultGroupId = [];
 	protected static $_customerHasAddress = [];
 	protected static $_customer_groups = [];
-	public $id_shop_group;
 	/** @var string Secure key */
 	public $secure_key;
 	/** @var string protected note */
@@ -153,23 +150,6 @@ class CustomerCore extends ObjectModel {
 	// @codingStandardsIgnoreEnd
 	public $groupBox;
 
-	
-
-	protected $webserviceParameters = [
-		'fields'       => [
-			'id_default_group'           => ['xlink_resource' => 'groups'],
-			'id_lang'                    => ['xlink_resource' => 'languages'],
-			'newsletter_date_add'        => [],
-			'ip_registration_newsletter' => [],
-			'last_passwd_gen'            => ['setter' => null],
-			'secure_key'                 => ['setter' => null],
-			'deleted'                    => [],
-			'passwd'                     => ['setter' => 'setWsPasswd'],
-		],
-		'associations' => [
-			'groups' => ['resource' => 'group'],
-		],
-	];
 
 	/**
 	 * CustomerCore constructor.
@@ -235,7 +215,7 @@ class CustomerCore extends ObjectModel {
 	public static function generateCustomerAccount(Customer $student, $postcode = null) {
 
 		$affectation = Configuration::get('EPH_STUDENT_AFFECTATION');
-		$idLang = Configuration::get('EPH_LANG_DEFAULT');
+		$idLang = Context::getContext()->language->id;
 		
 		$cc = Db::getInstance()->getValue('SELECT `id_stdaccount` FROM `' . _DB_PREFIX_ . 'stdaccount` ORDER BY `id_stdaccount` DESC');
 		$iso_code = '';
@@ -268,7 +248,7 @@ class CustomerCore extends ObjectModel {
 		$sql = new DbQuery();
 		$sql->select('`id_customer`, `email`, `firstname`, `lastname`');
 		$sql->from(bqSQL(static::$definition['table']));
-		$sql->where('1 ' . Shop::addSqlRestriction(Shop::SHARE_CUSTOMER));
+		$sql->where('1 ');
 
 		if ($onlyActive) {
 			$sql->where('`active` = 1');
@@ -295,7 +275,7 @@ class CustomerCore extends ObjectModel {
 		$sql = new DbQuery();
 		$sql->select('*');
 		$sql->from(bqSQL(static::$definition['table']));
-		$sql->where('`email` = \'' . pSQL($email) . '\' ' . Shop::addSqlRestriction(Shop::SHARE_CUSTOMER));
+		$sql->where('`email` = \'' . pSQL($email) . '\'');
 
 		return Db::getInstance()->executeS($sql);
 	}
@@ -361,7 +341,7 @@ class CustomerCore extends ObjectModel {
 		$sql = new DbQuery();
 		$sql->select('`id_customer`');
 		$sql->from(bqSQL(static::$definition['table']));
-		$sql->where('`email` = \'' . pSQL($email) . '\' ' . Shop::addSqlRestriction(Shop::SHARE_CUSTOMER));
+		$sql->where('`email` = \'' . pSQL($email) . '\'');
 
 		if ($ignoreGuest) {
 			$sql->where('`is_guest` = 0');
@@ -452,11 +432,11 @@ class CustomerCore extends ObjectModel {
 
 		$sqlBase = 'SELECT *
 				FROM `' . _DB_PREFIX_ . 'customer`';
-		$sql = '(' . $sqlBase . ' WHERE `email` LIKE \'%' . pSQL($query) . '%\' ' . Shop::addSqlRestriction(Shop::SHARE_CUSTOMER) . ')';
-		$sql .= ' UNION (' . $sqlBase . ' WHERE `id_customer` = ' . (int) $query . ' ' . Shop::addSqlRestriction(Shop::SHARE_CUSTOMER) . ')';
-		$sql .= ' UNION (' . $sqlBase . ' WHERE `lastname` LIKE \'%' . pSQL($query) . '%\' ' . Shop::addSqlRestriction(Shop::SHARE_CUSTOMER) . ')';
-		$sql .= ' UNION (' . $sqlBase . ' WHERE `firstname` LIKE \'%' . pSQL($query) . '%\' ' . Shop::addSqlRestriction(Shop::SHARE_CUSTOMER) . ')';
-		$sql .= ' UNION (' . $sqlBase . ' WHERE `customer_code` LIKE \'%' . pSQL($query) . '%\' ' . Shop::addSqlRestriction(Shop::SHARE_CUSTOMER) . ')';
+		$sql = '(' . $sqlBase . ' WHERE `email` LIKE \'%' . pSQL($query) . '%\')';
+		$sql .= ' UNION (' . $sqlBase . ' WHERE `id_customer` = ' . (int) $query. ')';
+		$sql .= ' UNION (' . $sqlBase . ' WHERE `lastname` LIKE \'%' . pSQL($query) . '%\')';
+		$sql .= ' UNION (' . $sqlBase . ' WHERE `firstname` LIKE \'%' . pSQL($query) . '%\')';
+		$sql .= ' UNION (' . $sqlBase . ' WHERE `customer_code` LIKE \'%' . pSQL($query) . '%\')';
 
 		if ($limit) {
 			$sql .= ' LIMIT 0, ' . (int) $limit;
@@ -561,8 +541,7 @@ class CustomerCore extends ObjectModel {
 	 */
 	public function add($autoDate = true, $nullValues = true) {
 
-		$this->id_shop = ($this->id_shop) ? $this->id_shop : Context::getContext()->shop->id;
-		$this->id_shop_group = ($this->id_shop_group) ? $this->id_shop_group : Context::getContext()->shop->id_shop_group;
+		
 		$this->id_lang = ($this->id_lang) ? $this->id_lang : Context::getContext()->language->id;
 		$this->birthday = (empty($this->years) ? $this->birthday : (int) $this->years . '-' . (int) $this->months . '-' . (int) $this->days);
 		$this->secure_key = md5(uniqid(rand(), true));
@@ -651,7 +630,7 @@ class CustomerCore extends ObjectModel {
 	public function delete() {
 
 		if (!count(CustomerPieces::getCustomerOrders((int) $this->id))) {
-			$addresses = $this->getAddresses((int) Configuration::get('EPH_LANG_DEFAULT'));
+			$addresses = $this->getAddresses((int) $this->context->language->id);
 
 			foreach ($addresses as $address) {
 				$obj = new Address((int) $address['id_address']);
@@ -768,7 +747,7 @@ class CustomerCore extends ObjectModel {
 		$sql = new DbQuery();
 		$sql->select('*');
 		$sql->from(bqSQL(static::$definition['table']));
-		$sql->where('`email` = \'' . pSQL($email) . '\' ' . Shop::addSqlRestriction(Shop::SHARE_CUSTOMER));
+		$sql->where('`email` = \'' . pSQL($email) . '\'');
 		$sql->where('`deleted` = 0');
 
 		if ($ignoreGuest) {
@@ -1146,7 +1125,7 @@ class CustomerCore extends ObjectModel {
 		}
 
 		if ($this->deleted) {
-			$addresses = $this->getAddresses((int) Configuration::get('EPH_LANG_DEFAULT'));
+			$addresses = $this->getAddresses((int) $this->context->language->id);
 
 			foreach ($addresses as $address) {
 				$obj = new Address((int) $address['id_address']);
@@ -1402,23 +1381,6 @@ class CustomerCore extends ObjectModel {
 		return true;
 	}
 
-	/**
-	 * @param string $sqlJoin
-	 * @param string $sqlFilter
-	 * @param string $sqlSort
-	 * @param string $sqlLimit
-	 *
-	 * @return array|null
-	 *
-	 * @throws PhenyxShopDatabaseException
-	 * @throws PhenyxShopException
-	 * @since 2.1.0.0
-	 */
-	public function getWebserviceObjectList($sqlJoin, $sqlFilter, $sqlSort, $sqlLimit) {
-
-		$sqlFilter .= Shop::addSqlRestriction(Shop::SHARE_CUSTOMER, 'main');
-
-		return parent::getWebserviceObjectList($sqlJoin, $sqlFilter, $sqlSort, $sqlLimit);
-	}
+	
 
 }

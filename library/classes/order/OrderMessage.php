@@ -34,7 +34,7 @@
  *
  * @since 1.9.1.0
  */
-class OrderMessageCore extends ObjectModel
+class OrderMessageCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     /** @var string name name */
@@ -48,7 +48,7 @@ class OrderMessageCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'order_message',

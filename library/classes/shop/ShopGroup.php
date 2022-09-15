@@ -7,7 +7,7 @@
  * @since 1.9.1.0
  * @version 1.8.1.0 Initial version
  */
-class ShopGroupCore extends ObjectModel
+class ShopGroupCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     public $name;
@@ -19,7 +19,7 @@ class ShopGroupCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'shop_group',
@@ -35,7 +35,7 @@ class ShopGroupCore extends ObjectModel
     ];
 
     /**
-     * @see     ObjectModel::getFields()
+     * @see     PhenyxObjectModel::getFields()
      * @return array
      *
      * @since 1.9.1.0

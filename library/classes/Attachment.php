@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class AttachmentCore extends ObjectModel
+class AttachmentCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     /** @var string $file */
@@ -25,7 +25,7 @@ class AttachmentCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'attachment',
@@ -282,7 +282,6 @@ class AttachmentCore extends ObjectModel
                     ->from('product_attachment', 'pa')
                     ->leftJoin('product_lang', 'pl', 'pa.`id_product` = pl.`id_product`')
                     ->where('pa.`id_attachment` IN ('.implode(',', array_map('intval', $idAttachments)).')')
-                    ->where('pl.`id_shop` = '.(int) Context::getContext()->shop->id)
                     ->where('pl.`id_lang` = '.(int) $idLang)
             );
             $productAttachments = [];

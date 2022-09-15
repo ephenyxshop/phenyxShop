@@ -69,7 +69,6 @@ class AdminCurrenciesControllerCore extends AdminController {
         }
 
         $this->_select .= 'currency_shop.conversion_rate conversion_rate, m.`name` AS `module_name`';
-        $this->_join .= Shop::addSqlAssociation('currency', 'a');
         $this->_join .= ' LEFT JOIN `' . _DB_PREFIX_ . 'currency_module` cm ON a.`id_currency` = cm.`id_currency`';
         $this->_join .= ' LEFT JOIN `' . _DB_PREFIX_ . 'module` m ON m.`id_module` = cm.`id_module`';
         $this->_group .= 'GROUP BY a.id_currency';
@@ -252,13 +251,7 @@ class AdminCurrenciesControllerCore extends AdminController {
             ],
         ];
 
-        if (Shop::isFeatureActive()) {
-            $this->fields_form['input'][] = [
-                'type'  => 'shop',
-                'label' => $this->l('Shop association'),
-                'name'  => 'checkBoxShopAsso',
-            ];
-        }
+        
 
         $this->fields_form['submit'] = [
             'title' => $this->l('Save'),

@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class MailCore extends ObjectModel {
+class MailCore extends PhenyxObjectModel {
 
     const TYPE_HTML = 1;
     const TYPE_TEXT = 2;
@@ -25,7 +25,7 @@ class MailCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'mail',

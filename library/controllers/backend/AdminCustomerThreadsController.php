@@ -683,35 +683,11 @@ class AdminCustomerThreadsControllerCore extends AdminController {
             // Validate fields
 
             foreach ($fields as $field => $values) {
-                // We don't validate fields with no visibility
+               
 
-                if (!$hideMultishopCheckbox && Shop::isFeatureActive() && isset($values['visibility']) && $values['visibility'] > Shop::getContext()) {
-                    continue;
-                }
-
-                // Check if field is required
-
-                if ((!Shop::isFeatureActive() && isset($values['required']) && $values['required'])
-                    || (Shop::isFeatureActive() && isset($_POST['multishopOverrideOption'][$field]) && isset($values['required']) && $values['required'])
-                ) {
-
-                    if (isset($values['type']) && $values['type'] == 'textLang') {
-
-                        foreach ($languages as $language) {
-
-                            if (($value = Tools::getValue($field . '_' . $language['id_lang'])) == false && (string) $value != '0') {
-                                $this->errors[] = sprintf(Tools::displayError('field %s is required.'), $values['title']);
-                            }
-
-                        }
-
-                    } else
-
-                    if (($value = Tools::getValue($field)) == false && (string) $value != '0') {
+                if (($value = Tools::getValue($field)) == false && (string) $value != '0') {
                         $this->errors[] = sprintf(Tools::displayError('field %s is required.'), $values['title']);
                     }
-
-                }
 
                 // Check field validator
 
@@ -753,14 +729,7 @@ class AdminCustomerThreadsControllerCore extends AdminController {
 
                 foreach ($fields as $key => $options) {
 
-                    if (Shop::isFeatureActive() && isset($options['visibility']) && $options['visibility'] > Shop::getContext()) {
-                        continue;
-                    }
-
-                    if (!$hideMultishopCheckbox && Shop::isFeatureActive() && Shop::getContext() != Shop::CONTEXT_ALL && empty($options['no_multishop_checkbox']) && empty($_POST['multishopOverrideOption'][$key])) {
-                        Configuration::deleteFromContext($key);
-                        continue;
-                    }
+                   
 
                     // check if a method updateOptionFieldName is available
                     $methodName = 'updateOption' . Tools::toCamelCase($key, true);
@@ -1040,7 +1009,7 @@ class AdminCustomerThreadsControllerCore extends AdminController {
                         $ct->email = $from;
                         $ct->id_contact = $idContact;
                         $ct->id_lang = (int) Configuration::get('EPH_LANG_DEFAULT');
-                        $ct->id_shop = $this->context->shop->id; //new customer threads for unrecognized mails are not shown without shop id
+                        $ct->id_shop = $this->context->company->id; //new customer threads for unrecognized mails are not shown without shop id
                         $ct->status = 'open';
                         $ct->token = Tools::passwdGen(12);
                         $ct->add();
@@ -1239,7 +1208,7 @@ class AdminCustomerThreadsControllerCore extends AdminController {
             if (Tools::isSubmit('submitReply')) {
                 $ct = new CustomerThread($idCustomerThread);
 
-                ShopUrl::cacheMainDomainForShop((int) $ct->id_shop);
+                
 
                 $cm = new CustomerMessage();
                 $cm->id_employee = (int) $this->context->employee->id;

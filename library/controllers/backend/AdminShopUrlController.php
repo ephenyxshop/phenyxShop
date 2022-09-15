@@ -435,7 +435,7 @@ class AdminShopUrlControllerCore extends AdminController {
                 'toolbar_scroll' => 1,
                 'toolbar_btn'    => $this->toolbar_btn,
                 'title'          => $this->toolbar_title,
-                'shoEPH_tree'     => $shopsTree,
+                'shops_tree'     => $shopsTree,
             ]
         );
     }

@@ -21,7 +21,6 @@ class AdminEmployeeMenusControllerCore extends AdminController {
 
 		$this->bootstrap = true;
 		$this->context = Context::getContext();
-		$this->multishop_context = Shop::CONTEXT_ALL;
 		$this->table = 'employee_menu';
 		$this->className = 'EmployeeMenu';
 		$this->publicName = 'Onglets Back Office';

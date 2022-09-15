@@ -121,7 +121,12 @@ class HelperFormCore extends Helper {
                         	}
 
                         	break;
-
+                        case 'gridcategories':
+						$paragridScript = $this->generateCategoryGridScript($params['category_tree'], $params['radio']);
+						$html = '<div id="grid_AdminAssociatedCategory" class="panel col-lg-12"><div>';						
+						$html .= '<div id="jsAssociatedCategory">'.$paragridScript.'</div></div></div>';
+						$this->context->smarty->assign('grid_categories', $html);
+						break;
                     	case 'categories':
 
                         	if ($categories) {
@@ -167,17 +172,17 @@ class HelperFormCore extends Helper {
                         	break;
                     	case 'image':
 
-                        	$src = !empty($params['image']) ? $params['image'] : '<img src="' . $this->fields_value[$params['name']] . '" id="image' . $params['name'] . '"  alt="' . $params['label'] . '">';
-
-                        	$format = $params['format'];
-                        	$html = '<div class="imageuploadify-container-image">' . $src . '</div><input id="' . $params['name'] . 'File" type="file" data-target="image' . $params['name'] . '" accept="image/*" multiple>
-                            <script type="text/javascript">
-                                $(document).ready(function() {
-                                    $("#' . $params['name'] . 'File").imageuploadify();
-                                });
-                            </script>';
-
-                        	$params['paramImage'] = $html;
+                        	$src = '<img src="'.$params['image'].'" id="image'.$params['name'].'"  alt="'.$params['label'].'">';
+							
+							$format = $params['format'];
+							$html = '<div class="imageuploadify-container-image">'.$src.'</div><input id="'.$params['name'].'File" type="file" data-target="image'.$params['name'].'" accept="image/*" multiple>
+							<script type="text/javascript">
+								$(document).ready(function() {
+									$("#'.$params['name'].'File").imageuploadify();
+								});
+							</script>';
+							
+						      $params['paramImage'] = $html;
                         	break;
 
                     	case 'file':
@@ -1071,17 +1076,7 @@ class HelperFormCore extends Helper {
                         	$html .= '</div>';
 							$params['background_position'] = $html;
                         	break;
-                    	case 'shop':
-                        	$disableShops = isset($params['disable_shared']) ? $params['disable_shared'] : false;
-                        	$params['html'] = $this->renderAssoShop($disableShops);
-
-                        	if (Shop::getTotalShops(false) == 1) {
-
-                            	if ((isset($this->fields_form[$fieldsetKey]['form']['force']) && !$this->fields_form[$fieldsetKey]['form']['force']) || !isset($this->fields_form[$fieldsetKey]['form']['force'])) {
-                                	unset($this->fields_form[$fieldsetKey]['form']['input'][$key]);
-								}
-                        	}
-                        	break;
+                    	
 						case 'theme_manager':
 							$fields = false;					
 							$xprt = $this->tpl_vars['xprt'];
@@ -1202,7 +1197,7 @@ class HelperFormCore extends Helper {
                 'required_fields'       => $this->getFieldsRequired(),
                 'vat_number'            => Module::isInstalled('vatnumber') && file_exists(_EPH_MODULE_DIR_ . 'vatnumber/ajax.php'),
                 'module_dir'            => _MODULE_DIR_,
-                'base_url'              => $this->context->shop->getBaseURL(),
+                'base_url'              => $this->context->company->getBaseURL(),
                 'contains_states'       => (isset($this->fields_value['id_country']) && isset($this->fields_value['id_state'])) ? Country::containsStates($this->fields_value['id_country']) : null,
                 'show_cancel_button'    => $this->show_cancel_button,
                 'back_url'              => $this->back_url,
@@ -1261,6 +1256,79 @@ class HelperFormCore extends Helper {
 
         return false;
     }
+    
+    public function generateCategoryGridScript($category_tree, $radio = true) {
+
+		$paragrid = new ParamGrid('AsssociatedCategory', 'AdminAssociatedCategory', $this->table, $this->identifier);
+		$paragrid->height = 500;
+		$paragrid->showNumberCell = 0;
+		$paragrid->showTitle = 1;
+        $paragrid->title =  '\'' . $this->l('Parent Category') . '\'';
+		$paragrid->selectionModelType = 'cell';
+		$paragrid->needRequestModel = false;
+		$paragrid->dataModel  = [
+			'data' => $category_tree
+		];
+		$paragrid->colModel = $this->getCategoryTreeFields();
+		$paragrid->check = 'function(evt, ui) {
+			$("#id_parent").val(ui.rows[0].rowData.id_category);
+        }';
+        
+		$paragrid->filterModel = [
+            'on'     => true,
+            'mode'   => '\'AND\'',
+            'header' => true,
+        ];
+        $paragrid->treeModel = [
+            'dataIndx'     => '\'name\'',
+            'id'           => '\'id_category\'',
+            'checkbox'     => 1,
+			'filterShowChildren' => 1,
+            'icons'        => 0,
+           // 'iconCollapse' => ['\'fa fa-circle-minus toggeCategoryClose\'', '\'fa fa-circle-plus toggeCategoryOpen\''],
+        ];
+		if($radio) {
+			$paragrid->treeModel['maxCheck'] = 1;
+		}
+		
+        $paragrid->gridFunction = [
+			'neutralFunction()'                  => ''
+		];
+
+        $option = $paragrid->generateParaGridOption();
+		$script = $paragrid->generateParagridScript();
+		return '<script type="text/javascript">' . PHP_EOL . $script . PHP_EOL . '</script>';
+    }
+	
+	public function getCategoryTreeFields() {
+
+        return Tools::jsonEncode([
+
+			[
+                
+                'dataIndx' => 'pq_tree_cb',
+                'editable' => true,
+                'hidden'   => true,
+            ],
+            [
+                'title'    => $this->l('ID'),
+                'dataIndx' => 'id_category',
+                'dataType' => 'integer',
+                'hidden'   => true,
+            ],
+
+            [
+                'title'      => $this->l('Name'),
+                'width'      => 300,
+                'dataIndx'   => 'name',
+                'align'      => 'left',
+                'valign'     => 'center',
+                'dataType'   => 'string',
+            ],
+           
+        ]);
+
+    }
 
     public function generateTabScript($controller) {
 
@@ -1273,80 +1341,6 @@ class HelperFormCore extends Helper {
                 </script>' . PHP_EOL;
     }
 
-    /**
-     * Render an area to determinate shop association
-     *
-     * @param bool $disableShared
-     * @param null $templateDirectory
-     *
-     * @return string
-     * @throws PhenyxShopDatabaseException
-     * @throws PhenyxShopException
-     * @since   1.8.1.0
-     * @version 1.8.5.0
-     */
-    public function renderAssoShop($disableShared = false, $templateDirectory = null) {
-
-        if (!Shop::isFeatureActive()) {
-            return '';
-        }
-
-        $assos = [];
-
-        if ((int) $this->id) {
-
-            foreach (Db::getInstance()->executeS(
-                (new DbQuery())
-                ->select('`id_shop`, `' . bqSQL($this->identifier) . '`')
-                ->from(bqSQL($this->table) . '_shop')
-                ->where('`' . bqSQL($this->identifier) . '` = ' . (int) $this->id)
-            ) as $row) {
-                $assos[$row['id_shop']] = $row['id_shop'];
-            }
-
-        } else {
-
-            switch (Shop::getContext()) {
-            case Shop::CONTEXT_SHOP:
-                $assos[Shop::getContextShopID()] = Shop::getContextShopID();
-                break;
-
-            case Shop::CONTEXT_GROUP:
-
-                foreach (Shop::getShops(false, Shop::getContextShopGroupID(), true) as $idShop) {
-                    $assos[$idShop] = $idShop;
-                }
-
-                break;
-
-            default:
-
-                foreach (Shop::getShops(false, null, true) as $idShop) {
-                    $assos[$idShop] = $idShop;
-                }
-
-                break;
-            }
-
-        }
-
-        /*$nb_shop = 0;
-                                foreach ($tree as &$value)
-                                {
-                                    $value['disable_shops'] = (isset($value[$disable_shared]) && $value[$disable_shared]);
-                                    $nb_shop += count($value['shops']);
-        */
-
-        $tree = new HelperTreeShops('shop-tree', 'Shops');
-
-        if (isset($templateDirectory)) {
-            $tree->setTemplateDirectory($templateDirectory);
-        }
-
-        $tree->setSelectedShops($assos);
-        $tree->setAttribute('table', $this->table);
-
-        return $tree->render();
-    }
+    
 
 }

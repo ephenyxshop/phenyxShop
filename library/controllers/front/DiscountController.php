@@ -86,7 +86,7 @@ class DiscountControllerCore extends FrontController {
                     $product->category,
                     $product->ean13,
                     $this->context->language->id,
-                    $this->context->shop->id,
+                    $this->context->company->id,
                     $discount['gift_product_attribute'],
                     false,
                     false,

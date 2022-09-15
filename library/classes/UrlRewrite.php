@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class UrlRewriteCore extends Objectmodel {
+class UrlRewriteCore extends PhenyxObjectModel {
 
     const CANONICAL = 1;
     const DIRECT_SERVE = 2;
@@ -24,7 +24,7 @@ class UrlRewriteCore extends Objectmodel {
 
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'          => 'url_rewrite',

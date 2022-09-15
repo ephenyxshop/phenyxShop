@@ -1,6 +1,6 @@
 <?php
 
-class TopMenuElementsCore extends ObjectModel {
+class TopMenuElementsCore extends PhenyxObjectModel {
 
     public $id;
     public $link;

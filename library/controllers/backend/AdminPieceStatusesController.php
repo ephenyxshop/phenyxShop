@@ -776,7 +776,7 @@ class AdminPieceStatusesControllerCore extends AdminController {
 
 	protected function getTemplates() {
 
-		$theme = new Theme($this->context->shop->id_theme);
+		$theme = new Theme($this->context->company->id_theme);
 		$defaultPath = '../mails/';
 		$themePath = '../themes/' . $theme->directory . '/mails/'; // Mail templates can also be found in the theme folder
 

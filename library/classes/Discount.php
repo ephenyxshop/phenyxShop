@@ -267,7 +267,7 @@ class DiscountCore extends CartRule {
         }
 
         if (Validate::isLoadedObject($shop)) {
-            $context->shop = $shop;
+            $context->company = $shop;
         }
 
         return parent::getContextualValue($useTax, $context);

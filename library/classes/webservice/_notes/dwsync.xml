@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<dwsync>
+<file name="index.php" server="192.129.167.152" local="132981014800000000" remote="133056526200000000" Dst="2" />
+<file name="WebserviceException.php" server="192.129.167.152" local="132981014810000000" remote="133056526200000000" Dst="2" />
+<file name="WebserviceOutputInterface.php" server="192.129.167.152" local="132981014810000000" remote="133056526200000000" Dst="2" />
+<file name="WebserviceKey.php" server="192.129.167.152" local="132981014820000000" remote="133056526200000000" Dst="2" />
+<file name="WebserviceOutputBuilder.php" server="192.129.167.152" local="132981014810000000" remote="133056526200000000" Dst="2" />
+<file name="WebserviceOutputJSON.php" server="192.129.167.152" local="132981014810000000" remote="133056526200000000" Dst="2" />
+<file name="WebserviceOutputXML.php" server="192.129.167.152" local="132981014820000000" remote="133056526200000000" Dst="2" />
+<file name="WebserviceRequest.php" server="192.129.167.152" local="132981014820000000" remote="133056526200000000" Dst="2" />
+<file name="WebserviceSpecificManagementImages.php" server="192.129.167.152" local="132981014830000000" remote="133056526200000000" Dst="2" />
+<file name="WebserviceSpecificManagementInterface.php" server="192.129.167.152" local="132981014830000000" remote="133056526200000000" Dst="2" />
+<file name="WebserviceSpecificManagementSearch.php" server="192.129.167.152" local="132981014830000000" remote="133056526200000000" Dst="2" />
+<file name="WebserviceException.php" server="142.11.250.73" local="133072673740000000" remote="133075253400000000" Dst="2" />
+<file name="index.php" server="142.11.250.73" local="133072673740000000" remote="133075253400000000" Dst="2" />
+<file name="WebserviceKey.php" server="142.11.250.73" local="133075252198858682" remote="133075253400000000" Dst="2" />
+<file name="WebserviceOutputInterface.php" server="142.11.250.73" local="133072673740000000" remote="133075253400000000" Dst="2" />
+<file name="WebserviceOutputBuilder.php" server="142.11.250.73" local="133072673740000000" remote="133075253400000000" Dst="2" />
+<file name="WebserviceOutputJSON.php" server="142.11.250.73" local="133072673740000000" remote="133075253400000000" Dst="2" />
+<file name="WebserviceOutputXML.php" server="142.11.250.73" local="133072673740000000" remote="133075253400000000" Dst="2" />
+<file name="WebserviceRequest.php" server="142.11.250.73" local="133075252198938888" remote="133075253400000000" Dst="2" />
+<file name="WebserviceSpecificManagementImages.php" server="142.11.250.73" local="133072673740000000" remote="133075253400000000" Dst="2" />
+<file name="WebserviceSpecificManagementInterface.php" server="142.11.250.73" local="133072673740000000" remote="133075253400000000" Dst="2" />
+<file name="WebserviceSpecificManagementSearch.php" server="142.11.250.73" local="133072673740000000" remote="133075253400000000" Dst="2" />
+</dwsync>

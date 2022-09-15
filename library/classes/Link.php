@@ -102,12 +102,11 @@ class LinkCore {
 	public function getAdminImageLink($name, $ids, $type = null)  {
         
 		
-        $theme = ((Shop::isFeatureActive() && file_exists(_EPH_PROD_IMG_DIR_.$ids.($type ? '-'.$type : '').'-'.(int)Context::getContext()->shop->id_theme.'.jpg')) ? '-'.Context::getContext()->shop->id_theme : '');
+       
         $split_ids = explode('-', $ids);
-        $id_image = (isset($split_ids[1]) ? $split_ids[1] : $split_ids[0]);
-        $theme = ((Shop::isFeatureActive() && file_exists(_EPH_PROD_IMG_DIR_.Image::getImgFolderStatic($id_image).$id_image.($type ? '-'.$type : '').'-'.(int)Context::getContext()->shop->id_theme.'.jpg')) ? '-'.Context::getContext()->shop->id_theme : '');
+        $id_image = (isset($split_ids[1]) ? $split_ids[1] : $split_ids[0]);       
         
-		$uri_path = $id_image.($type ? '-'.$type : '').$theme.'/'.$name.'.webp';
+		$uri_path = $id_image.($type ? '-'.$type : '').'/'.$name.'.webp';
 
         return $this->getBaseFrontLink().$uri_path;
     }
@@ -126,7 +125,7 @@ class LinkCore {
      * @param int|null    $category
      * @param string|null $ean13
      * @param int|null    $idLang
-     * @param int|null    $idShop
+     * @param int|null    $idCompany
      * @param int         $ipa
      * @param bool        $forceRoutes
      * @param bool        $relativeProtocol
@@ -138,7 +137,7 @@ class LinkCore {
      *
      * @since 1.9.1.0
      */
-     public function getProductLink($product, $alias = null, $category = null, $ean13 = null, $idLang = null, $idShop = null, $ipa = 0, $forceRoutes = false, $relativeProtocol = false, $addAnchor = false, $extraParams = []) {
+     public function getProductLink($product, $alias = null, $category = null, $ean13 = null, $idLang = null,  $ipa = 0, $forceRoutes = false, $relativeProtocol = false, $addAnchor = false, $extraParams = []) {
 
         $dispatcher = Performer::getInstance();
 
@@ -146,14 +145,14 @@ class LinkCore {
             $idLang = Context::getContext()->language->id;
         }
 
-        $url = $this->getBaseLink($idShop, null, $relativeProtocol) . $this->getLangLink($idLang, null, $idShop);
+        $url = $this->getBaseLink(null, $relativeProtocol) . $this->getLangLink($idLang, null);
 
         if (!is_object($product)) {
 
             if (is_array($product) && isset($product['id_product'])) {
-                $product = new Product($product['id_product'], false, $idLang, $idShop);
+                $product = new Product($product['id_product'], false, $idLang);
             } else if ((int) $product) {
-                $product = new Product((int) $product, false, $idLang, $idShop);
+                $product = new Product((int) $product, false, $idLang);
             } else {
                 throw new PhenyxShopException('Invalid product vars');
             }
@@ -169,31 +168,31 @@ class LinkCore {
         $params['meta_keywords'] = Tools::str2url($product->getFieldByLang('meta_keywords'));
         $params['meta_title'] = Tools::str2url($product->getFieldByLang('meta_title'));
 
-        if ($dispatcher->hasKeyword('product_rule', $idLang, 'manufacturer', $idShop)) {
+        if ($dispatcher->hasKeyword('product_rule', $idLang, 'manufacturer')) {
             $params['manufacturer'] = Tools::str2url($product->isFullyLoaded ? $product->manufacturer_name : Manufacturer::getNameById($product->id_manufacturer));
         }
 
-        if ($dispatcher->hasKeyword('product_rule', $idLang, 'supplier', $idShop)) {
+        if ($dispatcher->hasKeyword('product_rule', $idLang, 'supplier')) {
             $params['supplier'] = Tools::str2url($product->isFullyLoaded ? $product->supplier_name : Supplier::getNameById($product->id_supplier));
         }
 
-        if ($dispatcher->hasKeyword('product_rule', $idLang, 'price', $idShop)) {
+        if ($dispatcher->hasKeyword('product_rule', $idLang, 'price')) {
             $params['price'] = $product->isFullyLoaded ? $product->price : Product::getPriceStatic($product->id, false, null, 6, null, false, true, 1, false, null, null, null, $product->specificPrice);
         }
 
-        if ($dispatcher->hasKeyword('product_rule', $idLang, 'tags', $idShop)) {
+        if ($dispatcher->hasKeyword('product_rule', $idLang, 'tags')) {
             $params['tags'] = Tools::str2url($product->getTags($idLang));
         }
 
-        if ($dispatcher->hasKeyword('product_rule', $idLang, 'category', $idShop)) {
+        if ($dispatcher->hasKeyword('product_rule', $idLang, 'category')) {
             $params['category'] = (!is_null($product->category) && !empty($product->category)) ? Tools::str2url($product->category) : Tools::str2url($category);
         }
 
-        if ($dispatcher->hasKeyword('product_rule', $idLang, 'reference', $idShop)) {
+        if ($dispatcher->hasKeyword('product_rule', $idLang, 'reference')) {
             $params['reference'] = Tools::str2url($product->reference);
         }
 
-        if ($dispatcher->hasKeyword('product_rule', $idLang, 'categories', $idShop)) {
+        if ($dispatcher->hasKeyword('product_rule', $idLang, 'categories')) {
             $params['category'] = (!$category) ? $product->category : $category;
             $cats = [];
             $categoryDisableRewrite = static::$categoryDisableRewrite;
@@ -212,11 +211,11 @@ class LinkCore {
 
         $anchor = $ipa ? $product->getAnchor((int) $ipa, (bool) $addAnchor) : '';
 
-        return $url . $dispatcher->createUrl('product_rule', $idLang, array_merge($params, $extraParams), $forceRoutes, $anchor, $idShop);
+        return $url . $dispatcher->createUrl('product_rule', $idLang, array_merge($params, $extraParams), $forceRoutes, $anchor);
     }
     
     /**
-     * @param int|null  $idShop
+     * @param int|null  $idCompany
      * @param bool|null $ssl
      * @param bool      $relativeProtocol
      *
@@ -225,7 +224,7 @@ class LinkCore {
      * @since 1.9.1.0 Function has become public
      * @throws PhenyxShopException
      */
-    public function getBaseLink($idShop = null, $ssl = null, $relativeProtocol = false) {
+    public function getBaseLink($ssl = null, $relativeProtocol = false) {
 
         static $forceSsl = null;
 
@@ -238,30 +237,18 @@ class LinkCore {
             $ssl = $forceSsl;
         }
 
-        if (Configuration::get('EPH_MULTISHOP_FEATURE_ACTIVE') && $idShop !== null) {
-            $shop = new Shop($idShop);
-        } else {
-            $shop = Context::getContext()->shop;
-        }
+        $shop = Context::getContext()->company;
 
-         if (defined('EPH_ADMIN_DIR')) {
-			
-            $base = 'https://' . $shop->admin_ssl;
-			 
-        } else {
-			 
-			if ($relativeProtocol) {
+        if ($relativeProtocol) {
             	$base = '//' . ($ssl && $this->ssl_enable ? $shop->domain_ssl : $shop->domain);
         	} else {
             	$base = (($ssl && $this->ssl_enable) ? 'https://' . $shop->domain_ssl : 'http://' . $shop->domain);
         	}
             
-        }
-
         return $base . $shop->getBaseURI();
     }
 	
-	public function getBaseAdminLink($idShop = null, $ssl = null, $relativeProtocol = false) {
+	public function getBaseAdminLink($ssl = null, $relativeProtocol = false) {
 
         static $forceSsl = null;
 
@@ -274,10 +261,10 @@ class LinkCore {
             $ssl = $forceSsl;
         }
 
-        if (Configuration::get('EPH_MULTISHOP_FEATURE_ACTIVE') && $idShop !== null) {
-            $shop = new Shop($idShop);
+        if (Configuration::get('EPH_MULTISHOP_FEATURE_ACTIVE') && $idCompany !== null) {
+            $shop = new Company($idCompany);
         } else {
-            $shop = Context::getContext()->shop;
+            $shop = Context::getContext()->company;
         }
 
          $base = (($ssl && $this->ssl_enable) ? 'https://' . $shop->domain_ssl : 'http://' . $shop->domain);
@@ -285,7 +272,7 @@ class LinkCore {
         return $base . $shop->getBaseURI();
     }
 	
-	public function getBaseFrontLink($idShop = null, $ssl = null, $relativeProtocol = false) {
+	public function getBaseFrontLink($idCompany = null, $ssl = null, $relativeProtocol = false) {
 
         static $forceSsl = null;
 
@@ -298,10 +285,10 @@ class LinkCore {
             $ssl = $forceSsl;
         }
 
-        if (Configuration::get('EPH_MULTISHOP_FEATURE_ACTIVE') && $idShop !== null) {
-            $shop = new Shop($idShop);
+        if (Configuration::get('EPH_MULTISHOP_FEATURE_ACTIVE') && $idCompany !== null) {
+            $shop = new Company($idCompany);
         } else {
-            $shop = Context::getContext()->shop;
+            $shop = Context::getContext()->company;
         }
 
          if ($relativeProtocol) {
@@ -319,14 +306,14 @@ class LinkCore {
     /**
      * @param int|null     $idLang
      * @param Context|null $context
-     * @param int|null     $idShop
+     * @param int|null     $idCompany
      *
      * @return string
      *
      * @since 1.9.1.0 Function has become public
      * @throws PhenyxShopException
      */
-    public function getLangLink($idLang = null, Context $context = null, $idShop = null) {
+    public function getLangLink($idLang = null, Context $context = null) {
 
         if (!$context) {
             $context = Context::getContext();
@@ -336,9 +323,7 @@ class LinkCore {
             return '';
         }
 
-        if ((!$this->allow && in_array($idShop, [$context->shop->id, null])) || !Language::isMultiLanguageActivated($idShop) || !(int) Configuration::get('EPH_REWRITING_SETTINGS', null, null, $idShop)) {
-            return '';
-        }
+       
 
         if (!$idLang) {
             $idLang = $context->language->id;
@@ -369,13 +354,12 @@ class LinkCore {
         }
         $params =  [];
 		$ssl = true;
-		$idShop = Context::getContext()->shop->id;
 		$relativeProtocol = false;
-		$uriPath = Performer::getInstance()->createAdminUrl($controller, $idLang, $params);
-		return $this->getBaseAdminLink($idShop, $ssl, $relativeProtocol) . $this->getLangLink($idLang, null, $idShop) . ltrim($uriPath, '/');
+		$uriPath = Performer::getInstance()->createUrl($controller, $idLang, $params);
+		return $this->getBaseAdminLink($ssl, $relativeProtocol) . $this->getLangLink($idLang, null) . ltrim($uriPath, '/');
     }
     
-    public function getPageLink($controller, $ssl = null, $idLang = null, $request = null, $requestUrlEncode = false, $idShop = null, $relativeProtocol = false) {
+    public function getPageLink($controller, $ssl = null, $idLang = null, $request = null, $requestUrlEncode = false,  $relativeProtocol = false) {
 
         //If $controller contains '&' char, it means that $controller contains request data and must be parsed first
         $p = strpos($controller, '&');
@@ -417,9 +401,9 @@ class LinkCore {
             
         }
 
-        $uriPath = Performer::getInstance()->createUrl($controller, $idLang, $request, false, '', $idShop);
+        $uriPath = Performer::getInstance()->createUrl($controller, $idLang, $request, false, '');
 
-        return $this->getBaseLink($idShop, $ssl, $relativeProtocol) . $this->getLangLink($idLang, null, $idShop) . ltrim($uriPath, '/');
+        return $this->getBaseLink($ssl, $relativeProtocol) . $this->getLangLink($idLang, null) . ltrim($uriPath, '/');
     }
 
     /**
@@ -449,16 +433,16 @@ class LinkCore {
         
         $splitIds = explode('-', $ids);
         $idImage = (isset($splitIds[1]) ? $splitIds[1] : $splitIds[0]);
-        $theme = ((Shop::isFeatureActive() && file_exists(_EPH_PROD_IMG_DIR_ . Image::getImgFolderStatic($idImage) . $idImage . ($type ? '-' . $type : '') . '-' . (int) $context->shop->id_theme . ($highDpi ? '2x.' : '.') . $format)) ? '-' . $context->shop->id_theme : '');
+       
         if ($this->allow == 1) {
             if($idImage > 0) {
-                $uriPath = __EPH_BASE_URI__ . $idImage . ($type ? '-' . $type : '') . $theme . '/' . $name . ($highDpi ? '2x.' : '.') . $format;
+                $uriPath = __EPH_BASE_URI__ . $idImage . ($type ? '-' . $type : '') .  '/' . $name . ($highDpi ? '2x.' : '.') . $format;
             } else {
                 $uriPath = __EPH_BASE_URI__ . 'content/img/p/'.$context->language->iso_code. ($type ? '-default-' . $type : '')  . '.'.$format;
             }
             
         } else {
-            $uriPath = _THEME_PROD_DIR_ . Image::getImgFolderStatic($idImage) . $idImage . ($type ? '-' . $type : '') . $theme . ($highDpi ? '2x.' : '.') . $format;
+            $uriPath = _THEME_PROD_DIR_ . Image::getImgFolderStatic($idImage) . $idImage . ($type ? '-' . $type : '') .  ($highDpi ? '2x.' : '.') . $format;
         }
        
         $url = $this->protocol_content . Tools::getMediaServer($uriPath) . $uriPath;
@@ -580,7 +564,7 @@ class LinkCore {
      * @param string|null  $alias
      * @param int|null     $idLang
      * @param string|null  $selectedFilters
-     * @param int|null     $idShop
+     * @param int|null     $idCompany
      * @param bool         $relativeProtocol
      *
      * @return string
@@ -588,13 +572,13 @@ class LinkCore {
      * @throws PhenyxShopException
      * @throws PhenyxShopException
      */
-    public function getCategoryLink($category, $alias = null, $idLang = null, $selectedFilters = null, $idShop = null, $relativeProtocol = false) {
+    public function getCategoryLink($category, $alias = null, $idLang = null, $selectedFilters = null, $idCompany = null, $relativeProtocol = false) {
 
         if (!$idLang) {
             $idLang = Context::getContext()->language->id;
         }
 
-        $url = $this->getBaseLink($idShop, null, $relativeProtocol) . $this->getLangLink($idLang, null, $idShop);
+        $url = $this->getBaseLink(null, $relativeProtocol) . $this->getLangLink($idLang, null, $idCompany);
 
         if (!is_object($category)) {
             $category = new Category($category, $idLang);
@@ -632,7 +616,7 @@ class LinkCore {
             $params['selected_filters'] = $selectedFilters;
         }
 
-        return $url . Performer::getInstance()->createUrl($rule, $idLang, $params, $this->allow, '', $idShop);
+        return $url . Performer::getInstance()->createUrl($rule, $idLang, $params, $this->allow, '', $idCompany);
     }
 
     /**
@@ -641,7 +625,7 @@ class LinkCore {
      * @param mixed    $supplier Supplier object (can be an ID supplier, but deprecated)
      * @param string   $alias
      * @param int      $idLang
-     * @param int|null $idShop
+     * @param int|null $idCompany
      * @param bool     $relativeProtocol
      *
      * @return string
@@ -650,20 +634,20 @@ class LinkCore {
      * @throws PhenyxShopException
      * @throws PhenyxShopException
      */
-    public function getSupplierLink($supplier, $alias = null, $idLang = null, $idShop = null, $relativeProtocol = false) {
+    public function getSupplierLink($supplier, $alias = null, $idLang = null, $idCompany = null, $relativeProtocol = false) {
 
         if (!$idLang) {
             $idLang = Context::getContext()->language->id;
         }
 
-        $url = $this->getBaseLink($idShop, null, $relativeProtocol) . $this->getLangLink($idLang, null, $idShop);
+        $url = $this->getBaseLink(null, $relativeProtocol) . $this->getLangLink($idLang, null, $idCompany);
 
         $dispatcher = Performer::getInstance();
 
         if (!is_object($supplier)) {
 
-            if ($alias !== null && !$dispatcher->hasKeyword('supplier_rule', $idLang, 'meta_keywords', $idShop) && !$dispatcher->hasKeyword('supplier_rule', $idLang, 'meta_title', $idShop)) {
-                return $url . $dispatcher->createUrl('supplier_rule', $idLang, ['id' => (int) $supplier, 'rewrite' => (string) $alias], $this->allow, '', $idShop);
+            if ($alias !== null && !$dispatcher->hasKeyword('supplier_rule', $idLang, 'meta_keywords', $idCompany) && !$dispatcher->hasKeyword('supplier_rule', $idLang, 'meta_title', $idCompany)) {
+                return $url . $dispatcher->createUrl('supplier_rule', $idLang, ['id' => (int) $supplier, 'rewrite' => (string) $alias], $this->allow, '', $idCompany);
             }
 
             $supplier = new Supplier($supplier, $idLang);
@@ -676,7 +660,7 @@ class LinkCore {
         $params['meta_keywords'] = Tools::str2url($supplier->meta_keywords);
         $params['meta_title'] = Tools::str2url($supplier->meta_title);
 
-        return $url . $dispatcher->createUrl('supplier_rule', $idLang, $params, $this->allow, '', $idShop);
+        return $url . $dispatcher->createUrl('supplier_rule', $idLang, $params, $this->allow, '', $idCompany);
     }
 
     /**
@@ -685,7 +669,7 @@ class LinkCore {
      * @param mixed    $manufacturer Manufacturer object (can be an ID supplier, but deprecated)
      * @param string   $alias
      * @param int      $idLang
-     * @param int|null $idShop
+     * @param int|null $idCompany
      * @param bool     $relativeProtocol
      *
      * @return string
@@ -694,20 +678,20 @@ class LinkCore {
      * @throws PhenyxShopException
      * @throws PhenyxShopException
      */
-    public function getManufacturerLink($manufacturer, $alias = null, $idLang = null, $idShop = null, $relativeProtocol = false) {
+    public function getManufacturerLink($manufacturer, $alias = null, $idLang = null, $idCompany = null, $relativeProtocol = false) {
 
         if (!$idLang) {
             $idLang = Context::getContext()->language->id;
         }
 
-        $url = $this->getBaseLink($idShop, null, $relativeProtocol) . $this->getLangLink($idLang, null, $idShop);
+        $url = $this->getBaseLink(null, $relativeProtocol) . $this->getLangLink($idLang, null, $idCompany);
 
         $dispatcher = Performer::getInstance();
 
         if (!is_object($manufacturer)) {
 
-            if ($alias !== null && !$dispatcher->hasKeyword('manufacturer_rule', $idLang, 'meta_keywords', $idShop) && !$dispatcher->hasKeyword('manufacturer_rule', $idLang, 'meta_title', $idShop)) {
-                return $url . $dispatcher->createUrl('manufacturer_rule', $idLang, ['id' => (int) $manufacturer, 'rewrite' => (string) $alias], $this->allow, '', $idShop);
+            if ($alias !== null && !$dispatcher->hasKeyword('manufacturer_rule', $idLang, 'meta_keywords') && !$dispatcher->hasKeyword('manufacturer_rule', $idLang, 'meta_title')) {
+                return $url . $dispatcher->createUrl('manufacturer_rule', $idLang, ['id' => (int) $manufacturer, 'rewrite' => (string) $alias], $this->allow, '');
             }
 
             $manufacturer = new Manufacturer($manufacturer, $idLang);
@@ -720,7 +704,7 @@ class LinkCore {
         $params['meta_keywords'] = Tools::str2url($manufacturer->meta_keywords);
         $params['meta_title'] = Tools::str2url($manufacturer->meta_title);
 
-        return $url . $dispatcher->createUrl('manufacturer_rule', $idLang, $params, $this->allow, '', $idShop);
+        return $url . $dispatcher->createUrl('manufacturer_rule', $idLang, $params, $this->allow, '');
     }
 
     /**
@@ -728,23 +712,23 @@ class LinkCore {
      * @param string|null $alias
      * @param null        $ssl
      * @param null        $idLang
-     * @param null        $idShop
+     * @param null        $idCompany
      * @param bool        $relativeProtocol
      *
      * @return string
      * @throws PhenyxShopException
      */
-    public function getCMSLink($cms, $alias = null, $ssl = null, $idLang = null, $idShop = null, $relativeProtocol = false) {
+    public function getCMSLink($cms, $alias = null, $ssl = null, $idLang = null, $idCompany = null, $relativeProtocol = false) {
 
         if (!$idLang) {
             $idLang = Context::getContext()->language->id;
         }
 
-        if (!$idShop) {
-            $idShop = Context::getContext()->shop->id;
+        if (!$idCompany) {
+            $idCompany = Context::getContext()->company->id;
         }
 
-        $url = $this->getBaseLink($idShop, $ssl, $relativeProtocol) . $this->getLangLink($idLang, null, $idShop);
+        $url = $this->getBaseLink($ssl, $relativeProtocol) . $this->getLangLink($idLang, null, $idCompany);
         $dispatcher = Performer::getInstance();
 
         if (!is_object($cms)) {
@@ -768,20 +752,20 @@ class LinkCore {
             $params['meta_title'] = is_array($cms->meta_title) ? Tools::str2url($cms->meta_title[(int) $idLang]) : Tools::str2url($cms->meta_title);
         }
 
-        return $url . $dispatcher->createUrl('cms_rule', $idLang, $params, $this->allow, '', $idShop);
+        return $url . $dispatcher->createUrl('cms_rule', $idLang, $params, $this->allow, '', $idCompany);
     }
 	
-	public function getFrontCMSLink($cms, $alias = null, $ssl = null, $idLang = null, $idShop = null, $relativeProtocol = false) {
+	public function getFrontCMSLink($cms, $alias = null, $ssl = null, $idLang = null,  $relativeProtocol = false) {
 
         if (!$idLang) {
             $idLang = Context::getContext()->language->id;
         }
 
-        if (!$idShop) {
-            $idShop = Context::getContext()->shop->id;
+        if (!$idCompany) {
+            $idCompany = Context::getContext()->company->id;
         }
 
-        $url = $this->getBaseFrontLink($idShop, $ssl, $relativeProtocol) . $this->getLangLink($idLang, null, $idShop);
+        $url = $this->getBaseFrontLink($idCompany, $ssl, $relativeProtocol) . $this->getLangLink($idLang, null, $idCompany);
         $dispatcher = Performer::getInstance();
 
         if (!is_object($cms)) {
@@ -805,21 +789,21 @@ class LinkCore {
             $params['meta_title'] = is_array($cms->meta_title) ? Tools::str2url($cms->meta_title[(int) $idLang]) : Tools::str2url($cms->meta_title);
         }
 
-        return $url . $dispatcher->createUrl('cms_rule', $idLang, $params, $this->allow, '', $idShop);
+        return $url . $dispatcher->createUrl('cms_rule', $idLang, $params, $this->allow, '', $idCompany);
     }
 	
 	
-	public function getPFGLink($pfg, $alias = null, $ssl = null, $idLang = null, $idShop = null, $relativeProtocol = false) {
+	public function getPFGLink($pfg, $alias = null, $ssl = null, $idLang = null, $idCompany = null, $relativeProtocol = false) {
 
         if (!$idLang) {
             $idLang = Context::getContext()->language->id;
         }
 
-        if (!$idShop) {
-            $idShop = Context::getContext()->shop->id;
+        if (!$idCompany) {
+            $idCompany = Context::getContext()->company->id;
         }
 
-        $url = $this->getBaseLink($idShop, $ssl, $relativeProtocol) . $this->getLangLink($idLang, null, $idShop);
+        $url = $this->getBaseLink($ssl, $relativeProtocol) . $this->getLangLink($idLang, null, $idCompany);
         $dispatcher = Performer::getInstance();
 
         if (!is_object($pfg)) {
@@ -831,7 +815,7 @@ class LinkCore {
         $params['id'] = $pfg->id;
         $params['rewrite'] = (!$alias) ? (is_array($pfg->link_rewrite) ? $pfg->link_rewrite[(int) $idLang] : $pfg->link_rewrite) : $alias;
 
-        return $url . $dispatcher->createUrl('pfg_rule', $idLang, $params, $this->allow, '', $idShop);
+        return $url . $dispatcher->createUrl('pfg_rule', $idLang, $params, $this->allow, '', $idCompany);
     }
 	
 	
@@ -886,23 +870,23 @@ class LinkCore {
      * @param int|CMSCategory $cmsCategory
      * @param string|null     $alias
      * @param int|null        $idLang
-     * @param int|null        $idShop
+     * @param int|null        $idCompany
      * @param bool            $relativeProtocol
      *
      * @return string
      * @throws PhenyxShopException
      */
-    public function getCMSCategoryLink($cmsCategory, $alias = null, $idLang = null, $idShop = null, $relativeProtocol = false) {
+    public function getCMSCategoryLink($cmsCategory, $alias = null, $idLang = null, $idCompany = null, $relativeProtocol = false) {
 
         if (empty($idLang)) {
             $idLang = Context::getContext()->language->id;
         }
 
-        if (empty($idShop)) {
-            $idShop = Context::getContext()->shop->id;
+        if (empty($idCompany)) {
+            $idCompany = Context::getContext()->company->id;
         }
 
-        $url = $this->getBaseLink($idShop, null, $relativeProtocol) . $this->getLangLink($idLang, null, $idShop);
+        $url = $this->getBaseLink(null, $relativeProtocol) . $this->getLangLink($idLang, null, $idCompany);
         $dispatcher = Performer::getInstance();
 
         if (!is_object($cmsCategory)) {
@@ -935,7 +919,7 @@ class LinkCore {
             $params['categories'] = $this->findCMSCategorySubcategories($idParent, $idLang);
         }
 
-        return $url . $dispatcher->createUrl('cms_category_rule', $idLang, $params, $this->allow, '', $idShop);
+        return $url . $dispatcher->createUrl('cms_category_rule', $idLang, $params, $this->allow, '', $idCompany);
     }
 
     /**
@@ -967,7 +951,7 @@ class LinkCore {
      * @param array    $params
      * @param null     $ssl
      * @param int      $idLang
-     * @param int|null $idShop
+     * @param int|null $idCompany
      * @param bool     $relativeProtocol
      *
      * @return string
@@ -976,13 +960,13 @@ class LinkCore {
      * @version  1.0.0 Initial version
      * @throws PhenyxShopException
      */
-    public function getModuleLink($module, $controller = 'default', array $params = [], $ssl = null, $idLang = null, $idShop = null, $relativeProtocol = false) {
+    public function getModuleLink($module, $controller = 'default', array $params = [], $ssl = null, $idLang = null,  $relativeProtocol = false) {
 
         if (!$idLang) {
             $idLang = Context::getContext()->language->id;
         }
 
-        $url = $this->getBaseLink($idShop, $ssl, $relativeProtocol) . $this->getLangLink($idLang, null, $idShop);
+        $url = $this->getBaseLink($ssl, $relativeProtocol) . $this->getLangLink($idLang, null);
 
         // Set available keywords
         $params['module'] = $module;
@@ -990,10 +974,10 @@ class LinkCore {
 
         // If the module has its own route ... just use it !
 
-        if (Performer::getInstance()->hasRoute('module-' . $module . '-' . $controller, $idLang, $idShop)) {
+        if (Performer::getInstance()->hasRoute('module-' . $module . '-' . $controller, $idLang)) {
             return $this->getPageLink('module-' . $module . '-' . $controller, $ssl, $idLang, $params);
         } else {
-            return $url . Performer::getInstance()->createUrl('module', $idLang, $params, $this->allow, '', $idShop);
+            return $url . Performer::getInstance()->createUrl('module', $idLang, $params, $this->allow, '');
         }
 
     }
@@ -1001,7 +985,7 @@ class LinkCore {
     
     
 	
-	public function getFrontPageLink($controller, $ssl = null, $idLang = null, $request = null, $requestUrlEncode = false, $idShop = null, $relativeProtocol = false) {
+	public function getFrontPageLink($controller, $ssl = null, $idLang = null, $request = null, $requestUrlEncode = false,  $relativeProtocol = false) {
 
         //If $controller contains '&' char, it means that $controller contains request data and must be parsed first
         $p = strpos($controller, '&');
@@ -1043,9 +1027,9 @@ class LinkCore {
             
         }
 
-        $uriPath = Performer::getInstance()->createUrl($controller, $idLang, $request, false, '', $idShop);
+        $uriPath = Performer::getInstance()->createUrl($controller, $idLang, $request, false, '');
 
-        return $this->getBaseFrontLink($idShop, $ssl, $relativeProtocol) . $this->getLangLink($idLang, null, $idShop) . ltrim($uriPath, '/');
+        return $this->getBaseFrontLink($ssl, $relativeProtocol) . $this->getLangLink($idLang, null) . ltrim($uriPath, '/');
     }
 	
 	
@@ -1284,7 +1268,7 @@ class LinkCore {
 
    
 
-    public static function getStaticBaseLink($id_shop = null, $ssl = null, $relative_protocol = false) {
+    public static function getStaticBaseLink($id_company = null, $ssl = null, $relative_protocol = false) {
 
         $ssl = (Configuration::get('EPH_SSL_ENABLED') && Configuration::get('EPH_SSL_ENABLED_EVERYWHERE'));
         $shop = Context::getContext()->shop;
@@ -1293,7 +1277,7 @@ class LinkCore {
         return $base . $shop->getBaseURI();
     }
 
-    public static function getStaticLangLink($id_lang = null, Context $context = null, $id_shop = null) {
+    public static function getStaticLangLink($id_lang = null, Context $context = null, $id_company = null) {
 
         if (!$context) {
             $context = Context::getContext();
@@ -1301,7 +1285,7 @@ class LinkCore {
 
         $allow = (int) Configuration::get('EPH_REWRITING_SETTINGS');
 
-        if ((!$allow && in_array($id_shop, [$context->shop->id, null])) || !Language::isMultiLanguageActivated($id_shop) || !(int) Configuration::get('EPH_REWRITING_SETTINGS', null, null, $id_shop)) {
+        if ((!$allow && in_array($id_company, [$context->company->id, null])) || !Language::isMultiLanguageActivated($id_company) || !(int) Configuration::get('EPH_REWRITING_SETTINGS', null, null, $id_company)) {
             return '';
         }
 

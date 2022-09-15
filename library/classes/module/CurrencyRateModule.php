@@ -252,7 +252,7 @@ abstract class CurrencyRateModuleCore extends Module
         $sql = new DbQuery();
         $sql->select('m.`id_module`, m.`name`');
         $sql->from('module', 'm');
-        $sql->leftJoin('hook_module', 'hm', 'hm.`id_module` = m.`id_module` '.Shop::addSqlRestriction(false, 'hm'));
+        $sql->leftJoin('hook_module', 'hm', 'hm.`id_module` = m.`id_module` ');
         $sql->leftJoin('hook', 'h', 'hm.`id_hook` = h.`id_hook`');
         $sql->innerJoin('module_shop', 'ms', 'm.`id_module` = ms.`id_module`');
         $sql->where('ms.`id_shop` = '.(int) Context::getContext()->shop->id);

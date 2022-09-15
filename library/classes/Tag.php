@@ -5,11 +5,11 @@
  *
  * @since 1.9.1.0
  */
-class TagCore extends ObjectModel {
+class TagCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'tag',
@@ -180,7 +180,7 @@ class TagCore extends ObjectModel {
 
         if (is_array($array)) {
             $array = array_map('intval', $array);
-            $result &= ObjectModel::updateMultishopTable('Product', ['indexed' => 0], 'a.id_product IN (' . implode(',', $array) . ')');
+            $result &= PhenyxObjectModel::updateMultishopTable('Product', ['indexed' => 0], 'a.id_product IN (' . implode(',', $array) . ')');
             $ids = [];
 
             foreach ($array as $idProduct) {
@@ -226,28 +226,28 @@ class TagCore extends ObjectModel {
             }
 
             Db::getInstance()->execute(
-                'REPLACE INTO `' . _DB_PREFIX_ . 'tag_count` (id_group, id_tag, id_lang, id_shop, counter)
-            SELECT cg.id_group, pt.id_tag, pt.id_lang, id_shop, COUNT(pt.id_tag) AS times
+                'REPLACE INTO `' . _DB_PREFIX_ . 'tag_count` (id_group, id_tag, id_lang,  counter)
+            SELECT cg.id_group, pt.id_tag, pt.id_lang,  COUNT(pt.id_tag) AS times
                 FROM `' . _DB_PREFIX_ . 'product_tag` pt
-                INNER JOIN `' . _DB_PREFIX_ . 'product_shop` product_shop
+                INNER JOIN `' . _DB_PREFIX_ . 'product` p
                     USING (id_product)
                 JOIN (SELECT DISTINCT id_group FROM `' . _DB_PREFIX_ . 'category_group`) cg
-                WHERE product_shop.`active` = 1
+                WHERE p.`active` = 1
                 AND EXISTS(SELECT 1 FROM `' . _DB_PREFIX_ . 'category_product` cp
                                 LEFT JOIN `' . _DB_PREFIX_ . 'category_group` cgo ON (cp.`id_category` = cgo.`id_category`)
-                                WHERE cgo.`id_group` = cg.id_group AND product_shop.`id_product` = cp.`id_product`)
+                                WHERE cgo.`id_group` = cg.id_group AND p.`id_product` = cp.`id_product`)
                 ' . $tagListQuery . '
                 GROUP BY pt.id_tag, pt.id_lang, cg.id_group, id_shop ORDER BY NULL'
             );
             Db::getInstance()->execute(
-                'REPLACE INTO `' . _DB_PREFIX_ . 'tag_count` (id_group, id_tag, id_lang, id_shop, counter)
-            SELECT 0, pt.id_tag, pt.id_lang, id_shop, COUNT(pt.id_tag) AS times
+                'REPLACE INTO `' . _DB_PREFIX_ . 'tag_count` (id_group, id_tag, id_lang, counter)
+            SELECT 0, pt.id_tag, pt.id_lang,  COUNT(pt.id_tag) AS times
                 FROM `' . _DB_PREFIX_ . 'product_tag` pt
-                INNER JOIN `' . _DB_PREFIX_ . 'product_shop` product_shop
+                INNER JOIN `' . _DB_PREFIX_ . 'product` p
                     USING (id_product)
-                WHERE product_shop.`active` = 1
+                WHERE p.`active` = 1
                 ' . $tagListQuery . '
-                GROUP BY pt.id_tag, pt.id_lang, id_shop ORDER BY NULL'
+                GROUP BY pt.id_tag, pt.id_lang ORDER BY NULL'
             );
         }
 
@@ -278,7 +278,7 @@ class TagCore extends ObjectModel {
                     ->leftJoin('tag', 't', 't.`id_tag` = pt.`id_tag`')
                     ->where('pt.`id_group` ' . (count($groups) ? 'IN (' . implode(',', $groups) . ')' : '= 1'))
                     ->where('pt.`id_lang` = ' . (int) $idLang)
-                    ->where('pt.`id_shop` = ' . (int) $context->shop->id)
+                    ->where('pt.`id_shop` = ' . (int) $context->company->id)
                     ->orderBy('`times` DESC')
                     ->limit((int) $nb)
             );
@@ -290,7 +290,7 @@ class TagCore extends ObjectModel {
                     ->leftJoin('tag', 't', 't.`id_tag` = pt.`id_tag`')
                     ->where('pt.`id_group` = 0')
                     ->where('pt.`id_lang` = ' . (int) $idLang)
-                    ->where('pt.`id_shop` = ' . (int) $context->shop->id)
+                    ->where('pt.`id_shop` = ' . (int) $context->company->id)
                     ->orderBy('`times` DESC')
                     ->limit((int) $nb)
             );

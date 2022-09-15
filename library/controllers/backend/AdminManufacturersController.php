@@ -482,7 +482,7 @@ class AdminManufacturersControllerCore extends AdminController {
 
                         }
 
-                        $currentLogoFile = _EPH_TMP_IMG_DIR_ . 'manufacturer_mini_' . $this->object->id . '_' . $this->context->shop->id . '.jpg';
+                        $currentLogoFile = _EPH_TMP_IMG_DIR_ . 'manufacturer_mini_' . $this->object->id . '_' . $this->context->company->id . '.jpg';
                     }
 
                 }
@@ -623,7 +623,7 @@ class AdminManufacturersControllerCore extends AdminController {
 
                     }
 
-                    $currentLogoFile = _EPH_TMP_IMG_DIR_ . 'manufacturer_mini_' . $this->object->id . '_' . $this->context->shop->id . '.jpg';
+                    $currentLogoFile = _EPH_TMP_IMG_DIR_ . 'manufacturer_mini_' . $this->object->id . '_' . $this->context->company->id . '.jpg';
                 }
 
             }
@@ -741,7 +741,7 @@ class AdminManufacturersControllerCore extends AdminController {
 
             }
 
-            $currentLogoFile = _EPH_TMP_IMG_DIR_ . 'manufacturer_mini_' . $idManufacturer . '_' . $this->context->shop->id . '.jpg';
+            $currentLogoFile = _EPH_TMP_IMG_DIR_ . 'manufacturer_mini_' . $idManufacturer . '_' . $this->context->company->id . '.jpg';
 
             if ($res && file_exists($currentLogoFile)) {
                 unlink($currentLogoFile);

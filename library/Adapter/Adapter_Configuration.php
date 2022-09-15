@@ -6,8 +6,8 @@
  * @since 1.9.1.0
  */
 // @codingStandardsIgnoreStart
-class Adapter_Configuration implements Core_Business_ConfigurationInterface
-{
+class Adapter_Configuration implements Core_Business_ConfigurationInterface {
+
     // @codingStandardsIgnoreEnd
 
     /**
@@ -20,12 +20,14 @@ class Adapter_Configuration implements Core_Business_ConfigurationInterface
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function get($key)
-    {
+    public function get($key) {
+
         if (defined($key)) {
             return constant($key);
         } else {
             return Configuration::get($key);
         }
+
     }
+
 }

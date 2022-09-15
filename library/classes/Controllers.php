@@ -5,11 +5,11 @@
  *
  * @since 1.9.1.0
  */
-class ControllersCore extends ObjectModel {
+class ControllersCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'controllers',

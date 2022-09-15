@@ -5,7 +5,7 @@
  *
  * @since 2.1.0.0
  */
-class CountryCore extends ObjectModel {
+class CountryCore extends PhenyxObjectModel {
 
 	// @codingStandardsIgnoreStart
 	protected static $_idZones = [];
@@ -39,7 +39,7 @@ class CountryCore extends ObjectModel {
 	public $currency_name;
 
 	/**
-	 * @see ObjectModel::$definition
+	 * @see PhenyxObjectModel::$definition
 	 */
 	public static $definition = [
 		'table'        => 'country',
@@ -95,7 +95,7 @@ class CountryCore extends ObjectModel {
 	}
 
 	/**
-	 * @param int $idShop
+	 * @param int $idCompany
 	 * @param int $idLang
 	 *
 	 * @return array|false|mysqli_result|null|PDOStatement|resource
@@ -104,13 +104,13 @@ class CountryCore extends ObjectModel {
 	 * @throws PhenyxShopException
 	 * @since 2.1.0.0
 	 */
-	public static function getCountriesByIdShop($idShop, $idLang) {
+	public static function getCountriesByIdShop($idCompany, $idLang) {
 
 		return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
 			(new DbQuery())
 				->select('*')
 				->from('country', 'c')
-				->leftJoin('country_shop', 'cs', 'cs.`id_country` = c.`id_country` AND cs.`id_shop` = ' . (int) $idShop . ' AND cs.`id_lang` = ' . (int) $idLang)
+				->leftJoin('country_shop', 'cs', 'cs.`id_country` = c.`id_country` AND cs.`id_shop` = ' . (int) $idCompany . ' AND cs.`id_lang` = ' . (int) $idLang)
 				->leftJoin('country_lang', 'cl', 'cl.`id_country` = c.`id_country`')
 		);
 	}
@@ -534,9 +534,7 @@ class CountryCore extends ObjectModel {
 	 */
 	public static function addModuleRestrictions(array $shops = [], array $countries = [], array $modules = []) {
 
-		if (!count($shops)) {
-			$shops = Shop::getShops(true, null, true);
-		}
+		
 
 		if (!count($countries)) {
 			$countries = Country::getCountries((int) Context::getContext()->cookie->id_lang);
@@ -548,14 +546,13 @@ class CountryCore extends ObjectModel {
 
 		$insert = [];
 
-		foreach ($shops as $idShop) {
+		foreach ($shops as $idCompany) {
 
 			foreach ($countries as $country) {
 
 				foreach ($modules as $module) {
 					$insert[] = [
 						'id_module'  => (int) $module['id_module'],
-						'id_shop'    => (int) $idShop,
 						'id_country' => (int) $country['id_country'],
 					];
 				}

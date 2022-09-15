@@ -1,6 +1,6 @@
 <?php
 
-class PFGModelCore extends ObjectModel {
+class PFGModelCore extends PhenyxObjectModel {
 
 	public $send_mail_to;
 	public $action_sender;
