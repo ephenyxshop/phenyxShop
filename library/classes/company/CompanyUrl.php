@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class CompanyUrlCore extends ObjectModel {
+class CompanyUrlCore extends PhenyxObjectModel {
 
    
     public $id_company;
@@ -29,11 +29,11 @@ class CompanyUrlCore extends ObjectModel {
     protected static $main_domain_ssl = [];
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'company_url',
-        'primary' => 'id_cpmpany_url',
+        'primary' => 'id_company_url',
         'fields'  => [
             'active'       => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
             'main'         => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],

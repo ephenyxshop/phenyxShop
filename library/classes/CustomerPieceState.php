@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class CustomerPieceStateCore extends ObjectModel {
+class CustomerPieceStateCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var string Name */
@@ -41,7 +41,7 @@ class CustomerPieceStateCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'customer_piece_state',

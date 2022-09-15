@@ -6,7 +6,7 @@
  *
  * @since 1.9.1.0
  */
-class SupplyOrderDetailCore extends ObjectModel
+class SupplyOrderDetailCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     /**
@@ -123,7 +123,7 @@ class SupplyOrderDetailCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'supply_order_detail',
@@ -155,7 +155,7 @@ class SupplyOrderDetailCore extends ObjectModel
     ];
 
     /**
-     * @see ObjectModel::$webserviceParameters
+     * @see PhenyxObjectModel::$webserviceParameters
      */
     protected $webserviceParameters = [
         'objectsNodeName' => 'supply_order_details',
@@ -171,7 +171,7 @@ class SupplyOrderDetailCore extends ObjectModel
     ];
 
     /**
-     * @see ObjectModel::update()
+     * @see PhenyxObjectModel::update()
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
@@ -184,7 +184,7 @@ class SupplyOrderDetailCore extends ObjectModel
     }
 
     /**
-     * @see ObjectModel::add()
+     * @see PhenyxObjectModel::add()
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
@@ -229,7 +229,7 @@ class SupplyOrderDetailCore extends ObjectModel
 
     /**
      * Applies a global order discount rate, for the current product (i.e detail)
-     * Calls ObjectModel::update()
+     * Calls PhenyxObjectModel::update()
      *
      * @param float|int $discountRate The discount rate in percent (Ex. 5 for 5 percents)
      *
@@ -253,7 +253,7 @@ class SupplyOrderDetailCore extends ObjectModel
     }
 
     /**
-     * @see ObjectModel::validateController()
+     * @see PhenyxObjectModel::validateController()
      *
      * @param bool $htmlentities Optional
      *
@@ -327,7 +327,7 @@ class SupplyOrderDetailCore extends ObjectModel
     }
 
     /**
-     * @see ObjectModel::hydrate()
+     * @see PhenyxObjectModel::hydrate()
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version

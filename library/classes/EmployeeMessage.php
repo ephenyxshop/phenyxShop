@@ -6,7 +6,7 @@ use \Curl\Curl;
  *
  * @since 1.8.1.0
  */
-class EmployeeMessageCore extends ObjectModel {
+class EmployeeMessageCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var int $id_customer_thread */
@@ -26,7 +26,7 @@ class EmployeeMessageCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'employee_message',
@@ -114,7 +114,7 @@ class EmployeeMessageCore extends ObjectModel {
                     ->select('COUNT(*)')
                     ->from('customer_message')
                     ->leftJoin('customer_thread', 'ct', 'cm.`id_customer_thread` = ct.`id_customer_thread`')
-                    ->where('1 ' . Shop::addSqlRestriction())
+                    ->where('1')
             );
         } else {
             return (int) Db::getInstance()->getValue(
@@ -122,7 +122,7 @@ class EmployeeMessageCore extends ObjectModel {
                     ->select('COUNT(*)')
                     ->from('customer_message', 'cm')
                     ->leftJoin('customer_thread', 'ct', 'cm.`id_customer_thread` = ct.`id_customer_thread`')
-                    ->where($where . Shop::addSqlRestriction())
+                    ->where($where)
             );
         }
 

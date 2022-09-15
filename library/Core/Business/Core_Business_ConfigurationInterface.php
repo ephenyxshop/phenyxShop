@@ -6,8 +6,7 @@
  * @since 1.9.1.0
  */
 // @codingStandardsIgnoreStart
-interface Core_Business_ConfigurationInterface
-{
+interface Core_Business_ConfigurationInterface {
     // @codingStandardsIgnoreEnd
 
     /**

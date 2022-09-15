@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class EmployeeMenuCore extends ObjectModel {
+class EmployeeMenuCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     protected static $_getIdFromClassName = null;
@@ -51,7 +51,7 @@ class EmployeeMenuCore extends ObjectModel {
 	public $accesses;
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'employee_menu',
@@ -875,7 +875,7 @@ class EmployeeMenuCore extends ObjectModel {
     /**
      * Overrides update to set position to last when changing parent tab
      *
-     * @see     ObjectModel::update
+     * @see     PhenyxObjectModel::update
      *
      * @param bool $nullValues
      *

@@ -1,6 +1,6 @@
 <?php
 
-class FrontParallaxCore extends ObjectModel {
+class FrontParallaxCore extends PhenyxObjectModel {
 
     public $id;
     public $id_xprtparrallaxblocktbl;
@@ -89,7 +89,7 @@ class FrontParallaxCore extends ObjectModel {
         return (is_numeric($position)) ? $position : -1;
     }
 
-    public static function GetParrallaxBlock($hook = NULL, $id_lang = NULL, $id_shop = NULL) {
+    public static function GetParrallaxBlock($hook = NULL, $id_lang = NULL, $id_company = NULL) {
 
         if ($hook == NULL) {
             return false;
@@ -99,10 +99,7 @@ class FrontParallaxCore extends ObjectModel {
             $id_lang = (int) Context::getContext()->language->id;
         }
 
-        if ($id_shop == NULL) {
-            $id_shop = (int) Context::getContext()->shop->id;
-        }
-
+        
         $sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'xprtparrallaxblocktbl x INNER JOIN
                 ' . _DB_PREFIX_ . 'xprtparrallaxblocktbl_lang xl ON x.id_xprtparrallaxblocktbl=xl.id_xprtparrallaxblocktbl
                 AND x.active= 1 AND x.hook = "' . $hook . '"';

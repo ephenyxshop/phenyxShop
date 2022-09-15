@@ -7,7 +7,7 @@ use \GuzzleHttp\Exception\RequestException;
  *
  * @since 1.9.1.0
  */
-class EmployeeCore extends ObjectModel {
+class EmployeeCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var string Determine employee profile */
@@ -66,7 +66,7 @@ class EmployeeCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'employee',
@@ -118,16 +118,16 @@ class EmployeeCore extends ObjectModel {
      *
      * @param int|null $id
      * @param int|null $idLang
-     * @param int|null $idShop
+     * @param int|null $idCompany
      *
      * @throws PhenyxShopDatabaseException
      * @throws PhenyxShopException
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function __construct($id = null, $idLang = null, $idShop = null) {
+    public function __construct($id = null, $idLang = null, $idCompany = null) {
 
-        parent::__construct($id, null, $idShop);
+        parent::__construct($id, null, $idCompany);
 
         if (!is_null($idLang)) {
             $this->id_lang = (int) (Language::getLanguage($idLang) !== false) ? $idLang : Configuration::get('EPH_LANG_DEFAULT');
@@ -235,7 +235,7 @@ class EmployeeCore extends ObjectModel {
     }
 
     /**
-     * @see     ObjectModel::getFields()
+     * @see     PhenyxObjectModel::getFields()
      * @return array
      *
      * @since 1.9.1.0
@@ -317,7 +317,7 @@ class EmployeeCore extends ObjectModel {
                                 'activity' => Configuration::get('EPH_SHOP_ACTIVITY'),
                                 'country'  => $context->country->iso_code,
                                 'language' => $context->language->iso_code,
-                                'URL'      => $context->shop->getBaseURL(),
+                                'URL'      => $context->company->getBaseURL(),
                             ],
                         ]
                     )->getBody();
@@ -661,14 +661,14 @@ class EmployeeCore extends ObjectModel {
     /**
      * Check if the employee is associated to a specific shop
      *
-     * @param int $idShop
+     * @param int $idCompany
      *
      * @return bool
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function hasAuthOnShop($idShop) {
+    public function hasAuthOnShop($idCompany) {
 
         return $this->isSuperAdmin();
     }
@@ -676,14 +676,14 @@ class EmployeeCore extends ObjectModel {
     /**
      * Check if the employee is associated to a specific shop group
      *
-     * @param int $idShopGroup
+     * @param int $idCompanyGroup
      *
      * @return bool
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function hasAuthOnShopGroup($idShopGroup) {
+    public function hasAuthOnShopGroup($idCompanyGroup) {
 
         if ($this->isSuperAdmin()) {
             return true;

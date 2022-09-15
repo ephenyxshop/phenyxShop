@@ -967,7 +967,6 @@ class AdminCustomersControllerCore extends AdminController {
 			'countries'       => Country::getCountries($this->context->language->id, false),
 			'default_country' => Configuration::get('EPH_COUNTRY_DEFAULT'),
 			'taxes'           => Tax::getRulesTaxes($this->context->language->id),
-			'tarifs'          => Customer::getTarifs(),
 			'genders'         => Gender::getGenders(),
 			'paymentModes'    => PaymentMode::getPaymentModes(),
 			'groups'          => $groups,
@@ -1010,8 +1009,6 @@ class AdminCustomersControllerCore extends AdminController {
 			]);
 
 			$genders = Gender::getGenders();
-
-			$tarifs = Customer::getTarifs();
 
 			$groups = Group::getGroups($this->default_form_language, true);
 
@@ -1073,9 +1070,9 @@ class AdminCustomersControllerCore extends AdminController {
 				$image = _EPH_EMPLOYEE_IMG_DIR_ . $employee->id . '.jpg';
 
 				if (file_exists($image)) {
-					$imageUrl = $this->context->link->getBaseFrontLink() . 'img/e/' . $employee->id . '.jpg';
+					$imageUrl = $this->context->link->getBaseFrontLink() . 'content/img/e/' . $employee->id . '.jpg';
 				} else {
-					$imageUrl = $this->context->link->getBaseFrontLink() . 'img/e/Unknown.png';
+					$imageUrl = $this->context->link->getBaseFrontLink() . 'content/img/e/Unknown.png';
 				}
 
 				$themes = [];
@@ -1109,7 +1106,6 @@ class AdminCustomersControllerCore extends AdminController {
 				'countries'              => Country::getCountries($this->context->language->id, false),
 				'default_country'        => Configuration::get('EPH_COUNTRY_DEFAULT'),
 				'taxes'                  => Tax::getRulesTaxes($this->context->language->id),
-				'tarifs'                 => Customer::getTarifs(),
 				'genders'                => Gender::getGenders(),
 				'paymentModes'           => PaymentMode::getPaymentModes(),
 				'addresses'              => [$address],
@@ -1782,7 +1778,6 @@ class AdminCustomersControllerCore extends AdminController {
 					$sql = 'SELECT pa.`id_education_attribute`, pa.`reference`, pa.`id_formatpack`, pa.`days`, ag.`id_attribute_group`, pai.`id_image`, agl.`name` AS group_name, al.`name` AS attribute_name,
 						a.`id_attribute`
 					FROM `' . _DB_PREFIX_ . 'education_attribute` pa
-					' . Shop::addSqlAssociation('education_attribute', 'pa') . '
 					LEFT JOIN `' . _DB_PREFIX_ . 'education_attribute_combination` pac ON pac.`id_education_attribute` = pa.`id_education_attribute`
 					LEFT JOIN `' . _DB_PREFIX_ . 'attribute` a ON a.`id_attribute` = pac.`id_attribute`
 					LEFT JOIN `' . _DB_PREFIX_ . 'attribute_group` ag ON ag.`id_attribute_group` = a.`id_attribute_group`

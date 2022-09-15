@@ -6,7 +6,7 @@
  * @since   1.8.1.0
  * @version 1.8.5.0
  */
-class AttributesCore extends ObjectModel {
+class AttributesCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var int Group id which attribute belongs */
@@ -22,7 +22,7 @@ class AttributesCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'attribute',
@@ -53,7 +53,7 @@ class AttributesCore extends ObjectModel {
      *
      * @param null $id
      * @param null $idLang
-     * @param null $idShop
+     * @param null $idCompany
      *
      * @since   1.8.1.0
      * @version 1.8.5.0
@@ -101,7 +101,7 @@ class AttributesCore extends ObjectModel {
      */
     public function delete() {
 
-        if (!$this->hasMultishopEntries() || Shop::getContext() == Shop::CONTEXT_ALL) {
+        
             $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('`id_product_attribute`')
@@ -150,7 +150,7 @@ class AttributesCore extends ObjectModel {
 
             /* Reinitializing position */
             $this->cleanPositions((int) $this->id_attribute_group);
-        }
+       
 
         $return = parent::delete();
 
@@ -249,24 +249,14 @@ class AttributesCore extends ObjectModel {
      */
     public static function checkAttributeQty($idProductAttribute, $qty, Shop $shop = null) {
 
-        if (!$shop) {
-            $shop = Context::getContext()->shop;
-        }
+        
 
-        $result = StockAvailable::getQuantityAvailableByProduct(null, (int) $idProductAttribute, $shop->id);
+        $result = StockAvailable::getQuantityAvailableByProduct(null, (int) $idProductAttribute);
 
         return ($result && $qty <= $result);
     }
 
-    /**
-     * @deprecated 1.0.0, use StockAvailable::getQuantityAvailableByProduct()
-     */
-    public static function getAttributeQty($idProduct) {
-
-        Tools::displayAsDeprecated();
-
-        return StockAvailable::getQuantityAvailableByProduct($idProduct);
-    }
+    
 
     /**
      * Update array with veritable quantity
@@ -332,8 +322,7 @@ class AttributesCore extends ObjectModel {
         $minimalQuantity = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('`minimal_quantity`')
-                ->from('product_attribute_shop', 'pas')
-                ->where('`id_shop` = ' . (int) Context::getContext()->shop->id)
+                ->from('product_attribute', 'pas')
                 ->where('`id_product_attribute` = ' . (int) $idProductAttribute)
         );
 

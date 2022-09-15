@@ -672,7 +672,7 @@ class AdminBackUsersControllerCore extends AdminController {
         }
 
         die('Form language updated.');
-    }
+    }   
 
     protected function ajaxProcessToggleMenu() {
 
@@ -704,21 +704,6 @@ class AdminBackUsersControllerCore extends AdminController {
         return !count($this->errors) ? true : false;
     }
 
-    protected function afterImageUpload() {
-
-        parent::afterImageUpload();
-
-        if (($id_employee = (int) Tools::getValue('id_employy')) &&
-            isset($_FILES) && count($_FILES) && file_exists(_EPH_EMPLOYEE_IMG_DIR_ . $id_employee . '.jpg')) {
-            $current_file = _EPH_TMP_IMG_DIR_ . 'emplyee_mini_' . $id_employee . '_' . $this->context->shop->id . '.jpg';
-
-            if (file_exists($current_file)) {
-                unlink($current_file);
-            }
-
-        }
-
-        return true;
-    }
+    
 
 }

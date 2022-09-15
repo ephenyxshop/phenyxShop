@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class CustomerThreadCore extends ObjectModel {
+class CustomerThreadCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var int $id_contact */
@@ -29,7 +29,7 @@ class CustomerThreadCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'customer_thread',
@@ -37,7 +37,6 @@ class CustomerThreadCore extends ObjectModel {
         'fields'  => [
             'id_lang'     => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true],
             'id_contact'  => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true],
-            'id_shop'     => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],
             'id_customer' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],
             'id_order'    => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],
             'id_product'  => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],
@@ -48,32 +47,7 @@ class CustomerThreadCore extends ObjectModel {
             'date_upd'    => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
         ],
     ];
-    protected $webserviceParameters = [
-        'fields'       => [
-            'id_lang'     => [
-                'xlink_resource' => 'languages',
-            ],
-            'id_shop'     => [
-                'xlink_resource' => 'shops',
-            ],
-            'id_customer' => [
-                'xlink_resource' => 'customers',
-            ],
-            'id_order'    => [
-                'xlink_resource' => 'orders',
-            ],
-            'id_product'  => [
-                'xlink_resource' => 'products',
-            ],
-        ],
-        'associations' => [
-            'customer_messages' => [
-                'resource' => 'customer_message',
-                'id'       => ['required' => true],
-            ],
-        ],
-    ];
-
+    
     /**
      * @param int      $idCustomer
      * @param int|null $read
@@ -122,7 +96,6 @@ class CustomerThreadCore extends ObjectModel {
                 ->select('cm.`id_customer_thread`')
                 ->from('customer_thread', 'cm')
                 ->where('cm.`email` = \'' . pSQL($email) . '\'')
-                ->where('cm.`id_shop` = ' . (int) Context::getContext()->shop->id)
                 ->where('cm.`id_order` = ' . (int) $idOrder)
         );
     }
@@ -140,12 +113,12 @@ class CustomerThreadCore extends ObjectModel {
         return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('cl.*, COUNT(*) as `total`')
-                ->select('(SELECT `id_customer_thread` FROM `' . _DB_PREFIX_ . 'customer_thread` ct2 WHERE status = "open" AND ct.`id_contact` = ct2.`id_contact` ' . Shop::addSqlRestriction() . ' ORDER BY `date_upd` ASC LIMIT 1) AS `id_customer_thread`')
+                ->select('(SELECT `id_customer_thread` FROM `' . _DB_PREFIX_ . 'customer_thread` ct2 WHERE status = "open" AND ct.`id_contact` = ct2.`id_contact`  ORDER BY `date_upd` ASC LIMIT 1) AS `id_customer_thread`')
                 ->from('customer_thread', 'ct')
                 ->leftJoin('contact_lang', 'cl', 'cl.`id_contact` = ct.`id_contact` AND cl.`id_lang` = ' . (int) Context::getContext()->language->id)
                 ->where('ct.`status` = "open"')
                 ->where('ct.`id_contact` IS NOT NULL')
-                ->where('cl.`id_contact` IS NOT NULL ' . Shop::addSqlRestriction())
+                ->where('cl.`id_contact` IS NOT NULL')
                 ->groupBy('ct.`id_contact`')
                 ->having('COUNT(*) > 0')
         );
@@ -166,7 +139,7 @@ class CustomerThreadCore extends ObjectModel {
             (new DbQuery())
                 ->select('COUNT(*)')
                 ->from('customer_thread')
-                ->where(($where ?: '1') . ' ' . Shop::addSqlRestriction())
+                ->where(($where ?: '1'))
         );
     }
 

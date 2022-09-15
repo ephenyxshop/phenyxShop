@@ -179,20 +179,19 @@ abstract class ModuleCore {
             // If cache is not generated, we generate it
 
             if (static::$modules_cache == null && !is_array(static::$modules_cache)) {
-                $idShop = (Validate::isLoadedObject($this->context->shop) ? $this->context->shop->id : Configuration::get('EPH_SHOP_DEFAULT'));
+               
 
                 static::$modules_cache = [];
                 // Join clause is done to check if the module is activated in current shop context
                 $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                     (new DbQuery())
-                        ->select('m.`id_module`, m.`name`, ms.`id_module` AS `mshop`')
+                        ->select('m.`id_module`, m.`name`, m.`active`')
                         ->from('module', 'm')
-                        ->leftJoin('module_shop', 'ms', 'ms.`id_module` = m.`id_module` AND ms.`id_shop` = ' . (int) $idShop)
                 );
 
                 foreach ($result as $row) {
                     static::$modules_cache[$row['name']] = $row;
-                    static::$modules_cache[$row['name']]['active'] = ($row['mshop'] > 0) ? 1 : 0;
+                    static::$modules_cache[$row['name']]['active'] = $row['active'];
                 }
 
             }
@@ -873,7 +872,7 @@ abstract class ModuleCore {
         $modulesInstalled = [];
         $result = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
-                ->select('m.`name`, m.`version`, mp.`interest`')
+                ->select('m.`name`, m.`version`, m.active, mp.`interest`')
                 ->from('module', 'm')
                 ->leftJoin('module_preference', 'mp', 'mp.`module` = m.`name` AND mp.`id_employee` = ' . (int) $idEmployee)
         );
@@ -1064,7 +1063,7 @@ abstract class ModuleCore {
         // Get modules information from database
 
         if (!empty($moduleNameList)) {
-            $list = Shop::getContextListShopID();
+            $list = [Context::getContext()->company->id];
             $results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
                     ->select('m.`id_module`, m.`name`, COUNT(m.`id_module`) AS `total`')
@@ -1160,7 +1159,7 @@ abstract class ModuleCore {
                 $module->installed = true;
                 $module->database_version = $modulesInstalled[$module->name]['version'];
                 $module->interest = $modulesInstalled[$module->name]['interest'];
-                $module->enable_device = $modulesInstalled[$module->name]['enable_device'];
+                $module->enable_device = $modulesInstalled[$module->name]['active'];
             } else {
                 $module->installed = false;
                 $module->database_version = 0;
@@ -1455,20 +1454,19 @@ abstract class ModuleCore {
             $hookPayment = 'displayPayment';
         }
 
-        $list = Shop::getContextListShopID();
+       
 
         return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
                 ->select('DISTINCT m.`id_module`, h.`id_hook`, m.`name`, hm.`position`')
                 ->from('module', 'm')
-                ->join($frontend ? 'LEFT JOIN `' . _DB_PREFIX_ . 'module_country` mc ON (m.`id_module` = mc.`id_module` AND mc.id_shop = ' . (int) $context->shop->id . ')' : '')
-                ->join($frontend && $useGroups ? 'INNER JOIN `' . _DB_PREFIX_ . 'module_group` mg ON (m.`id_module` = mg.`id_module` AND mg.id_shop = ' . (int) $context->shop->id . ')' : '')
+                ->join($frontend ? 'LEFT JOIN `' . _DB_PREFIX_ . 'module_country` mc ON (m.`id_module` = mc.`id_module` AND mc.id_shop = ' . (int) $context->company->id . ')' : '')
+                ->join($frontend && $useGroups ? 'INNER JOIN `' . _DB_PREFIX_ . 'module_group` mg ON (m.`id_module` = mg.`id_module` AND mg.id_shop = ' . (int) $context->company->id . ')' : '')
                 ->join($frontend && isset($context->customer) && $useGroups ? 'INNER JOIN `' . _DB_PREFIX_ . 'customer_group` cg on (cg.`id_group` = mg.`id_group`AND cg.`id_customer` = ' . (int) $context->customer->id . ')' : '')
                 ->leftJoin('hook_module', 'hm', 'hm.`id_module` = m.`id_module`')
                 ->leftJoin('hook', 'h', 'hm.`id_hook` = h.`id_hook`')
                 ->where('h.`name` = \'' . pSQL($hookPayment) . '\'')
                 ->where((isset($billing) && $frontend ? 'mc.`id_country` = ' . (int) $billing->id_country : ''))
-                ->where('hm.`id_shop` IN(' . implode(', ', $list) . ')')
                 ->where((count($groups) && $frontend && $useGroups) ? 'mg.`id_group` IN (' . implode(', ', $groups) . ')' : '')
                 ->groupBy('hm.`id_hook`, hm.`id_module`')
                 ->orderBy('hm.`position`, m.`name` DESC')
@@ -1691,7 +1689,7 @@ abstract class ModuleCore {
         );
 
         // Adding Restrictions for client groups
-        Group::addRestrictionsForModule($this->id, Shop::getShops(true, null, true));
+        Group::addRestrictionsForModule($this->id);
         Hook::exec('actionModuleInstallAfter', ['object' => $this]);
 
         if (!defined('EPH_INSTALLATION_IN_PROGRESS') || !EPH_INSTALLATION_IN_PROGRESS) {
@@ -2549,7 +2547,7 @@ abstract class ModuleCore {
         // Unregister module on hook by id
         $result = Db::getInstance()->delete(
             'hook_module',
-            '`id_module` = ' . (int) $this->id . ' AND `id_hook` = ' . (int) $hookId . (($shopList) ? ' AND `id_shop` IN(' . implode(', ', array_map('intval', $shopList)) . ')' : '')
+            '`id_module` = ' . (int) $this->id . ' AND `id_hook` = ' . (int) $hookId
         );
 
         // Clean modules position
@@ -2580,28 +2578,25 @@ abstract class ModuleCore {
 
         $results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
             (new DbQuery())
-                ->select('`id_module`, `id_shop`')
+                ->select('`id_module`')
                 ->from('hook_module')
                 ->where('`id_hook` = ' . (int) $idHook)
-                ->where((!is_null($shopList) && $shopList) ? '`id_shop` IN(' . implode(', ', array_map('intval', $shopList)) . ')' : '')
                 ->orderBy('`position`')
         );
-        $position = [];
+        $position = 1;
 
         foreach ($results as $row) {
 
-            if (!isset($position[$row['id_shop']])) {
-                $position[$row['id_shop']] = 1;
-            }
+            
 
             Db::getInstance()->update(
                 'hook_module',
                 [
-                    'position' => $position[$row['id_shop']],
+                    'position' => $position,
                 ],
-                '`id_hook` = ' . (int) $idHook . ' AND `id_module` = ' . $row['id_module'] . ' AND `id_shop` = ' . $row['id_shop']
+                '`id_hook` = ' . (int) $idHook . ' AND `id_module` = ' . $row['id_module']
             );
-            $position[$row['id_shop']]++;
+            $position++;
         }
 
         return true;
@@ -2621,7 +2616,7 @@ abstract class ModuleCore {
 
         return Db::getInstance()->delete(
             'hook_module_exceptions',
-            '`id_module` = ' . (int) $this->id . ' AND `id_hook` = ' . (int) $hookId . (($shopList) ? ' AND `id_shop` IN(' . implode(', ', array_map('intval', $shopList)) . ')' : '')
+            '`id_module` = ' . (int) $this->id . ' AND `id_hook` = ' . (int) $hookId 
         );
     }
 
@@ -2637,11 +2632,11 @@ abstract class ModuleCore {
     public function enableDevice($device) {
 
         Db::getInstance()->update(
-            'module_shop',
+            'module',
             [
                 'enable_device' => ['type' => 'sql', 'value' => '`enable_device` + ' . (int) $device],
             ],
-            '(`enable_device` &~ ' . (int) $device . ' OR `enable_device` = 0) AND `id_module` = ' . (int) $this->id . ' ' . Shop::addSqlRestriction()
+            '(`enable_device` &~ ' . (int) $device . ' OR `enable_device` = 0) AND `id_module` = ' . (int) $this->id 
         );
 
         return true;
@@ -2663,7 +2658,7 @@ abstract class ModuleCore {
             [
                 'enable_device' => ['type' => 'sql', 'value' => '`enable_device` - ' . (int) $device],
             ],
-            'enable_device & ' . (int) $device . ' AND id_module=' . (int) $this->id . Shop::addSqlRestriction()
+            'enable_device & ' . (int) $device . ' AND id_module=' . (int) $this->id 
         );
 
         return true;
@@ -2797,51 +2792,38 @@ abstract class ModuleCore {
 
             }
 
-            // If shop lists is null, we fill it with all shops
-
-            if (is_null($shopList)) {
-                $shopList = Shop::getCompleteListOfShopsID();
-            }
-
-            $shopListEmployee = Shop::getShops(true, null, true);
-
-            foreach ($shopList as $shopId) {
-                // Check if already register
-                $sql = 'SELECT hm.`id_module`
+           
+            $sql = 'SELECT hm.`id_module`
                     FROM `' . _DB_PREFIX_ . 'hook_module` hm, `' . _DB_PREFIX_ . 'hook` h
                     WHERE hm.`id_module` = ' . (int) $this->id . ' AND h.`id_hook` = ' . $idHook . '
-                    AND h.`id_hook` = hm.`id_hook` AND `id_shop` = ' . (int) $shopId;
+                    AND h.`id_hook` = hm.`id_hook`';
 
-                if (Db::getInstance()->getRow($sql)) {
-                    continue;
-                }
+            if (Db::getInstance()->getRow($sql)) {
+                continue;
+            }
 
                 // Get module position in hook
-                $sql = 'SELECT MAX(`position`) AS position
+            $sql = 'SELECT MAX(`position`) AS position
                     FROM `' . _DB_PREFIX_ . 'hook_module`
-                    WHERE `id_hook` = ' . (int) $idHook . ' AND `id_shop` = ' . (int) $shopId;
+                    WHERE `id_hook` = ' . (int) $idHook ;
 
-                if (!$position = Db::getInstance()->getValue($sql)) {
-                    $position = 0;
-                }
+            if (!$position = Db::getInstance()->getValue($sql)) {
+                $position = 0;
+            }
 
                 // Register module in hook
-                $return &= Db::getInstance()->insert(
-                    'hook_module',
+            $return &= Db::getInstance()->insert(
+                'hook_module',
                     [
                         'id_module' => (int) $this->id,
                         'id_hook'   => (int) $idHook,
-                        'id_shop'   => (int) $shopId,
                         'position'  => (int) ($position + 1),
                     ]
-                );
+             );
 
-                if (!in_array($shopId, $shopListEmployee)) {
-                    $where = '`id_module` = ' . (int) $this->id . ' AND `id_shop` = ' . (int) $shopId;
-                    $return &= Db::getInstance()->delete('module_shop', $where);
-                }
+             
 
-            }
+       
             $hook = new Hook($idHook);
             $hook->getModules(true);
             $hook->getPossibleModuleList(true);
@@ -2867,7 +2849,7 @@ abstract class ModuleCore {
         $result = true;
 
         foreach ($excepts as $shopId => $except) {
-            $shopList = ($shopId == 0) ? Shop::getContextListShopID() : [$shopId];
+            $shopList = [$shopId];
             $this->unregisterExceptions($idHook, $shopList);
             $result &= $this->registerExceptions($idHook, $except, $shopList);
 
@@ -2889,15 +2871,7 @@ abstract class ModuleCore {
      */
     public function registerExceptions($idHook, $excepts, $shopList = null) {
 
-        // If shop lists is null, we fill it with all shops
-
-        if (is_null($shopList)) {
-            $shopList = Shop::getContextListShopID();
-        }
-
-        // Save modules exception for each shop
-
-        foreach ($shopList as $shopId) {
+        
 
             foreach ($excepts as $except) {
 
@@ -2908,7 +2882,6 @@ abstract class ModuleCore {
                 $insertException = [
                     'id_module' => (int) $this->id,
                     'id_hook'   => (int) $idHook,
-                    'id_shop'   => (int) $shopId,
                     'file_name' => pSQL($except),
                 ];
                 $result = Db::getInstance()->insert('hook_module_exceptions', $insertException);
@@ -2919,7 +2892,7 @@ abstract class ModuleCore {
 
             }
 
-        }
+       
 
         return true;
     }
@@ -2939,15 +2912,13 @@ abstract class ModuleCore {
      */
     public function updatePosition($idHook, $way, $position = null) {
 
-        foreach (Shop::getContextListShopID() as $idShop) {
+        
             $sql = 'SELECT hm.`id_module`, hm.`position`, hm.`id_hook`
                     FROM `' . _DB_PREFIX_ . 'hook_module` hm
-                    WHERE hm.`id_hook` = ' . (int) $idHook . ' AND hm.`id_shop` = ' . $idShop . '
+                    WHERE hm.`id_hook` = ' . (int) $idHook . ' 
                     ORDER BY hm.`position` ' . ($way ? 'ASC' : 'DESC');
 
-            if (!$res = Db::getInstance()->executeS($sql)) {
-                continue;
-            }
+           
 
             foreach ($res as $key => $values) {
 
@@ -2972,7 +2943,7 @@ abstract class ModuleCore {
             $sql = 'UPDATE `' . _DB_PREFIX_ . 'hook_module`
                 SET `position`= position ' . ($way ? '-1' : '+1') . '
                 WHERE position between ' . (int) (min([$from['position'], $to['position']])) . ' AND ' . max([$from['position'], $to['position']]) . '
-                AND `id_hook` = ' . (int) $from['id_hook'] . ' AND `id_shop` = ' . $idShop;
+                AND `id_hook` = ' . (int) $from['id_hook'];
 
             if (!Db::getInstance()->execute($sql)) {
                 return false;
@@ -2981,13 +2952,13 @@ abstract class ModuleCore {
             $sql = 'UPDATE `' . _DB_PREFIX_ . 'hook_module`
                 SET `position`=' . (int) $to['position'] . '
                 WHERE `' . pSQL($this->identifier) . '` = ' . (int) $from[$this->identifier] . '
-                AND `id_hook` = ' . (int) $to['id_hook'] . ' AND `id_shop` = ' . $idShop;
+                AND `id_hook` = ' . (int) $to['id_hook'];
 
             if (!Db::getInstance()->execute($sql)) {
                 return false;
             }
 
-        }
+       
 
         return true;
     }
@@ -3125,7 +3096,6 @@ abstract class ModuleCore {
                 (new DbQuery())
                     ->select('*')
                     ->from('hook_module_exceptions')
-                    ->where('`id_shop` IN (' . implode(', ', Shop::getContextListShopID()) . ')')
             );
 
             foreach ($result as $row) {
@@ -3140,11 +3110,9 @@ abstract class ModuleCore {
                     $exceptions_cache[$key] = [];
                 }
 
-                if (!isset($exceptions_cache[$key][$row['id_shop']])) {
-                    $exceptions_cache[$key][$row['id_shop']] = [];
-                }
+                
 
-                $exceptions_cache[$key][$row['id_shop']][] = $row['file_name'];
+                $exceptions_cache[$key][] = $row['file_name'];
             }
 
             Cache::store($cache_id, $exceptions_cache);
@@ -3157,7 +3125,7 @@ abstract class ModuleCore {
 
         if ($dispatch) {
 
-            foreach (Shop::getContextListShopID() as $shop_id) {
+            foreach ([Context::getContext()->company->id] as $shop_id) {
 
                 if (isset($exceptions_cache[$key], $exceptions_cache[$key][$shop_id])) {
                     $array_return[$shop_id] = $exceptions_cache[$key][$shop_id];
@@ -3167,7 +3135,7 @@ abstract class ModuleCore {
 
         } else {
 
-            foreach (Shop::getContextListShopID() as $shop_id) {
+            foreach ([Context::getContext()->company->id] as $shop_id) {
 
                 if (isset($exceptions_cache[$key], $exceptions_cache[$key][$shop_id])) {
 
@@ -3199,12 +3167,11 @@ abstract class ModuleCore {
         return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
                 ->select('COUNT(*) n')
-                ->from('module_shop')
+                ->from('module')
                 ->where('`id_module` = ' . (int) $this->id)
-                ->where('`id_shop` IN (' . implode(',', array_map('intval', Shop::getContextListShopID())) . ')')
+                ->where('`active` = 1')
                 ->groupBy('`id_module`')
-                ->having('n = ' . (int) count(Shop::getContextListShopID())
-                ));
+        );
     }
 
     /**
@@ -3553,7 +3520,6 @@ abstract class ModuleCore {
                 ->from('hook_module')
                 ->where('`id_hook` = ' . (int) $id_hook)
                 ->where('`id_module` = ' . (int) $this->id)
-                ->where('`id_shop` = ' . (int) Context::getContext()->shop->id)
         );
 
         return $result['position'];
@@ -3626,9 +3592,7 @@ abstract class ModuleCore {
             $cache_array[] = (int) Tools::usingSecureMode();
         }
 
-        if (Shop::isFeatureActive()) {
-            $cache_array[] = (int) $this->context->shop->id;
-        }
+       
 
         if (Group::isFeatureActive() && isset($this->context->customer)) {
             $cache_array[] = (int) Group::getCurrent()->id;

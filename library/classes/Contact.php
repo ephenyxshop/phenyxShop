@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class ContactCore extends ObjectModel {
+class ContactCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     public $id;
@@ -19,7 +19,7 @@ class ContactCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'contact',
@@ -51,7 +51,6 @@ class ContactCore extends ObjectModel {
                 ->select('*')
                 ->from('contact', 'c')
                 ->leftJoin('contact_lang', 'cl', 'c.`id_contact` = cl.`id_contact` AND cl.`id_lang` = ' . (int) $idLang)
-                ->where('contact_shop.`id_shop` IN (' . implode(', ', array_map('intval', Shop::getContextListShopID())) . ')')
                 ->groupBy('c.`id_contact`')
                 ->orderBy('`name` ASC')
         );
@@ -75,7 +74,6 @@ class ContactCore extends ObjectModel {
                 ->from('contact', 'ct')
                 ->leftJoin('contact_lang', 'cl', 'cl.`id_contact` = ct.`id_contact` AND cl.`id_lang` = ' . (int) Context::getContext()->language->id)
                 ->where('ct.`customer_service` = 1')
-                ->where('contact_shop.`id_shop` IN (' . implode(', ', array_map('intval', Shop::getContextListShopID())) . ')')
                 ->groupBy('ct.`id_contact`')
         );
     }

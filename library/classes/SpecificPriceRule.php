@@ -5,11 +5,11 @@
  *
  * @since 1.9.1.0
  */
-class SpecificPriceRuleCore extends ObjectModel {
+class SpecificPriceRuleCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'specific_price_rule',
@@ -33,8 +33,8 @@ class SpecificPriceRuleCore extends ObjectModel {
     protected static $rules_application_enable = true;
     /** @var string $name */
     public $name;
-    /** @var int $id_shop */
-    public $id_shop;
+    /** @var int $id_company */
+    public $id_company;
     /** @var int $id_currency */
     public $id_currency;
     /** @var int $id_country */

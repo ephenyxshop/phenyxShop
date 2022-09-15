@@ -3,7 +3,7 @@
 /**
  * @deprecated 1.0.0
  */
-class CountyCore extends ObjectModel {
+class CountyCore extends PhenyxObjectModel {
 
 	const USE_BOTH_TAX = 0;
 	const USE_COUNTY_TAX = 1;
@@ -19,7 +19,7 @@ class CountyCore extends ObjectModel {
 	// @codingStandardsIgnoreEnd
 
 	/**
-	 * @see ObjectModel::$definition
+	 * @see PhenyxObjectModel::$definition
 	 */
 	public static $definition = [
 		'table'   => 'county',

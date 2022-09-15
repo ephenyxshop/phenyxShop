@@ -230,13 +230,12 @@ class AdminCategoriesControllerCore extends AdminController {
 
         $results = Db::getInstance()->executeS(
             (new DbQuery())
-                ->select('c.*, cl.*, category_shop.`position`')
+                ->select('c.*, cl.*, c.`position`')
                 ->from('category', 'c')
-                ->join(Shop::addSqlAssociation('category', 'c'))
                 ->leftJoin('category_lang', 'cl', 'c.`id_category` = cl.`id_category` AND cl.`id_lang` = ' . (int) $this->context->language->id)
                 ->rightJoin('category', 'c2', 'c2.`id_category` = ' . (int) $root->id . ' AND c.`nleft` >= c2.`nleft` AND c.`nright` <= c2.`nright`')
                 ->where('id_lang = ' . (int) $this->context->language->id)
-                ->orderBy('c.`level_depth` ASC, category_shop.`position` ASC')
+                ->orderBy('c.`level_depth` ASC, c.`position` ASC')
 
         );
 
@@ -487,9 +486,9 @@ class AdminCategoriesControllerCore extends AdminController {
         $obj = $this->loadObject();
 
         $context = $this->context;
-        $idShop = $context->shop->id;
+        $idCompany = $context->company->id;
 
-        $selectedCategories = [(isset($obj->id_parent) && $obj->isParentCategoryAvailable($idShop)) ? (int) $obj->id_parent : (int) Tools::getValue('id_parent', Category::getRootCategory()->id)];
+        $selectedCategories = [(isset($obj->id_parent) && $obj->isParentCategoryAvailable($idCompany)) ? (int) $obj->id_parent : (int) Tools::getValue('id_parent', Category::getRootCategory()->id)];
         $category_tree = $this->getCategoryTree($selectedCategories, $obj->id);
 
         $unidentified = new Group(Configuration::get('EPH_UNIDENTIFIED_GROUP'));
@@ -507,9 +506,9 @@ class AdminCategoriesControllerCore extends AdminController {
         $image = _EPH_CAT_IMG_DIR_ . $obj->id . '.' . $this->imageType;
 
         if (file_exists($image)) {
-            $imageUrl = $this->context->link->getBaseFrontLink() . 'img/c/' . $obj->id . '.jpg';
+            $imageUrl = $this->context->link->getBaseFrontLink() . 'content/img/c/' . $obj->id . '.jpg';
         } else {
-            $imageUrl = $this->context->link->getBaseFrontLink() . 'img/c/fr-default-category_default.jpg';
+            $imageUrl = $this->context->link->getBaseFrontLink() . 'content/img/c/fr-default-category_default.jpg';
         }
 
         $imageSize = file_exists($image) ? filesize($image) / 1000 : false;
@@ -690,50 +689,17 @@ class AdminCategoriesControllerCore extends AdminController {
             ],
         ];
 
-        $this->tpl_form_vars['shared_category'] = Validate::isLoadedObject($obj) && $obj->hasMultishopEntries();
+        
         $this->tpl_form_vars['EPH_ALLOW_ACCENTED_CHARS_URL'] = (int) Configuration::get('EPH_ALLOW_ACCENTED_CHARS_URL');
         $this->tpl_form_vars['displayBackOfficeCategory'] = Hook::exec('displayBackOfficeCategory');
 
-        // Display this field only if multistore option is enabled
-
-        if (Configuration::get('EPH_MULTISHOP_FEATURE_ACTIVE') && Tools::isSubmit('add' . $this->table . 'root')) {
-            $this->fields_form['input'][] = [
-                'type'     => 'switch',
-                'label'    => $this->l('Root Category'),
-                'name'     => 'is_root_category',
-                'required' => false,
-                'is_bool'  => true,
-                'values'   => [
-                    [
-                        'id'    => 'is_root_on',
-                        'value' => 1,
-                        'label' => $this->l('Yes'),
-                    ],
-                    [
-                        'id'    => 'is_root_off',
-                        'value' => 0,
-                        'label' => $this->l('No'),
-                    ],
-                ],
-            ];
-            unset($this->fields_form['input'][2], $this->fields_form['input'][3]);
-        }
-
-        // Display this field only if multistore option is enabled AND there are several stores configured
-
-        if (Shop::isFeatureActive()) {
-            $this->fields_form['input'][] = [
-                'type'  => 'shop',
-                'label' => $this->l('Shop association'),
-                'name'  => 'checkBoxShopAsso',
-            ];
-        }
+        
 
         // Added values of object Group
         $categoryGroupsIds = $obj->getGroups();
 
         $groups = Group::getGroups($this->context->language->id);
-        // if empty $carrier_grouEPH_ids : object creation : we set the default groups
+        // if empty $carrier_groups_ids : object creation : we set the default groups
 
         if (empty($categoryGroupsIds)) {
             $preselected = [Configuration::get('EPH_UNIDENTIFIED_GROUP'), Configuration::get('EPH_GUEST_GROUP'), Configuration::get('EPH_CUSTOMER_GROUP')];
@@ -1060,6 +1026,7 @@ class AdminCategoriesControllerCore extends AdminController {
                 ];
             }
 
+
         } else {
             $return = [
                 'success' => false,
@@ -1306,7 +1273,7 @@ class AdminCategoriesControllerCore extends AdminController {
         $result = Db::getInstance()->execute(
             'UPDATE `' . _DB_PREFIX_ . 'category_shop` c
             SET c.`position`= ' . (int) $position . '
-            WHERE c.`id_category` =' . (int) $id_category . ' AND c.`id_shop` = ' . $this->context->shop->id);
+            WHERE c.`id_category` =' . (int) $id_category . ' AND c.`id_shop` = ' . $this->context->company->id);
 
         if (!$result) {
             return false;
@@ -1608,7 +1575,6 @@ class AdminCategoriesControllerCore extends AdminController {
         $fatherlessProducts = Db::getInstance()->executeS(
             '
             SELECT p.`id_product` FROM `' . _DB_PREFIX_ . 'product` p
-            ' . Shop::addSqlAssociation('product', 'p') . '
             WHERE NOT EXISTS (SELECT 1 FROM `' . _DB_PREFIX_ . 'category_product` cp WHERE cp.`id_product` = p.`id_product`)'
         );
 

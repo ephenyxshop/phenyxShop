@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class StateCore extends ObjectModel {
+class StateCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var int Country id which state belongs */
@@ -21,7 +21,7 @@ class StateCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'state',

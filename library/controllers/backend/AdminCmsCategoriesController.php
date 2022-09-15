@@ -146,13 +146,7 @@ class AdminCmsCategoriesControllerCore extends AdminController {
             ],
         ];
 
-        if (Shop::isFeatureActive()) {
-            $this->fields_form['input'][] = [
-                'type'  => 'shop',
-                'label' => $this->l('Shop association'),
-                'name'  => 'checkBoxShopAsso',
-            ];
-        }
+        
 
         $this->fields_value['ajax'] = 1;
 

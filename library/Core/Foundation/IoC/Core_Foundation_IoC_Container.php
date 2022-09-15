@@ -1,35 +1,12 @@
 <?php
-/*
-* 2018-2020 Ephenyx Digital LTD
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Open Software License (OSL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/osl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PhenyxShop to newer
-* versions in the future. If you wish to customize PhenyxShop for your
-* needs please refer to http://ephenyx.com for more information.
-*
-*  @author Ephenyx Digital LTD <contact@ephenyx.com>
-*  @copyright  2018-2020 Pphenyx Digital LTD
-*  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
-*  International Registered Trademark & Property of phenyx Digital LTD
-*//**
+/**
  * Class Core_Foundation_IoC_Container
  *
  * @since 1.9.1.0
  */
 // @codingStandardsIgnoreStart
-class Core_Foundation_IoC_Container
-{
+class Core_Foundation_IoC_Container {
+
     // @codingStandardsIgnoreStartingStandardsIgnoreEnd
 
     protected $bindings = [];
@@ -44,8 +21,8 @@ class Core_Foundation_IoC_Container
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function knows($serviceName)
-    {
+    public function knows($serviceName) {
+
         return array_key_exists($serviceName, $this->bindings);
     }
 
@@ -54,8 +31,8 @@ class Core_Foundation_IoC_Container
      *
      * @return bool
      */
-    protected function knowsNamespaceAlias($alias)
-    {
+    protected function knowsNamespaceAlias($alias) {
+
         return array_key_exists($alias, $this->namespaceAliases);
     }
 
@@ -70,8 +47,8 @@ class Core_Foundation_IoC_Container
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function bind($serviceName, $constructor, $shared = false)
-    {
+    public function bind($serviceName, $constructor, $shared = false) {
+
         if ($this->knows($serviceName)) {
             throw new Core_Foundation_IoC_Exception(
                 sprintf('Cannot bind `%s` again. A service name can only be bound once.', $serviceName)
@@ -80,7 +57,7 @@ class Core_Foundation_IoC_Container
 
         $this->bindings[$serviceName] = [
             'constructor' => $constructor,
-            'shared' => $shared
+            'shared'      => $shared,
         ];
 
         return $this;
@@ -96,8 +73,8 @@ class Core_Foundation_IoC_Container
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function aliasNamespace($alias, $namespacePrefix)
-    {
+    public function aliasNamespace($alias, $namespacePrefix) {
+
         if ($this->knowsNamespaceAlias($alias)) {
             throw new Core_Foundation_IoC_Exception(
                 sprintf(
@@ -119,15 +96,18 @@ class Core_Foundation_IoC_Container
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function resolveClassName($className)
-    {
+    public function resolveClassName($className) {
+
         $colonPos = strpos($className, ':');
+
         if (0 !== $colonPos) {
             $alias = substr($className, 0, $colonPos);
+
             if ($this->knowsNamespaceAlias($alias)) {
                 $class = ltrim(substr($className, $colonPos + 1), '\\');
                 return $this->namespaceAliases[$alias] . '\\' . $class;
             }
+
         }
 
         return $className;
@@ -143,8 +123,8 @@ class Core_Foundation_IoC_Container
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    protected function makeInstanceFromClassName($className, array $alreadySeen)
-    {
+    protected function makeInstanceFromClassName($className, array $alreadySeen) {
+
         $className = $this->resolveClassName($className);
 
         try {
@@ -162,16 +142,20 @@ class Core_Foundation_IoC_Container
         $classConstructor = $refl->getConstructor();
 
         if ($classConstructor) {
+
             foreach ($classConstructor->getParameters() as $param) {
-               	$paramClass = $param->getType() && !$param->getType()->isBuiltin()  ? new ReflectionClass($param->getType()->getName()) : null;
+                $paramClass = $param->getType() && !$param->getType()->isBuiltin() ? new ReflectionClass($param->getType()->getName()) : null;
+
                 if ($paramClass) {
                     $args[] = $this->doMake($param->getClass()->getName(), $alreadySeen);
-                } elseif ($param->isDefaultValueAvailable()) {
+                } else if ($param->isDefaultValueAvailable()) {
                     $args[] = $param->getDefaultValue();
                 } else {
                     throw new Core_Foundation_IoC_Exception(sprintf('Cannot build a `%s`.', $className));
                 }
+
             }
+
         }
 
         if (count($args) > 0) {
@@ -181,6 +165,7 @@ class Core_Foundation_IoC_Container
             // doesn't have an explicitly defined constructor
             return $refl->newInstance();
         }
+
     }
 
     /**
@@ -193,8 +178,8 @@ class Core_Foundation_IoC_Container
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    protected function doMake($serviceName, array $alreadySeen = [])
-    {
+    protected function doMake($serviceName, array $alreadySeen = []) {
+
         if (array_key_exists($serviceName, $alreadySeen)) {
             throw new Core_Foundation_IoC_Exception(sprintf(
                 'Cyclic dependency detected while building `%s`.',
@@ -217,7 +202,7 @@ class Core_Foundation_IoC_Container
 
             if (is_callable($constructor)) {
                 $service = call_user_func($constructor);
-            } elseif (!is_string($constructor)) {
+            } else if (!is_string($constructor)) {
                 // user already provided the value, no need to construct it.
                 $service = $constructor;
             } else {
@@ -231,6 +216,7 @@ class Core_Foundation_IoC_Container
 
             return $service;
         }
+
     }
 
     /**
@@ -241,8 +227,9 @@ class Core_Foundation_IoC_Container
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function make($serviceName)
-    {
+    public function make($serviceName) {
+
         return $this->doMake($serviceName, []);
     }
+
 }

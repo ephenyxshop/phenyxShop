@@ -5,7 +5,7 @@ use Thunder\Shortcode\Parser\RegularParser;
 use Thunder\Shortcode\Processor\Processor;
 use Thunder\Shortcode\Shortcode\ShortcodeInterface;
 
-class EphComposerCore extends ObjectModel {
+class EphComposerCore extends PhenyxObjectModel {
 
     protected static $_base_map = [];
     protected static $sc = [];
@@ -488,7 +488,7 @@ class EphComposerCore extends ObjectModel {
                 $result['name'] = $instance->name;
                 $result['base'] = 'vc_' . $module;
                 $result['category'] = 'Modules';
-                $result['icon'] = $context->shop->getBaseURL() . 'plugins/' . $module . '/logo.png';
+                $result['icon'] = $context->company->getBaseURL() . 'plugins/' . $module . '/logo.png';
                 $result['description'] = '';
                 $items[] = $result;
             }
@@ -2104,11 +2104,11 @@ class EphComposerCore extends ObjectModel {
         // return $link;
     }
 
-    public static function getCMSLink($id, $alias = null, $ssl = null, $id_lang = null, $id_shop = null) {
+    public static function getCMSLink($id, $alias = null, $ssl = null, $id_lang = null, $id_company = null) {
 
         $link = new Link;
         $cms = new CMS($id);
-        return $link->getCMSLink($cms, $alias, $ssl, $id_lang, $id_shop);
+        return $link->getCMSLink($cms, $alias, $ssl, $id_lang, $id_company);
     }
 
     public static function getExitVcLink() {
@@ -2126,15 +2126,15 @@ class EphComposerCore extends ObjectModel {
 
     }
 
-    public static function getCategoryLink($id, $alias = null, $ssl = null, $id_lang = null, $id_shop = null) {
+    public static function getCategoryLink($id, $alias = null, $ssl = null, $id_lang = null, $id_company = null) {
 
         $link = new Link;
         // $category = new Category($id);
         return $link->getCategoryLink($id);
-        // return $link->getCategoryLink($category, $alias, $ssl, $id_lang, $id_shop);
+        // return $link->getCategoryLink($category, $alias, $ssl, $id_lang, $id_company);
     }
 
-    public static function getVccontentanywhereLink($id, $alias = null, $ssl = null, $id_lang = null, $id_shop = null) {
+    public static function getVccontentanywhereLink($id, $alias = null, $ssl = null, $id_lang = null, $id_company = null) {
 
         $link = new Link;
         $url = $link->getModuleLink('jscomposer', 'vc_contentanywhere', ['val_identifier' => Tools::getValue('val_identifier'), 'frontend_module_name' => Tools::getValue('frontend_module_name'), Configuration::get('EPH_SSL_ENABLED')]);
@@ -2143,7 +2143,7 @@ class EphComposerCore extends ObjectModel {
 
     }
 
-    public static function getProductLinks($id_product, $alias = null, $ssl = null, $id_lang = null, $id_shop = null) {
+    public static function getProductLinks($id_product, $alias = null, $ssl = null, $id_lang = null, $id_company = null) {
 
         $link = new Link();
         $product = new Product((int) $id_product, false, $id_lang);
@@ -2857,7 +2857,7 @@ class EphComposerCore extends ObjectModel {
         $id = intval(Tools::getValue('post_id'));
         $link = new Link;
         $id_lang = Tools::getValue('id_lang') ? Tools::getValue('id_lang') : null;
-        $id_shop = Tools::getValue('id_shop') ? Tools::getValue('id_shop') : null;
+        $id_company = Tools::getValue('id_shop') ? Tools::getValue('id_shop') : null;
         $ssl = Tools::getValue('ssl') ? Tools::getValue('ssl') : null;
         $type = Tools::getValue('type');
 
@@ -2865,19 +2865,19 @@ class EphComposerCore extends ObjectModel {
 
             switch ($type) {
             case 'cms':
-                echo $link->getCMSLink($id, null, $ssl, $id_lang, $id_shop);
+                echo $link->getCMSLink($id, null, $ssl, $id_lang, $id_company);
                 break;
             case 'cat':
-                echo $link->getCategoryLink($id, null, $ssl, $id_lang, $id_shop);
+                echo $link->getCategoryLink($id, null, $ssl, $id_lang, $id_company);
                 break;
             case 'man':
-                echo $link->getManufacturerLink($id, null, $ssl, $id_lang, $id_shop);
+                echo $link->getManufacturerLink($id, null, $ssl, $id_lang, $id_company);
                 break;
             case 'sup':
-                echo $link->getSupplierLink($id, null, $ssl, $id_lang, $id_shop);
+                echo $link->getSupplierLink($id, null, $ssl, $id_lang, $id_company);
                 break;
             case 'prd':
-                echo $link->getProductLink($id, null, $ssl, $id_lang, $id_shop);
+                echo $link->getProductLink($id, null, $ssl, $id_lang, $id_company);
                 break;
             case 'smartblog':
 

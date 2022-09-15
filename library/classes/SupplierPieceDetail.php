@@ -5,11 +5,11 @@
  *
  * @since 2.1.0.0
  */
-class SupplierPieceDetailCore extends ObjectModel {
+class SupplierPieceDetailCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'supplier_piece_detail',
@@ -189,14 +189,14 @@ class SupplierPieceDetailCore extends ObjectModel {
     }
 
     /**
-     * @param int $idShop
+     * @param int $idCompany
      *
      * @since 2.1.0.0
      */
-    protected function setContext($idShop) {
+    protected function setContext($idCompany) {
 
-        if ($this->context->shop->id != $idShop) {
-            $this->context->shop = new Shop((int) $idShop);
+        if ($this->context->company->id != $idCompany) {
+            $this->context->company = new Company((int) $idCompany);
         }
 
     }

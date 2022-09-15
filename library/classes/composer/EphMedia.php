@@ -1,6 +1,6 @@
 <?php
 
-class EphMediaCore extends ObjectModel {
+class EphMediaCore extends PhenyxObjectModel {
 
     public $id_vc_media;
     public $file_name;

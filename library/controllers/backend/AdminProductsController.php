@@ -171,8 +171,7 @@ class AdminProductsControllerCore extends AdminController {
 
 		$this->available_tabs = ['Quantities' => 6, 'Warehouses' => 14];
 
-		if ($this->context->shop->getContext() != Shop::CONTEXT_GROUP) {
-			$this->available_tabs = array_merge($this->available_tabs, [
+		$this->available_tabs = array_merge($this->available_tabs, [
 				'Informations'   => 0,
 				'Pack'           => 7,
 				'VirtualProduct' => 8,
@@ -188,7 +187,6 @@ class AdminProductsControllerCore extends AdminController {
 				'Suppliers'      => 14,
 				'Accounting'     => 16,
 			]);
-		}
 
 		$this->exclude_tabs = [
 			'Quantities', 'Combinations', 'Images', 'Features', 'Customization', 'Attachments', 'Suppliers', 'GroupsGranted',
@@ -213,15 +211,7 @@ class AdminProductsControllerCore extends AdminController {
 			$this->context->cookie->id_category_products_filter = false;
 		}
 
-		if (Shop::isFeatureActive() && $this->context->cookie->id_category_products_filter) {
-			$category = new Category((int) $this->context->cookie->id_category_products_filter);
-
-			if (!$category->inShop()) {
-				$this->context->cookie->id_category_products_filter = false;
-				Tools::redirectAdmin($this->context->link->getAdminLink('AdminProducts'));
-			}
-
-		}
+		
 
 	}
 
@@ -672,10 +662,10 @@ class AdminProductsControllerCore extends AdminController {
 		$query = new DbQuery();
 		$query->select('a.`id_product`, b.`link_rewrite`,a.`id_tax_rules_group`, b.`description_short`, b.`description`, b.`meta_description`, image.`id_image` AS `Image`, `reference`, b.`name`, cl.`name` AS `CategoryName` , a.`price`, a.`ecotax`, tl.`name` as `Tax`, t.rate, a.`wholesale_price`, sav.`quantity`, a.`active` as enable, a.`available_for_order` as available, a.`id_category_default`, a.`id_manufacturer`, mn.`name` AS `brand`, case  when cp.`position` >= 0 then CONCAT(\'<div class="dragGroup"><div class="productPosition_\', a.`id_category_default`,\' positions" data-id="\', a.`id_product`,\'" data-position="\',cp.`position`,\'">\',cp.`position`, \'</div></div>\') end as `position`, cp.`position` as `productPosition`, a.`cache_default_attribute` as `id_product_attribute`');
 		$query->from('product', 'a');
-		$query->leftJoin('product_lang', 'b', 'b.`id_product` = a.`id_product` AND b.`id_lang` = ' . (int) $this->context->language->id . ' AND b.`id_shop` = ' . (int) $this->context->shop->id);
-		$query->leftJoin('stock_available', 'sav', 'sav.`id_product` = a.`id_product` AND sav.`id_product_attribute` = 0 AND sav.id_shop = ' . (int) $this->context->shop->id . ' AND sav.id_shop_group = 0');
+		$query->leftJoin('product_lang', 'b', 'b.`id_product` = a.`id_product` AND b.`id_lang` = ' . (int) $this->context->language->id);
+		$query->leftJoin('stock_available', 'sav', 'sav.`id_product` = a.`id_product` AND sav.`id_product_attribute` = 0');
 		$query->leftJoin('manufacturer', 'mn', 'a.`id_manufacturer` = mn.`id_manufacturer`');
-		$query->leftJoin('category_lang', 'cl', 'a.`id_category_default` = cl.`id_category` AND b.`id_lang` = cl.`id_lang` AND cl.id_shop = a.id_shop_default');
+		$query->leftJoin('category_lang', 'cl', 'a.`id_category_default` = cl.`id_category` AND b.`id_lang` = cl.`id_lang`');
 		$query->leftJoin('image', 'image', 'image.`id_product` = a.`id_product` AND image.`cover` = 1');
 		$query->leftJoin('tax_rules_group', 'tl', 'tl.`id_tax_rules_group` = a.`id_tax_rules_group`');
 		$query->leftJoin('tax', 't', 't.`id_tax` = tl.`id_tax_rules_group`');
@@ -747,7 +737,7 @@ class AdminProductsControllerCore extends AdminController {
 
 		foreach ($products as &$product) {
 
-			$product['Image'] = '<img src="' . $this->context->link->getAdminImageLink($product['link_rewrite'], $product['Image'], 'cart_default') . '" class="imgm img-thumbnail">';
+			$product['Image'] = '<img src="' . $this->context->link->getImageLink($product['link_rewrite'], $product['Image'], 'cart_default') . '" class="imgm img-thumbnail">';
 			$product['stockValue'] = $product['quantity'] * $product['wholesale_price'];
 
 			if ($product['enable'] == 1) {
@@ -1378,9 +1368,8 @@ class AdminProductsControllerCore extends AdminController {
 				foreach ($_POST as $key => $value) {
 
 					if (property_exists($product, $key) && $key != 'id_product') {
-						$product->{$key}
-
-						= $value;
+						fwrite($file, $key.' => '.$value . PHP_EOL);
+                        $product->{$key} = $value;
 					}
 
 				}
@@ -1592,10 +1581,10 @@ class AdminProductsControllerCore extends AdminController {
 				if (Configuration::get('EPH_FORCE_ASM_NEW_PRODUCT') && Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT') && $product->getType() != Product::PTYPE_VIRTUAL) {
 					$product->advanced_stock_management = 1;
 					$product->save();
-					$idShops = Shop::getContextListShopID();
+					$idCompanys = [Context::getContext()->company->id];
 
-					foreach ($idShops as $idShop) {
-						StockAvailable::setProductDependsOnStock($product->id, true, (int) $idShop, 0);
+					foreach ($idCompanys as $idCompany) {
+						StockAvailable::setProductDependsOnStock($product->id, true,  0);
 					}
 
 				}
@@ -1845,7 +1834,7 @@ class AdminProductsControllerCore extends AdminController {
 			$idProduct = Tools::getValue('idObject');
 			$this->object = new Product($idProduct, true);
 
-			$iso = (file_exists(_EPH_ROOT_ADMIN_DIR_ . '/js/tinymce/langs/' . $this->context->language->iso_code . '.js') ? $iso : 'en');
+			$iso = (file_exists(_SHOP_ROOT_DIR_ . '/js/tinymce/langs/' . $this->context->language->iso_code . '.js') ? $iso : 'en');
 
 			$data = $this->createTemplate('controllers/products/editProduct.tpl');
 
@@ -1855,7 +1844,7 @@ class AdminProductsControllerCore extends AdminController {
 				_EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/multiaccessories/accessory_admin_tab.css',
 				_EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/css/multiaccessories/jquery-confirm.min.css',
 			]);
-
+            $_GET['controller'] = $this->controller_name;
 			$_GET['id_product'] = $idProduct;
 			$_GET['updateproduct'] = 1;
 
@@ -1922,11 +1911,11 @@ class AdminProductsControllerCore extends AdminController {
 				'save_error'                => !empty($this->errors),
 				'mod_evasive'               => Tools::apacheModExists('evasive'),
 				'mod_security'              => Tools::apacheModExists('security'),
-				'EPH_force_friendly_product' => Configuration::get('EPH_FORCE_FRIENDLY_PRODUCT'),
+				'ps_force_friendly_product' => Configuration::get('EPH_FORCE_FRIENDLY_PRODUCT'),
 				'tinymce'                   => true,
 				'iso'                       => $iso,
 				'path_css'                  => _THEME_CSS_DIR_,
-				'ad'                        => __EPH_BASE_URI__ . basename(_EPH_ADMIN_DIR_),
+				'ad'                        => __EPH_BASE_URI__ . basename(_EPH_ROOT_DIR_),
 				'product_type'              => (int) Tools::getValue('type_product', $this->object->getType()),
 			]);
 
@@ -2022,7 +2011,7 @@ class AdminProductsControllerCore extends AdminController {
 			'save_error'                => !empty($this->errors),
 			'mod_evasive'               => Tools::apacheModExists('evasive'),
 			'mod_security'              => Tools::apacheModExists('security'),
-			'EPH_force_friendly_product' => Configuration::get('EPH_FORCE_FRIENDLY_PRODUCT'),
+			'ps_force_friendly_product' => Configuration::get('EPH_FORCE_FRIENDLY_PRODUCT'),
 			'tinymce'                   => true,
 			'iso'                       => file_exists('/js/tinymce/langs/' . $iso . '.js') ? $iso : 'en',
 			'path_css'                  => _THEME_CSS_DIR_,
@@ -2300,19 +2289,7 @@ class AdminProductsControllerCore extends AdminController {
 		if (Validate::isLoadedObject($product = new Product((int) Tools::getValue('id_product')))) {
 			$idProductOld = $product->id;
 
-			if (empty($product->price) && Shop::getContext() == Shop::CONTEXT_GROUP) {
-				$shops = ShopGroup::getShopsFromGroup(Shop::getContextShopGroupID());
-
-				foreach ($shops as $shop) {
-
-					if ($product->isAssociatedToShop($shop['id_shop'])) {
-						$product_price = new Product($idProductOld, false, null, $shop['id_shop']);
-						$product->price = $product_price->price;
-					}
-
-				}
-
-			}
+			
 
 			unset($product->id);
 			unset($product->id_product);
@@ -2380,19 +2357,7 @@ class AdminProductsControllerCore extends AdminController {
 			$idProductOld = $product->id;
 			fwrite($file, $product->id . PHP_EOL);
 
-			if (empty($product->price) && Shop::getContext() == Shop::CONTEXT_GROUP) {
-				$shops = ShopGroup::getShopsFromGroup(Shop::getContextShopGroupID());
-
-				foreach ($shops as $shop) {
-
-					if ($product->isAssociatedToShop($shop['id_shop'])) {
-						$product_price = new Product($idProductOld, false, null, $shop['id_shop']);
-						$product->price = $product_price->price;
-					}
-
-				}
-
-			}
+			
 
 			unset($product->id);
 			unset($product->id_product);
@@ -2504,27 +2469,7 @@ class AdminProductsControllerCore extends AdminController {
 
 		if ($result && Validate::isLoadedObject($this->object)) {
 
-			if (Shop::getContext() == Shop::CONTEXT_SHOP && Shop::isFeatureActive() && !$this->object->isAssociatedToShop()) {
-				$defaultProduct = new Product((int) $this->object->id, false, null, (int) $this->object->id_shop_default);
-				$def = ObjectModel::getDefinition($this->object);
-
-				foreach ($def['fields'] as $field_name => $row) {
-
-					if (is_array($defaultProduct->$field_name)) {
-
-						foreach ($defaultProduct->$field_name as $key => $value) {
-							$this->object->{$field_name}
-
-							[$key] = $value;
-						}
-
-					} else {
-						$this->object->$field_name = $defaultProduct->$field_name;
-					}
-
-				}
-
-			}
+			
 
 			$this->object->loadStockData();
 		}
@@ -2536,7 +2481,7 @@ class AdminProductsControllerCore extends AdminController {
 
 		$idSpecificPrices = Tools::getValue('spm_id_specific_price');
 		$idCombinations = Tools::getValue('spm_id_product_attribute');
-		$idShops = Tools::getValue('spm_id_shop');
+		$idCompanys = Tools::getValue('spm_id_shop');
 		$idCurrencies = Tools::getValue('spm_id_currency');
 		$idCountries = Tools::getValue('spm_id_country');
 		$idGroups = Tools::getValue('spm_id_group');
@@ -2554,9 +2499,9 @@ class AdminProductsControllerCore extends AdminController {
 				$this->errors[] = Tools::displayError('Submitted reduction value (0-100) is out-of-range');
 			} else
 
-			if ($this->_validateSpecificPrice($idShops[$key], $idCurrencies[$key], $idCountries[$key], $idGroups[$key], $idCustomers[$key], $prices[$key], $fromQuantities[$key], $reductions[$key], $reductionTypes[$key], $froms[$key], $tos[$key], $idCombinations[$key])) {
+			if ($this->_validateSpecificPrice($idCompanys[$key], $idCurrencies[$key], $idCountries[$key], $idGroups[$key], $idCustomers[$key], $prices[$key], $fromQuantities[$key], $reductions[$key], $reductionTypes[$key], $froms[$key], $tos[$key], $idCombinations[$key])) {
 				$specificPrice = new SpecificPrice((int) ($idSpecificPrice));
-				$specificPrice->id_shop = (int) $idShops[$key];
+				$specificPrice->id_shop = (int) $idCompanys[$key];
 				$specificPrice->id_product_attribute = (int) $idCombinations[$key];
 				$specificPrice->id_currency = (int) ($idCurrencies[$key]);
 				$specificPrice->id_country = (int) ($idCountries[$key]);
@@ -2583,9 +2528,9 @@ class AdminProductsControllerCore extends AdminController {
 
 	}
 
-	protected function _validateSpecificPrice($idShop, $idCurrency, $idCountry, $idGroup, $idCustomer, $price, $fromQuantity, $reduction, $reductionType, $from, $to, $idCombination = 0) {
+	protected function _validateSpecificPrice($idCompany, $idCurrency, $idCountry, $idGroup, $idCustomer, $price, $fromQuantity, $reduction, $reductionType, $from, $to, $idCombination = 0) {
 
-		if (!Validate::isUnsignedId($idShop) || !Validate::isUnsignedId($idCurrency) || !Validate::isUnsignedId($idCountry) || !Validate::isUnsignedId($idGroup) || !Validate::isUnsignedId($idCustomer)) {
+		if (!Validate::isUnsignedId($idCompany) || !Validate::isUnsignedId($idCurrency) || !Validate::isUnsignedId($idCountry) || !Validate::isUnsignedId($idGroup) || !Validate::isUnsignedId($idCustomer)) {
 			$this->errors[] = Tools::displayError('Wrong IDs');
 		} else
 
@@ -2605,7 +2550,7 @@ class AdminProductsControllerCore extends AdminController {
 			$this->errors[] = Tools::displayError('The from/to date is invalid.');
 		} else
 
-		if (SpecificPrice::exists((int) $this->object->id, $idCombination, $idShop, $idGroup, $idCountry, $idCurrency, $idCustomer, $fromQuantity, $from, $to, false)) {
+		if (SpecificPrice::exists((int) $this->object->id, $idCombination, $idCompany, $idGroup, $idCountry, $idCurrency, $idCustomer, $fromQuantity, $from, $to, false)) {
 			$this->errors[] = Tools::displayError('A specific price already exists for these parameters.');
 		} else {
 			return true;
@@ -2876,7 +2821,7 @@ class AdminProductsControllerCore extends AdminController {
 					'languages'             => $this->_languages,
 					'default_form_language' => $this->default_form_language,
 					'id_lang'               => $this->context->language->id,
-					'bo_imgdir'             => __EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+					'bo_imgdir'                 => __EPH_BASE_URI__ .  'content/themes/' . $this->bo_theme . '/img/',
 				]
 			);
 
@@ -3312,8 +3257,8 @@ class AdminProductsControllerCore extends AdminController {
 			$res &= @unlink(_EPH_TMP_IMG_DIR_ . 'product_' . $image->id_product . '.jpg');
 		}
 
-		if (file_exists(_EPH_TMP_IMG_DIR_ . 'product_mini_' . $image->id_product . '_' . $this->context->shop->id . '.jpg')) {
-			$res &= @unlink(_EPH_TMP_IMG_DIR_ . 'product_mini_' . $image->id_product . '_' . $this->context->shop->id . '.jpg');
+		if (file_exists(_EPH_TMP_IMG_DIR_ . 'product_mini_' . $image->id_product . '_' . $this->context->company->id . '.jpg')) {
+			$res &= @unlink(_EPH_TMP_IMG_DIR_ . 'product_mini_' . $image->id_product . '_' . $this->context->company->id . '.jpg');
 		}
 
 		if ($res) {
@@ -3359,17 +3304,11 @@ class AdminProductsControllerCore extends AdminController {
 
 		if ($this->isTabSubmitted('Informations')) {
 
-			if ($this->checkMultishopBox('available_for_order', $this->context)) {
-				$object->available_for_order = (int) Tools::getValue('available_for_order');
-			}
+			$object->available_for_order = (int) Tools::getValue('available_for_order');
 
-			if ($this->checkMultishopBox('show_price', $this->context)) {
-				$object->show_price = $object->available_for_order ? 1 : (int) Tools::getValue('show_price');
-			}
+			$object->show_price = $object->available_for_order ? 1 : (int) Tools::getValue('show_price');
 
-			if ($this->checkMultishopBox('online_only', $this->context)) {
-				$object->online_only = (int) Tools::getValue('online_only');
-			}
+			$object->online_only = (int) Tools::getValue('online_only');
 
 		}
 
@@ -3399,34 +3338,6 @@ class AdminProductsControllerCore extends AdminController {
 			return '';
 		}
 
-	}
-
-	public function checkMultishopBox($field, $context = null) {
-
-		static $checkbox = null;
-		static $shopContext = null;
-
-		if ($context == null && $shopContext == null) {
-			$context = $this->context;
-		}
-
-		if ($shopContext == null) {
-			$shopContext = $context->shop->getContext();
-		}
-
-		if ($checkbox == null) {
-			$checkbox = Tools::getValue('multishop_check', []);
-		}
-
-		if ($shopContext == Shop::CONTEXT_SHOP) {
-			return true;
-		}
-
-		if (isset($checkbox[$field]) && $checkbox[$field] == 1) {
-			return true;
-		}
-
-		return false;
 	}
 
 	/**
@@ -3733,27 +3644,7 @@ class AdminProductsControllerCore extends AdminController {
 	protected function isProductFieldUpdated($field, $idLang = null) {
 
 		// Cache this condition to improve performances
-		static $isActivated = null;
-
-		if (is_null($isActivated)) {
-			$isActivated = Shop::isFeatureActive() && Shop::getContext() != Shop::CONTEXT_SHOP && $this->id_object;
-		}
-
-		if (!$isActivated) {
-			return true;
-		}
-
-		$def = ObjectModel::getDefinition($this->object);
-
-		if (!$this->object->isMultiShopField($field) && is_null($idLang) && isset($def['fields'][$field])) {
-			return true;
-		}
-
-		if (is_null($idLang)) {
-			return !empty($_POST['multishop_check'][$field]);
-		} else {
-			return !empty($_POST['multishop_check'][$field][$idLang]);
-		}
+		return true;
 
 	}
 
@@ -3765,7 +3656,7 @@ class AdminProductsControllerCore extends AdminController {
 	protected function _removeTaxFromEcotax() {
 
 		if ($ecotax = Tools::getValue('ecotax')) {
-			$_POST['ecotax'] = Tools::EPH_round($ecotax / (1 + Tax::getProductEcotaxRate() / 100), 6);
+			$_POST['ecotax'] = Tools::ps_round($ecotax / (1 + Tax::getProductEcotaxRate() / 100), 6);
 		}
 
 	}
@@ -3990,13 +3881,13 @@ class AdminProductsControllerCore extends AdminController {
 	 */
 	public function getPreviewUrl(Product $product) {
 
-		$idLang = Configuration::get('EPH_LANG_DEFAULT', null, null, $this->context->shop->id);
+		$idLang = Configuration::get('EPH_LANG_DEFAULT', null, null, $this->context->company->id);
 
 		if (!Validate::isLoadedObject($product) || !$product->id_category_default) {
 			return $this->l('Unable to determine the preview URL. This product has not been linked with a category, yet.');
 		}
 
-		if (!ShopUrl::getMainShopDomain()) {
+		if (!CompanyUrl::getMainShopDomain()) {
 			return false;
 		}
 
@@ -4007,7 +3898,7 @@ class AdminProductsControllerCore extends AdminController {
 			Category::getLinkRewrite($this->getFieldValue($product, 'id_category_default'), $this->context->language->id),
 			null,
 			$idLang,
-			(int) $this->context->shop->id,
+			(int) $this->context->company->id,
 			0,
 			$isRewriteActive
 		);
@@ -4185,7 +4076,7 @@ class AdminProductsControllerCore extends AdminController {
 							)
 						);
 
-						$price = Tools::EPH_round($price, 6);
+						$price = Tools::ps_round($price, 6);
 
 						$idCurrency = (int) Tools::getValue(
 							'product_price_currency_' . $product->id . '_' . $attribute['id_product_attribute'] . '_' . $supplier->id_supplier,
@@ -4212,7 +4103,7 @@ class AdminProductsControllerCore extends AdminController {
 									$where = '
                                         a.id_product = ' . (int) $product->id . '
                                         AND a.id_product_attribute = ' . (int) $attribute['id_product_attribute'];
-									ObjectModel::updateMultishopTable('Combination', $data, $where);
+									PhenyxObjectModel::updateMultishopTable('Combination', $data, $where);
 								} else {
 									$product->wholesale_price = (float) Tools::convertPrice($price, $idCurrency); //converted in the default currency
 									$product->supplier_reference = pSQL($reference);
@@ -4461,8 +4352,8 @@ class AdminProductsControllerCore extends AdminController {
 								$this->isProductFieldUpdated('available_date_attribute') ? Tools::getValue('available_date_attribute') : null,
 								false
 							);
-							StockAvailable::setProductDependsOnStock((int) $product->id, $product->depends_on_stock, null, (int) $idProductAttribute);
-							StockAvailable::setProductOutOfStock((int) $product->id, $product->out_of_stock, null, (int) $idProductAttribute);
+							StockAvailable::setProductDependsOnStock((int) $product->id, $product->depends_on_stock, (int) $idProductAttribute);
+							StockAvailable::setProductOutOfStock((int) $product->id, $product->out_of_stock,  (int) $idProductAttribute);
 						}
 
 					} else {
@@ -4498,8 +4389,8 @@ class AdminProductsControllerCore extends AdminController {
 								[],
 								Tools::getValue('available_date_attribute')
 							);
-							StockAvailable::setProductDependsOnStock((int) $product->id, $product->depends_on_stock, null, (int) $idProductAttribute);
-							StockAvailable::setProductOutOfStock((int) $product->id, $product->out_of_stock, null, (int) $idProductAttribute);
+							StockAvailable::setProductDependsOnStock((int) $product->id, $product->depends_on_stock,  (int) $idProductAttribute);
+							StockAvailable::setProductOutOfStock((int) $product->id, $product->out_of_stock,  (int) $idProductAttribute);
 						}
 
 					} else {
@@ -4559,7 +4450,7 @@ class AdminProductsControllerCore extends AdminController {
 
 		$idProduct = Tools::getValue('id_product');
 		$idProductAttribute = Tools::getValue('sp_id_product_attribute');
-		$idShop = Tools::getValue('sp_id_shop');
+		$idCompany = Tools::getValue('sp_id_shop');
 		$idCurrency = Tools::getValue('sp_id_currency');
 		$idCountry = Tools::getValue('sp_id_country');
 		$idGroup = Tools::getValue('sp_id_group');
@@ -4594,11 +4485,11 @@ class AdminProductsControllerCore extends AdminController {
 			$this->errors[] = Tools::displayError('Submitted reduction value (0-100) is out-of-range');
 		} else
 
-		if ($this->_validateSpecificPrice($idShop, $idCurrency, $idCountry, $idGroup, $idCustomer, $price, $fromQuantity, $reduction, $reductionType, $from, $to, $idProductAttribute)) {
+		if ($this->_validateSpecificPrice($idCompany, $idCurrency, $idCountry, $idGroup, $idCustomer, $price, $fromQuantity, $reduction, $reductionType, $from, $to, $idProductAttribute)) {
 			$specificPrice = new SpecificPrice();
 			$specificPrice->id_product = (int) $idProduct;
 			$specificPrice->id_product_attribute = (int) $idProductAttribute;
-			$specificPrice->id_shop = (int) $idShop;
+			$specificPrice->id_shop = (int) $idCompany;
 			$specificPrice->id_currency = (int) ($idCurrency);
 			$specificPrice->id_country = (int) ($idCountry);
 			$specificPrice->id_group = (int) ($idGroup);
@@ -5058,23 +4949,7 @@ class AdminProductsControllerCore extends AdminController {
 		// Product for multishop
 		$this->context->smarty->assign('bullet_common_field', '');
 
-		if (Shop::isFeatureActive() && $this->display == 'edit') {
-
-			if (Shop::getContext() != Shop::CONTEXT_SHOP) {
-				$this->context->smarty->assign(
-					[
-						'display_multishop_checkboxes' => true,
-						'multishop_check'              => Tools::getValue('multishop_check'),
-					]
-				);
-			}
-
-			if (Shop::getContext() != Shop::CONTEXT_ALL) {
-				$this->context->smarty->assign('bullet_common_field', '<i class="icon-circle text-orange"></i>');
-				$this->context->smarty->assign('display_common_field', true);
-			}
-
-		}
+		
 
 		$this->tpl_form_vars['tabs_preloaded'] = $this->available_tabs;
 
@@ -5085,7 +4960,7 @@ class AdminProductsControllerCore extends AdminController {
 		$this->tpl_form_vars['id_lang_default'] = Configuration::get('EPH_LANG_DEFAULT');
 
 		$this->tpl_form_vars['currentIndex'] = static::$currentIndex;
-		$this->tpl_form_vars['display_multishop_checkboxes'] = (Shop::isFeatureActive() && Shop::getContext() != Shop::CONTEXT_SHOP && $this->display == 'edit');
+		$this->tpl_form_vars['display_multishop_checkboxes'] = false;
 		$this->fields_form = [''];
 
 		$this->tpl_form_vars['token'] = $this->token;
@@ -5095,7 +4970,7 @@ class AdminProductsControllerCore extends AdminController {
 		$this->tpl_form_vars['save_error'] = !empty($this->errors);
 		$this->tpl_form_vars['mod_evasive'] = Tools::apacheModExists('evasive');
 		$this->tpl_form_vars['mod_security'] = Tools::apacheModExists('security');
-		$this->tpl_form_vars['EPH_force_friendly_product'] = Configuration::get('EPH_FORCE_FRIENDLY_PRODUCT');
+		$this->tpl_form_vars['ps_force_friendly_product'] = Configuration::get('EPH_FORCE_FRIENDLY_PRODUCT');
 
 		// autoload rich text editor (tiny mce)
 		$this->tpl_form_vars['tinymce'] = true;
@@ -5127,25 +5002,7 @@ class AdminProductsControllerCore extends AdminController {
 		$this->tpl_form_vars['link'] = $this->context->link;
 		$this->product_exists_in_shop = true;
 
-		if ($this->display == 'edit' && Validate::isLoadedObject($product) && Shop::isFeatureActive() && Shop::getContext() == Shop::CONTEXT_SHOP && !$product->isAssociatedToShop($this->context->shop->id)) {
-			$this->product_exists_in_shop = false;
-
-			if ($this->tab_display == 'Informations') {
-				$this->displayWarning($this->l('Warning: The product does not exist in this shop'));
-			}
-
-			$defaultProduct = new Product();
-			$definition = ObjectModel::getDefinition($product);
-
-			foreach ($definition['fields'] as $fieldName => $field) {
-
-				if (isset($field['shop']) && $field['shop']) {
-					$product->$fieldName = ObjectModel::formatValue($defaultProduct->$fieldName, $field['type']);
-				}
-
-			}
-
-		}
+		
 
 		// let's calculate this once for all
 
@@ -5294,7 +5151,7 @@ class AdminProductsControllerCore extends AdminController {
 
 		$root = Category::getRootCategory();
 
-		$defaultCategory = $this->context->cookie->id_category_products_filter ? $this->context->cookie->id_category_products_filter : $this->context->shop->id_category;
+		$defaultCategory = $this->context->cookie->id_category_products_filter ? $this->context->cookie->id_category_products_filter : $this->context->company->id_category;
 		fwrite($file, $defaultCategory . PHP_EOL);
 
 		if (!$product->id) {
@@ -5312,7 +5169,7 @@ class AdminProductsControllerCore extends AdminController {
 		}
 
 		// Multishop block
-		$data->assign('feature_shop_active', Shop::isFeatureActive());
+		$data->assign('feature_shop_active', false);
 		$helper = new HelperForm();
 
 		if ($this->object && $this->object->id) {
@@ -5355,7 +5212,7 @@ class AdminProductsControllerCore extends AdminController {
 				'product'             => $product,
 				'link'                => $this->context->link,
 				'manufacturers'       => $manufacturers,
-				'is_shop_context'     => Shop::getContext() == Shop::CONTEXT_SHOP,
+				'is_shop_context'     => Company::getContext(),
 			]
 		);
 
@@ -5510,7 +5367,7 @@ class AdminProductsControllerCore extends AdminController {
 		$product = $obj;
 
 		if ($obj->id) {
-			$shops = Shop::getShops();
+			
 			$countries = Country::getCountries($this->context->language->id);
 			$groups = Group::getGroups($this->context->language->id);
 			$currencies = Currency::getCurrencies();
@@ -5544,13 +5401,12 @@ class AdminProductsControllerCore extends AdminController {
 
 			$data->assign(
 				[
-					'shops'          => $shops,
-					'admin_one_shop' => count($this->context->employee->getAssociatedShops()) == 1,
+					
+					'admin_one_shop' => 1,
 					'currencies'     => $currencies,
 					'countries'      => $countries,
 					'groups'         => $groups,
 					'combinations'   => $combinations,
-					'multi_shop'     => Shop::isFeatureActive(),
 					'link'           => new Link(),
 					'pack'           => new Pack(),
 				]
@@ -5602,19 +5458,19 @@ class AdminProductsControllerCore extends AdminController {
 				'taxesRatesByGroup'       => $taxRates,
 				'ecotaxTaxRate'           => Tax::getProductEcotaxRate(),
 				'tax_exclude_taxe_option' => Tax::excludeTaxeOption(),
-				'EPH_use_ecotax'           => Configuration::get('EPH_USE_ECOTAX'),
+				'ps_use_ecotax'           => Configuration::get('EPH_USE_ECOTAX'),
 			]
 		);
 
 		$product->price = Tools::convertPrice($product->price, $this->context->currency, true, $this->context);
 
 		if ($product->unit_price_ratio != 0) {
-			$data->assign('unit_price', Tools::EPH_round($product->price / $product->unit_price_ratio, 6));
+			$data->assign('unit_price', Tools::ps_round($product->price / $product->unit_price_ratio, 6));
 		} else {
 			$data->assign('unit_price', 0);
 		}
 
-		$data->assign('EPH_tax', Configuration::get('EPH_TAX'));
+		$data->assign('ps_tax', Configuration::get('EPH_TAX'));
 
 		$data->assign('country_display_tax_label', $this->context->country->display_tax_label);
 		$data->assign(
@@ -5630,19 +5486,14 @@ class AdminProductsControllerCore extends AdminController {
 
 	public function getSpecificPriceRequest($idProduct) {
 
-		$shops = Shop::getShops();
+		
 		$countries = Country::getCountries($this->context->language->id);
 		$groups = Group::getGroups($this->context->language->id);
 		$currencies = Currency::getCurrencies();
 
 		$tmp = [];
 
-		foreach ($shops as $shop) {
-			$tmp[$shop['id_shop']] = $shop;
-		}
-
-		$shops = $tmp;
-		$tmp = [];
+		
 
 		foreach ($currencies as $currency) {
 			$tmp[$currency['id_currency']] = $currency;
@@ -5702,7 +5553,7 @@ class AdminProductsControllerCore extends AdminController {
 				$specificPrice['impact'] = '- ' . ($specificPrice['reduction'] * 100) . ' %';
 			} else
 			if ($specificPrice['reduction'] > 0) {
-				$specificPrice['impact'] = '- ' . Tools::displayPrice(Tools::EPH_round($specificPrice['reduction'], 2), $currentSpecificCurrency) . ' ';
+				$specificPrice['impact'] = '- ' . Tools::displayPrice(Tools::ps_round($specificPrice['reduction'], 2), $currentSpecificCurrency) . ' ';
 
 				if ($specificPrice['reduction_tax']) {
 					$specificPrice['impact'] .= '(' . $this->l('Tax incl.') . ')';
@@ -5930,13 +5781,11 @@ class AdminProductsControllerCore extends AdminController {
 			'product'         => $product,
 			'combinations'    => $combinations,
 			'tagHeader'       => $this->l('Add new specifi price for ') . $product->name[$this->context->language->id],
-			'shops'           => Shop::getShops(),
 			'countries'       => Country::getCountries($this->context->language->id),
 			'groups'          => Group::getGroups($this->context->language->id),
 			'currencies'      => Currency::getCurrencies(),
 			'currency'        => $this->context->currency,
-			'multi_shop'      => Shop::isFeatureActive(),
-			'admin_one_shop'  => count($this->context->employee->getAssociatedShops()) == 1,
+			'admin_one_shop'  => 1,
 		]);
 
 		$result = [
@@ -5999,13 +5848,11 @@ class AdminProductsControllerCore extends AdminController {
 			'product'         => $product,
 			'combinations'    => $combinations,
 			'tagHeader'       => $this->l('Add new specifi price for ') . $product->name[$this->context->language->id],
-			'shops'           => Shop::getShops(),
 			'countries'       => Country::getCountries($this->context->language->id),
 			'groups'          => Group::getGroups($this->context->language->id),
 			'currencies'      => Currency::getCurrencies(),
 			'currency'        => $this->context->currency,
-			'multi_shop'      => Shop::isFeatureActive(),
-			'admin_one_shop'  => count($this->context->employee->getAssociatedShops()) == 1,
+			'admin_one_shop'  => 1,
 		]);
 
 		$result = [
@@ -6026,7 +5873,7 @@ class AdminProductsControllerCore extends AdminController {
 
 		$idProduct = Tools::getValue('id_product');
 		$idProductAttribute = Tools::getValue('sp_id_product_attribute');
-		$idShop = Tools::getValue('sp_id_shop');
+		$idCompany = Tools::getValue('sp_id_shop');
 		$idCurrency = Tools::getValue('sp_id_currency');
 		$idCountry = Tools::getValue('sp_id_country');
 		$idGroup = Tools::getValue('sp_id_group');
@@ -6061,11 +5908,11 @@ class AdminProductsControllerCore extends AdminController {
 			$this->errors[] = Tools::displayError('Submitted reduction value (0-100) is out-of-range');
 		} else
 
-		if ($this->_validateSpecificPrice($idShop, $idCurrency, $idCountry, $idGroup, $idCustomer, $price, $fromQuantity, $reduction, $reductionType, $from, $to, $idProductAttribute)) {
+		if ($this->_validateSpecificPrice($idCompany, $idCurrency, $idCountry, $idGroup, $idCustomer, $price, $fromQuantity, $reduction, $reductionType, $from, $to, $idProductAttribute)) {
 			$specificPrice = new SpecificPrice();
 			$specificPrice->id_product = (int) $idProduct;
 			$specificPrice->id_product_attribute = (int) $idProductAttribute;
-			$specificPrice->id_shop = (int) $idShop;
+			$specificPrice->id_shop = (int) $idCompany;
 			$specificPrice->id_currency = (int) ($idCurrency);
 			$specificPrice->id_country = (int) ($idCountry);
 			$specificPrice->id_group = (int) ($idGroup);
@@ -6117,7 +5964,7 @@ class AdminProductsControllerCore extends AdminController {
 	protected function _applyTaxToEcotax($product) {
 
 		if ($product->ecotax) {
-			$product->ecotax = Tools::EPH_round($product->ecotax * (1 + Tax::getProductEcotaxRate() / 100), 2);
+			$product->ecotax = Tools::ps_round($product->ecotax * (1 + Tax::getProductEcotaxRate() / 100), 2);
 		}
 
 	}
@@ -6155,8 +6002,8 @@ class AdminProductsControllerCore extends AdminController {
 				'product'               => $product,
 				'languages'             => $this->_languages,
 				'id_lang'               => $this->context->language->id,
-				'EPH_ssl_enabled'        => Configuration::get('EPH_SSL_ENABLED'),
-				'curent_shop_url'       => $this->context->shop->getBaseURL(),
+				'ps_ssl_enabled'        => Configuration::get('EPH_SSL_ENABLED'),
+				'curent_shop_url'       => $this->context->company->getBaseURL(),
 				'default_form_language' => $this->default_form_language,
 				'rewritten_links'       => $rewrittenLinks,
 			]
@@ -6273,7 +6120,7 @@ class AdminProductsControllerCore extends AdminController {
 					$packItems[$i]['image'] = $this->context->link->getImageLink($packItem->link_rewrite, $cover['id_image'], 'home_default');
 					// @todo: don't rely on 'home_default'
 					//$path_to_image = _EPH_IMG_DIR_.'p/'.Image::getImgFolderStatic($cover['id_image']).(int)$cover['id_image'].'.jpg';
-					//$pack_items[$i]['image'] = ImageManager::thumbnail($path_to_image, 'pack_mini_'.$pack_item->id.'_'.$this->context->shop->id.'.jpg', 120);
+					//$pack_items[$i]['image'] = ImageManager::thumbnail($path_to_image, 'pack_mini_'.$pack_item->id.'_'.$this->context->company->id.'.jpg', 120);
 					$i++;
 				}
 
@@ -6507,13 +6354,13 @@ class AdminProductsControllerCore extends AdminController {
 				}
 
 				$isoTinyMce = $this->context->language->iso_code;
-				$isoTinyMce = (file_exists(_EPH_ROOT_ADMIN_DIR_ . '/js/tinymce/langs/' . $isoTinyMce . '.js') ? $isoTinyMce : 'en');
+				$isoTinyMce = (file_exists(_EPH_ROOT_DIR_ . '/js/tinymce/langs/' . $isoTinyMce . '.js') ? $isoTinyMce : 'en');
 
 				$data->assign(
 					[
 						'obj'                    => $obj,
 						'table'                  => $this->table,
-						'ad'                     => __EPH_BASE_URI__ . basename(_EPH_ADMIN_DIR_),
+						'ad'                     => __EPH_BASE_URI__ . basename(_EPH_ROOT_DIR_),
 						'iso_tiny_mce'           => $isoTinyMce,
 						'languages'              => $this->_languages,
 						'id_lang'                => $this->context->language->id,
@@ -6522,7 +6369,7 @@ class AdminProductsControllerCore extends AdminController {
 						'default_form_language'  => (int) Configuration::get('EPH_LANG_DEFAULT'),
 						'attachment_name'        => $attachmentName,
 						'attachment_description' => $attachmentDescription,
-						'bo_imgdir'              => _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+						'bo_imgdir'                 => __EPH_BASE_URI__ .  'content/themes/' . $this->bo_theme . '/img/',
 					]
 				);
 			} else {
@@ -6633,13 +6480,11 @@ class AdminProductsControllerCore extends AdminController {
 
 		$checkProductAssociationAjax = false;
 
-		if (Shop::isFeatureActive() && Shop::getContext() != Shop::CONTEXT_ALL) {
-			$checkProductAssociationAjax = true;
-		}
+		
 
 		// TinyMCE
 		$isoTinyMce = $this->context->language->iso_code;
-		$isoTinyMce = (file_exists(_EPH_ROOT_ADMIN_DIR_ . '/js/tinymce/langs/' . $isoTinyMce . '.js') ? $isoTinyMce : 'en');
+		$isoTinyMce = (file_exists(_EPH_ROOT_DIR_ . '/js/tinymce/langs/' . $isoTinyMce . '.js') ? $isoTinyMce : 'en');
 		$data->assign(
 			[
 				'ad'                             => dirname($_SERVER['PHP_SELF']),
@@ -6665,8 +6510,8 @@ class AdminProductsControllerCore extends AdminController {
 		$data->assign(
 			[
 				'product'                   => $obj,
-				'EPH_dimension_unit'         => Configuration::get('EPH_DIMENSION_UNIT'),
-				'EPH_weight_unit'            => Configuration::get('EPH_WEIGHT_UNIT'),
+				'ps_dimension_unit'         => Configuration::get('EPH_DIMENSION_UNIT'),
+				'ps_weight_unit'            => Configuration::get('EPH_WEIGHT_UNIT'),
 				'carrier_list'              => $this->getCarrierList(),
 				'currency'                  => $this->context->currency,
 				'country_display_tax_label' => $this->context->country->display_tax_label,
@@ -6712,22 +6557,7 @@ class AdminProductsControllerCore extends AdminController {
 
 				$shops = false;
 
-				if (Shop::isFeatureActive()) {
-					$shops = Shop::getShops();
-				}
-
-				if ($shops) {
-
-					foreach ($shops as $key => $shop) {
-
-						if (!$obj->isAssociatedToShop($shop['id_shop'])) {
-							unset($shops[$key]);
-						}
-
-					}
-
-				}
-
+				
 				$data->assign('shops', $shops);
 
 				$countImages = Db::getInstance()->getValue(
@@ -6743,11 +6573,7 @@ class AdminProductsControllerCore extends AdminController {
 					$images[$k] = new Image($image['id_image']);
 				}
 
-				if ($this->context->shop->getContext() == Shop::CONTEXT_SHOP) {
-					$currentShopId = (int) $this->context->shop->id;
-				} else {
-					$currentShopId = 0;
-				}
+				$currentShopId = (int) $this->context->company->id;
 
 				$languages = Language::getLanguages(true);
 
@@ -6767,8 +6593,8 @@ class AdminProductsControllerCore extends AdminController {
 						'languages'           => $this->_languages,
 						'default_language'    => (int) Configuration::get('EPH_LANG_DEFAULT'),
 						'link'                => $this->context->link,
-						'base_link'           => $this->context->link->getBaseFrontLink(),
-						'bo_imgdir'           => _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+						'base_link'           => $this->context->link->getBaseFrontLink().'content/',
+						'bo_imgdir'                 => __EPH_BASE_URI__ .  'content/themes/' . $this->bo_theme . '/img/',
 					]
 				);
 
@@ -6798,7 +6624,7 @@ class AdminProductsControllerCore extends AdminController {
 
 		foreach ($images as &$image) {
 			$img = new Image($image['id_image']);
-			$path = $this->context->link->getBaseFrontLink() . '/img/p/' . $img->getExistingImgPath() . '-small_default.jpg';
+			$path = $this->context->link->getBaseFrontLink() . '/content/img/p/' . $img->getExistingImgPath() . '-small_default.jpg';
 			$image['Image'] = '<img src="' . $path . '" class="imgm img-thumbnail">';
 			$image['imagePosition'] = $img->position;
 			$image['position'] = '<div class="dragGroup"><div class="imagePosition_' . $img->id . ' positions" data-id="' . $img->id . '" data-parent="' . $img->id . '" data-position="' . $img->position . '">' . $img->position . '</div></div>';
@@ -7201,7 +7027,7 @@ class AdminProductsControllerCore extends AdminController {
 				$file['path'] = $image->getExistingImgPath();
 
 				@unlink(_EPH_TMP_IMG_DIR_ . 'product_' . (int) $product->id . '.jpg');
-				@unlink(_EPH_TMP_IMG_DIR_ . 'product_mini_' . (int) $product->id . '_' . $this->context->shop->id . '.jpg');
+				@unlink(_EPH_TMP_IMG_DIR_ . 'product_mini_' . (int) $product->id . '_' . $this->context->company->id . '.jpg');
 
 				$result = [
 					'success'                 => true,
@@ -7274,9 +7100,9 @@ class AdminProductsControllerCore extends AdminController {
 			$images = Image::getImages($this->context->language->id, $product->id);
 
 			$data->assign('tax_exclude_option', Tax::excludeTaxeOption());
-			$data->assign('EPH_weight_unit', Configuration::get('EPH_WEIGHT_UNIT'));
+			$data->assign('ps_weight_unit', Configuration::get('EPH_WEIGHT_UNIT'));
 			$isoTinyMce = $this->context->language->iso_code;
-			$isoTinyMce = (file_exists(_EPH_ROOT_ADMIN_DIR_ . '/js/tinymce/langs/' . $isoTinyMce . '.js') ? $isoTinyMce : 'en');
+			$isoTinyMce = (file_exists(_EPH_ROOT_DIR_ . '/js/tinymce/langs/' . $isoTinyMce . '.js') ? $isoTinyMce : 'en');
 			$currency = $this->context->currency;
 
 			$data->assign(
@@ -7287,7 +7113,7 @@ class AdminProductsControllerCore extends AdminController {
 					'token'                 => $this->token,
 					'languages'             => $this->_languages,
 					'default_form_language' => $this->default_form_language,
-					'bo_imgdir'             => _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+					'bo_imgdir'                 => __EPH_BASE_URI__ .  'content/themes/' . $this->bo_theme . '/img/',
 				]
 			);
 
@@ -7381,9 +7207,9 @@ class AdminProductsControllerCore extends AdminController {
 				$images = Image::getImages($this->context->language->id, $product->id);
 
 				$data->assign('tax_exclude_option', Tax::excludeTaxeOption());
-				$data->assign('EPH_weight_unit', Configuration::get('EPH_WEIGHT_UNIT'));
+				$data->assign('ps_weight_unit', Configuration::get('EPH_WEIGHT_UNIT'));
 				$isoTinyMce = $this->context->language->iso_code;
-				$isoTinyMce = (file_exists(_EPH_ROOT_ADMIN_DIR_ . '/js/tinymce/langs/' . $isoTinyMce . '.js') ? $isoTinyMce : 'en');
+				$isoTinyMce = (file_exists(_EPH_ROOT_DIR_ . '/js/tinymce/langs/' . $isoTinyMce . '.js') ? $isoTinyMce : 'en');
 				$currency = $this->context->currency;
 
 				$data->assign(
@@ -7425,12 +7251,10 @@ class AdminProductsControllerCore extends AdminController {
 
 						'combinationScript'  => $this->buildDeclinaisonScript($product->id),
 						'declinaisons'       => $declinaisons,
-						'declinaisonFields'  => EmployeeConfiguration::get('EXPERT_EDUCATION_DECLINAISON_FIELDS'),
-						'_THEME_EDUC_DIR_'   => _THEME_EDUC_DIR_,
 						'product'            => $product,
 						'token_generator'    => Tools::getAdminTokenLite('AdminAttributeGenerator'),
 						'combination_exists' => (count(AttributeGroup::getAttributesGroups($this->context->language->id)) > 0 && $product->hasAttributes()),
-						'bo_imgdir'          => __EPH_BASE_URI__ . $this->admin_webpath . _EPH_ADMIN_THEME_DIR_ . $this->bo_theme . '/img/',
+						'bo_imgdir'                 => __EPH_BASE_URI__ .  'content/themes/' . $this->bo_theme . '/img/',
 						'has_declinaisons'   => $product->hasAttributes(),
 					]
 				);
@@ -7686,40 +7510,10 @@ class AdminProductsControllerCore extends AdminController {
 				}
 
 				$show_quantities = true;
-				$shop_context = Shop::getContext();
-				$shop_group = new ShopGroup((int) Shop::getContextShopGroupID());
+				
+				
 
-				// if we are in all shops context, it's not possible to manage quantities at this level
-
-				if (Shop::isFeatureActive() && $shop_context == Shop::CONTEXT_ALL) {
-					$show_quantities = false;
-				}
-
-				// if we are in group shop context
-				else
-
-				if (Shop::isFeatureActive() && $shop_context == Shop::CONTEXT_GROUP) {
-					// if quantities are not shared between shops of the group, it's not possible to manage them at group level
-
-					if (!$shop_group->share_stock) {
-						$show_quantities = false;
-					}
-
-				}
-
-				// if we are in shop context
-				else
-
-				if (Shop::isFeatureActive()) {
-					// if quantities are shared between shops of the group, it's not possible to manage them for a given shop
-
-					if ($shop_group->share_stock) {
-						$show_quantities = false;
-					}
-
-				}
-
-				$data->assign('EPH_stock_management', Configuration::get('EPH_STOCK_MANAGEMENT'));
+				$data->assign('ps_stock_management', Configuration::get('EPH_STOCK_MANAGEMENT'));
 				$data->assign('has_attribute', $obj->hasAttributes());
 				// Check if product has combination, to display the available date only for the product or for each combination
 
@@ -7997,7 +7791,7 @@ class AdminProductsControllerCore extends AdminController {
 			if ($obj->id) {
 
 				if ($this->product_exists_in_shop) {
-					$features = Feature::getFeatures($this->context->language->id, (Shop::isFeatureActive() && Shop::getContext() == Shop::CONTEXT_SHOP));
+					$features = Feature::getFeatures($this->context->language->id);
 
 					foreach ($features as $k => $tab_features) {
 						$features[$k]['current_item'] = false;
@@ -8224,10 +8018,7 @@ class AdminProductsControllerCore extends AdminController {
 			$id_lang = Tools::getValue('id_lang');
 			$limit = Tools::getValue('limit');
 
-			if ($this->context->shop->getContext() != Shop::CONTEXT_SHOP) {
-				$result = false;
-			} else {
-				$result = Db::getInstance()->executeS(
+			$result = Db::getInstance()->executeS(
 					'
                     SELECT DISTINCT pl.`name`, p.`id_product`, pl.`id_shop`
                     FROM `' . _DB_PREFIX_ . 'product` p
@@ -8237,7 +8028,6 @@ class AdminProductsControllerCore extends AdminController {
                     GROUP BY pl.`id_product`
                     LIMIT ' . (int) $limit
 				);
-			}
 
 			$this->ajaxDie(json_encode($result));
 		}

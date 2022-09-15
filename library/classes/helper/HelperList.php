@@ -567,7 +567,7 @@ class HelperListCore extends Helper {
                         $pathToImage = _EPH_IMG_DIR_ . $params['image'] . '/' . Image::getImgFolderStatic($tr['id_image']) . (int) $tr['id_image'] . '.' . $this->imageType;
                     }
 
-                    $this->_list[$index][$key] = ImageManager::thumbnail($pathToImage, $this->table . '_mini_' . $itemId . '_' . $this->context->shop->id . '.' . $this->imageType, 45, $this->imageType);
+                    $this->_list[$index][$key] = ImageManager::thumbnail($pathToImage, $this->table . '_mini_' . $itemId . '_' . $this->context->company->id . '.' . $this->imageType, 45, $this->imageType);
                 } else
                 if (isset($params['icon']) && isset($tr[$key]) && (isset($params['icon'][$tr[$key]]) || isset($params['icon']['default']))) {
 

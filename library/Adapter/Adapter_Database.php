@@ -6,8 +6,8 @@
  * @since 1.9.1.0
  */
 // @codingStandardsIgnoreStart
-class Adapter_Database implements Core_Foundation_Database_DatabaseInterface
-{
+class Adapter_Database implements Core_Foundation_Database_DatabaseInterface {
+
     // @codingStandardsIgnoreEnd
 
     /**
@@ -22,8 +22,8 @@ class Adapter_Database implements Core_Foundation_Database_DatabaseInterface
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function select($sql)
-    {
+    public function select($sql) {
+
         return Db::getInstance()->executeS($sql);
     }
 
@@ -37,8 +37,8 @@ class Adapter_Database implements Core_Foundation_Database_DatabaseInterface
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function escape($unsafeData)
-    {
+    public function escape($unsafeData) {
+
         // Prepare required params
         $htmlOk = true;
         $bqSql = true;

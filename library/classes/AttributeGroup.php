@@ -5,11 +5,11 @@
  *
  * @since 1.9.1.0
  */
-class AttributeGroupCore extends ObjectModel {
+class AttributeGroupCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'attribute_group',
@@ -204,7 +204,7 @@ class AttributeGroupCore extends ObjectModel {
      */
     public function delete() {
 
-        if (!$this->hasMultishopEntries() || Shop::getContext() == Shop::CONTEXT_ALL) {
+       
             /* Select children in order to find linked combinations */
             $attributeIds = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
                 (new DbQuery())
@@ -250,7 +250,7 @@ class AttributeGroupCore extends ObjectModel {
             }
 
             $this->cleanPositions();
-        }
+       
 
         $return = parent::delete();
 

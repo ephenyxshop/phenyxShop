@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class ConfigurationCore extends ObjectModel {
+class ConfigurationCore extends PhenyxObjectModel {
 
     // Default configuration consts
     // @since 1.0.1
@@ -241,7 +241,7 @@ class ConfigurationCore extends ObjectModel {
     const EPHENYX_LICENSE_KEY = '_EPHENYX_LICENSE_KEY_';
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'configuration',
@@ -249,8 +249,6 @@ class ConfigurationCore extends ObjectModel {
         'multilang' => true,
         'fields'    => [
             'name'          => ['type' => self::TYPE_STRING, 'validate' => 'isConfigName', 'required' => true, 'size' => 254],
-            'id_shop_group' => ['type' => self::TYPE_NOTHING, 'validate' => 'isUnsignedId'],
-            'id_shop'       => ['type' => self::TYPE_NOTHING, 'validate' => 'isUnsignedId'],
             'value'         => ['type' => self::TYPE_NOTHING],
             'date_add'      => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
             'date_upd'      => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
@@ -262,8 +260,6 @@ class ConfigurationCore extends ObjectModel {
     protected static $types = [];
     /** @var string Key */
     public $name;
-    public $id_shop_group;
-    public $id_shop;
     /** @var string Value */
     public $value;
     /** @var string Object creation date */
@@ -314,7 +310,7 @@ class ConfigurationCore extends ObjectModel {
      */
     public static function getGlobalValue($key, $idLang = null) {
 
-        return Configuration::get($key, $idLang, 0, 0);
+        return Configuration::get($key, $idLang);
     }
 
     /**
@@ -322,8 +318,8 @@ class ConfigurationCore extends ObjectModel {
      *
      * @param string   $key    Key wanted
      * @param int      $idLang Language ID
-     * @param int|null $idShopGroup
-     * @param int|null $idShop
+     * @param int|null $idCompanyGroup
+     * @param int|null $idCompany
      *
      * @return string Value
      *
@@ -331,7 +327,7 @@ class ConfigurationCore extends ObjectModel {
      * @version 1.8.1.0 Initial version
      * @throws PhenyxShopException
      */
-    public static function get($key, $idLang = null, $idShopGroup = null, $idShop = null) {
+    public static function get($key, $idLang = null) {
 
         if (defined('_EPH_DO_NOT_LOAD_CONFIGURATION_') && _EPH_DO_NOT_LOAD_CONFIGURATION_) {
             return false;
@@ -346,24 +342,12 @@ class ConfigurationCore extends ObjectModel {
 
         $idLang = (int) $idLang;
 
-        if ($idShop === null || !Shop::isFeatureActive()) {
-            $idShop = Shop::getContextShopID(true);
-        }
-
-        if ($idShopGroup === null || !Shop::isFeatureActive()) {
-            $idShopGroup = Shop::getContextShopGroupID(true);
-        }
-
+       
         if (!isset(static::$_cache[static::$definition['table']][$idLang])) {
             $idLang = 0;
         }
 
-        if ($idShop && Configuration::hasKey($key, $idLang, null, $idShop)) {
-            return static::$_cache[static::$definition['table']][$idLang]['shop'][$idShop][$key];
-        } else
-        if ($idShopGroup && Configuration::hasKey($key, $idLang, $idShopGroup)) {
-            return static::$_cache[static::$definition['table']][$idLang]['group'][$idShopGroup][$key];
-        } else
+        
         if (Configuration::hasKey($key, $idLang) && isset(static::$_cache[static::$definition['table']][$idLang]['global'][$key])) {
 			
             return static::$_cache[static::$definition['table']][$idLang]['global'][$key];
@@ -406,7 +390,7 @@ class ConfigurationCore extends ObjectModel {
 
         $rows = $connection->executeS(
             (new DbQuery())
-                ->select('c.`name`, cl.`id_lang`, IFNULL(cl.`value`, c.`value`) AS `value`, c.`id_shop_group`, c.`id_shop`')
+                ->select('c.`name`, cl.`id_lang`, IFNULL(cl.`value`, c.`value`) AS `value`')
                 ->from(static::$definition['table'], 'c')
                 ->leftJoin(static::$definition['table'] . '_lang', 'cl', 'c.`' . static::$definition['primary'] . '` = cl.`' . static::$definition['primary'] . '`')
         );
@@ -422,19 +406,10 @@ class ConfigurationCore extends ObjectModel {
             if (!isset(static::$_cache[static::$definition['table']][$lang])) {
                 static::$_cache[static::$definition['table']][$lang] = [
                     'global' => [],
-                    'group'  => [],
-                    'shop'   => [],
                 ];
             }
 
-            if ($row['id_shop']) {
-                static::$_cache[static::$definition['table']][$lang]['shop'][$row['id_shop']][$row['name']] = $row['value'];
-            } else
-            if ($row['id_shop_group']) {
-                static::$_cache[static::$definition['table']][$lang]['group'][$row['id_shop_group']][$row['name']] = $row['value'];
-            } else {
-                static::$_cache[static::$definition['table']][$lang]['global'][$row['name']] = $row['value'];
-            }
+            static::$_cache[static::$definition['table']][$lang]['global'][$row['name']] = $row['value'];
 
         }
 
@@ -445,15 +420,15 @@ class ConfigurationCore extends ObjectModel {
      *
      * @param string $key
      * @param int    $idLang
-     * @param int    $idShopGroup
-     * @param int    $idShop
+     * @param int    $idCompanyGroup
+     * @param int    $idCompany
      *
      * @return bool
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function hasKey($key, $idLang = null, $idShopGroup = null, $idShop = null) {
+    public static function hasKey($key, $idLang = null) {
 
         return (bool) Db::getInstance(_EPH_USE_SQL_SLAVE_)->getValue(
             (new DbQuery())
@@ -463,70 +438,23 @@ class ConfigurationCore extends ObjectModel {
         );
     }
 
-    /**
-     * Get a single configuration value (in multiple languages)
-     *
-     * @param string $key Key wanted
-     * @param int    $idShopGroup
-     * @param int    $idShop
-     *
-     * @return array Values in multiple languages
-     *
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     * @throws PhenyxShopException
-     */
-    public static function getInt($key, $idShopGroup = null, $idShop = null) {
+    public static function getInt($key) {
 
         $resultsArray = [];
 
         foreach (Language::getIDs() as $idLang) {
-            $resultsArray[$idLang] = Configuration::get($key, $idLang, $idShopGroup, $idShop);
+            $resultsArray[$idLang] = Configuration::get($key, $idLang);
         }
 
         return $resultsArray;
     }
 
-    /**
-     * Get a single configuration value for all shops
-     *
-     * @param string $key    Key wanted
-     * @param int    $idLang
-     *
-     * @return array Values for all shops
-     *
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     * @throws PhenyxShopException
-     */
-    public static function getMultiShopValues($key, $idLang = null) {
+    public static function getMultiShopValues($key, $idLang = null) {        
 
-        $shops = Shop::getShops(false, null, true);
-        $resultsArray = [];
-
-        foreach ($shops as $idShop) {
-            $resultsArray[$idShop] = Configuration::get($key, $idLang, null, $idShop);
-        }
-
-        return $resultsArray;
+        return Configuration::get($key, $idLang, null);
     }
 
-    /**
-     * Get several configuration values (in one language only)
-     *
-     * @throws PhenyxShopException
-     *
-     * @param array $keys        Keys wanted
-     * @param int   $idLang      Language ID
-     * @param int   $idShopGroup
-     * @param int   $idShop
-     *
-     * @return array Values
-     *
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     */
-    public static function getMultiple($keys, $idLang = null, $idShopGroup = null, $idShop = null) {
+    public static function getMultiple($keys, $idLang = null) {
 
         if (!is_array($keys)) {
             throw new PhenyxShopException('keys var is not an array');
@@ -534,64 +462,22 @@ class ConfigurationCore extends ObjectModel {
 
         $idLang = (int) $idLang;
 
-        if ($idShop === null) {
-            $idShop = Shop::getContextShopID(true);
-        }
-
-        if ($idShopGroup === null) {
-            $idShopGroup = Shop::getContextShopGroupID(true);
-        }
-
+       
         $results = [];
 
         foreach ($keys as $key) {
-            $results[$key] = Configuration::get($key, $idLang, $idShopGroup, $idShop);
+            $results[$key] = Configuration::get($key, $idLang);
         }
 
         return $results;
     }
 
-    /**
-     * Update configuration key for global context only
-     *
-     * This method escapes $values with pSQL().
-     *
-     * @param string $key
-     * @param mixed  $values
-     * @param bool   $html
-     *
-     * @return bool
-     *
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     * @throws PhenyxShopException
-     */
     public static function updateGlobalValue($key, $values, $html = false) {
 
         return Configuration::updateValue($key, $values, $html, 0, 0);
     }
-
-    /**
-     * Update configuration key and value into database (automatically insert if key does not exist)
-     *
-     * Values are inserted/updated directly using SQL, because using (Configuration) ObjectModel
-     * may not insert values correctly (for example, HTML is escaped, when it should not be).
-     *
-     * This method escapes $values with pSQL().
-     *
-     * @param string $key    Key
-     * @param mixed  $values $values is an array if the configuration is multilingual, a single string else.
-     * @param bool   $html   Specify if html is authorized in value
-     * @param int    $idShopGroup
-     * @param int    $idShop
-     *
-     * @return bool Update result
-     *
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     * @throws PhenyxShopException
-     */
-    public static function updateValue($key, $values, $html = false, $script = false, $idShopGroup = null, $idShop = null) {
+    
+    public static function updateValue($key, $values, $html = false, $script = false) {
 
         $file = fopen("testupdateValue.txt", "w");
 
@@ -599,13 +485,7 @@ class ConfigurationCore extends ObjectModel {
 
         fwrite($file, $key . ' => ' . $values . PHP_EOL);
 
-        if ($idShop === null || !Shop::isFeatureActive()) {
-            $idShop = Shop::getContextShopID(true);
-        }
-
-        if ($idShopGroup === null || !Shop::isFeatureActive()) {
-            $idShopGroup = Shop::getContextShopGroupID(true);
-        }
+        
 
         if (!is_array($values)) {
             $values = [$values];
@@ -630,7 +510,7 @@ class ConfigurationCore extends ObjectModel {
 
         foreach ($values as $lang => $value) {
 
-            if (Configuration::hasKey($key, $lang, $idShopGroup, $idShop)) {
+            if (Configuration::hasKey($key, $lang)) {
                 // If key exists already, update value.
                 fwrite($file, 'Configuration has Key' . PHP_EOL);
                 fwrite($file, $lang . PHP_EOL);
@@ -643,7 +523,7 @@ class ConfigurationCore extends ObjectModel {
                             'value'    => $value,
                             'date_upd' => date('Y-m-d H:i:s'),
                         ],
-                        '`name` = \'' . $key . '\'' . Configuration::sqlRestriction($idShopGroup, $idShop),
+                        '`name` = \'' . $key . '\'',
                         1,
                         true
                     );
@@ -657,7 +537,6 @@ class ConfigurationCore extends ObjectModel {
                                     SELECT c.`' . static::$definition['primary'] . '`
                                     FROM `' . _DB_PREFIX_ . static::$definition['table'] . '` c
                                     WHERE c.name = \'' . $key . '\''
-                    . Configuration::sqlRestriction($idShopGroup, $idShop)
                         . ')';
                     $result &= Db::getInstance()->execute($sql);
                 }
@@ -666,10 +545,8 @@ class ConfigurationCore extends ObjectModel {
                 // If key doesn't exist, create it.
                 fwrite($file, 'No Key' . PHP_EOL);
 
-                if (!$configID = Configuration::getIdByName($key, $idShopGroup, $idShop)) {
+                if (!$configID = Configuration::getIdByName($key)) {
                     $data = [
-                        'id_shop_group' => $idShopGroup ? (int) $idShopGroup : null,
-                        'id_shop'       => $idShop ? (int) $idShop : null,
                         'name'          => $key,
                         'value'         => $lang ? null : $value,
                         'date_add'      => ['type' => 'sql', 'value' => 'NOW()'],
@@ -695,96 +572,29 @@ class ConfigurationCore extends ObjectModel {
 
         }
 
-        Configuration::set($key, $values, $idShopGroup, $idShop);
+        Configuration::set($key, $values);
 
         return $result;
     }
-
-    /**
-     * Add SQL restriction on shops for configuration table
-     *
-     * @param int $idShopGroup
-     * @param int $idShop
-     *
-     * @return string
-     *
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     */
-    protected static function sqlRestriction($idShopGroup, $idShop) {
-
-        if ($idShop) {
-            return ' AND id_shop = ' . (int) $idShop;
-        } else
-        if ($idShopGroup) {
-            return ' AND id_shop_group = ' . (int) $idShopGroup . ' AND (id_shop IS NULL OR id_shop = 0)';
-        } else {
-            return ' AND (id_shop_group IS NULL OR id_shop_group = 0) AND (id_shop IS NULL OR id_shop = 0)';
-        }
-
-    }
-
-    /**
-     * Return ID a configuration key
-     *
-     * @param string $key
-     * @param int    $idShopGroup
-     * @param int    $idShop
-     *
-     * @return int Configuration key ID
-     *
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     * @throws PhenyxShopException
-     */
-    public static function getIdByName($key, $idShopGroup = null, $idShop = null) {
+   
+    public static function getIdByName($key) {
 
         static::validateKey($key);
 
-        if ($idShop === null) {
-            $idShop = Shop::getContextShopID(true);
-        }
-
-        if ($idShopGroup === null) {
-            $idShopGroup = Shop::getContextShopGroupID(true);
-        }
+        
 
         $sql = 'SELECT `' . static::$definition['primary'] . '`
                 FROM `' . _DB_PREFIX_ . static::$definition['table'] . '`
-                WHERE name = \'' . $key . '\'
-                ' . Configuration::sqlRestriction($idShopGroup, $idShop);
+                WHERE name = \'' . $key . '\'';
 
         return (int) Db::getInstance()->getValue($sql);
     }
 
-    /**
-     * Set TEMPORARY a single configuration value (in one language only)
-     *
-     * This method expects $values to be escaped with pSQL() already (to change
-     * this, we'd need $html in the signature).
-     *
-     * Note: a need for calling this method directly should be rare.
-     *       updateValue() and updateGlobalValue() do this on their own already.
-     *
-     * @param string $key         Key wanted
-     * @param mixed  $values      $values is an array if the configuration is multilingual, a single string else.
-     * @param int    $idShopGroup
-     * @param int    $idShop
-     *
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     */
-    public static function set($key, $values, $idShopGroup = null, $idShop = null) {
+    public static function set($key, $values) {
 
         static::validateKey($key);
 
-        if ($idShop === null) {
-            $idShop = Shop::getContextShopID(true);
-        }
-
-        if ($idShopGroup === null) {
-            $idShopGroup = Shop::getContextShopGroupID(true);
-        }
+        
 
         if (!is_array($values)) {
             $values = [$values];
@@ -792,31 +602,12 @@ class ConfigurationCore extends ObjectModel {
 
         foreach ($values as $lang => $value) {
 
-            if ($idShop) {
-                static::$_cache[static::$definition['table']][$lang]['shop'][$idShop][$key] = $value;
-            } else
-            if ($idShopGroup) {
-                static::$_cache[static::$definition['table']][$lang]['group'][$idShopGroup][$key] = $value;
-            } else {
-                static::$_cache[static::$definition['table']][$lang]['global'][$key] = $value;
-            }
+            static::$_cache[static::$definition['table']][$lang]['global'][$key] = $value;
 
         }
 
     }
 
-    /**
-     * Delete a configuration key in database (with or without language management)
-     *
-     * @param string $key Key to delete
-     *
-     * @return bool Deletion result
-     *
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     * @throws PhenyxShopException
-     * @throws PhenyxShopDatabaseException
-     */
     public static function deleteByName($key) {
 
         static::validateKey($key);
@@ -838,30 +629,10 @@ class ConfigurationCore extends ObjectModel {
         return ($result && $result2);
     }
 
-    /**
-     * Delete configuration key from current context.
-     *
-     * @param string $key
-     *
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     * @throws PhenyxShopDatabaseException
-     * @throws PhenyxShopException
-     */
     public static function deleteFromContext($key) {
 
-        if (Shop::getContext() == Shop::CONTEXT_ALL) {
-            return;
-        }
 
-        $idShop = null;
-        $idShopGroup = Shop::getContextShopGroupID(true);
-
-        if (Shop::getContext() == Shop::CONTEXT_SHOP) {
-            $idShop = Shop::getContextShopID(true);
-        }
-
-        $id = Configuration::getIdByName($key, $idShopGroup, $idShop);
+        $id = Configuration::getIdByName($key);
         Db::getInstance()->delete(
             static::$definition['table'],
             '`' . static::$definition['primary'] . '` = ' . (int) $id
@@ -874,48 +645,6 @@ class ConfigurationCore extends ObjectModel {
         static::$_cache[static::$definition['table']] = null;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return bool
-     *
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     * @throws PhenyxShopException
-     */
-    public static function isOverridenByCurrentContext($key) {
-
-        if (Configuration::isLangKey($key)) {
-            $testContext = false;
-
-            foreach (Language::getIDs(false) as $idLang) {
-
-                if ((Shop::getContext() == Shop::CONTEXT_SHOP && Configuration::hasContext($key, $idLang, Shop::CONTEXT_SHOP))
-                    || (Shop::getContext() == Shop::CONTEXT_GROUP && Configuration::hasContext($key, $idLang, Shop::CONTEXT_GROUP))
-                ) {
-                    $testContext = true;
-                }
-
-            }
-
-        } else {
-            $testContext = ((Shop::getContext() == Shop::CONTEXT_SHOP && Configuration::hasContext($key, null, Shop::CONTEXT_SHOP))
-                || (Shop::getContext() == Shop::CONTEXT_GROUP && Configuration::hasContext($key, null, Shop::CONTEXT_GROUP))) ? true : false;
-        }
-
-        return (Shop::isFeatureActive() && Shop::getContext() != Shop::CONTEXT_ALL && $testContext);
-    }
-
-    /**
-     * Check if a key was loaded as multi lang
-     *
-     * @param string $key
-     *
-     * @return bool
-     *
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     */
     public static function isLangKey($key) {
 
         static::validateKey($key);
@@ -923,51 +652,6 @@ class ConfigurationCore extends ObjectModel {
         return (isset(static::$types[$key]) && static::$types[$key] == 'lang') ? true : false;
     }
 
-    /**
-     * Check if configuration var is defined in given context
-     *
-     * @param string $key
-     * @param int    $idLang
-     * @param int    $context
-     *
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     * @return bool
-     */
-    public static function hasContext($key, $idLang, $context) {
-
-        if (Shop::getContext() == Shop::CONTEXT_ALL) {
-            $idShop = $idShopGroup = null;
-        } else
-        if (Shop::getContext() == Shop::CONTEXT_GROUP) {
-            $idShopGroup = Shop::getContextShopGroupID(true);
-            $idShop = null;
-        } else {
-            $idShopGroup = Shop::getContextShopGroupID(true);
-            $idShop = Shop::getContextShopID(true);
-        }
-
-        if ($context == Shop::CONTEXT_SHOP && Configuration::hasKey($key, $idLang, null, $idShop)) {
-            return true;
-        } else
-        if ($context == Shop::CONTEXT_GROUP && Configuration::hasKey($key, $idLang, $idShopGroup)) {
-            return true;
-        } else
-        if ($context == Shop::CONTEXT_ALL && Configuration::hasKey($key, $idLang)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @see     ObjectModel::getFieldsLang()
-     * @return bool|array Multilingual fields
-     *
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     * @throws PhenyxShopException
-     */
     public function getFieldsLang() {
 
         if (!is_array($this->value)) {
@@ -977,45 +661,6 @@ class ConfigurationCore extends ObjectModel {
         return parent::getFieldsLang();
     }
 
-    /**
-     * This method is override to allow TranslatedConfiguration entity
-     *
-     * @param string $sqlJoin
-     * @param string $sqlFilter
-     * @param string $sqlSort
-     * @param string $sqlLimit
-     *
-     * @return array
-     *
-     * @throws PhenyxShopDatabaseException
-     * @throws PhenyxShopException
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     */
-    public function getWebserviceObjectList($sqlJoin, $sqlFilter, $sqlSort, $sqlLimit) {
-
-        $query = '
-        SELECT DISTINCT main.`' . static::$definition['primary'] . '`
-        FROM `' . _DB_PREFIX_ . static::$definition['table'] . '` main
-        ' . $sqlJoin . '
-        WHERE `' . static::$definition['primary'] . '` NOT IN (
-            SELECT `' . static::$definition['primary'] . '`
-            FROM ' . _DB_PREFIX_ . static::$definition['table'] . '_lang
-        ) ' . $sqlFilter . '
-        ' . ($sqlSort != '' ? $sqlSort : '') . '
-        ' . ($sqlLimit != '' ? $sqlLimit : '');
-
-        return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
-    }
-
-    /**
-     * Validate a configuration key. Throws an exception for invalid keys.
-     *
-     * @param string $key
-     *
-     * @throws PhenyxShopException
-     * @since   1.0.8
-     */
     protected static function validateKey($key) {
 
         if (!Validate::isConfigName($key)) {

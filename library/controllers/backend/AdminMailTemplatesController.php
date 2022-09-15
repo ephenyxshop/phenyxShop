@@ -261,12 +261,12 @@ class AdminMailTemplatesControllerCore extends AdminController {
 
         $iterator = new AppendIterator();
 
-        $iterator->append(new DirectoryIterator(_EPH_ROOT_ADMIN_DIR_ . '/mails/fr'));
+        $iterator->append(new DirectoryIterator(_EPH_ROOT_DIR_ . '/mails/fr'));
 
         foreach ($iterator as $file) {
 
             $filePath = $file->getFilename();
-            $filePath = str_replace(_EPH_ROOT_ADMIN_DIR_, '', $filePath);
+            $filePath = str_replace(_EPH_ROOT_DIR_, '', $filePath);
 
             if (in_array($file->getFilename(), ['.', '..', 'index.php', '.htaccess', 'dwsync.xml'])) {
                 continue;
@@ -333,7 +333,7 @@ class AdminMailTemplatesControllerCore extends AdminController {
 
         $idMailTemplate = Tools::getValue('idMailTemplate');
         $template = new MailTemplate($idMailTemplate);
-        $filePath = _EPH_ROOT_ADMIN_DIR_ . '/mails/fr/' . $template->template;
+        $filePath = _EPH_ROOT_DIR_ . '/mails/fr/' . $template->template;
 
         if (unlink($filePath)) {
             $template->delete();
@@ -372,7 +372,7 @@ class AdminMailTemplatesControllerCore extends AdminController {
         $content = str_replace('&gt;', '>', $mailTemplate->content);
         $output = $formatter->format($content);
 
-        $file = fopen(_EPH_ROOT_ADMIN_DIR_ . "/mails/fr/" . $mailTemplate->template, "w");
+        $file = fopen(_EPH_ROOT_DIR_ . "/mails/fr/" . $mailTemplate->template, "w");
         fwrite($file, $output);
 
         $result = $mailTemplate->update();

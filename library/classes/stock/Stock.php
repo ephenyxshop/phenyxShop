@@ -6,7 +6,7 @@
  *
  * @since 1.9.1.0
  */
-class StockCore extends ObjectModel
+class StockCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     /** @var int identifier of the warehouse */
@@ -30,7 +30,7 @@ class StockCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'stock',
@@ -49,7 +49,7 @@ class StockCore extends ObjectModel
     ];
 
     /**
-     * @see ObjectModel::$webserviceParameters
+     * @see PhenyxObjectModel::$webserviceParameters
      */
     protected $webserviceParameters = [
         'fields'        => [
@@ -62,7 +62,7 @@ class StockCore extends ObjectModel
     ];
 
     /**
-     * @see     ObjectModel::update()
+     * @see     PhenyxObjectModel::update()
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
@@ -81,7 +81,7 @@ class StockCore extends ObjectModel
     }
 
     /**
-     * @see     ObjectModel::add()
+     * @see     PhenyxObjectModel::add()
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version

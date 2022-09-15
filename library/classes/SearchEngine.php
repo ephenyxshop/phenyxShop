@@ -5,13 +5,13 @@
  *
  * @since 1.9.1.0
  */
-class SearchEngineCore extends ObjectModel {
+class SearchEngineCore extends PhenyxObjectModel {
 
     public $server;
     public $getvar;
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'search_engine',

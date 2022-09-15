@@ -114,7 +114,7 @@ class ProductControllerCore extends FrontController
         parent::init();
 
         if ($idProduct = (int) Tools::getValue('id_product')) {
-            $this->product = new Product($idProduct, true, $this->context->language->id, $this->context->shop->id);
+            $this->product = new Product($idProduct, true, $this->context->language->id, $this->context->company->id);
         }
 
         if (!Validate::isLoadedObject($this->product)) {
@@ -130,7 +130,7 @@ class ProductControllerCore extends FrontController
              * In all the others cases => 404 "Product is no longer available"
              */
             if ( !$this->product->active) {
-                if (Tools::getValue('adtoken') == Tools::getAdminToken('AdminProducts'.(int) Tab::getIdFromClassName('AdminProducts').(int) Tools::getValue('id_employee')) && $this->product->isAssociatedToShop()) {
+                if (Tools::getValue('adtoken') == Tools::getAdminToken('AdminProducts'.(int) Tab::getIdFromClassName('AdminProducts').(int) Tools::getValue('id_employee')) ) {
                     // If the product is not active, it's the admin preview mode
                     $this->context->smarty->assign('adminActionDisplay', true);
                 } else {
@@ -185,7 +185,7 @@ class ProductControllerCore extends FrontController
                         }
                     }
                 }
-                if (!$idCategory || !Category::inShopStatic($idCategory, $this->context->shop) || !Product::idIsOnCategoryId((int) $this->product->id, ['0' => ['id_category' => $idCategory]])) {
+                if (!$idCategory || !Category::inShopStatic($idCategory, $this->context->company) || !Product::idIsOnCategoryId((int) $this->product->id, ['0' => ['id_category' => $idCategory]])) {
                     $idCategory = (int) $this->product->id_category_default;
                 }
                 $this->category = new Category((int) $idCategory, (int) $this->context->cookie->id_lang);
@@ -618,7 +618,7 @@ class ProductControllerCore extends FrontController
                 'image_fancybox' => MaLink::getProductImageLink($accessory['link_rewrite'], $combination['id_image'], Configuration::get('HSMA_IMAGE_SIZE_IN_FANCYBOX')),
                 'image_default' => $combination['image'],
                 'name' => $combination['name'],
-                'specific_prices' => MaSpecificPrice::getSpecificPrices($accessory['id_accessory'], $id_customer, ($id_customer ? Customer::getDefaultGroupId((int) $id_customer) : (int) Group::getCurrent()->id), ($id_customer ? Customer::getCurrentCountry($id_customer) : Configuration::get('EPH_COUNTRY_DEFAULT')), (int) $this->context->currency->id, (int) $this->context->shop->id, false, $combination['id_product_attribute']),
+                'specific_prices' => MaSpecificPrice::getSpecificPrices($accessory['id_accessory'], $id_customer, ($id_customer ? Customer::getDefaultGroupId((int) $id_customer) : (int) Group::getCurrent()->id), ($id_customer ? Customer::getCurrentCountry($id_customer) : Configuration::get('EPH_COUNTRY_DEFAULT')), (int) $this->context->currency->id, (int) $this->context->company->id, false, $combination['id_product_attribute']),
                 'avaiable_quantity' => (int) $combination['stock_available'],
                 'out_of_stock' => MaProduct::isAvailableWhenOutOfStock($combination['out_of_stock']),
                 'is_stock_available' => (int) $this->isStockAvailable($accessory['id_accessory'], (int) $combination['id_product_attribute'], (int) $accessory['default_quantity']),
@@ -631,7 +631,7 @@ class ProductControllerCore extends FrontController
 	protected function isStockAvailable($id_product, $id_product_attribute, $quantity)
     {
         $flag = false;
-        $stock_status = MaProduct::getStockStatus((int) $id_product, (int) $id_product_attribute, $this->context->shop);
+        $stock_status = MaProduct::getStockStatus((int) $id_product, (int) $id_product_attribute, $this->context->company);
         if (!empty($stock_status)) {
             if (Product::isAvailableWhenOutOfStock($stock_status['out_of_stock']) || (!Product::isAvailableWhenOutOfStock($stock_status['out_of_stock']) && $stock_status['quantity'] >= (int) $quantity)) {
                 $flag = true;
@@ -680,7 +680,7 @@ class ProductControllerCore extends FrontController
         $formatted_product['available_quantity'] = (int) $product->quantity;
         $formatted_product['description_short'] = $product->description_short;
         $formatted_product['default_id_product_attribute'] = $product->id_product_attribute;
-        $combinations = MaProduct::getCombinations((int) $product->id, (int) $this->context->shop->id);
+        $combinations = MaProduct::getCombinations((int) $product->id, (int) $this->context->company->id);
         if (!empty($combinations)) {
             $formatted_product['combinations'] = $combinations;
         } else {
@@ -710,7 +710,7 @@ class ProductControllerCore extends FrontController
             $formated_combinations[$id_product_attribute] = array(
                 'price' => $price,
                 'name' => $combination['name'],
-                'specific_prices' => MaSpecificPrice::getSpecificPrices($product['id_product'], $id_customer, ($id_customer ? Customer::getDefaultGroupId((int) $id_customer) : (int) Group::getCurrent()->id), ($id_customer ? Customer::getCurrentCountry($id_customer) : Configuration::get('EPH_COUNTRY_DEFAULT')), (int) $this->context->currency->id, (int) $this->context->shop->id, false, $combination['id_product_attribute']),
+                'specific_prices' => MaSpecificPrice::getSpecificPrices($product['id_product'], $id_customer, ($id_customer ? Customer::getDefaultGroupId((int) $id_customer) : (int) Group::getCurrent()->id), ($id_customer ? Customer::getCurrentCountry($id_customer) : Configuration::get('EPH_COUNTRY_DEFAULT')), (int) $this->context->currency->id, (int) $this->context->company->id, false, $combination['id_product_attribute']),
                 //'avaiable_quantity' => (int) $combination['stock_available'],
                 'out_of_stock' => MaProduct::isAvailableWhenOutOfStock($combination['out_of_stock']),
             );
@@ -728,16 +728,16 @@ class ProductControllerCore extends FrontController
     protected function assignCategory()
     {
         // Assign category to the template
-        if ($this->category !== false && Validate::isLoadedObject($this->category) && $this->category->inShop() && $this->category->isAssociatedToShop()) {
+        if ($this->category !== false && Validate::isLoadedObject($this->category)) {
             $path = Tools::getPath($this->category->id, $this->product->name, true);
-        } elseif (Category::inShopStatic($this->product->id_category_default, $this->context->shop)) {
+        } elseif (Category::inShopStatic($this->product->id_category_default, $this->context->company)) {
             $this->category = new Category((int) $this->product->id_category_default, (int) $this->context->language->id);
-            if (Validate::isLoadedObject($this->category) && $this->category->active && $this->category->isAssociatedToShop()) {
+            if (Validate::isLoadedObject($this->category) && $this->category->active) {
                 $path = Tools::getPath((int) $this->product->id_category_default, $this->product->name);
             }
         }
         if (!isset($path) || !$path) {
-            $path = Tools::getPath((int) $this->context->shop->id_category, $this->product->name);
+            $path = Tools::getPath((int) $this->context->company->id_category, $this->product->name);
         }
 
         if (Validate::isLoadedObject($this->category)) {
@@ -752,7 +752,7 @@ class ProductControllerCore extends FrontController
                     'id_category_current'  => (int) $this->category->id,
                     'id_category_parent'   => (int) $this->category->id_parent,
                     'return_category_name' => Tools::safeOutput($this->category->getFieldByLang('name')),
-                    'categories'           => Category::getHomeCategories($this->context->language->id, true, (int) $this->context->shop->id),
+                    'categories'           => Category::getHomeCategories($this->context->language->id, true, (int) $this->context->company->id),
                 ]
             );
         }
@@ -783,20 +783,20 @@ class ProductControllerCore extends FrontController
 
         $productPriceWithTax = Product::getPriceStatic($this->product->id, true, null, 6);
         if (Product::$_taxCalculationMethod == EPH_TAX_INC) {
-            $productPriceWithTax = Tools::EPH_round($productPriceWithTax, 2);
+            $productPriceWithTax = Tools::ps_round($productPriceWithTax, 2);
         }
         $productPriceWithoutEcoTax = (float) $productPriceWithTax - $this->product->ecotax;
 
         $ecotaxRate = (float) Tax::getProductEcotaxRate($this->context->cart->{Configuration::get('EPH_TAX_ADDRESS_TYPE')});
         if (Product::$_taxCalculationMethod == EPH_TAX_INC && (int) Configuration::get('EPH_TAX')) {
-            $ecotaxTaxAmount = Tools::EPH_round($this->product->ecotax * (1 + $ecotaxRate / 100), 2);
+            $ecotaxTaxAmount = Tools::ps_round($this->product->ecotax * (1 + $ecotaxRate / 100), 2);
         } else {
-            $ecotaxTaxAmount = Tools::EPH_round($this->product->ecotax, 2);
+            $ecotaxTaxAmount = Tools::ps_round($this->product->ecotax, 2);
         }
 
         $idCurrency = (int) $this->context->cookie->id_currency;
         $idProduct = (int) $this->product->id;
-        $idShop = $this->context->shop->id;
+        $idShop = $this->context->company->id;
 
         $quantityDiscounts = SpecificPrice::getQuantityDiscounts($idProduct, $idShop, $idCurrency, $idCountry, $idGroup, null, true, (int) $this->context->customer->id);
         foreach ($quantityDiscounts as &$quantityDiscount) {
@@ -825,7 +825,7 @@ class ProductControllerCore extends FrontController
             [
                 'quantity_discounts'         => $this->formatQuantityDiscounts($quantityDiscounts, null, (float) $tax, $ecotaxTaxAmount),
                 'ecotax_tax_inc'             => $ecotaxTaxAmount,
-                'ecotax_tax_exc'             => Tools::EPH_round($this->product->ecotax, 2),
+                'ecotax_tax_exc'             => Tools::ps_round($this->product->ecotax, 2),
                 'ecotaxTax_rate'             => $ecotaxRate,
                 'productPriceWithoutEcoTax'  => (float) $productPriceWithoutEcoTax,
                 'group_reduction'            => $groupReduction,

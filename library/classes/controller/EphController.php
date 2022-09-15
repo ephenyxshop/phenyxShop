@@ -424,12 +424,8 @@ abstract class EphControllerCore {
 
         $html = trim($html);
 
-        if (in_array($this->controller_type, ['front', 'modulefront']) && !empty($html) && $this->getLayout()) {
-            $liveEditContent = '';
-
-            if (!$this->useMobileTheme() && $this->checkLiveEditAccess()) {
-                $liveEditContent = $this->getLiveEditFooter();
-            }
+        if (in_array($this->controller_type, ['admin', 'modulefront']) && !empty($html) ) {
+            
 
             $domAvailable = extension_loaded('dom') ? true : false;
             $defer = (bool) Configuration::get('EPH_JS_DEFER');

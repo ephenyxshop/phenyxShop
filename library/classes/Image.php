@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class ImageCore extends ObjectModel {
+class ImageCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var int access rights of created folders (octal) */
@@ -33,7 +33,7 @@ class ImageCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'image',
@@ -66,7 +66,7 @@ class ImageCore extends ObjectModel {
     /**
      * Return first image (by position) associated with a product attribute
      *
-     * @param int $idShop             Shop ID
+     * @param int $idCompany             Shop ID
      * @param int $idLang             Language ID
      * @param int $idProduct          Product ID
      * @param int $idProductAttribute Product Attribute ID
@@ -78,18 +78,17 @@ class ImageCore extends ObjectModel {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function getBestImageAttribute($idShop, $idLang, $idProduct, $idProductAttribute) {
+    public static function getBestImageAttribute($idLang, $idProduct, $idProductAttribute) {
 
-        $cacheId = 'Image::getBestImageAttribute' . '-' . (int) $idProduct . '-' . (int) $idProductAttribute . '-' . (int) $idLang . '-' . (int) $idShop;
+        $cacheId = 'Image::getBestImageAttribute' . '-' . (int) $idProduct . '-' . (int) $idProductAttribute . '-' . (int) $idLang ;
 
         if (!Cache::isStored($cacheId)) {
             $row = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
-                    ->select('image_shop.`id_image` id_image, il.`legend`')
-                    ->from('image', 'i')
-                    ->innerJoin('image_shop', 'image_shop', 'i.`id_image` = image_shop.`id_image` AND image_shop.`id_shop` = ' . (int) $idShop)
+                    ->select('i.`id_image` id_image, il.`legend`')
+                    ->from('image', 'i')                    
                     ->innerJoin('product_attribute_image', 'pai', 'pai.`id_image` = i.`id_image` AND pai.`id_product_attribute` = ' . (int) $idProductAttribute)
-                    ->leftJoin('image_lang', 'il', 'image_shop.`id_image` = il.`id_image` AND il.`id_lang` = ' . (int) $idLang)
+                    ->leftJoin('image_lang', 'il', 'ii.`id_image` = il.`id_image` AND il.`id_lang` = ' . (int) $idLang)
                     ->where('i.`id_product` = ' . (int) $idProduct)
                     ->orderBy('i.`position` ASC')
             );
@@ -236,14 +235,7 @@ class ImageCore extends ObjectModel {
             '`id_product` = ' . (int) $idProduct,
             0,
             true
-        ) &&
-            Db::getInstance()->update(
-                'image_shop',
-                [
-                    'cover' => ['type' => 'sql', 'value' => 'NULL'],
-                ],
-                '`id_shop` IN (' . implode(',', array_map('intval', Shop::getContextListShopID())) . ') AND `id_product` = ' . (int) $idProduct
-            ));
+        ));
     }
 
     /**

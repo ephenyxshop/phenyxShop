@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class AddressFormatCore extends ObjectModel
+class AddressFormatCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     /** @var int */
@@ -19,7 +19,7 @@ class AddressFormatCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'address_format',

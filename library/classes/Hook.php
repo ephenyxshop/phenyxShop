@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class HookCore extends ObjectModel {
+class HookCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /**
@@ -46,7 +46,7 @@ class HookCore extends ObjectModel {
     
     public $available_modules;
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'hook',
@@ -266,9 +266,9 @@ class HookCore extends ObjectModel {
             ->from('hook_module', 'hm')
             ->leftJoin('hook', 'h', 'h.`id_hook` = hm.`id_hook`')
             ->leftJoin('hook_lang', 'hl', 'hl.`id_hook` = h.`id_hook` AND hl.`id_lang` = '.$idLang)
-            ->leftJoin('module_shop', 'ms', 'ms.`id_module` = hm.`id_module`')
+            ->leftJoin('module', 'm', 'm.`id_module` = hm.`id_module`')
             ->orderBy('hm.`id_hook` ASC')
-            ->where('h.live_edit = 1 AND ms.enable_device = 7')
+            ->where('h.live_edit = 1 AND m.active = 1')
         );
     }
 
@@ -290,7 +290,7 @@ class HookCore extends ObjectModel {
             $results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS('
                 SELECT h.id_hook, h.name AS h_name, hl.title, hl.description, h.position, h.live_edit, hm.position AS hm_position, m.id_module, m.name, m.active
                 FROM `' . _DB_PREFIX_ . 'hook_module` hm
-                STRAIGHT_JOIN `' . _DB_PREFIX_ . 'hook` h ON (h.id_hook = hm.id_hook AND hm.id_shop = ' . (int) Context::getContext()->shop->id . ')
+                STRAIGHT_JOIN `' . _DB_PREFIX_ . 'hook` h ON (h.id_hook = hm.id_hook)
                 STRAIGHT_JOIN `' . _DB_PREFIX_ . 'hook_lang` hl ON (hl.id_hook = h.id_hook AND hl.id_lang = ' . (int) Context::getContext()->language->id . ')
                 STRAIGHT_JOIN `' . _DB_PREFIX_ . 'module` AS m ON (m.id_module = hm.id_module)
                 ORDER BY hm.position'
@@ -357,7 +357,7 @@ class HookCore extends ObjectModel {
      * @param bool   $arrayReturn     If specified, module output will be set by name in an array
      * @param bool   $checkExceptions Check permission exceptions
      * @param bool   $usePush         Force change to be refreshed on Dashboard widgets
-     * @param int    $idShop          If specified, hook will be execute the shop with this ID
+     * @param int    $idCompany          If specified, hook will be execute the shop with this ID
      *
      * @throws PhenyxShopException
      *
@@ -372,12 +372,11 @@ class HookCore extends ObjectModel {
         $idModule = null,
         $arrayReturn = false,
         $checkExceptions = true,
-        $usePush = false,
-        $idShop = null
+        $usePush = false
     ) {
 
         if (!PageCache::isEnabled()) {
-            return static::execWithoutCache($hookName, $hookArgs, $idModule, $arrayReturn, $checkExceptions, $usePush, $idShop);
+            return static::execWithoutCache($hookName, $hookArgs, $idModule, $arrayReturn, $checkExceptions, $usePush);
         }
 
         if (!$moduleList = static::getHookModuleExecList($hookName)) {
@@ -395,7 +394,7 @@ class HookCore extends ObjectModel {
 
             foreach ($moduleList as $m) {
                 $idModule = (int) $m['id_module'];
-                $data = static::execWithoutCache($hookName, $hookArgs, $idModule, $arrayReturn, $checkExceptions, $usePush, $idShop);
+                $data = static::execWithoutCache($hookName, $hookArgs, $idModule, $arrayReturn, $checkExceptions, $usePush);
 
                 if (is_array($data)) {
                     $data = array_shift($data);
@@ -425,7 +424,7 @@ class HookCore extends ObjectModel {
             }
 
         } else {
-            $return = static::execWithoutCache($hookName, $hookArgs, $idModule, $arrayReturn, $checkExceptions, $usePush, $idShop);
+            $return = static::execWithoutCache($hookName, $hookArgs, $idModule, $arrayReturn, $checkExceptions, $usePush);
         }
 
         return $return;
@@ -440,7 +439,7 @@ class HookCore extends ObjectModel {
      * @param bool   $arrayReturn     If specified, module output will be set by name in an array
      * @param bool   $checkExceptions Check permission exceptions
      * @param bool   $usePush         Force change to be refreshed on Dashboard widgets
-     * @param int    $idShop          If specified, hook will be execute the shop with this ID
+     * @param int    $idCompany          If specified, hook will be execute the shop with this ID
      *
      * @throws PhenyxShopException
      *
@@ -455,10 +454,21 @@ class HookCore extends ObjectModel {
         $idModule = null,
         $arrayReturn = false,
         $checkExceptions = true,
-        $usePush = false,
-        $idShop = null
+        $usePush = false
     ) {
 
+        if($hookName == 'moduleRoutes') {
+            $file = fopen("testexecWithoutCach.txt","a");
+            fwrite($file,"Hook name : ".$hookName.PHP_EOL);
+        
+            fwrite($file,"Id Module : ".$idModule.PHP_EOL);
+            fwrite($file,"Hook Args : ".print_r($hookArgs, true).PHP_EOL);
+            if(!is_numeric((int)$idModule)) {
+                fwrite($file,"Id Module : ".$idModule.' not numeric'.PHP_EOL);
+            
+            }
+        }
+        
         if (defined('EPH_INSTALLATION_IN_PROGRESS')) {
             return;
         }
@@ -468,10 +478,12 @@ class HookCore extends ObjectModel {
         if ($disableNonNativeModules === null) {
             $disableNonNativeModules = (bool) Configuration::get('EPH_DISABLE_NON_NATIVE_MODULE');
         }
+        
+       
 
         // Check arguments validity
 
-        if (($idModule && !is_numeric($idModule)) || !Validate::isHookName($hookName)) {
+        if (($idModule && !is_numeric((int)$idModule)) || !Validate::isHookName($hookName)) {
             throw new PhenyxShopException('Invalid id_module or hook_name');
         }
 
@@ -516,20 +528,8 @@ class HookCore extends ObjectModel {
             Hook::$native_module = Module::getNativeModuleList();
         }
 
-        $differentShop = false;
-
-        if ($idShop !== null && Validate::isUnsignedId($idShop) && $idShop != $context->shop->getContextShopID()) {
-            $oldContext = $context->shop->getContext();
-            $oldShop = clone $context->shop;
-            $shop = new Shop((int) $idShop);
-
-            if (Validate::isLoadedObject($shop)) {
-                $context->shop = $shop;
-                $context->shop->setContext(Shop::CONTEXT_SHOP, $shop->id);
-                $differentShop = true;
-            }
-
-        }
+        
+        
 
         foreach ($moduleList as $array) {
             // Check errors
@@ -556,7 +556,7 @@ class HookCore extends ObjectModel {
                     $controller = 'module-' . $controllerObj->module->name . '-' . $controller;
                 }
 
-                if (in_array($controller, $exceptions)) {
+                if (is_array($exceptions) && in_array($controller, $exceptions)) {
                     continue;
                 }
 
@@ -618,10 +618,7 @@ class HookCore extends ObjectModel {
 
         }
 
-        if ($differentShop) {
-            $context->shop = $oldShop;
-            $context->shop->setContext($oldContext, $shop->id);
-        }
+       
 
         if ($arrayReturn) {
             return $output;
@@ -647,7 +644,7 @@ class HookCore extends ObjectModel {
     public static function getHookModuleExecList($hookName = null) {
 
         $context = Context::getContext();
-        $cacheId = 'hook_module_exec_list_' . (isset($context->shop->id) ? '_' . $context->shop->id : '') . ((isset($context->customer)) ? '_' . $context->customer->id : '');
+        $cacheId = 'hook_module_exec_list_' . (isset($context->company->id) ? '_' . $context->company->id : '') . ((isset($context->customer)) ? '_' . $context->customer->id : '');
 
         if (!Cache::isStored($cacheId) || $hookName == 'displayPayment' || $hookName == 'displayPaymentEU') {
             $frontend = true;
@@ -687,7 +684,7 @@ class HookCore extends ObjectModel {
             else if ($frontend) {
 
                 if (Validate::isLoadedObject($context->country)) {
-                    $sql->where('((h.`name` = "displayPayment" OR h.`name` = "displayPaymentEU") AND (SELECT `id_country` FROM `' . _DB_PREFIX_ . 'module_country` mc WHERE mc.`id_module` = m.`id_module` AND `id_country` = ' . (int) $context->country->id . ' AND `id_shop` = ' . (int) $context->shop->id . ' LIMIT 1) = ' . (int) $context->country->id . ')');
+                    $sql->where('((h.`name` = "displayPayment" OR h.`name` = "displayPaymentEU") AND (SELECT `id_country` FROM `' . _DB_PREFIX_ . 'module_country` mc WHERE mc.`id_module` = m.`id_module` AND `id_country` = ' . (int) $context->country->id . '  LIMIT 1) = ' . (int) $context->country->id . ')');
                 }
 
                 if (Validate::isLoadedObject($context->currency)) {
@@ -698,27 +695,20 @@ class HookCore extends ObjectModel {
                     $carrier = new Carrier($context->cart->id_carrier);
 
                     if (Validate::isLoadedObject($carrier)) {
-                        $sql->where('((h.`name` = "displayPayment" OR h.`name` = "displayPaymentEU") AND (SELECT `id_reference` FROM `' . _DB_PREFIX_ . 'module_carrier` mcar WHERE mcar.`id_module` = m.`id_module` AND `id_reference` = ' . (int) $carrier->id_reference . ' AND `id_shop` = ' . (int) $context->shop->id . ' LIMIT 1) = ' . (int) $carrier->id_reference . ')');
+                        $sql->where('((h.`name` = "displayPayment" OR h.`name` = "displayPaymentEU") AND (SELECT `id_reference` FROM `' . _DB_PREFIX_ . 'module_carrier` mcar WHERE mcar.`id_module` = m.`id_module` AND `id_reference` = ' . (int) $carrier->id_reference . ' LIMIT 1) = ' . (int) $carrier->id_reference . ')');
                     }
 
                 }
 
             }
 
-            if (Validate::isLoadedObject($context->shop)) {
-                $sql->where('hm.`id_shop` = ' . (int) $context->shop->id);
-            }
 
             if ($frontend) {
 
                 if ($useGroups) {
                     $sql->leftJoin('module_group', 'mg', 'mg.`id_module` = m.`id_module`');
 
-                    if (Validate::isLoadedObject($context->shop)) {
-                        $sql->where('mg.`id_shop` = ' . ((int) $context->shop->id) . (count($groups) ? ' AND  mg.`id_group` IN (' . implode(', ', $groups) . ')' : ''));
-                    } else if (count($groups)) {
-                        $sql->where('mg.`id_group` IN (' . implode(', ', $groups) . ')');
-                    }
+                    $sql->where('mg.`id_group` IN (' . implode(', ', $groups) . ')');
 
                 }
 

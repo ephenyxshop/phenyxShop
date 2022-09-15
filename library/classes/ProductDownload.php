@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class ProductDownloadCore extends ObjectModel {
+class ProductDownloadCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
 
@@ -33,7 +33,7 @@ class ProductDownloadCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'product_download',

@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class ThemeCore extends ObjectModel {
+class ThemeCore extends PhenyxObjectModel {
 
     const CACHE_FILE_CUSTOMER_THEMES_LIST = '/app/xml/customer_themes_list.xml';
     const CACHE_FILE_MUST_HAVE_THEMES_LIST = '/app/xml/must_have_themes_list.xml';
@@ -15,7 +15,7 @@ class ThemeCore extends ObjectModel {
     /** @var int access rights of created folders (octal) */
     public static $access_rights = 0775;
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'theme',

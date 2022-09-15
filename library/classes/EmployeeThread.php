@@ -6,7 +6,7 @@ use \Curl\Curl;
  *
  * @since 1.9.1.0
  */
-class EmployeeThreadCore extends ObjectModel {
+class EmployeeThreadCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var int $id_employee */
@@ -22,7 +22,7 @@ class EmployeeThreadCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'employee_thread',
@@ -172,7 +172,7 @@ class EmployeeThreadCore extends ObjectModel {
             (new DbQuery())
                 ->select('COUNT(*)')
                 ->from('employee_thread')
-                ->where(($where ?: '1') . ' ' . Shop::addSqlRestriction())
+                ->where(($where ?: '1'))
         );
     }
 

@@ -1,35 +1,12 @@
 <?php
-/*
-* 2018-2020 Ephenyx Digital LTD
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Open Software License (OSL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/osl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PhenyxShop to newer
-* versions in the future. If you wish to customize PhenyxShop for your
-* needs please refer to http://ephenyx.com for more information.
-*
-*  @author Ephenyx Digital LTD <contact@ephenyx.com>
-*  @copyright  2018-2020 Pphenyx Digital LTD
-*  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
-*  International Registered Trademark & Property of phenyx Digital LTD
-*//**
+/**
  * Class Core_Foundation_Database_EntityRepository
  *
  * @since 1.9.1.0
  */
 // @codingStandardsIgnoreStart
-class Core_Foundation_Database_EntityRepository
-{
+class Core_Foundation_Database_EntityRepository {
+
     // @codingStandardsIgnoreStartingStandardsIgnoreEnd
 
     protected $entityManager;
@@ -53,6 +30,7 @@ class Core_Foundation_Database_EntityRepository
         $tablesPrefix,
         Core_Foundation_Database_EntityMetaData $entityMetaData
     ) {
+
         $this->entityManager = $entityManager;
         $this->db = $this->entityManager->getDatabase();
         $this->tablesPrefix = $tablesPrefix;
@@ -70,14 +48,14 @@ class Core_Foundation_Database_EntityRepository
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function __call($method, $arguments)
-    {
+    public function __call($method, $arguments) {
+
         if (0 === strpos($method, 'findOneBy')) {
             $one = true;
-            $by  = substr($method, 9);
-        } elseif (0 === strpos($method, 'findBy')) {
+            $by = substr($method, 9);
+        } else if (0 === strpos($method, 'findBy')) {
             $one = false;
-            $by  = substr($method, 6);
+            $by = substr($method, 6);
         } else {
             throw new Core_Foundation_Database_Exception(sprintf('Undefind method %s.', $method));
         }
@@ -108,8 +86,8 @@ class Core_Foundation_Database_EntityRepository
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    protected function convertToDbFieldName($camelCaseFieldName)
-    {
+    protected function convertToDbFieldName($camelCaseFieldName) {
+
         return strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $camelCaseFieldName));
     }
 
@@ -122,8 +100,8 @@ class Core_Foundation_Database_EntityRepository
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    protected function getIdFieldName()
-    {
+    protected function getIdFieldName() {
+
         $primary = $this->entityMetaData->getPrimaryKeyFieldnames();
 
         if (count($primary) === 0) {
@@ -133,7 +111,7 @@ class Core_Foundation_Database_EntityRepository
                     $this->entityMetaData->getEntityClassName()
                 )
             );
-        } elseif (count($primary) > 1) {
+        } else if (count($primary) > 1) {
             throw new Core_Foundation_Database_Exception(
                 sprintf(
                     'Entity `%s` has a composite primary key, which is not supported by entity repositories.',
@@ -153,8 +131,8 @@ class Core_Foundation_Database_EntityRepository
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    protected function getTableNameWithPrefix()
-    {
+    protected function getTableNameWithPrefix() {
+
         return $this->db->escape($this->tablesPrefix . $this->entityMetaData->getTableName());
     }
 
@@ -166,8 +144,8 @@ class Core_Foundation_Database_EntityRepository
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    protected function getPrefix()
-    {
+    protected function getPrefix() {
+
         return $this->db->escape($this->tablesPrefix);
     }
 
@@ -179,8 +157,8 @@ class Core_Foundation_Database_EntityRepository
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function getNewEntity()
-    {
+    public function getNewEntity() {
+
         $entityClassName = $this->entityMetaData->getEntityClassName();
 
         return new $entityClassName;
@@ -201,19 +179,20 @@ class Core_Foundation_Database_EntityRepository
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    protected function hydrateOne(array $rows)
-    {
+    protected function hydrateOne(array $rows) {
+
         if (count($rows) === 0) {
             return null;
-        } elseif (count($rows) > 1) {
+        } else if (count($rows) > 1) {
             throw new Core_Foundation_Database_Exception('Too many rows returned.');
         } else {
             $data = $rows[0];
-            $entity = $this-> getNewEntity();
+            $entity = $this->getNewEntity();
             $entity->hydrate($data);
 
             return $entity;
         }
+
     }
 
     /**
@@ -224,9 +203,10 @@ class Core_Foundation_Database_EntityRepository
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    protected function hydrateMany(array $rows)
-    {
+    protected function hydrateMany(array $rows) {
+
         $entities = [];
+
         foreach ($rows as $row) {
             $entity = $this->getNewEntity();
             $entity->hydrate($row);
@@ -248,11 +228,11 @@ class Core_Foundation_Database_EntityRepository
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    protected function doFind($one, array $cumulativeConditions)
-    {
+    protected function doFind($one, array $cumulativeConditions) {
+
         $whereClause = $this->queryBuilder->buildWhereConditions('AND', $cumulativeConditions);
 
-        $sql = 'SELECT * FROM '.$this->getTableNameWithPrefix().' WHERE '.$whereClause;
+        $sql = 'SELECT * FROM ' . $this->getTableNameWithPrefix() . ' WHERE ' . $whereClause;
 
         $rows = $this->db->select($sql);
 
@@ -261,6 +241,7 @@ class Core_Foundation_Database_EntityRepository
         } else {
             return $this->hydrateMany($rows);
         }
+
     }
 
     /**
@@ -274,8 +255,8 @@ class Core_Foundation_Database_EntityRepository
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function findOne($id)
-    {
+    public function findOne($id) {
+
         $conditions = [];
         $conditions[$this->getIdFieldName()] = $id;
 
@@ -290,10 +271,11 @@ class Core_Foundation_Database_EntityRepository
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public function findAll()
-    {
-        $sql = 'SELECT * FROM '.$this->getTableNameWithPrefix();
+    public function findAll() {
+
+        $sql = 'SELECT * FROM ' . $this->getTableNameWithPrefix();
 
         return $this->hydrateMany($this->db->select($sql));
     }
+
 }

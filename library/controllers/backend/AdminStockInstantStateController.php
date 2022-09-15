@@ -23,7 +23,6 @@ class AdminStockInstantStateControllerCore extends AdminController {
         $this->className = 'Stock';
         $this->tpl_list_vars['show_filter'] = true;
         $this->lang = false;
-        $this->multishop_context = Shop::CONTEXT_ALL;
 
         $this->fields_list = [
             'reference'         => [

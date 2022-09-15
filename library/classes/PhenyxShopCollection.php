@@ -74,7 +74,7 @@ class PhenyxShopCollectionCore implements Iterator, ArrayAccess, Countable {
         $this->classname = $classname;
         $this->id_lang = $idLang;
 
-        $this->definition = ObjectModel::getDefinition($this->classname);
+        $this->definition = PhenyxObjectModel::getDefinition($this->classname);
 
         if (!isset($this->definition['table'])) {
             throw new PhenyxShopException('Miss table in definition for class ' . $this->classname);
@@ -177,7 +177,7 @@ class PhenyxShopCollectionCore implements Iterator, ArrayAccess, Countable {
             }
 
             if ($fieldname == $definition['primary'] || (!empty($definition['is_lang']) && $fieldname == 'id_lang')) {
-                $type = ObjectModel::TYPE_INT;
+                $type = PhenyxObjectModel::TYPE_INT;
             } else {
                 // Test if field exists
 
@@ -248,7 +248,7 @@ class PhenyxShopCollectionCore implements Iterator, ArrayAccess, Countable {
                 }
 
                 $classname = (isset($currentDef['object'])) ? $currentDef['object'] : Tools::toCamelCase($asso, true);
-                $definition = ObjectModel::getDefinition($classname);
+                $definition = PhenyxObjectModel::getDefinition($classname);
             }
 
             // Get definition of associated entity and add information on current association
@@ -458,13 +458,13 @@ class PhenyxShopCollectionCore implements Iterator, ArrayAccess, Countable {
             $results = [];
 
             foreach ($value as $item) {
-                $results[] = ObjectModel::formatValue($item, $info['type'], true);
+                $results[] = PhenyxObjectModel::formatValue($item, $info['type'], true);
             }
 
             return $results;
         }
 
-        return ObjectModel::formatValue($value, $info['type'], true);
+        return PhenyxObjectModel::formatValue($value, $info['type'], true);
     }
 
     /**
@@ -652,7 +652,7 @@ class PhenyxShopCollectionCore implements Iterator, ArrayAccess, Countable {
         $this->results = Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($this->query);
 
         if ($this->results && is_array($this->results)) {
-            $this->results = ObjectModel::hydrateCollection($this->classname, $this->results, $this->id_lang);
+            $this->results = PhenyxObjectModel::hydrateCollection($this->classname, $this->results, $this->id_lang);
         }
 
         return $this;

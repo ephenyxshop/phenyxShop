@@ -24,9 +24,7 @@ class AdminCarrierWizardControllerCore extends AdminController {
         $this->lang = false;
         $this->deleted = true;
         $this->step_number = 0;
-        $this->type_context = Shop::getContext();
         $this->old_context = Context::getContext();
-        $this->multishop_context = Shop::CONTEXT_ALL;
 
         $this->fieldImageSettings = [
             'name' => 'logo',
@@ -104,7 +102,7 @@ class AdminCarrierWizardControllerCore extends AdminController {
             'wizard_steps'      => $this->wizard_steps,
             'validate_url'      => $this->context->link->getAdminLink('AdminCarrierWizard'),
             'carrierlist_url'   => $this->context->link->getAdminLink('AdminCarriers') . '&conf=' . ((int) Validate::isLoadedObject($carrier) ? 4 : 3),
-            'multistore_enable' => Shop::isFeatureActive(),
+            
             'wizard_contents'   => [
                 'contents' => [
                     0 => $this->renderStepOne($carrier),
@@ -116,10 +114,7 @@ class AdminCarrierWizardControllerCore extends AdminController {
             'labels'            => ['next' => $this->l('Next'), 'previous' => $this->l('Previous'), 'finish' => $this->l('Finish')],
         ];
 
-        if (Shop::isFeatureActive()) {
-            array_splice($this->tpl_view_vars['wizard_contents']['contents'], 1, 0, [0 => $this->renderStepTwo($carrier)]);
-        }
-
+        
         $this->context->smarty->assign(
             [
                 'carrier_logo' => (Validate::isLoadedObject($carrier) && file_exists(_EPH_SHIP_IMG_DIR_ . $carrier->id . '.jpg') ? _THEME_SHIP_DIR_ . $carrier->id . '.jpg' : false),
@@ -165,14 +160,7 @@ class AdminCarrierWizardControllerCore extends AdminController {
             ],
         ];
 
-        if (Shop::isFeatureActive()) {
-            $multistoreStep = [
-                [
-                    'title' => $this->l('MultiStore'),
-                ],
-            ];
-            array_splice($this->wizard_steps['steps'], 1, 0, $multistoreStep);
-        }
+        
 
     }
 
@@ -183,24 +171,8 @@ class AdminCarrierWizardControllerCore extends AdminController {
      */
     public function getActualCurrency() {
 
-        try {
-
-            if ($this->type_context == Shop::CONTEXT_SHOP) {
-                Shop::setContext($this->type_context, $this->old_context->shop->id);
-            } else
-            if ($this->type_context == Shop::CONTEXT_GROUP) {
-                Shop::setContext($this->type_context, $this->old_context->shop->id_shop_group);
-            }
-
-            $currency = new Currency(Configuration::get('EPH_CURRENCY_DEFAULT'));
-
-            Shop::setContext(Shop::CONTEXT_ALL);
-        } catch (Exception $e) {
-            $this->errors[] = $e->getMessage();
-
-            return new Currency();
-        }
-
+        $currency = new Currency(Configuration::get('EPH_CURRENCY_DEFAULT'));
+        
         return $currency;
     }
 
@@ -783,16 +755,7 @@ class AdminCarrierWizardControllerCore extends AdminController {
             $this->errors[] = Tools::displayError('You do not have permission to use this wizard.');
         } else {
 
-            if (Shop::isFeatureActive() && $stepNumber == 2) {
-
-                if (!Tools::getValue('checkBoxShopAsso_carrier')) {
-                    $return['has_error'] = true;
-                    $return['errors'][] = $this->l('You must choose at least one shop or group shop.');
-                }
-
-            } else {
-                $this->validateRules();
-            }
+            $this->validateRules();
 
         }
 
@@ -935,10 +898,7 @@ class AdminCarrierWizardControllerCore extends AdminController {
 
                 }
 
-                if (Shop::isFeatureActive() && !$this->updateAssoShop((int) $carrier->id)) {
-                    $return['has_error'] = true;
-                    $return['errors'][] = $this->l('An error occurred while saving associations of shops.');
-                }
+                
 
                 if (!$carrier->setTaxRulesGroup((int) Tools::getValue('id_tax_rules_group'))) {
                     $return['has_error'] = true;
@@ -1167,7 +1127,7 @@ class AdminCarrierWizardControllerCore extends AdminController {
             return;
         }
 
-        if ($stepNumber == 4 && !Shop::isFeatureActive() || $stepNumber == 5 && Shop::isFeatureActive()) {
+        if ($stepNumber == 4 ) {
             return ['fields' => []];
         }
 
@@ -1178,14 +1138,9 @@ class AdminCarrierWizardControllerCore extends AdminController {
             4 => [],
         ];
 
-        if (Shop::isFeatureActive()) {
-            $tmp = $stepFields;
-            $stepFields = array_slice($tmp, 0, 1, true) + [2 => ['shop']];
-            $stepFields[3] = $tmp[2];
-            $stepFields[4] = $tmp[3];
-        }
+        
 
-        $definition = ObjectModel::getDefinition('Carrier');
+        $definition = PhenyxObjectModel::getDefinition('Carrier');
 
         foreach ($definition['fields'] as $field => $def) {
 

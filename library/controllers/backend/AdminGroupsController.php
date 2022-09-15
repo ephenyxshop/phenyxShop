@@ -15,7 +15,7 @@ class AdminGroupsControllerCore extends AdminController {
         $this->identifier = 'id_group';
         $this->controller_name = 'AdminGroups';
 
-        $grouEPH_to_keep = [
+        $groups_to_keep = [
             Configuration::get('EPH_UNIDENTIFIED_GROUP'),
             Configuration::get('EPH_GUEST_GROUP'),
             Configuration::get('EPH_CUSTOMER_GROUP'),
@@ -23,42 +23,7 @@ class AdminGroupsControllerCore extends AdminController {
 
         parent::__construct();
 
-        if (Shop::isFeatureActive()) {
-            $this->fields_options = [
-                'general' => [
-                    'title'  => $this->l('Default groups options'),
-                    'fields' => [
-                        'EPH_UNIDENTIFIED_GROUP' => [
-                            'title'      => $this->l('Visitors group'),
-                            'desc'       => $this->l('The group defined for your un-identified visitors.'),
-                            'cast'       => 'intval',
-                            'type'       => 'select',
-                            'list'       => $groups,
-                            'identifier' => 'id_group',
-                        ],
-                        'EPH_GUEST_GROUP'        => [
-                            'title'      => $this->l('Guests group'),
-                            'desc'       => $this->l('The group defined for your identified guest customers (used in guest checkout).'),
-                            'cast'       => 'intval',
-                            'type'       => 'select',
-                            'list'       => $groups,
-                            'identifier' => 'id_group',
-                        ],
-                        'EPH_CUSTOMER_GROUP'     => [
-                            'title'      => $this->l('Customers group'),
-                            'desc'       => $this->l('The group defined for your identified registered customers.'),
-                            'cast'       => 'intval',
-                            'type'       => 'select',
-                            'list'       => $groups,
-                            'identifier' => 'id_group',
-                        ],
-                    ],
-                    'submit' => [
-                        'title' => $this->l('Save'),
-                    ],
-                ],
-            ];
-        }
+      
 
         EmployeeConfiguration::updateValue('EXPERT_GROUP_SCRIPT', $this->generateParaGridScript(true));
         $this->paragridScript = EmployeeConfiguration::get('EXPERT_GROUP_SCRIPT');
@@ -259,7 +224,7 @@ class AdminGroupsControllerCore extends AdminController {
                     ->select('COUNT(cg.`id_customer`)')
                     ->from('customer_group', 'cg')
                     ->leftJoin('customer', 'c', 'c.`id_customer` = cg.`id_customer`')
-                    ->where('c.`deleted` != 1 ' . Shop::addSqlRestriction(Shop::SHARE_CUSTOMER, 'c') . ' AND cg.`id_group` = ' . (int) $group['id_group'])
+                    ->where('c.`deleted` != 1 AND cg.`id_group` = ' . (int) $group['id_group'])
             );
 
             if ($group['show_prices'] == 1) {
@@ -530,7 +495,6 @@ class AdminGroupsControllerCore extends AdminController {
         $this->_select = 'c.*, a.id_group';
         $this->_join = 'LEFT JOIN `' . _DB_PREFIX_ . 'customer` c ON (a.`id_customer` = c.`id_customer`)';
         $this->_where = 'AND a.`id_group` = ' . (int) $group->id . ' AND c.`deleted` != 1';
-        $this->_where .= Shop::addSqlRestriction(Shop::SHARE_CUSTOMER, 'c');
         self::$currentIndex = self::$currentIndex . '&id_group=' . (int) $group->id . '&viewgroup';
 
         $this->processFilter();
@@ -663,13 +627,7 @@ class AdminGroupsControllerCore extends AdminController {
             ],
         ];
 
-        if (Shop::isFeatureActive()) {
-            $this->fields_form['input'][] = [
-                'type'  => 'shop',
-                'label' => $this->l('Shop association'),
-                'name'  => 'checkBoxShopAsso',
-            ];
-        }
+        
 
         if (Tools::getIsset('addgroup')) {
             $this->fields_value['price_display_method'] = Configuration::get('PRICE_DISPLAY_METHOD');
@@ -854,10 +812,9 @@ class AdminGroupsControllerCore extends AdminController {
             Group::truncateModulesRestrictions((int) $id_group);
         }
 
-        $shops = Shop::getShops(true, null, true);
-
+        
         if (is_array($auth_modules)) {
-            $return &= Group::addModulesRestrictions($id_group, $auth_modules, $shops);
+            $return &= Group::addModulesRestrictions($id_group, $auth_modules);
         }
 
         return $return;

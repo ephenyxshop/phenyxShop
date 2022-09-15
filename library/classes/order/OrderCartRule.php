@@ -34,7 +34,7 @@
  *
  * @since 1.9.1.0
  */
-class OrderCartRuleCore extends ObjectModel
+class OrderCartRuleCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     /** @var int */
@@ -63,7 +63,7 @@ class OrderCartRuleCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'order_cart_rule',

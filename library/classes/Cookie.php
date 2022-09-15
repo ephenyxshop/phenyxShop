@@ -49,7 +49,7 @@ class CookieCore {
         $this->_standalone = $standalone;
         $this->_expire = is_null($expire) ? time() + 1728000 : (int) $expire;
 
-        $this->_path = trim(($this->_standalone ? '' : Context::getContext()->shop->physical_uri) . $path, '/\\') . '/';
+        $this->_path = trim(($this->_standalone ? '' : Context::getContext()->company->physical_uri) . $path, '/\\') . '/';
 
         if ($this->_path[0] != '/') {
             $this->_path = '/' . $this->_path;

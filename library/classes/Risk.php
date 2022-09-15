@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class RiskCore extends ObjectModel {
+class RiskCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     public $id_risk;

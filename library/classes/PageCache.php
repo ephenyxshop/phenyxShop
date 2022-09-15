@@ -87,13 +87,13 @@ class PageCacheCore {
      * @param int    $idCurrency
      * @param int    $idLanguage
      * @param int    $idCountry
-     * @param int    $idShop
+     * @param int    $idCompany
      * @param string $entityType
      * @param int    $idEntity
      *
      * @since 1.9.1.0
      */
-    public static function cacheKey($key, $idCurrency, $idLanguage, $idCountry, $idShop, $entityType, $idEntity) {
+    public static function cacheKey($key, $idCurrency, $idLanguage, $idCountry, $idCompany, $entityType, $idEntity) {
 
         try {
             Db::getInstance()->insert(
@@ -103,7 +103,7 @@ class PageCacheCore {
                     'id_currency' => (int) $idCurrency,
                     'id_language' => (int) $idLanguage,
                     'id_country'  => (int) $idCountry,
-                    'id_shop'     => (int) $idShop,
+                    'id_shop'     => (int) $idCompany,
                     'entity_type' => pSQL($entityType),
                     'id_entity'   => (int) $idEntity,
                 ],

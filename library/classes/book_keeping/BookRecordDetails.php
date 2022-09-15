@@ -3,11 +3,11 @@
 /**
  * @since 1.9.1.0
  */
-class BookRecordDetailsCore extends ObjectModel {
+class BookRecordDetailsCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'book_record_details',
@@ -38,7 +38,7 @@ class BookRecordDetailsCore extends ObjectModel {
      *
      * @param int|null $id
      * @param int|null $idLang
-     * @param int|null $idShop
+     * @param int|null $idCompany
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version

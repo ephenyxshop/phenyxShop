@@ -1,6 +1,6 @@
 <?php
 
-class BankAccountCore extends ObjectModel {
+class BankAccountCore extends PhenyxObjectModel {
 
 	public $id;
 

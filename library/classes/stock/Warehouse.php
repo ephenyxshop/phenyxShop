@@ -6,7 +6,7 @@
  *
  * @since 1.9.1.0
  */
-class WarehouseCore extends ObjectModel
+class WarehouseCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     /** @var int identifier of the warehouse */
@@ -39,7 +39,7 @@ class WarehouseCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'warehouse',
@@ -56,7 +56,7 @@ class WarehouseCore extends ObjectModel
     ];
 
     /**
-     * @see ObjectModel::$webserviceParameters
+     * @see PhenyxObjectModel::$webserviceParameters
      */
     protected $webserviceParameters = [
         'fields'       => [
@@ -322,7 +322,7 @@ class WarehouseCore extends ObjectModel
      *
      * @param int $idProduct          ID of the product
      * @param int $idProductAttribute Optional, uses 0 if this product does not have attributes
-     * @param int $idShop             Optional, ID of the shop. Uses the context shop id (@see Context::shop)
+     * @param int $idCompany             Optional, ID of the shop. Uses the context shop id (@see Context::shop)
      *
      * @return array Warehouses (ID, reference/name concatenated)
      *
@@ -331,33 +331,14 @@ class WarehouseCore extends ObjectModel
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function getProductWarehouseList($idProduct, $idProductAttribute = 0, $idShop = null)
+    public static function getProductWarehouseList($idProduct, $idProductAttribute = 0)
     {
         // if it's a pack, returns warehouses if and only if some products use the advanced stock management
-        $shareStock = false;
-        if ($idShop === null) {
-            if (Shop::getContext() == Shop::CONTEXT_GROUP) {
-                $shopGroup = Shop::getContextShopGroup();
-            } else {
-                $shopGroup = Context::getContext()->shop->getGroup();
-                $idShop = (int) Context::getContext()->shop->id;
-            }
-            $shareStock = $shopGroup->share_stock;
-        } else {
-            $shopGroup = Shop::getGroupFromShop($idShop);
-            $shareStock = $shopGroup['share_stock'];
-        }
-
-        if ($shareStock) {
-            $idsShop = Shop::getShops(true, (int) $shopGroup->id, true);
-        } else {
-            $idsShop = [(int) $idShop];
-        }
-
+        
         $query = new DbQuery();
         $query->select('wpl.id_warehouse, CONCAT(w.reference, " - ", w.name) as name');
         $query->from('warehouse_product_location', 'wpl');
-        $query->innerJoin('warehouse_shop', 'ws', 'ws.id_warehouse = wpl.id_warehouse AND id_shop IN ('.implode(',', array_map('intval', $idsShop)).')');
+        $query->innerJoin('warehouse_shop', 'ws', 'ws.id_warehouse = wpl.id_warehouse');
         $query->innerJoin('warehouse', 'w', 'ws.id_warehouse = w.id_warehouse');
         $query->where('id_product = '.(int) $idProduct);
         $query->where('id_product_attribute = '.(int) $idProductAttribute);
@@ -367,65 +348,22 @@ class WarehouseCore extends ObjectModel
         return (Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query));
     }
 
-    /**
-     * Gets available warehouses
-     * It is possible via ignore_shop and id_shop to filter the list with shop id
-     *
-     * @param bool $ignoreShop Optional, false by default - Allows to get only the warehouses that are associated to one/some shops (@see $id_shop)
-     * @param int  $idShop     Optional, Context::shop::Id by default - Allows to define a specific shop to filter.
-     *
-     * @return array Warehouses (ID, reference/name concatenated)
-     *
-     * @throws PhenyxShopDatabaseException
-     * @throws PhenyxShopException
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     */
-    public static function getWarehouses($ignoreShop = false, $idShop = null)
+   
+    public static function getWarehouses($ignoreShop = false)
     {
-        if (!$ignoreShop) {
-            if (is_null($idShop)) {
-                $idShop = Context::getContext()->shop->id;
-            }
-        }
+        
 
         $query = new DbQuery();
         $query->select('w.id_warehouse, CONCAT(reference, \' - \', name) as name');
         $query->from('warehouse', 'w');
         $query->where('deleted = 0');
         $query->orderBy('reference ASC');
-        if (!$ignoreShop) {
-            $query->innerJoin('warehouse_shop', 'ws', 'ws.id_warehouse = w.id_warehouse AND ws.id_shop = '.(int) $idShop);
-        }
+        
 
         return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS($query);
     }
 
-    /**
-     * Gets warehouses grouped by shops
-     *
-     * @return array (of array) Warehouses ID are grouped by shops ID
-     *
-     * @throws PhenyxShopDatabaseException
-     * @throws PhenyxShopException
-     * @since 1.9.1.0
-     * @version 1.8.1.0 Initial version
-     */
-    public static function getWarehousesGroupedByShops()
-    {
-        $idsWarehouse = [];
-        $query = new DbQuery();
-        $query->select('id_warehouse, id_shop');
-        $query->from('warehouse_shop');
-        $query->orderBy('id_shop');
-
-        // queries to get warehouse ids grouped by shops
-        foreach (Db::getInstance()->executeS($query) as $row) {
-            $idsWarehouse[$row['id_shop']][] = $row['id_warehouse'];
-        }
-
-        return $idsWarehouse;
-    }
+    
 
     /**
      * Gets the number of products in the current warehouse
@@ -573,7 +511,7 @@ class WarehouseCore extends ObjectModel
      *
      * @param int  $idProduct
      *
-     * @param null $idShop
+     * @param null $idCompany
      *
      * @return array|bool id_warehouse or false
      *
@@ -582,14 +520,14 @@ class WarehouseCore extends ObjectModel
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function getPackWarehouses($idProduct, $idShop = null)
+    public static function getPackWarehouses($idProduct, $idCompany = null)
     {
         if (!Pack::isPack($idProduct)) {
             return false;
         }
 
-        if (is_null($idShop)) {
-            $idShop = Context::getContext()->shop->id;
+        if (is_null($idCompany)) {
+            $idCompany = Context::getContext()->shop->id;
         }
 
         // warehouses of the pack
@@ -610,7 +548,7 @@ class WarehouseCore extends ObjectModel
         foreach ($products as $product) {
             if ($product->advanced_stock_management) {
                 // gets the warehouses of one product
-                $productWarehouses = Warehouse::getProductWarehouseList((int) $product->id, (int) $product->cache_default_attribute, (int) $idShop);
+                $productWarehouses = Warehouse::getProductWarehouseList((int) $product->id, (int) $product->cache_default_attribute, (int) $idCompany);
                 $list[(int) $product->id] = [];
                 // fills array with warehouses for this product
                 foreach ($productWarehouses as $productWarehouse) {

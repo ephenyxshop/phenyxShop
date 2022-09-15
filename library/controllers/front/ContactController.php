@@ -52,7 +52,7 @@ class ContactControllerCore extends FrontController {
                     ->select('ct.`id_customer_thread`')
                     ->from('customer_thread', 'ct')
                     ->where('ct.`id_customer_thread` = ' . (int) $idCustomerThread)
-                    ->where('ct.`id_shop` = ' . (int) $this->context->shop->id)
+                    ->where('ct.`id_shop` = ' . (int) $this->context->company->id)
                     ->where('ct.`token` = \'' . pSQL(Tools::getValue('token')) . '\'')
                 )
             ) || (
@@ -64,7 +64,7 @@ class ContactControllerCore extends FrontController {
                         ->select('ct.`id_customer_thread`, ct.`id_contact`, ct.`id_customer`, ct.`id_order`, ct.`id_product`, ct.`email`')
                         ->from('customer_thread', 'ct')
                         ->where('ct.`email` = \'' . pSQL($from) . '\'')
-                        ->where('ct.`id_shop` = ' . (int) $this->context->shop->id)
+                        ->where('ct.`id_shop` = ' . (int) $this->context->company->id)
                         ->where('(' . ($customer->id ? 'id_customer = ' . (int) $customer->id . ' OR ' : '') . ' id_order = ' . (int) $idOrder . ')')
                 );
                 $score = 0;
@@ -107,7 +107,7 @@ class ContactControllerCore extends FrontController {
                     ->from('customer_message', 'cm')
                     ->leftJoin('customer_thread', 'cc', 'cm.`id_customer_thread` = cc.`id_customer_thread`')
                     ->where('cc.`id_customer_thread` = ' . (int) $idCustomerThread)
-                    ->where('cc.`id_shop` = ' . (int) $this->context->shop->id)
+                    ->where('cc.`id_shop` = ' . (int) $this->context->company->id)
                     ->orderBy('cm.`date_add` DESC')
             );
 
@@ -133,7 +133,7 @@ class ContactControllerCore extends FrontController {
                         $ct->id_customer = (int) $customer->id;
                     }
 
-                    $ct->id_shop = (int) $this->context->shop->id;
+                    $ct->id_shop = (int) $this->context->company->id;
                     $ct->id_order = (int) $idOrder;
 
                     if ($idProduct = (int) Tools::getValue('id_product')) {
@@ -377,7 +377,7 @@ class ContactControllerCore extends FrontController {
                     ->select('cm.*')
                     ->from('customer_thread', 'cm')
                     ->where('cm.`id_customer_thread` = ' . (int) $idCustomerThread)
-                    ->where('cm.`id_shop` = ' . (int) $this->context->shop->id)
+                    ->where('cm.`id_shop` = ' . (int) $this->context->company->id)
                     ->where('cm.`token` = \'' . pSQL($token) . '\'')
             );
 

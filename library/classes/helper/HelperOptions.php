@@ -53,8 +53,8 @@ class HelperOptionsCore extends Helper {
             $languages = Language::getLanguages(false);
         }
 
-        $useMultishop = false;
-        $hideMultishopCheckbox = (Shop::getTotalShops(false, null) < 2) ? true : false;
+       
+        
 	
         foreach ($optionList as $category => &$categoryData) {
 
@@ -79,9 +79,7 @@ class HelperOptionsCore extends Helper {
 
             foreach ($categoryData['fields'] as $key => &$field) {
 
-                if (empty($field['no_multishop_checkbox']) && !$hideMultishopCheckbox) {
-                    $categoryData['hide_multishop_checkbox'] = false;
-                }
+                
 
                 // Set field value unless explicitly denied
 
@@ -92,16 +90,6 @@ class HelperOptionsCore extends Helper {
                 // Check if var is invisible (can't edit it in current shop context), or disable (use default value for multishop)
                 $isDisabled = $isInvisible = false;
 
-                if (Shop::isFeatureActive()) {
-
-                    if (isset($field['visibility']) && $field['visibility'] > Shop::getContext()) {
-                        $isDisabled = true;
-                        $isInvisible = true;
-                    } else if (Shop::getContext() != Shop::CONTEXT_ALL && !Configuration::isOverridenByCurrentContext($key)) {
-                        $isDisabled = true;
-                    }
-
-                }
 
                 $field['is_disabled'] = $isDisabled;
                 $field['is_invisible'] = $isInvisible;
@@ -249,10 +237,7 @@ class HelperOptionsCore extends Helper {
                 // Multishop default value
                 $field['multishop_default'] = false;
 
-                if (Shop::isFeatureActive() && Shop::getContext() != Shop::CONTEXT_ALL && !$isInvisible) {
-                    $field['multishop_default'] = true;
-                    $useMultishop = true;
-                }
+                
 
                 // Assign the modifications back to parent array
                 $categoryData['fields'][$key] = $field;
@@ -284,7 +269,6 @@ class HelperOptionsCore extends Helper {
                 'languages'           => isset($languages) ? $languages : null,
                 'currency_left_sign'  => $this->context->currency->getSign('left'),
                 'currency_right_sign' => $this->context->currency->getSign('right'),
-                'use_multishop'       => $useMultishop,
 				'controller'		  => $this->controller_name,
 				'theme_path'	      => _EPH_THEMES_DIR_
             ]

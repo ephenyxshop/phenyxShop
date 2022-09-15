@@ -49,16 +49,15 @@ class AdminSearchConfControllerCore extends AdminController {
         ];
 
         // Search options
-        $cronUrl = Tools::getHttpHost(true, true) . __EPH_BASE_URI__ . basename(_EPH_ADMIN_DIR_) . '/searchcron.php?full=1&token=' . substr(_COOKIE_KEY_, 34, 8) . (Shop::getContext() == Shop::CONTEXT_SHOP ? '&id_shop=' . (int) $this->context->shop->id : '');
+        $cronUrl = Tools::getHttpHost(true, true) . __EPH_BASE_URI__ . basename(_EPH_ADMIN_DIR_) . '/searchcron.php?full=1&token=' . substr(_COOKIE_KEY_, 34, 8);
 
         try {
             list($total, $indexed) = Db::getInstance(_EPH_USE_SQL_SLAVE_)->getRow(
                 (new DbQuery())
-                    ->select('COUNT(*) as "0", SUM(product_shop.`indexed`) as "1"')
+                    ->select('COUNT(*) as "0", SUM(p.`indexed`) as "1"')
                     ->from('product', 'p')
-                    ->join(Shop::addSqlAssociation('product', 'p'))
-                    ->where('product_shop.`visibility` IN ("both", "search")')
-                    ->where('product_shop.`active` = 1')
+                    ->where('p.`visibility` IN ("both", "search")')
+                    ->where('p.`active` = 1')
             );
         } catch (PhenyxShopException $e) {
             $total = 0;
@@ -78,11 +77,11 @@ class AdminSearchConfControllerCore extends AdminController {
                         ' . $this->l('Building the product index may take a few minutes.') . '
                         ' . $this->l('If your server stops before the process ends, you can resume the indexing by clicking "Add missing products to the index".') . '
                     </p>
-                    <a href="searchcron.php?token=' . substr(_COOKIE_KEY_, 34, 8) . '&amp;redirect=1' . (Shop::getContext() == Shop::CONTEXT_SHOP ? '&id_shop=' . (int) $this->context->shop->id : '') . '" class="btn-link">
+                    <a href="searchcron.php?token=' . substr(_COOKIE_KEY_, 34, 8) . '&amp;redirect=1" class="btn-link">
                         <i class="icon-external-link-sign"></i>
                         ' . $this->l('Add missing products to the index') . '
                     </a><br />
-                    <a href="searchcron.php?full=1&amp;token=' . substr(_COOKIE_KEY_, 34, 8) . '&amp;redirect=1' . (Shop::getContext() == Shop::CONTEXT_SHOP ? '&id_shop=' . (int) $this->context->shop->id : '') . '" class="btn-link">
+                    <a href="searchcron.php?full=1&amp;token=' . substr(_COOKIE_KEY_, 34, 8) . '&amp;redirect=1" class="btn-link">
                         <i class="icon-external-link-sign"></i>
                         ' . $this->l('Re-build the entire index') . '
                     </a><br /><br />

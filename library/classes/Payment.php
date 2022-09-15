@@ -5,7 +5,7 @@
  *
  * @since 2.1.0.0
  */
-class PaymentCore extends ObjectModel {
+class PaymentCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
 	public $payment_number;
@@ -28,7 +28,7 @@ class PaymentCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'payment',

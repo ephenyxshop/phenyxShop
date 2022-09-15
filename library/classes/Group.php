@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class GroupCore extends ObjectModel {
+class GroupCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     protected static $cache_reduction = [];
@@ -25,7 +25,7 @@ class GroupCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'group',
@@ -43,14 +43,14 @@ class GroupCore extends ObjectModel {
         ],
     ];
 
-    protected $webserviceParameters = [];
+    
 
     /**
      * GroupCore constructor.
      *
      * @param int|null $id
      * @param int|null $idLang
-     * @param int|null $idShop
+     * @param int|null $idCompany
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
@@ -69,7 +69,7 @@ class GroupCore extends ObjectModel {
 
     /**
      * @param int      $idLang
-     * @param int|bool $idShop
+     * @param int|bool $idCompany
      *
      * @return array|false|mysqli_result|null|PDOStatement|resource
      *
@@ -78,7 +78,7 @@ class GroupCore extends ObjectModel {
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
-    public static function getGroups($idLang, $idShop = false) {
+    public static function getGroups($idLang, $idCompany = false) {
 
         
         return Db::getInstance(_EPH_USE_SQL_SLAVE_)->executeS(
@@ -387,7 +387,7 @@ class GroupCore extends ObjectModel {
                     ->select('COUNT(*)')
                     ->from('customer', 'c')
                     ->leftJoin('customer', 'c', 'cg.`id_customer` = c.`id_customer`')
-                    ->where('cg.`id_group` = ' . (int) $this->id . ' ' . ($shopFiltering ? Shop::addSqlRestriction(Shop::SHARE_CUSTOMER) : ''))
+                    ->where('cg.`id_group` = ' . (int) $this->id)
                     ->where('c.`deleted` != 1')
             );
         }
@@ -398,7 +398,7 @@ class GroupCore extends ObjectModel {
                 ->from('customer_group', 'cg')
                 ->leftJoin('customer', 'c', 'cg.`id_customer` = c.`id_customer`')
                 ->where('cg.`id_group` = ' . (int) $this->id)
-                ->where('c.`deleted` != 1' . ($shopFiltering ? Shop::addSqlRestriction(Shop::SHARE_CUSTOMER) : ''))
+                ->where('c.`deleted` != 1')
                 ->orderBy('cg.`id_customer` ASC')
                 ->limit($limit > 0 ? (int) $limit : 0, $limit ? (int) $start : 0)
         );

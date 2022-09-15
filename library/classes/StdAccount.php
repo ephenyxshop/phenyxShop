@@ -1,6 +1,6 @@
 <?php
 
-class StdAccount extends ObjectModel {
+class StdAccount extends PhenyxObjectModel {
 
 	public $id_stdaccount;
 	public $account;
@@ -26,7 +26,7 @@ class StdAccount extends ObjectModel {
 	public $counterPartCode;
 
 	/**
-	 * @see ObjectModel::$definition
+	 * @see PhenyxObjectModel::$definition
 	 */
 	public static $definition = [
 		'table'     => 'stdaccount',

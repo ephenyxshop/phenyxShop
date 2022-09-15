@@ -1,6 +1,6 @@
 <?php
 
-class CustomerPiecesHistoryCore extends ObjectModel {
+class CustomerPiecesHistoryCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /** @var int Order id */
@@ -16,7 +16,7 @@ class CustomerPiecesHistoryCore extends ObjectModel {
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'customer_piece_history',
@@ -30,7 +30,7 @@ class CustomerPiecesHistoryCore extends ObjectModel {
     ];
 
     /**
-     * @see  ObjectModel::$webserviceParameters
+     * @see  PhenyxObjectModel::$webserviceParameters
      */
     protected $webserviceParameters = [
         'objectsNodeName' => 'order_histories',
@@ -58,7 +58,7 @@ class CustomerPiecesHistoryCore extends ObjectModel {
             return;
         }
 
-        ShopUrl::cacheMainDomainForShop($order->id_shop);
+       
 
         $newOs = new CustomerPieceState((int) $newOrderState, $order->id_lang);
         $oldOs = $order->getCurrentOrderState();
@@ -196,8 +196,8 @@ class CustomerPiecesHistoryCore extends ObjectModel {
 
                         if (!Pack::isPack($product['id_product']) &&
                             in_array($oldOs->id, $errorOrCanceledStatuses) &&
-                            !StockAvailable::dependsOnStock($product['id_product'], (int) $order->id_shop)) {
-                            StockAvailable::updateQuantity($product['id_product'], $product['id_product_attribute'], -(int) $product['product_quantity'], $order->id_shop);
+                            !StockAvailable::dependsOnStock($product['id_product'])) {
+                            StockAvailable::updateQuantity($product['id_product'], $product['id_product_attribute'], -(int) $product['product_quantity']);
                         }
 
                     } else if (!$newOs->logable && $oldOs->logable) {
@@ -209,7 +209,7 @@ class CustomerPiecesHistoryCore extends ObjectModel {
                         if (!Pack::isPack($product['id_product']) &&
                             in_array($newOs->id, $errorOrCanceledStatuses) &&
                             !StockAvailable::dependsOnStock($product['id_product'])) {
-                            StockAvailable::updateQuantity($product['id_product'], $product['id_product_attribute'], (int) $product['product_quantity'], $order->id_shop);
+                            StockAvailable::updateQuantity($product['id_product'], $product['id_product_attribute'], (int) $product['product_quantity']);
                         }
 
                     } else if (!$newOs->logable && !$oldOs->logable &&
@@ -217,7 +217,7 @@ class CustomerPiecesHistoryCore extends ObjectModel {
                         !in_array($oldOs->id, $errorOrCanceledStatuses) &&
                         !StockAvailable::dependsOnStock($product['id_product'])) {
                         // if waiting for payment => payment error/canceled
-                        StockAvailable::updateQuantity($product['id_product'], $product['id_product_attribute'], (int) $product['product_quantity'], $order->id_shop);
+                        StockAvailable::updateQuantity($product['id_product'], $product['id_product_attribute'], (int) $product['product_quantity']);
                     }
 
                 }
@@ -272,7 +272,7 @@ class CustomerPiecesHistoryCore extends ObjectModel {
                                     }
 
                                     if (!StockAvailable::dependsOnStock($product['id_product'])) {
-                                        StockAvailable::updateQuantity($packProduct->id, 0, (int) $packProduct->pack_quantity * $product['product_quantity'], $order->id_shop);
+                                        StockAvailable::updateQuantity($packProduct->id, 0, (int) $packProduct->pack_quantity * $product['product_quantity']);
                                     }
 
                                 }
@@ -389,7 +389,7 @@ class CustomerPiecesHistoryCore extends ObjectModel {
         // executes hook
         Hook::exec('actionOrderStatusPostUpdate', ['newOrderStatus' => $newOs, 'id_order' => (int) $order->id], null, false, true, false, $order->id_shop);
 
-        ShopUrl::resetMainDomainCache();
+       
     }
 
     public static function getLastOrderState($idOrder) {
@@ -451,8 +451,7 @@ class CustomerPiecesHistoryCore extends ObjectModel {
 
         if (isset($result['template']) && Validate::isEmail($result['email'])) {
 
-            ShopUrl::cacheMainDomainForShop($order->id_shop);
-
+           
             $tpl = Context::getContext()->smarty->createTemplate(_EPH_MAIL_DIR_ . '/' . $result['template'] . '.tpl');
 
             $topic = $result['osname'];
@@ -519,7 +518,7 @@ class CustomerPiecesHistoryCore extends ObjectModel {
 
             }
 
-            ShopUrl::resetMainDomainCache();
+            
         }
 
         return true;

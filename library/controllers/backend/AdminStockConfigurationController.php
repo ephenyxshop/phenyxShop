@@ -19,7 +19,6 @@ class AdminStockConfigurationControllerCore extends AdminController {
         $this->table = 'stock_mvt_reason';
         $this->className = 'StockMvtReason';
         $this->lang = true;
-        $this->multishop_context = Shop::CONTEXT_ALL;
 
         // defines fields
         $this->fields_list = [
@@ -77,7 +76,6 @@ class AdminStockConfigurationControllerCore extends AdminController {
                         'type'       => 'select',
                         'list'       => $reasonsInc,
                         'identifier' => 'id_stock_mvt_reason',
-                        'visibility' => Shop::CONTEXT_ALL,
                     ],
                     'EPH_STOCK_MVT_DEC_REASON_DEFAULT' => [
                         'title'      => $this->l('Default label for decreasing stock'),
@@ -85,7 +83,6 @@ class AdminStockConfigurationControllerCore extends AdminController {
                         'type'       => 'select',
                         'list'       => $reasonsDec,
                         'identifier' => 'id_stock_mvt_reason',
-                        'visibility' => Shop::CONTEXT_ALL,
                     ],
                     'EPH_STOCK_CUSTOMER_ORDER_REASON'  => [
                         'title'      => $this->l('Default label for decreasing stock when a customer order is shipped'),
@@ -93,7 +90,6 @@ class AdminStockConfigurationControllerCore extends AdminController {
                         'type'       => 'select',
                         'list'       => $reasonsDec,
                         'identifier' => 'id_stock_mvt_reason',
-                        'visibility' => Shop::CONTEXT_ALL,
                     ],
                     'EPH_STOCK_MVT_SUPPLY_ORDER'       => [
                         'title'      => $this->l('Default label for increasing stock when a supply order is received'),
@@ -101,7 +97,6 @@ class AdminStockConfigurationControllerCore extends AdminController {
                         'type'       => 'select',
                         'list'       => $reasonsInc,
                         'identifier' => 'id_stock_mvt_reason',
-                        'visibility' => Shop::CONTEXT_ALL,
                     ],
                 ],
                 'submit' => ['title' => $this->l('Save')],

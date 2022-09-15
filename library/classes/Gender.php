@@ -3,11 +3,11 @@
 /**
  * @since 1.9.1.0
  */
-class GenderCore extends ObjectModel {
+class GenderCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'gender',
@@ -30,14 +30,14 @@ class GenderCore extends ObjectModel {
      *
      * @param int|null $id
      * @param int|null $idLang
-     * @param int|null $idShop
+     * @param int|null $idCompany
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
      */
     public function __construct($id = null, $idLang = null) {
 
-        parent::__construct($id, $idLang, $idShop);
+        parent::__construct($id, $idLang, $idCompany);
 
         $this->image_dir = _EPH_GENDERS_DIR_;
     }

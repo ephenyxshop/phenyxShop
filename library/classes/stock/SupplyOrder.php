@@ -6,7 +6,7 @@
  *
  * @since 1.9.1.0
  */
-class SupplyOrderCore extends ObjectModel
+class SupplyOrderCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     /**
@@ -101,7 +101,7 @@ class SupplyOrderCore extends ObjectModel
     // @codingStandardsIgnoreEnd
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'supply_order',
@@ -129,7 +129,7 @@ class SupplyOrderCore extends ObjectModel
     ];
 
     /**
-     * @see ObjectModel::$webserviceParameters
+     * @see PhenyxObjectModel::$webserviceParameters
      */
     protected $webserviceParameters = [
         'fields'        => [
@@ -157,7 +157,7 @@ class SupplyOrderCore extends ObjectModel
     ];
 
     /**
-     * @see     ObjectModel::update()
+     * @see     PhenyxObjectModel::update()
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
@@ -177,7 +177,7 @@ class SupplyOrderCore extends ObjectModel
     }
 
     /**
-     * @see     ObjectModel::add()
+     * @see     PhenyxObjectModel::add()
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version
@@ -528,7 +528,7 @@ class SupplyOrderCore extends ObjectModel
     }
 
     /**
-     * @see ObjectModel::hydrate()
+     * @see PhenyxObjectModel::hydrate()
      *
      * @since 1.9.1.0
      * @version 1.8.1.0 Initial version

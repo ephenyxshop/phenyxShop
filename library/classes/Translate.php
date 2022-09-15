@@ -28,7 +28,7 @@ class TranslateCore {
 
         if (empty($iso)) {
             try {
-                $iso = Language::getIsoById((int) Configuration::get('EPH_LANG_DEFAULT'));
+                $iso = Language::getIsoById((int) Context::getContext()->language->id);
             } catch (PhenyxShopException $e) {
                 $iso = 'en';
             }
@@ -83,7 +83,7 @@ class TranslateCore {
 
             if (empty($iso)) {
                 try {
-                    $iso = Language::getIsoById((int) Configuration::get('EPH_LANG_DEFAULT'));
+                    $iso = Language::getIsoById((int) Context::getContext()->language->id);
                 } catch (PhenyxShopException $e) {
                     $iso = 'en';
                 }
@@ -122,12 +122,15 @@ class TranslateCore {
 
         global $_LANGCLASS;
 
+        if(is_null($string)) {
+            return $string;
+        }
         if ($_LANGCLASS == null) {
             $iso = Context::getContext()->language->iso_code;
 
             if (empty($iso)) {
                 try {
-                    $iso = Language::getIsoById((int) Configuration::get('EPH_LANG_DEFAULT'));
+                    $iso = Language::getIsoById((int) Context::getContext()->language->id);
                 } catch (PhenyxShopException $e) {
                     $iso = 'en';
                 }
@@ -139,7 +142,7 @@ class TranslateCore {
             }
 
         }
-
+        
         $string = preg_replace("/\\\*'/", "\'", $string);
         $key = md5($string);
 

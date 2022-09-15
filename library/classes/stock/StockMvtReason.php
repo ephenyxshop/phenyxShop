@@ -6,7 +6,7 @@
  *
  * @since 1.9.1.0
  */
-class StockMvtReasonCore extends ObjectModel
+class StockMvtReasonCore extends PhenyxObjectModel
 {
     // @codingStandardsIgnoreStart
     /** @var int identifier of the movement reason */
@@ -30,7 +30,7 @@ class StockMvtReasonCore extends ObjectModel
 
     /**
      * @since 1.5.0
-     * @see   ObjectModel::$definition
+     * @see   PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'     => 'stock_mvt_reason',
@@ -46,7 +46,7 @@ class StockMvtReasonCore extends ObjectModel
     ];
 
     /**
-     * @see ObjectModel::$webserviceParameters
+     * @see PhenyxObjectModel::$webserviceParameters
      */
     protected $webserviceParameters = [
         'objectsNodeName' => 'stock_movement_reasons',

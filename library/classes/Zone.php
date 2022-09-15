@@ -5,10 +5,10 @@
  *
  * @since 1.9.1.0
  */
-class ZoneCore extends ObjectModel {
+class ZoneCore extends PhenyxObjectModel {
 
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'zone',

@@ -5,7 +5,7 @@
  *
  * @since 1.9.1.0
  */
-class PageCore extends ObjectModel {
+class PageCore extends PhenyxObjectModel {
 
     // @codingStandardsIgnoreStart
     public $id_page_type;
@@ -13,7 +13,7 @@ class PageCore extends ObjectModel {
     public $name;
     // @codingStandardsIgnoreEnd
     /**
-     * @see ObjectModel::$definition
+     * @see PhenyxObjectModel::$definition
      */
     public static $definition = [
         'table'   => 'page',
@@ -116,7 +116,7 @@ class PageCore extends ObjectModel {
                 SET `counter` = `counter` + 1
                 WHERE `id_date_range` = ' . (int) $idDateRange . '
                     AND `id_page` = ' . (int) $idPage . '
-                    AND `id_shop` = ' . (int) $context->shop->id;
+                    AND `id_shop` = ' . (int) $context->company->id;
         Db::getInstance()->execute($sql);
 
         // If no one has seen the page in this date range, it is added
@@ -128,8 +128,8 @@ class PageCore extends ObjectModel {
                     'id_date_range' => (int) $idDateRange,
                     'id_page'       => (int) $idPage,
                     'counter'       => 1,
-                    'id_shop'       => (int) $context->shop->id,
-                    'id_shop_group' => (int) $context->shop->id_shop_group,
+                    'id_shop'       => (int) $context->company->id,
+                    'id_shop_group' => (int) $context->company->id_shop_group,
                 ]
             );
         }

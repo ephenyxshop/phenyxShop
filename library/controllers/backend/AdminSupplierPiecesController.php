@@ -2047,8 +2047,8 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 
 		}
 
-		$newPiece->id_shop = (int) $context->shop->id;
-		$newPiece->id_shop_group = (int) $context->shop->id_shop_group;
+		$newPiece->id_shop = (int) $context->company->id;
+		$newPiece->id_shop_group = (int) $context->company->id_shop_group;
 		$newPiece->id_lang = $context->language->id;
 		$newPiece->round_mode = Configuration::get('EPH_PRICE_ROUND_MODE');
 		$newPiece->round_type = Configuration::get('EPH_ROUND_TYPE');
@@ -2178,7 +2178,6 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 			(new DbQuery())
 				->select('p.`id_product`, p.`id_tax_rules_group`, p.`reference`, pl.`name`, p.`wholesale_price`, p.`price`, p.`ecotax`, p.`weight`, p.`ean13`, p.`upc`, t.rate, p.`cache_default_attribute` as `id_product_attribute`')
 				->from('product', 'p')
-				->join(Shop::addSqlAssociation('product', 'p'))
 				->leftJoin('product_lang', 'pl', 'pl.id_product = p.id_product AND pl.id_lang = ' . (int) $context->language->id)
 				->leftJoin('tax_rules_group', 'tl', 'tl.`id_tax_rules_group` = p.`id_tax_rules_group`')
 				->leftJoin('tax', 't', 't.`id_tax` = tl.`id_tax_rules_group`')
@@ -2204,7 +2203,6 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 							->select('pa.`id_product_attribute`, pa.`reference`, pa.`wholesale_price`, pa.`price`, pa.`ecotax`, ag.`id_attribute_group`, agl.`name` AS group_name, al.`name` AS attribute_name,
                         a.`id_attribute`')
 							->from('product_attribute', 'pa')
-							->join(Shop::addSqlAssociation('product_attribute', 'pa'))
 							->leftJoin('product_attribute_combination', 'pac', 'pac.`id_product_attribute` = pa.`id_product_attribute`')
 							->leftJoin('attribute', 'a', 'a.`id_attribute` = pac.`id_attribute`')
 							->leftJoin('attribute_lang', 'al', 'a.`id_attribute` = al.`id_attribute` AND al.`id_lang` = ' . (int) $context->language->id)
@@ -2340,16 +2338,16 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 		}
 
 		$context = Context::getContext();
-		$idShop = (int) $context->shop->id;
+		$idCompany = (int) $context->company->id;
 
-		if (Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop))) {
-			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop);
-			$logo_path = _EPH_IMG_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop);
+		if (Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany))) {
+			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany);
+			$logo_path = _EPH_IMG_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany);
 		} else
 
-		if (Configuration::get('EPH_LOGO', null, null, $idShop) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop))) {
-			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop);
-			$logo_path = _EPH_IMG_ . Configuration::get('EPH_LOGO', null, null, $idShop);
+		if (Configuration::get('EPH_LOGO', null, null, $idCompany) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idCompany))) {
+			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idCompany);
+			$logo_path = _EPH_IMG_ . Configuration::get('EPH_LOGO', null, null, $idCompany);
 		}
 
 		$width = 0;
@@ -2373,7 +2371,7 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 		$data->assign(
 			[
 				'company'          => $context->company,
-				'free_text'        => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->shop->id),
+				'free_text'        => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->company->id),
 				'logo_path'        => $logo_path,
 				'piece'            => $customerPiece,
 				'studentEducation' => $studentEducation,
@@ -2420,7 +2418,7 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 		}
 
 		$context = Context::getContext();
-		$idShop = (int) $context->shop->id;
+		$idCompany = (int) $context->company->id;
 
 		$pathLogo = $this->getLogo();
 
@@ -2455,7 +2453,7 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 		$data->assign(
 			[
 				'company'        => $context->company,
-				'free_text'      => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->shop->id),
+				'free_text'      => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->company->id),
 				'logo_path'      => $pathLogo,
 				'width_logo'     => $width,
 				'height_logo'    => $height,
@@ -2474,7 +2472,7 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 		$data->assign(
 			[
 				'company'        => $context->company,
-				'free_text'      => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->shop->id),
+				'free_text'      => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->company->id),
 				'logo_path'      => $logo_path,
 				'piece'          => $customerPiece,
 				'payments'       => $payments,
@@ -2499,7 +2497,7 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 		$data->assign(
 			[
 				'company'          => $context->company,
-				'free_text'        => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->shop->id),
+				'free_text'        => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->company->id),
 				'logo_path'        => $logo_path,
 				'piece'            => $customerPiece,
 				'studentEducation' => $studentEducation,
@@ -2568,7 +2566,7 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 		}
 
 		$context = Context::getContext();
-		$idShop = (int) $context->shop->id;
+		$idCompany = (int) $context->company->id;
 
 		$pathLogo = $this->getLogo();
 
@@ -2603,7 +2601,7 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 		$data->assign(
 			[
 				'company'        => $context->company,
-				'free_text'      => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->shop->id),
+				'free_text'      => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->company->id),
 				'logo_path'      => $pathLogo,
 				'width_logo'     => $width,
 				'height_logo'    => $height,
@@ -2622,7 +2620,7 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 		$data->assign(
 			[
 				'company'        => $context->company,
-				'free_text'      => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->shop->id),
+				'free_text'      => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->company->id),
 				'logo_path'      => $logo_path,
 				'piece'          => $customerPiece,
 				'payments'       => $payments,
@@ -2647,7 +2645,7 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 		$data->assign(
 			[
 				'company'          => $context->company,
-				'free_text'        => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->shop->id),
+				'free_text'        => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->company->id),
 				'logo_path'        => $logo_path,
 				'piece'            => $customerPiece,
 				'studentEducation' => $studentEducation,
@@ -2696,16 +2694,16 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 		$template = Tools::jsonDecode(EmployeeConfiguration::get($model), true);
 		$idPieces = Tools::getValue('pieces');
 		$context = Context::getContext();
-		$idShop = (int) $context->shop->id;
+		$idCompany = (int) $context->company->id;
 
-		if (Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop))) {
-			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop);
-			$logo_path = _EPH_IMG_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop);
+		if (Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany))) {
+			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany);
+			$logo_path = _EPH_IMG_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany);
 		} else
 
-		if (Configuration::get('EPH_LOGO', null, null, $idShop) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop))) {
-			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop);
-			$logo_path = _EPH_IMG_ . Configuration::get('EPH_LOGO', null, null, $idShop);
+		if (Configuration::get('EPH_LOGO', null, null, $idCompany) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idCompany))) {
+			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idCompany);
+			$logo_path = _EPH_IMG_ . Configuration::get('EPH_LOGO', null, null, $idCompany);
 		}
 
 		$filePath = 'invoices' . DIRECTORY_SEPARATOR;
@@ -2756,7 +2754,7 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 			$data->assign(
 				[
 					'company'        => $context->company,
-					'free_text'      => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->shop->id),
+					'free_text'      => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->company->id),
 					'logo_path'      => $pathLogo,
 					'width_logo'     => $width,
 					'height_logo'    => $height,
@@ -2775,7 +2773,7 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 			$data->assign(
 				[
 					'company'        => $context->company,
-					'free_text'      => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->shop->id),
+					'free_text'      => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->company->id),
 					'logo_path'      => $logo_path,
 					'piece'          => $customerPiece,
 					'payments'       => $payments,
@@ -2800,7 +2798,7 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 			$data->assign(
 				[
 					'company'          => $context->company,
-					'free_text'        => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->shop->id),
+					'free_text'        => Configuration::get('EPH_INVOICE_FREE_TEXT', (int) Context::getContext()->language->id, null, $context->company->id),
 					'logo_path'        => $logo_path,
 					'piece'            => $customerPiece,
 					'studentEducation' => $studentEducation,
@@ -2858,14 +2856,14 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 
 		$logo = '';
 		$context = Context::getContext();
-		$idShop = (int) $context->shop->id;
+		$idCompany = (int) $context->company->id;
 
-		if (Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop))) {
-			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idShop);
+		if (Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany))) {
+			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO_INVOICE', null, null, $idCompany);
 		} else
 
-		if (Configuration::get('EPH_LOGO', null, null, $idShop) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop))) {
-			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idShop);
+		if (Configuration::get('EPH_LOGO', null, null, $idCompany) != false && file_exists(_EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idCompany))) {
+			$logo = _EPH_IMG_DIR_ . Configuration::get('EPH_LOGO', null, null, $idCompany);
 		}
 
 		return $logo;
@@ -3123,8 +3121,8 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 				// Formatted price
 				$product['formatted_price'] = Tools::displayPrice(Tools::convertPrice($product['price_tax_incl'], $currency), $currency);
 				// Concret price
-				$product['price_tax_incl'] = Tools::EPH_round(Tools::convertPrice($product['price_tax_incl'], $currency), 2);
-				$product['price_tax_excl'] = Tools::EPH_round(Tools::convertPrice($product['price_tax_excl'], $currency), 2);
+				$product['price_tax_incl'] = Tools::ps_round(Tools::convertPrice($product['price_tax_incl'], $currency), 2);
+				$product['price_tax_excl'] = Tools::ps_round(Tools::convertPrice($product['price_tax_excl'], $currency), 2);
 				$productObj = new Product((int) $product['id_product'], false, (int) $this->context->language->id);
 				$combinations = [];
 				$attributes = $productObj->getAttributesGroups((int) $this->context->language->id);
@@ -3150,13 +3148,13 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 					if (!isset($combinations[$attribute['id_product_attribute']]['price'])) {
 						$priceTaxIncl = Product::getPriceStatic((int) $product['id_product'], true, $attribute['id_product_attribute']);
 						$priceTaxExcl = Product::getPriceStatic((int) $product['id_product'], false, $attribute['id_product_attribute']);
-						$combinations[$attribute['id_product_attribute']]['price_tax_incl'] = Tools::EPH_round(Tools::convertPrice($priceTaxIncl, $currency), 2);
-						$combinations[$attribute['id_product_attribute']]['price_tax_excl'] = Tools::EPH_round(Tools::convertPrice($priceTaxExcl, $currency), 2);
+						$combinations[$attribute['id_product_attribute']]['price_tax_incl'] = Tools::ps_round(Tools::convertPrice($priceTaxIncl, $currency), 2);
+						$combinations[$attribute['id_product_attribute']]['price_tax_excl'] = Tools::ps_round(Tools::convertPrice($priceTaxExcl, $currency), 2);
 						$combinations[$attribute['id_product_attribute']]['formatted_price'] = Tools::displayPrice(Tools::convertPrice($priceTaxExcl, $currency), $currency);
 					}
 
 					if (!isset($combinations[$attribute['id_product_attribute']]['qty_in_stock'])) {
-						$combinations[$attribute['id_product_attribute']]['qty_in_stock'] = StockAvailable::getQuantityAvailableByProduct((int) $product['id_product'], $attribute['id_product_attribute'], (int) $this->context->shop->id);
+						$combinations[$attribute['id_product_attribute']]['qty_in_stock'] = StockAvailable::getQuantityAvailableByProduct((int) $product['id_product'], $attribute['id_product_attribute']);
 					}
 
 					if (Configuration::get('EPH_ADVANCED_STOCK_MANAGEMENT') && (int) $product['advanced_stock_management'] == 1) {
@@ -3174,7 +3172,7 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 					$product['warehouse_list'][0] = [];
 				}
 
-				$product['stock'][0] = StockAvailable::getQuantityAvailableByProduct((int) $product['id_product'], 0, (int) $this->context->shop->id);
+				$product['stock'][0] = StockAvailable::getQuantityAvailableByProduct((int) $product['id_product'], 0);
 
 				foreach ($combinations as &$combination) {
 					$combination['attributes'] = rtrim($combination['attributes'], ' - ');
@@ -3348,8 +3346,7 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 			isset($productInformations['product_attribute_id']) ? $productInformations['product_attribute_id'] : null,
 			isset($combination) ? $combination->id : null,
 			'up',
-			0,
-			new Shop($cart->id_shop)
+			0
 		);
 
 		if ($updateQuantity < 0) {
@@ -3410,8 +3407,8 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 				$carrier = new Carrier((int) $order->id_carrier);
 				$taxCalculator = $carrier->getTaxCalculator($invoiceAddress);
 
-				$orderInvoice->total_paid_tax_excl = Tools::EPH_round((float) $cart->getSupplierPiecesTotal(false, $totalMethod), 2);
-				$orderInvoice->total_paid_tax_incl = Tools::EPH_round((float) $cart->getSupplierPiecesTotal($useTaxes, $totalMethod), 2);
+				$orderInvoice->total_paid_tax_excl = Tools::ps_round((float) $cart->getSupplierPiecesTotal(false, $totalMethod), 2);
+				$orderInvoice->total_paid_tax_incl = Tools::ps_round((float) $cart->getSupplierPiecesTotal($useTaxes, $totalMethod), 2);
 				$orderInvoice->total_products = (float) $cart->getSupplierPiecesTotal(false, Cart::ONLY_PRODUCTS);
 				$orderInvoice->total_products_wt = (float) $cart->getSupplierPiecesTotal($useTaxes, Cart::ONLY_PRODUCTS);
 				$orderInvoice->total_shipping_tax_excl = (float) $cart->getTotalShippingCost(null, false);
@@ -3445,8 +3442,8 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 
 			// Update current invoice
 			else {
-				$orderInvoice->total_paid_tax_excl += Tools::EPH_round((float) ($cart->getSupplierPiecesTotal(false, $totalMethod)), 2);
-				$orderInvoice->total_paid_tax_incl += Tools::EPH_round((float) ($cart->getSupplierPiecesTotal($useTaxes, $totalMethod)), 2);
+				$orderInvoice->total_paid_tax_excl += Tools::ps_round((float) ($cart->getSupplierPiecesTotal(false, $totalMethod)), 2);
+				$orderInvoice->total_paid_tax_incl += Tools::ps_round((float) ($cart->getSupplierPiecesTotal($useTaxes, $totalMethod)), 2);
 				$orderInvoice->total_products += (float) $cart->getSupplierPiecesTotal(false, Cart::ONLY_PRODUCTS);
 				$orderInvoice->total_products_wt += (float) $cart->getSupplierPiecesTotal($useTaxes, Cart::ONLY_PRODUCTS);
 				$orderInvoice->update();
@@ -3462,9 +3459,9 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 		$order->total_products += (float) $cart->getSupplierPiecesTotal(false, Cart::ONLY_PRODUCTS);
 		$order->total_products_wt += (float) $cart->getSupplierPiecesTotal($useTaxes, Cart::ONLY_PRODUCTS);
 
-		$order->total_paid += Tools::EPH_round((float) ($cart->getSupplierPiecesTotal(true, $totalMethod)), 2);
-		$order->total_paid_tax_excl += Tools::EPH_round((float) ($cart->getSupplierPiecesTotal(false, $totalMethod)), 2);
-		$order->total_paid_tax_incl += Tools::EPH_round((float) ($cart->getSupplierPiecesTotal($useTaxes, $totalMethod)), 2);
+		$order->total_paid += Tools::ps_round((float) ($cart->getSupplierPiecesTotal(true, $totalMethod)), 2);
+		$order->total_paid_tax_excl += Tools::ps_round((float) ($cart->getSupplierPiecesTotal(false, $totalMethod)), 2);
+		$order->total_paid_tax_incl += Tools::ps_round((float) ($cart->getSupplierPiecesTotal($useTaxes, $totalMethod)), 2);
 
 		if (isset($orderInvoice) && Validate::isLoadedObject($orderInvoice)) {
 			$order->total_shipping = $orderInvoice->total_shipping_tax_incl;
@@ -3472,7 +3469,7 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 			$order->total_shipping_tax_excl = $orderInvoice->total_shipping_tax_excl;
 		}
 
-		StockAvailable::updateQuantity($orderDetail->product_id, $orderDetail->product_attribute_id, ($orderDetail->product_quantity * -1), $order->id_shop);
+		StockAvailable::updateQuantity($orderDetail->product_id, $orderDetail->product_attribute_id, ($orderDetail->product_quantity * -1));
 
 		// discount
 		$order->total_discounts += (float) abs($cart->getSupplierPiecesTotal(true, Cart::ONLY_DISCOUNTS));
@@ -3507,7 +3504,7 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 
 		// Get the last product
 		$product = end($products);
-		$product['current_stock'] = StockAvailable::getQuantityAvailableByProduct($product['product_id'], $product['product_attribute_id'], $product['id_shop']);
+		$product['current_stock'] = StockAvailable::getQuantityAvailableByProduct($product['product_id'], $product['product_attribute_id']);
 		$resume = SupplierPiecesSlip::getProductSlipResume((int) $product['id_order_detail']);
 		$product['quantity_refundable'] = $product['product_quantity'] - $resume['product_quantity'];
 		$product['amount_refundable'] = $product['total_price_tax_excl'] - $resume['amount_tax_excl'];
@@ -3748,8 +3745,8 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 			$productQuantity = Tools::getValue('product_quantity');
 		}
 
-		$productPriceTaxIncl = Tools::EPH_round(Tools::getValue('product_price_tax_incl'), 2);
-		$productPriceTaxExcl = Tools::EPH_round(Tools::getValue('product_price_tax_excl'), 2);
+		$productPriceTaxIncl = Tools::ps_round(Tools::getValue('product_price_tax_incl'), 2);
+		$productPriceTaxExcl = Tools::ps_round(Tools::getValue('product_price_tax_excl'), 2);
 		$totalProductsTaxIncl = $productPriceTaxIncl * $productQuantity;
 		$totalProductsTaxExcl = $productPriceTaxExcl * $productQuantity;
 
@@ -3843,12 +3840,12 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 		}
 
 		// Update product available quantity
-		StockAvailable::updateQuantity($orderDetail->product_id, $orderDetail->product_attribute_id, ($oldQuantity - $orderDetail->product_quantity), $order->id_shop);
+		StockAvailable::updateQuantity($orderDetail->product_id, $orderDetail->product_attribute_id, ($oldQuantity - $orderDetail->product_quantity));
 
 		$products = $this->getProducts($order);
 		// Get the last product
 		$product = $products[$orderDetail->id];
-		$product['current_stock'] = StockAvailable::getQuantityAvailableByProduct($product['product_id'], $product['product_attribute_id'], $product['id_shop']);
+		$product['current_stock'] = StockAvailable::getQuantityAvailableByProduct($product['product_id'], $product['product_attribute_id']);
 		$resume = SupplierPiecesSlip::getProductSlipResume($orderDetail->id);
 		$product['quantity_refundable'] = $product['product_quantity'] - $resume['product_quantity'];
 		$product['amount_refundable'] = $product['total_price_tax_excl'] - $resume['amount_tax_excl'];
@@ -3936,8 +3933,8 @@ class AdminSupplierPiecesControllerCore extends AdminController {
 	protected function checkStockAvailable($orderDetail, $addQuantity) {
 
 		if ($addQuantity > 0) {
-			$stockAvailable = StockAvailable::getQuantityAvailableByProduct($orderDetail->product_id, $orderDetail->product_attribute_id, $orderDetail->id_shop);
-			$product = new Product($orderDetail->product_id, true, null, $orderDetail->id_shop);
+			$stockAvailable = StockAvailable::getQuantityAvailableByProduct($orderDetail->product_id, $orderDetail->product_attribute_id);
+			$product = new Product($orderDetail->product_id, true, null);
 
 			if (!Validate::isLoadedObject($product)) {
 				$this->ajaxDie(json_encode([
